@@ -13,7 +13,7 @@ plenty_admin.UI.field.tempGraphEl = plenty_admin.UI.field.DOM.find(".tab-content
 plenty_admin.UI.field.moistureGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#moisture canvas");
 plenty_admin.UI.field.precipGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#precip canvas");
 plenty_admin.UI.field.gddGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#gdd canvas");
-plenty_admin.UI.field.fieldCropActivityFinancesGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#finances canvas");
+plenty_admin.UI.field.financesGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#finances canvas");
 
 /* Set up the global properties of the charts plugin*/
 Chart.defaults.global.responsive = true;
@@ -500,7 +500,6 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 		plenty_admin.REST.get_activity_finances_for_date_range(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(fieldCropActivityFinances){
 			console.log("get_activity_finances_for_date_range", fieldCropActivityFinances);
 			plenty_admin.UI.field.fieldCropActivityFinances = fieldCropActivityFinances;
-			//plenty_admin.UI.field.renderFinancesGraph();
 		});
 	});
 }
@@ -808,6 +807,44 @@ plenty_admin.UI.field.renderGDDGraph = function(){
 
 plenty_admin.UI.field.renderFinancesGraph = function(){
 	var finances = plenty_admin.UI.field.fieldCropActivityFinances;
+	
+	/* HACK - REMOVE WHEN FINANCES RETURN CORRECTLY */
+	if(finances.length === 0){
+		finances = [
+			{
+				amount: 6655.00,
+				name: "Late Nitrogen"
+			},
+			{
+				amount: 2758.80,
+				name: "Starter Fertilizer"
+			},
+			{
+				amount: 2656.92,
+				name: "Planting"
+			},
+			{
+				amount: 2411.54,
+				name: "Harvest"
+			},
+			{
+				amount: 2145.00,
+				name: "Early Nitrogen"
+			},
+			{
+				amount: 1587.14,
+				name: "Tilling"
+			},
+			{
+				amount: 825.00,
+				name: "Pest COntrol"
+			},
+			{
+				amount: 544.00,
+				name: "Soil Test"
+			}
+		];
+	}
 	//holder for graph data set
 	var financesData = [];
 	
@@ -816,22 +853,50 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	
 	for(var f=0; f<finances.length; f++){
 		var finance = finances[f];
+		finance.colour = "#"+plenty_admin.UI.brand_palette.colourAt(f);
+		console.log("finance.colour", finance.colour);
+		
 		var segment = {
 			value:		finance.amount,
-			color:		plenty_admin.UI.brand_palette.colourAt(f),
-			highlight:	plenty_admin.HELPER.colorLuminance(plenty_admin.UI.brand_palette.colourAt(f), 20),
-			label: 		"Red"
+			color:		finance.colour,
+			highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, 2),
+			label: 		finance.name
 		};
 		
-		financesData.push(finance);
+		financesData.push(segment);
 	}
 	
 	var financeChartOptions = {
-	
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid='<%=i%>'><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
 	};
 	
-	plenty_admin.UI.field.fieldActivityFinances = new Chart(plenty_admin.UI.field.fieldCropActivityFinancesGraphEl.get(0).getContext("2d")).Doughnut(financesData, financeChartOptions);
+	plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
+	console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
 	
-	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.fieldActivityFinances);
+	//add a legend for this graph
+	var $legendHTML = $(plenty_admin.UI.field.financesGraph.generateLegend());
+	
+	$legendHTML
+	.find("li")
+	.on("mouseenter", function(e){
+		var segment = plenty_admin.UI.field.financesGraph.segments[parseInt($(this).data("segmentid"))];
+		console.log("segment", parseInt($(this).data("segmentid")), segment);
+		plenty_admin.UI.field.financesGraph.oldFill = segment.fillColor;
+		segment.fillColor = segment.highlightColor;
+	})
+	.on("mouseleave", function(e){
+		var segment = plenty_admin.UI.field.financesGraph.segments[parseInt($(this).data("segmentid"))];
+		segment.fillColor = plenty_admin.UI.field.financesGraph.oldFill;
+	});
+	
+	plenty_admin.UI.field.financesGraphEl
+	.parent()
+	.parent()
+	.find(".legend")
+	.html("")
+	.append($legendHTML);
+	
+	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);
+	
 }
 

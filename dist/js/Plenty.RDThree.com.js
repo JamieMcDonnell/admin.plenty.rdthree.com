@@ -1,6 +1,6 @@
 /*!
- * Bootstrap v3.3.4 (http://getbootstrap.com)
- * Copyright 2011-2015 Twitter, Inc.
+ * Plenty.rdthree.com v0.1 (http://plenty.rdthree.com)
+ * Copyright 2015-2015 RDThree Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 

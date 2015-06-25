@@ -16,7 +16,7 @@
 			</div>
 			<div class="col-xs-9 pln prn">
 				<!-- Tab panes -->
-				<div class="tab-content ptn pbn">
+				<div class="tab-content ptn pbn flexbox-parent flexbox-item-grow">
 				  <table class="tab-pane active table table-striped table-hover mbn fitTable" id="activities">
 				  	<thead>
 						<tr>
@@ -41,7 +41,10 @@
 					</tbody>
 				  </table>
 				  <div class="tab-pane graph flexbox-parent flexbox-item-grow" id="finances">
-				  	<canvas class="flexbox-item flexbox-item-grow"></canvas>
+				  	<div class="doughnut">
+				  		<canvas class="flexbox-item flexbox-item-grow"></canvas>
+					</div>
+					<div class="legend flexbox-item flexbox-item-grow"></div>
 				  </div>
 				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="equipment">
 				  	<thead>
