@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+{{ include('snippets/meta.html', {"title": "Plenty Admin | Map View", "description": "This is the map view of the admin UI", "author": "Jamie McDonnell"}) }}
+</head>
+{{ include('snippets/header-flex.html', {"page": "map", "dashboard" : false, "settings" : false, "contact" : false, "organization" : false, "map" : true}) }}
+	{{ include('snippets/field.html', {"breadcrumbs": false}) }}
+	<div class="flexbox-item filter_controls">
+		<h3 class="pull-left mls mts quickFilters" style="display:none;"><a href="" class="quickFilter quickFilter_farms"></a> in <a href="" class="quickFilter quickFilter_organizations"></a></h3>
+		<h3 class="pull-right mrs mts toggleFilters"><a href="">Filters <span></span></a></h3>
+	</div>
+    <div class="flexbox-item fill-area content flexbox-item-grow">
+        <div class="fill-area-content flexbox-item-grow" id="map-wrapper">
+			<div class="col-sm-12 pln prn" id="map-container"></div>
+			{{ include('snippets/filters.html') }}
+        </div>
+    </div>
+	{{ include('snippets/footer-DOM.html') }}
+</div>
+	{{ include('snippets/loadingOverlay.html') }}
+	{{ include('snippets/set-id-and-password.html') }}
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
+	{{ include('snippets/footer-scripts.html') }}
+	<script type="text/javascript">
+		plenty_admin.init("map");
+	</script>
+</body>
+</html>

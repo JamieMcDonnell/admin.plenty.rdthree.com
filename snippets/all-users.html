@@ -1,0 +1,67 @@
+<div id="all-users-container" style="display:none;">
+	<h1>
+		<a href="#" class="back">
+			<span class="glyphicon glyphicon-chevron-left"></span>
+		</a> 
+		All Users in All Organizations
+	</h1>
+	<div role="tabpanel" id="all-users-panel"> 
+		<table class="usersList table table-striped table-hover mbn"></table>
+		<!-- Nav tabs 
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active"><a href="#farms" aria-controls="farms" role="tab" data-toggle="tab">Farms</a></li>
+			<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+			<li role="presentation"><a href="#equipments" aria-controls="equipments" role="tab" data-toggle="tab">Equipment</a></li>
+			<li role="presentation"><a href="#products" aria-controls="products" role="tab" data-toggle="tab">Products</a></li>
+			<li role="presentation"><a href="#plans" aria-controls="plans" role="tab" data-toggle="tab">Plans</a></li>
+			<li role="presentation"><a href="#skills" aria-controls="skills" role="tab" data-toggle="tab">Skills</a></li>
+			<li role="presentation" class="hide"><a href="#payments" aria-controls="payments" role="tab" data-toggle="tab">Payment</a></li>
+		</ul>
+		
+		<!-- Tab panes 
+		<div class="tab-content container-fluid table-responsive">
+			<div class="mbs overflowFix">
+				<button type="button" class="btn btn-default btn-success pull-left add_to_organization"><span class="glyphicon glyphicon-plus"></span> Add</button>
+				<button type="button" class="btn btn-default btn-danger pull-right delete_multiple" style="display:none;"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+			</div>
+			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="farms">
+				<table class="farmsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="users">
+				<table class="usersList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="equipments">
+				<table class="equipmentsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="products">
+				<table class="productsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="plans">
+				<table class="plansList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="skills">
+				<table class="skillsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="payments">
+				<table class="paymentsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+		</div>-->
+	</div>
+	{{ include('add_to_organization.html') }}
+	{{ include('edit_in_organization.html') }}
+	{{ include('confirm-delete.html') }}
+</div>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+{{ include('snippets/meta.html', {"title": "Plenty Admin Dashboard", "description": "This is the dashboard of the admin UI", "author": "Jamie McDonnell"}) }}
+</head>
+{{ include('snippets/header.html', {"page": "skill", "dashboard" : false, "settings" : false, "contact" : false, "organization" : false}) }}
+<div class="container-fluid">
+	<div class="row"> {{ include('snippets/sidebar-nav.html') }}
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+			<ol class="breadcrumb">
+			  <li><a href="organization.html?sub=skills">Organization 1</a></li>
+			  <li class="active">Skill A</li>
+			</ol>
+			<h1 class="page-header">Skill A</h1>
+			<div class="row skillDetails">
+				- Name
+				- Wage per hour
+				- List of users offering this skill
+				- date created
+				- date last modified
+			</div>
+		</div>
+	</div>
+</div>
+{{ include('snippets/footer.html') }} 
+<script src="js/skill.js"></script>
+</body></html>

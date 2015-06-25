@@ -1,0 +1,55 @@
+<div id="farm-container" style="display:none;">
+	<h1 data-type="text" class="pull-left" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Name this Organization"><a href="#" class="backTosettings"><span class="glyphicon glyphicon-chevron-left"></span></a> <span class="org-name editable">Org Name</span></h1>
+	<h1 data-type="text" class="pull-left mlm clearfix" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Name this Farm"><a href="#" class="backToOrganization"><span class="glyphicon glyphicon-chevron-left"></span></a> <span class="farm-name editable">Farm Name</span></h1>
+	<div role="tabpanel" id="farmAssets"> 
+		
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist" class="clear">
+			<li role="presentation" class="active"><a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">Fields</a></li>
+			<li role="presentation"><a href="#services" aria-controls="services" role="tab" data-toggle="tab">Services</a></li>
+		</ul>
+		
+		<!-- Tab panes -->
+		<div class="tab-content container-fluid table-responsive">
+			<div class="mbs overflowFix">
+				<button type="button" class="btn btn-default btn-success pull-left add_to_farm"><span class="glyphicon glyphicon-plus"></span> Add</button>
+				<button type="button" class="btn btn-default btn-danger pull-right delete_multiple" style="display:none;"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+			</div>
+			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="fields">
+				<table class="fieldsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="services">
+				<table class="servicesList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+		</div>
+	</div>
+	{{ include('add_to_farm.html') }}
+	{{ include('edit_in_farm.html') }}
+	
+	
+	
+	
+	<!--
+	<h1 class="page-header editable">Farm A</h1>
+	<div class="row farmDetails">
+		List components of this farm:
+		- Farm name
+		Fields
+			- Field name
+			- hidden (boolean)
+			- Acres
+			- Postal code
+			- timezone
+			- date created
+			- date last modified 	
+			- Thumbnail of field and field boundary on map?
+			- Equipment shown on map for this field clicking through to equipment item in admin?
+			- Plan currently associated with this field clicking through to plan item in admin?
+			- Product currently held at this field, clicking through to product item in admin?
+	</div>
+	-->
+</div>

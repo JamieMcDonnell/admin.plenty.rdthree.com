@@ -1,0 +1,95 @@
+<div id="organization-container" style="display:none;">
+	<div class="clearfix">
+		<p class="editable org-organizationTypeId pull-left mbn editable" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'></p>
+		<p class="pull-left lead2 mbn clear"><span class="org-addressLine1 editable" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span> <span class="org-addressLine2 editable" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span></p>
+		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"></p>
+		<p class="pull-left lead2 editable clear org-zip"></p>
+	</div>
+	<div role="tabpanel" id="orgAssets"> 
+		
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active" data-hash="farms"><a href="#farms" aria-controls="farms" role="tab" data-toggle="tab">Farms</a></li>
+			<li role="presentation" data-hash="fieldsAndCropTypes"><a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">Fields</a></li>
+			<li role="presentation" data-hash="users"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+			<li role="presentation" data-hash="equipments"><a href="#equipments" aria-controls="equipments" role="tab" data-toggle="tab">Equipment</a></li>
+			<li role="presentation" data-hash="products"><a href="#products" aria-controls="products" role="tab" data-toggle="tab">Products</a></li>
+			<li role="presentation" data-hash="plans"><a href="#plans" aria-controls="plans" role="tab" data-toggle="tab">Plans</a></li>
+			<li role="presentation" data-hash="skills"><a href="#skills" aria-controls="skills" role="tab" data-toggle="tab">Skills</a></li>
+			<li role="presentation" data-hash="payments" class="hide"><a href="#payments" aria-controls="payments" role="tab" data-toggle="tab">Payment</a></li>
+		</ul>
+		
+		<!-- Tab panes -->
+		<div class="tab-content container-fluid">
+
+			<div class="alert alert-info alert-dismissible farm-info" role="alert">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  <strong>Info:</strong> Farms can be created while adding a field. They are deleted automatically if no fields exist in them. Only their name is editable.
+			</div>
+
+			<div class="mbs overflowFix add_delete_controls clearfix" style="display:none;">
+				<button type="button" class="btn btn-default btn-success pull-left add_to_organization"><span class="glyphicon glyphicon-plus"></span> Add</button>
+				<button type="button" class="btn btn-default btn-danger pull-right delete_multiple" style="display:none;"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+			</div>
+			
+			<form class="form-inline filter-by-farm-group clearfix" style="display:none;">
+			  <div class="form-group">
+				<label class="sr-only">Filter By Farm</label>
+				<p class="form-control-static">Filter by farm: </p>
+			  </div>
+			  <div class="form-group">
+				<label for="farmList" class="sr-only">Farm List</label>
+				<select class="pull-left filter-by-farm col-xs-3 form-control mlm" id="farmList">
+				
+				</select>
+			  </div>
+			</form>
+				
+			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="farms">
+				<table class="farmsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="fields">
+				<table class="fieldsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="users">
+				<table class="usersList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="equipments">
+				<table class="equipmentsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="products">
+				<table class="productsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="plans">
+				<table class="plansList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="skills">
+				<table class="skillsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="payments">
+				<table class="paymentsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+		</div>
+	</div>
+	{{ include('add_to_organization.html') }}
+	{{ include('edit_in_organization.html') }}
+	{{ include('add_field.html') }}
+	{{ include('edit_field.html') }}
+	{{ include('confirm-delete.html') }}
+</div>

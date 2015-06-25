@@ -1,0 +1,19 @@
+/* LESS Document */
+.modal{
+	&.org_item_modal{
+		.modal-body{
+			.add_to_org_form{
+				display:none;
+			}
+		}
+	}
+	&.org_item_modal.farms .add_to_org_form.farms,
+	&.org_item_modal.users .add_to_org_form.users,
+	&.org_item_modal.equipments .add_to_org_form.equipments,
+	&.org_item_modal.products .add_to_org_form.products,
+	&.org_item_modal.plans .add_to_org_form.plans,
+	&.org_item_modal.skills .add_to_org_form.skills,
+	&.org_item_modal.payments .add_to_org_form.payments{
+		display:block;
+	}
+}

@@ -1,0 +1,96 @@
+<div class="add_field_form_wrapper">
+	<h3 class="mtn">Define this field below</h3>
+	<form class="add_field add_to_org_form">
+		<div class="overflowFix">
+			<div class="form-group col-xs-6 pln">
+				<label for="add_field_name">name</label>
+				<input type="text" class="form-control" id="add_field_name" required placeholder="e.g. North Farm" data-propname="name">
+			</div>
+			<div class="form-group col-xs-6 prn">
+				<label for="add_field_farms ">Farm (<a href="" class="showNewFarm">New Farm</a><a href="" style="display:none;" class="showExistingFarm">Existing Farm</a>)</label>
+				<div class="existingFarm">
+					<select class="form-control" id="add_field_farms" required placeholder="Associate this field with a farm" data-propname="farmId">
+						<!-- DYNAMIC -->
+					</select>
+				</div>
+				<div class="newFarm" style="display:none;">
+					<input type="text" class="form-control" id="add_field_new_farm_name" placeholder="Farm Name">
+				</div>
+			</div>
+		</div>
+		<div class="overflowFix">
+			<div class="form-group col-xs-6 pln">
+				<label for="add_field_acres">Acres</label>
+				<input type="number" step="any" class="form-control" id="add_field_acres" required placeholder="e.g. 110" data-propname="acres">
+			</div>
+			<div class="form-group col-xs-6 prn">
+				<label for="add_field_rotation">Rotation</label>
+				<input type="text" class="form-control" id="add_field_rotation" required placeholder="e.g. Wheat Year 2" data-propname="rotation">
+			</div>
+		</div>
+		<div class="overflowFix">
+			<div class="form-group col-xs-6 pln">
+				<label for="add_field_postalCode">ZIP Code</label>
+				<input type="text" class="form-control" id="add_field_postalCode" required placeholder="e.g. 90210" data-propname="postalCode">
+			</div>
+			<div class="form-group col-xs-6 prn">
+				<label for="add_field_timezone">Timezone</label>
+				<select class="form-control" id="add_field_timezone" required placeholder="Choose a time zone" data-propname="timezone">
+					<option value="AST">Alaska Standard Time</option>
+					<option value="CST">Central Standard Time</option>
+					<option value="EST">Eastern Standard Time</option>
+					<option value="MST">Mountain Standard Time</option>
+					<option value="PST">Pacific Standard Time</option>
+				</select>
+			</div>
+		</div>
+		<div class="overflowFix">
+			<div class="form-group col-xs-6 pln">
+				<label for="add_field_crop">Current Crop</label>
+				<select class="form-control crop_type_list" id="add_field_crop" required placeholder="Choose a crop for this field" data-propname="cropTypeId">
+					<!-- DYNAMIC -->
+				</select>
+			</div>
+			<div class="form-group col-xs-6 prn">
+				<label for="add_field_irrigation">Irrigation Type</label>
+				<select class="form-control irrigation_type_list" id="add_field_irrigation" required placeholder="Choose an irrigation type" data-propname="irrigationTypeId">
+					<!-- DYNAMIC -->
+				</select>
+			</div>
+		</div>
+		<div class="overflowFix">
+			<div class="form-group col-xs-6 pln">
+				<label for="add_field_tillage">Tillage Type</label>
+				<select class="form-control tillage_type_list" id="add_field_tillage" required placeholder="Choose a tillage type" data-propname="tillageTypeId">
+					<!-- DYNAMIC -->
+				</select>
+			</div>
+		</div>
+		<div class="overflowFix">
+			<div class="form-group col-xs-6 pln hide">
+					<label for="add_field_org_interest">Associated Organization</label>
+					<select class="form-control" id="add_field_org_interest" required placeholder="Choose an organization for which to add interest" data-propname="interestOrgId">
+						<!-- DYNAMIC -->
+					</select>
+				</div>
+			<div class="btn-group pull-right col-xs-6 prn" role="group" aria-label="add field controls">
+				<button class="btn btn-sm btn-default mrm cancel">Cancel</button>
+				<button class="btn btn-sm btn-primary add-field" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> Loading...">Add Field</button>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="add_field_success_wrapper bs-callout bs-callout-success" style="display:none;">
+	<h4>Field Added</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
+		<button class='newField btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Field</button>
+	</div>
+</div>
+<div class="add_field_error_wrapper bs-callout bs-callout-danger" style="display:none;">
+	<h4>Adding a Field Failed</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-default finish'>Finish</button>
+		<button class='newField btn btn-sm btn-primary'>Add Another Field</button>
+	</div>
+</div>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<meta name="description" content="This is the sign in page of the admin UI">
+<meta name="author" content="Jamie McDonnell">
+<!--<link rel="icon" href="favicon.ico">-->
+
+<title>Plenty Admin Sign In</title>
+
+<!-- Bootstrap core CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+ <!-- Bootstrap theme CSS -->
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- Custom styles for this template -->
+<link href="css/plenty.min.css" rel="stylesheet">
+
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+	<nav class="navbar navbar-fixed-top navbar-default">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <a href="index.html" class="pull-left brand">
+		  	<img src="img/plenty-logo.png">
+		</a>
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+		  
+		</div><!-- /.nav-collapse -->
+	  </div><!-- /.container -->
+	</nav><!-- /.navbar -->
+    <div class="container-fluid">
+		<div class="row">
+		  <form class="form-signin">
+			<h2 class="form-signin-heading">Please sign in</h2>
+			<label for="inputEmail" class="sr-only">Email address</label>
+			<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" value="kelmor@yahoo.com" autofocus>
+			<label for="inputPassword" class="sr-only">Password</label>
+			<input type="password" id="inputPassword" class="form-control" placeholder="Password" value="password" required="">
+			<div class="checkbox">
+			  <label>
+				<input type="checkbox" value="remember-me"> Remember me
+			  </label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		  </form>
+		</div>
+    </div> <!-- /container -->
+	<footer class="footer">
+	<div class="container-fluid">
+		<p class="pull-left">&copy; RoundThree Inc. 2015</p>
+		<ul class="links pull-right">
+			<li class="pull-left"><a href="#report-problem">Report Problem</a></li>
+			<li class="pull-left restStatus">REST Status: <span class="status"></span></li>
+		</ul>
+	</div>
+</footer>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="//use.typekit.net/jmc8hvz.js"></script>
+<script>try{Typekit.load();}catch(e){}</script>
+<script src="js/signin.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{ include('snippets/meta.html', {"title": "Plenty Admin Contact", "description": "This is the contact page of the admin UI", "author": "Jamie McDonnell"}) }}
+  </head>
+
+    {{ include('snippets/header.html', {"page": "contact", "dashboard" : false, "settings" : false, "contact" : true, "organization" : false}) }}
+
+    <div class="container-fluid">
+      <div class="row">
+        
+		{{ include('snippets/sidebar-nav.html') }}
+		
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          <div class="">
+            <h1>This is the template for the contact page</h1>
+            <p>Below Will be a form to contact Plenty Support</p>
+          </div>
+        </div><!--/.col-xs-12.col-sm-9-->
+
+        
+      </div><!--/row-->
+    </div><!--/.container-->
+
+	{{ include('snippets/footer.html'), {"organization":false}) }}
+	
+  </body>
+</html>

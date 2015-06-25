@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<meta name="description" content="This is the dashboard of the admin UI">
+<meta name="author" content="Jamie McDonnell">
+<!--<link rel="icon" href="favicon.ico">-->
+
+<title>Plenty Admin Dashboard</title>
+
+<!-- Bootstrap core CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+ <!-- Bootstrap theme CSS -->
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+<!-- Custom styles for this template -->
+<link href="css/plenty.min.css" rel="stylesheet">
+
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+<body class="settings">
+	<nav class="navbar navbar-fixed-top navbar-default">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a href="index.html" class="pull-left brand">
+		  	<img src="img/plenty-logo.png">
+		</a>
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+		  <ul class="nav navbar-nav">
+			<li class=""><a href="dashboard.html">Dashboard</a></li>
+			<li  class="active"><a href="settings.html">Settings</a></li>
+			<li  class=""><a href="map.html">Map</a></li>
+		  </ul>
+		  <ul class="nav navbar-nav navbar-right">
+			<li><p style="display:none;">Welcome <span class="userFName"></span> <span class="userLName"></span></p></li>
+			<li class=""><a href="contact.html">Contact</a></li>
+			<li class="logout"><a href="#">Log Out</a></li>
+		  </ul>
+		</div><!-- /.nav-collapse -->
+	  </div><!-- /.container -->
+	</nav><!-- /.navbar -->
+<div class="container-fluid">
+	<div class="row"> 
+		<div class="col-sm-3 col-md-2 sidebar" id="sidebar">
+	<h3 class="mtn">Organizations</h3>
+	<div class="organizations-list panel-group" id="organizations" role="tablist" aria-multiselectable="true"> </div>
+</div>
+
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">
+			<div id="settings">
+				<div class="row organizations"></div>
+			</div>
+			<div id="organization-container" style="display:none;">
+	<div class="clearfix">
+		<p class="editable org-organizationTypeId pull-left mbn editable" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'></p>
+		<p class="pull-left lead2 mbn clear"><span class="org-addressLine1 editable" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span> <span class="org-addressLine2 editable" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span></p>
+		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"></p>
+		<p class="pull-left lead2 editable clear org-zip"></p>
+	</div>
+	<div role="tabpanel" id="orgAssets"> 
+		
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active" data-hash="farms"><a href="#farms" aria-controls="farms" role="tab" data-toggle="tab">Farms</a></li>
+			<li role="presentation" data-hash="fieldsAndCropTypes"><a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">Fields</a></li>
+			<li role="presentation" data-hash="users"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+			<li role="presentation" data-hash="equipments"><a href="#equipments" aria-controls="equipments" role="tab" data-toggle="tab">Equipment</a></li>
+			<li role="presentation" data-hash="products"><a href="#products" aria-controls="products" role="tab" data-toggle="tab">Products</a></li>
+			<li role="presentation" data-hash="plans"><a href="#plans" aria-controls="plans" role="tab" data-toggle="tab">Plans</a></li>
+			<li role="presentation" data-hash="skills"><a href="#skills" aria-controls="skills" role="tab" data-toggle="tab">Skills</a></li>
+			<li role="presentation" data-hash="payments" class="hide"><a href="#payments" aria-controls="payments" role="tab" data-toggle="tab">Payment</a></li>
+		</ul>
+		
+		<!-- Tab panes -->
+		<div class="tab-content container-fluid">
+
+			<div class="alert alert-info alert-dismissible farm-info" role="alert">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  <strong>Info:</strong> Farms can be created while adding a field. They are deleted automatically if no fields exist in them. Only their name is editable.
+			</div>
+
+			<div class="mbs overflowFix add_delete_controls clearfix" style="display:none;">
+				<button type="button" class="btn btn-default btn-success pull-left add_to_organization"><span class="glyphicon glyphicon-plus"></span> Add</button>
+				<button type="button" class="btn btn-default btn-danger pull-right delete_multiple" style="display:none;"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+			</div>
+			
+			<form class="form-inline filter-by-farm-group clearfix" style="display:none;">
+			  <div class="form-group">
+				<label class="sr-only">Filter By Farm</label>
+				<p class="form-control-static">Filter by farm: </p>
+			  </div>
+			  <div class="form-group">
+				<label for="farmList" class="sr-only">Farm List</label>
+				<select class="pull-left filter-by-farm col-xs-3 form-control mlm" id="farmList">
+				
+				</select>
+			  </div>
+			</form>
+				
+			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="farms">
+				<table class="farmsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="fields">
+				<table class="fieldsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="users">
+				<table class="usersList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="equipments">
+				<table class="equipmentsList table table-striped table-hover mbn">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="products">
+				<table class="productsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="plans">
+				<table class="plansList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="skills">
+				<table class="skillsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="payments">
+				<table class="paymentsList table table-striped table-hover mbn fitTable">
+					
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade org_item_modal" id="add_to_organization">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form class="farms add_to_org_form">
+	<div class="form-group">
+		<label for="add_farm_name">Farm Name</label>
+		<input type="text" class="form-control" id="add_farm_name" placeholder="e.g. Bob's Farm" required data-propname="name">
+	</div>
+</form>
+		<form class="users add_to_org_form">
+	<div class="form-group">
+		<label for="add_user_first_name">First Name</label>
+		<input type="text" class="form-control" id="add_user_first_name" placeholder="e.g. Bob" required data-propname="firstName">
+	</div>
+	<div class="form-group">
+		<label for="add_user_last_name">Last Name</label>
+		<input type="text" class="form-control" id="add_user_last_name" placeholder="e.g. Smith" required data-propname="lastName">
+	</div>
+	<div class="form-group">
+		<label for="add_user_mobileNumber">Mobile #</label>
+		<input type="number" class="form-control" id="add_user_mobileNumber" placeholder="e.g. 777666555" required data-propname="mobileNumber">
+	</div>
+	<div class="form-group">
+		<label for="add_user_email">Email</label>
+		<input type="email" class="form-control" id="add_user_email" placeholder="e.g. bob@gmail.com" required data-propname="email">
+	</div>
+	<div class="form-group">
+		<label for="add_user_timezone">Timezone</label>
+		<select class="form-control" id="add_user_timezone" required placeholder="Choose a time zone" data-propname="timezone">
+			<option value="AST">Alaska Standard Time</option>
+			<option value="CST">Central Standard Time</option>
+			<option value="EST">Eastern Standard Time</option>
+			<option value="MST">Mountain Standard Time</option>
+			<option value="PST">Pacific Standard Time</option>
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="add_user_username">Username</label>
+		<input type="text" class="form-control" id="add_user_username" placeholder="e.g. bsmith" required data-propname="username">
+	</div>
+	<div class="form-group">
+		<label for="add_user_password">Password</label>
+		<input type="password" class="form-control" id="add_user_password" placeholder="e.g. xyzXYZABC123!@#" required data-propname="password">
+	</div>
+	<div class="form-group hide">
+		<input type="checkbox" class="form-control" id="add_user_enabled" checked data-propname="enabled">
+	</div>
+</form>
+		<form class="equipments add_to_org_form">
+	<div class="form-group">
+		<label for="add_equipment_name">Name</label>
+		<input type="text" class="form-control" id="add_equipment_name" placeholder="e.g. WetWillie" required data-propname="name">
+	</div>
+	<!-- DYNAMIC 	
+		<div class="form-group">
+			<label for="add_equipment_type">Type</label>
+			<select class="form-control equipment_type_list" id="add_equipment_type" required placeholder="Choose an equipment type" data-propname="equipmentTypeId">
+				
+			</select>
+		</div>
+	-->
+	<div class="form-group">
+		<label for="add_equipment_latitude">Latitude</label>
+		<input type="text" class="form-control" id="add_equipment_latitude" placeholder="e.g. 51.665544" required data-propname="latitude">
+	</div>
+	<div class="form-group">
+		<label for="add_equipment_longitude">Longitude</label>
+		<input type="text" class="form-control" id="add_equipment_longitude" placeholder="e.g. 51.665544" required data-propname="longitude">
+	</div>
+	<div class="form-group">
+		<button class="btn btn-sm btn-default mrm cancel">Cancel</button>
+		<button class="btn btn-sm btn-primary add-equipment" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> Loading...">Add Equipment</button>
+	</div>
+</form>
+<div class="add_equipment_success_wrapper bs-callout bs-callout-success" style="display:none;">
+	<h4>Equipment Added</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
+		<button class='newEquipment btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Equipment</button>
+	</div>
+</div>
+		<form class="products add_to_org_form">
+	<div class="form-group">
+		<label for="add_product_name">Name</label>
+		<input type="text" class="form-control" id="add_product_name" placeholder="e.g. X51-ABC" required data-propname="name">
+	</div>
+	<div class="form-group">
+		<label for="add_product_type">Type</label>
+		<input type="text" class="form-control" id="add_product_type" placeholder="e.g. Fertilizer" required data-propname="productTypeId">
+	</div>
+	<div class="form-group">
+		<label for="add_product_brand">Brand</label>
+		<input type="text" class="form-control" id="add_product_brand" placeholder="e.g. Macro" required data-propname="brandId">
+	</div>
+	<div class="form-group">
+		<label for="add_product_uom">Unit Of Measure</label>
+		<input type="text" class="form-control" id="add_product_uom" placeholder="e.g. ml" required data-propname="uomId">
+	</div>
+	<div class="form-group">
+		<label for="add_product_cost">Password</label>
+		<input type="text" class="form-control" id="add_product_cost" placeholder="e.g. 12.99" required data-propname="standardCost">
+	</div>
+</form>
+		<form class="plans add_to_org_form">
+	<div class="form-group">
+		<label for="add_plan_name">Name</label>
+		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required data-propname="name">
+	</div>
+	<div class="form-group">
+		<label for="add_plan_desc">Type</label>
+		<textarea class="form-control" id="add_plan_desc" placeholder="e.g. This is my wheat plan" required data-propname="description"></textarea>
+	</div>
+	<div class="form-group">
+		<label for="add_plan_enabled clearfix">Enabled</label>
+		<input type="checkbox" class="form-control switch" id="add_plan_enabled">
+	</div>
+</form>
+		<form class="skills add_to_org_form">
+	<div class="form-group">
+		<label for="add_skill_name">Name</label>
+		<input type="text" class="form-control" id="add_skill_name" placeholder="e.g. Skill 1" required data-propname="name">
+	</div>
+	<div class="form-group">
+		<label for="add_skill_wage">Wage</label>
+		<input type="number" class="form-control" id="add_skill_wage" placeholder="e.g. $20" required data-propname="standardWagePerHour">
+	</div>
+</form>
+		<form class="payment add_to_org_form">
+	<div class="form-group">
+		<label for="add_plan_name">Name</label>
+		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required data-propname="name">
+	</div>
+</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+        <button type="button" class="btn btn-primary add"><span class="glyphicon glyphicon-plus"></span> Add</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<div class="modal fade org_item_modal" id="edit_in_organization">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form class="farms add_to_org_form">
+	<div class="form-group">
+		<label for="add_farm_name">Farm Name</label>
+		<input type="text" class="form-control" id="add_farm_name" placeholder="e.g. Bob's Farm" required data-propname="name">
+	</div>
+</form>
+		<form class="users add_to_org_form">
+	<div class="form-group">
+		<label for="add_user_first_name">First Name</label>
+		<input type="text" class="form-control" id="add_user_first_name" placeholder="e.g. Bob" required data-propname="firstName">
+	</div>
+	<div class="form-group">
+		<label for="add_user_last_name">Last Name</label>
+		<input type="text" class="form-control" id="add_user_last_name" placeholder="e.g. Smith" required data-propname="lastName">
+	</div>
+	<div class="form-group">
+		<label for="add_user_mobileNumber">Mobile #</label>
+		<input type="number" class="form-control" id="add_user_mobileNumber" placeholder="e.g. 777666555" required data-propname="mobileNumber">
+	</div>
+	<div class="form-group">
+		<label for="add_user_email">Email</label>
+		<input type="email" class="form-control" id="add_user_email" placeholder="e.g. bob@gmail.com" required data-propname="email">
+	</div>
+	<div class="form-group">
+		<label for="add_user_timezone">Timezone</label>
+		<select class="form-control" id="add_user_timezone" required placeholder="Choose a time zone" data-propname="timezone">
+			<option value="AST">Alaska Standard Time</option>
+			<option value="CST">Central Standard Time</option>
+			<option value="EST">Eastern Standard Time</option>
+			<option value="MST">Mountain Standard Time</option>
+			<option value="PST">Pacific Standard Time</option>
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="add_user_username">Username</label>
+		<input type="text" class="form-control" id="add_user_username" placeholder="e.g. bsmith" required data-propname="username">
+	</div>
+	<div class="form-group">
+		<label for="add_user_password">Password</label>
+		<input type="password" class="form-control" id="add_user_password" placeholder="e.g. xyzXYZABC123!@#" required data-propname="password">
+	</div>
+	<div class="form-group hide">
+		<input type="checkbox" class="form-control" id="add_user_enabled" checked data-propname="enabled">
+	</div>
+</form>
+		<form class="equipments add_to_org_form">
+	<div class="form-group">
+		<label for="add_equipment_name">Name</label>
+		<input type="text" class="form-control" id="add_equipment_name" placeholder="e.g. WetWillie" required data-propname="name">
+	</div>
+	<!-- DYNAMIC 	
+		<div class="form-group">
+			<label for="add_equipment_type">Type</label>
+			<select class="form-control equipment_type_list" id="add_equipment_type" required placeholder="Choose an equipment type" data-propname="equipmentTypeId">
+				
+			</select>
+		</div>
+	-->
+	<div class="form-group">
+		<label for="add_equipment_latitude">Latitude</label>
+		<input type="text" class="form-control" id="add_equipment_latitude" placeholder="e.g. 51.665544" required data-propname="latitude">
+	</div>
+	<div class="form-group">
+		<label for="add_equipment_longitude">Longitude</label>
+		<input type="text" class="form-control" id="add_equipment_longitude" placeholder="e.g. 51.665544" required data-propname="longitude">
+	</div>
+	<div class="form-group">
+		<button class="btn btn-sm btn-default mrm cancel">Cancel</button>
+		<button class="btn btn-sm btn-primary add-equipment" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> Loading...">Add Equipment</button>
+	</div>
+</form>
+<div class="add_equipment_success_wrapper bs-callout bs-callout-success" style="display:none;">
+	<h4>Equipment Added</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
+		<button class='newEquipment btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Equipment</button>
+	</div>
+</div>
+		<form class="products add_to_org_form">
+	<div class="form-group">
+		<label for="add_product_name">Name</label>
+		<input type="text" class="form-control" id="add_product_name" placeholder="e.g. X51-ABC" required data-propname="name">
+	</div>
+	<div class="form-group">
+		<label for="add_product_type">Type</label>
+		<input type="text" class="form-control" id="add_product_type" placeholder="e.g. Fertilizer" required data-propname="productTypeId">
+	</div>
+	<div class="form-group">
+		<label for="add_product_brand">Brand</label>
+		<input type="text" class="form-control" id="add_product_brand" placeholder="e.g. Macro" required data-propname="brandId">
+	</div>
+	<div class="form-group">
+		<label for="add_product_uom">Unit Of Measure</label>
+		<input type="text" class="form-control" id="add_product_uom" placeholder="e.g. ml" required data-propname="uomId">
+	</div>
+	<div class="form-group">
+		<label for="add_product_cost">Password</label>
+		<input type="text" class="form-control" id="add_product_cost" placeholder="e.g. 12.99" required data-propname="standardCost">
+	</div>
+</form>
+		<form class="plans add_to_org_form">
+	<div class="form-group">
+		<label for="add_plan_name">Name</label>
+		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required data-propname="name">
+	</div>
+	<div class="form-group">
+		<label for="add_plan_desc">Type</label>
+		<textarea class="form-control" id="add_plan_desc" placeholder="e.g. This is my wheat plan" required data-propname="description"></textarea>
+	</div>
+	<div class="form-group">
+		<label for="add_plan_enabled clearfix">Enabled</label>
+		<input type="checkbox" class="form-control switch" id="add_plan_enabled">
+	</div>
+</form>
+		<form class="skills add_to_org_form">
+	<div class="form-group">
+		<label for="add_skill_name">Name</label>
+		<input type="text" class="form-control" id="add_skill_name" placeholder="e.g. Skill 1" required data-propname="name">
+	</div>
+	<div class="form-group">
+		<label for="add_skill_wage">Wage</label>
+		<input type="number" class="form-control" id="add_skill_wage" placeholder="e.g. $20" required data-propname="standardWagePerHour">
+	</div>
+</form>
+		<form class="payment add_to_org_form">
+	<div class="form-group">
+		<label for="add_plan_name">Name</label>
+		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required data-propname="name">
+	</div>
+</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+        <button type="button" class="btn btn-primary update"><span class="glyphicon glyphicon-plus"></span> Update</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<div class="modal fade" id="add_field">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add a field</h4>
+      </div>
+      <div class="modal-body">
+        <div id="add-field-map-canvas"></div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+        <button type="button" class="btn btn-primary add"><span class="glyphicon glyphicon-plus"></span> Add</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<div class="modal fade" id="edit_field">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit a field</h4>
+      </div>
+      <div class="modal-body">
+        <div id="edit-field-map-canvas"></div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirm delete" aria-hidden="true" id="confirm_delete">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+		<div class="modal-header">
+      		<h4 class="modal-title"></h4>
+	  	</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+		  <button type="button" class="btn btn-danger remove"><span class="glyphicon glyphicon-remove"></span> Remove</button>
+		</div>
+    </div>
+  </div>
+</div>
+</div>
+
+			<div id="field-container" style="display:none;" class="fill-area-content flexbox-parent flexbox-item-grow">
+	<div class="row-fluid mbs overflowFix col-md-12 prn flexbox-item flexbox-item-grow">
+		<div class="field_preview col-md-3 pln">
+			<div id="field_map"></div>
+			<button class="btn btn-primary btn-block field_analytics">Field Analytics</button>
+			<button class="btn btn-primary btn-block field_crop_surveys">Crop Surveys</button>
+		</div>
+		<div class="field_asset_data col-md-9 pln prn">
+			<div class="col-xs-3 prn pln"> <!-- required for floating -->
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+				<li class="active"><a href="#activities" data-toggle="tab">Activities</a></li>
+				<li><a href="#finances" data-toggle="tab">Finances</a></li>
+				<li><a href="#equipment" data-toggle="tab">Equipment</a></li>
+			  </ul>
+			</div>
+			<div class="col-xs-9 pln prn">
+				<!-- Tab panes -->
+				<div class="tab-content ptn pbn">
+				  <table class="tab-pane active table table-striped table-hover mbn fitTable" id="activities">
+				  	<thead>
+						<tr>
+							<th>
+								Status
+							</th>
+							<th>
+								Activity Name
+							</th>
+							<th>
+								Date
+							</th>
+							<th>
+								Duration
+							</th>
+							<th class='text-right'>
+								$
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				  </table>
+				  <div class="tab-pane graph flexbox-parent flexbox-item-grow" id="finances">
+				  	<canvas class="flexbox-item flexbox-item-grow"></canvas>
+				  </div>
+				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="equipment">
+				  	<thead>
+						<tr>
+							<th>
+								Equipment Type
+							</th>
+							<th>
+								Brand
+							</th>
+							<th>
+								Model
+							</th>
+							<th>
+								Live Data
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				  </table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row-fluid col-md-12 field_weather_data prn flexbox-item flexbox-item-grow pln">
+		<div class="col-xs-3 prn pln flexbox-item flexbox-item-grow"> <!-- required for floating -->
+		  <!-- Nav tabs -->
+		  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+			<li class="active"><a href="#gdd" data-toggle="tab">GDD</a></li>
+			<li><a href="#precip" data-toggle="tab">Precip</a></li>
+			<li><a href="#temp" data-toggle="tab">Temp</a></li>
+			<li><a href="#moisture" data-toggle="tab">Moisture</a></li>
+		  </ul>
+		</div>
+		<div class="col-xs-9 pln prn flexbox-item flexbox-item-grow">
+			<!-- Tab panes -->
+			<div class="tab-content ptn pbn flexbox-parent flexbox-item-grow">
+				<div class="weatherEvents temp flexbox-item"></div>
+				<div class="weatherEvents precip flexbox-item"></div>
+				<div class="weatherEvents wind flexbox-item"></div>
+				<div class="tab-pane graph active flexbox-parent flexbox-item-grow" id="gdd">
+					<p class="mbn flexbox-item"><b>Level</b></p>
+					<canvas class="flexbox-item flexbox-item-grow"></canvas>
+				</div>
+				<div class="tab-pane graph flexbox-parent flexbox-item-grow" id="precip">
+					<p class="mbn"><b>Inches</b></p>
+					<canvas class="flexbox-item flexbox-item-grow"></canvas>
+				</div>
+				<div class="tab-pane graph flexbox-parent flexbox-item-grow" id="temp">
+					<p class="mbn"><b>℉</b></p>
+					<canvas class="flexbox-item flexbox-item-grow"></canvas>
+				</div>
+				<div class="tab-pane graph flexbox-parent flexbox-item-grow" id="moisture">
+					<p class="mbn"><b>cb</b></p>
+					<canvas class="flexbox-item flexbox-item-grow"></canvas>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div class="row-fluid mbs col-md-12 prn pln mts activitiesTimeline flexbox-item">
+		<h3 class="col-xs-3 pln mtn mbn text-right"> <!-- required for floating -->
+		 Activities
+		</h3>
+		<div class="col-xs-9">
+			<div class="activities"></div>
+		</div>
+	</div>
+	<div class="row-fluid mbs col-md-12 prn pln mts yearSlider flexbox-item">
+		<h3 class="col-xs-3 pln mtn mbn text-right current_year_crop"> <!-- required for floating -->
+		</h3>
+		<div class="col-xs-9 pln">
+			<input type="text" class="field_year_slider col-md-12 prn pln"></input>
+		</div>
+	</div>
+	<div id="chartjs-tooltip"></div>
+</div>
+
+
+		</div>
+	</div>
+</div>
+</div>
+	<div id="loadingOverlay">
+	<h1>Loading - Please Wait...</h1>
+	<i class="fa fa-refresh fa-spin"></i>
+</div>
+	<div class="modal fade" id="setCreds">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Set your user ID and permenant password</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="//use.typekit.net/jmc8hvz.js"></script>
+<script>try{Typekit.load();}catch(e){}</script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="js/includes.js"></script>
+<footer class="footer flexbox-item">
+	<div class="container-fluid">
+		<p class="pull-left">&copy; RoundThree LLC. 2015</p>
+		<ul class="links pull-right">
+			<li class="pull-left"><a href="#report-problem">Report Problem</a></li>
+			<li class="pull-left restStatus">REST Status: <span class="status"></span></li>
+		</ul>
+	</div>
+</footer>
+
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
+	<script type="text/javascript">
+		plenty_admin.init("settings");
+	</script>
+</body>
+</html>

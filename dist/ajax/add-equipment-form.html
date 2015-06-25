@@ -1,0 +1,33 @@
+<form class="equipments add_to_org_form">
+	<div class="form-group">
+		<label for="add_equipment_name">Name</label>
+		<input type="text" class="form-control" id="add_equipment_name" placeholder="e.g. WetWillie" required data-propname="name">
+	</div>
+	<!-- DYNAMIC 	
+		<div class="form-group">
+			<label for="add_equipment_type">Type</label>
+			<select class="form-control equipment_type_list" id="add_equipment_type" required placeholder="Choose an equipment type" data-propname="equipmentTypeId">
+				
+			</select>
+		</div>
+	-->
+	<div class="form-group">
+		<label for="add_equipment_latitude">Latitude</label>
+		<input type="text" class="form-control" id="add_equipment_latitude" placeholder="e.g. 51.665544" required data-propname="latitude">
+	</div>
+	<div class="form-group">
+		<label for="add_equipment_longitude">Longitude</label>
+		<input type="text" class="form-control" id="add_equipment_longitude" placeholder="e.g. 51.665544" required data-propname="longitude">
+	</div>
+	<div class="form-group">
+		<button class="btn btn-sm btn-default mrm cancel">Cancel</button>
+		<button class="btn btn-sm btn-primary add-equipment" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> Loading...">Add Equipment</button>
+	</div>
+</form>
+<div class="add_equipment_success_wrapper bs-callout bs-callout-success" style="display:none;">
+	<h4>Equipment Added</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
+		<button class='newEquipment btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Equipment</button>
+	</div>
+</div>

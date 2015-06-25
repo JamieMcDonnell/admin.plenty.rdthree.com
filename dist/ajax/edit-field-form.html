@@ -1,0 +1,126 @@
+<div class="edit_field_form_wrapper">
+	<h3 class="mtn">Update the field details below</h3>
+	<div role="tabpanel" id="orgAssets"> 
+		
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Field Details</a></li>
+			<li role="presentation"><a href="#cropYears" aria-controls="cropYears" role="tab" data-toggle="tab">Crops</a></li>
+		</ul>
+		
+		<div class="tab-content container-fluid">
+			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="info">
+				<form class="edit_field">
+					<div class="overflowFix">
+						<div class="form-group col-xs-6 pln">
+							<label for="edit_field_name">name</label>
+							<input type="text" class="form-control" id="edit_field_name" required placeholder="e.g. North Farm" data-propname="name">
+						</div>
+						<div class="form-group col-xs-6 prn">
+							<label for="edit_field_farms ">Farm (<a href="" class="showNewFarm">New Farm</a><a href="" style="display:none;" class="showExistingFarm">Existing Farm</a>)</label>
+							<div class="existingFarm">
+								<select class="form-control" id="edit_field_farms" required placeholder="Associate this field with a farm" data-propname="farmId">
+								</select>
+							</div>
+							<div class="newFarm" style="display:none;">
+								<input type="text" class="form-control" id="edit_field_new_farm_name" placeholder="Farm Name">
+							</div>
+						</div>
+					</div>
+					<div class="overflowFix">
+						<div class="form-group col-xs-6 pln">
+							<label for="edit_field_acres">Acres</label>
+							<input type="number" step="any" class="form-control" id="edit_field_acres" required placeholder="e.g. 110" data-propname="acres">
+						</div>
+						<div class="form-group col-xs-6 prn">
+							<label for="edit_field_rotation">Rotation</label>
+							<input type="text" class="form-control" id="edit_field_rotation" required placeholder="e.g. Wheat Year 2" data-propname="rotation">
+						</div>
+					</div>
+					<div class="overflowFix">
+						<div class="form-group col-xs-6 pln">
+							<label for="edit_field_postalCode">ZIP Code</label>
+							<input type="text" class="form-control" id="edit_field_postalCode" required placeholder="e.g. 90210" data-propname="postalCode">
+						</div>
+						<div class="form-group col-xs-6 prn">
+							<label for="edit_user_timezone">Timezone</label>
+							<select class="form-control" id="edit_user_timezone" required placeholder="Choose a time zone" data-propname="timezone">
+								<option value="AST">Alaska Standard Time</option>
+								<option value="CST">Central Standard Time</option>
+								<option value="EST">Eastern Standard Time</option>
+								<option value="MST">Mountain Standard Time</option>
+								<option value="PST">Pacific Standard Time</option>
+							</select>
+						</div>
+					</div>
+					<div class="btn-group pull-right" role="group" aria-label="add field controls">
+						<button class="btn btn-sm btn-primary update-field"><span class="glyphicon glyphicon-save"></span> Save</button>
+					</div>
+				</form>
+			</div>
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="cropYears">
+				<table class="cropYears table table-striped table-hover mbn">
+					<thead>
+						<tr>
+							<th>Year</th>
+							<th>Crop</th>
+							<th>Tillage</th>
+							<th>Irrigation</th>
+						</tr>
+					</thead>
+					<tbody style="max-height:200px; overflow-y:auto;">
+						<tr class="new-crop-year" style="display:none;">
+							<td class="pln">
+								<select class="form-control" id="edit_field_crop_year" required placeholder="Choose crop year" data-propname="cropYear">
+									<option value="2014">2014</option>
+									<option value="2013">2013</option>
+									<option value="2012">2012</option>
+									<option value="2011">2011</option>
+									<option value="2010">2010</option>
+									<option value="2009">2009</option>
+									<option value="2008">2008</option>
+								</select>
+							</td>
+							<td>
+								<select class="form-control crop_types_list" id="edit_field_crop_type" required placeholder="Choose crop type" data-propname="cropType">
+									<!-- DYNAMIC -->
+								</select>
+							</td>
+							<td>
+								<select class="form-control tillage_types_list" id="edit_field_tillage_type" required placeholder="Choose crop type" data-propname="tillageType">
+									<!-- DYNAMIC -->
+								</select>
+							</td>
+							<td>
+								<select class="form-control irrigation_types_list" id="edit_field_irrigation_type" required placeholder="Choose irrigation type" data-propname="irrigationType">
+									<!-- DYNAMIC -->
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="overflowFix">
+					<div class="form-group col-xs-6 prn pull-right">
+						<button class="btn btn-block btn-primary addCropYear">Add</button>
+						<button class="btn btn-success saveCropYear pull-right" style="display:none;">Save</button>
+						<button class="btn btn-default cancelCropYear pull-right" style="display:none;">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="edit_field_success_wrapper bs-callout bs-callout-success" style="display:none;">
+	<h4>Field Added</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
+		<button class='newField btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Field</button>
+	</div>
+</div>
+<div class="edit_field_error_wrapper bs-callout bs-callout-danger" style="display:none;">
+	<h4>Adding a Field Failed</h4>
+	<div class="btn-group" role="group" aria-label="add field controls">
+		<button class='btn btn-sm btn-default finish'>Finish</button>
+		<button class='newField btn btn-sm btn-primary'>Add Another Field</button>
+	</div>
+</div>

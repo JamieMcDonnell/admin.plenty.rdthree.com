@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+{{ include('snippets/meta.html', {"title": "Plenty Admin Dashboard", "description": "This is the dashboard of the admin UI", "author": "Jamie McDonnell"}) }}
+</head>
+{{ include('snippets/header.html', {"page": "settings", "dashboard" : false, "settings" : true, "contact" : false, "organization" : false, "map" : false}) }}
+<div class="container-fluid">
+	<div class="row"> 
+		{{ include('snippets/sidebar-nav.html') }}
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">
+			<div id="settings">
+				<div class="row organizations"></div>
+			</div>
+			{{ include('snippets/organization.html') }}
+			{{ include('snippets/field.html', {"breadcrumbs": true}) }}
+		</div>
+	</div>
+</div>
+</div>
+	{{ include('snippets/loadingOverlay.html') }}
+	{{ include('snippets/set-id-and-password.html') }}
+	{{ include('snippets/footer.html') }}
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
+	<script type="text/javascript">
+		plenty_admin.init("settings");
+	</script>
+</body>
+</html>
