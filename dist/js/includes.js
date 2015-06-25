@@ -4789,11 +4789,11 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 		//plenty_admin.UI.field.dates.start = (startDate.obj.getFullYear()-1)+"-"+(startDate.obj.getMonth()+1)+"-"+startDate.obj.getDate()+" "+(startDate.obj.getHours()+1)+":"+startDate.obj.getMinutes();
 		
 		var d = new Date(); /* HACK!!! */
-		plenty_admin.UI.field.dates.start = (d.getFullYear()-1)+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours()+1)+":"+d.getMinutes();
+		plenty_admin.UI.field.dates.start = (d.getFullYear()-1)+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours())+":"+d.getMinutes();
 		
 		var endDate = plenty_admin.HELPER.formateJavaDate(activitiesForCropType[activitiesForCropType.length -1].endTime);
 		//plenty_admin.UI.field.dates.end = (endDate.obj.getFullYear()-1)+"-"+(endDate.obj.getMonth()+1)+"-"+endDate.obj.getDate()+" "+(endDate.obj.getHours()+1)+":"+endDate.obj.getMinutes();
-		plenty_admin.UI.field.dates.end = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours()+1)+":"+d.getMinutes();
+		plenty_admin.UI.field.dates.end = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours())+":"+d.getMinutes();
 		
 		//prepare all data type lists and wait till they've loaded
 		plenty_admin.DATA.eventCollector = window.eventcollector(2, 10000);
@@ -4973,7 +4973,7 @@ plenty_admin.UI.field.renderWeatherEvents = function(events, hash){
 				uom = "mph";
 			break;
 		}
-		var weatherEventHTML = $("<div class='event' data-toggle='tooltip' data-placement='top' title='"+(wE.detail ? wE.detail : wE.deatil)+" - "+wE.amount.toFixed(2)+uom+"' style='left:"+leftPos+"px'><i class='"+wE.type+" "+wE.iconClass+"'></i></div>");
+		var weatherEventHTML = $("<div class='event' data-toggle='tooltip' data-placement='top' title='"+(wE.detail ? wE.detail : wE.deatil)+": "+wE.amount.toFixed(2)+uom+"' style='left:"+leftPos+"px'><i class='"+wE.type+" "+wE.iconClass+"'></i></div>");
 		
 		weatherEventHTML
 		.tooltip();
@@ -5048,7 +5048,7 @@ plenty_admin.UI.field.renderActivities = function(activities){
 					"<td>",
 						activity.duration,
 					"</td>",
-					"<td>",
+					"<td class='text-right'>",
 						activity.cost,
 					"</td>",
 				"</tr>"
@@ -5094,7 +5094,7 @@ plenty_admin.UI.field.renderEquipment = function(equipment){
 					"<td>",
 						equipmentItem.model,
 					"</td>",
-					"<td>",
+					"<td class='text-right'>",
 						activity.liveData,
 					"</td>",
 				"</tr>"
@@ -5289,6 +5289,10 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 			}
 		];
 	}
+	
+	//set the canvas height
+	plenty_admin.UI.field.financesGraphEl.height(plenty_admin.UI.field.financesGraphEl.parent().height());
+	
 	//holder for graph data set
 	var financesData = [];
 	
@@ -5303,7 +5307,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 		var segment = {
 			value:		finance.amount,
 			color:		finance.colour,
-			highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, 2),
+			highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
 			label: 		finance.name
 		};
 		
@@ -5311,34 +5315,60 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid='<%=i%>'><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\"><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
+		animateRotate: true
 	};
 	
+	var helpers = Chart.helpers;
+	
 	plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
+	
 	console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
 	
 	//add a legend for this graph
 	var $legendHTML = $(plenty_admin.UI.field.financesGraph.generateLegend());
 	
-	$legendHTML
-	.find("li")
-	.on("mouseenter", function(e){
-		var segment = plenty_admin.UI.field.financesGraph.segments[parseInt($(this).data("segmentid"))];
-		console.log("segment", parseInt($(this).data("segmentid")), segment);
-		plenty_admin.UI.field.financesGraph.oldFill = segment.fillColor;
-		segment.fillColor = segment.highlightColor;
-	})
-	.on("mouseleave", function(e){
-		var segment = plenty_admin.UI.field.financesGraph.segments[parseInt($(this).data("segmentid"))];
-		segment.fillColor = plenty_admin.UI.field.financesGraph.oldFill;
-	});
-	
+	var legendHolder = 
 	plenty_admin.UI.field.financesGraphEl
 	.parent()
 	.parent()
-	.find(".legend")
+	.find(".legend");
+	
+	legendHolder
 	.html("")
 	.append($legendHTML);
+	
+	// Include a html legend template after the module doughnut itself
+	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
+		helpers.addEvent(legendNode, 'mouseover', function () {
+			var activeSegment = plenty_admin.UI.field.financesGraph.segments[index];
+			activeSegment.save();
+			activeSegment.fillColor = activeSegment.highlightColor;
+			activeSegment.innerRadius = 60;
+			plenty_admin.UI.field.financesGraph.showTooltip([activeSegment]);
+			activeSegment.restore();
+			
+			$(this)
+			.css({"background-color": $(this).data("hovercolour")})
+			.addClass("active")
+			.find("span")
+			.css({"background-color": activeSegment.highlightColor})
+		});
+	});
+	
+	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
+		plenty_admin.UI.field.financesGraph.draw();
+		$(legendHolder)
+		.find("li")
+		.css({"background-color": "transparent"})
+		.removeClass("active")
+		.find("span")
+		.each(function(){
+			$(this)
+			.css({"background-color": $(this).closest("li").data("hovercolour")});
+		});
+		
+	});
 	
 	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);
 	
