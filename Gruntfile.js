@@ -43,8 +43,8 @@ grunt.loadNpmTasks('grunt-include-replace-more');
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
     banner: '/*!\n' +
-            ' * Bootstrap v<%= pkg.version %> (<%= pkg.homepage %>)\n' +
-            ' * Copyright 2011-<%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
+            ' * Plenty.rdthree.com v<%= pkg.version %> (<%= pkg.homepage %>)\n' +
+            ' * Copyright 2015-<%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
             ' * Licensed under <%= pkg.license.type %> (<%= pkg.license.url %>)\n' +
             ' */\n',
     jqueryCheck: configBridge.config.jqueryCheck.join('\n'),

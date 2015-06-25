@@ -1,18 +1,14 @@
 {
-  "name": "bootstrap",
-  "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
-  "version": "3.3.4",
+  "name": "Plenty.RDThree.com",
+  "description": "Smart Farming Solutions.",
+  "version": "0.1",
   "keywords": [
-    "css",
-    "less",
-    "mobile-first",
-    "responsive",
-    "front-end",
-    "framework",
-    "web"
+    "farm",
+	"farming",
+	"farm management"
   ],
-  "homepage": "http://getbootstrap.com",
-  "author": "Twitter, Inc.",
+  "homepage": "http://plenty.rdthree.com",
+  "author": "RDThree Inc.",
   "scripts": {
     "test": "grunt test"
   },
@@ -21,10 +17,10 @@
   "main": "./dist/js/npm",
   "repository": {
     "type": "git",
-    "url": "https://github.com/twbs/bootstrap.git"
+    "url": "https://github.com/JamieMcDonnell/admin.plenty.rdthree.com"
   },
   "bugs": {
-    "url": "https://github.com/twbs/bootstrap/issues"
+    "url": "https://github.com/JamieMcDonnell/admin.plenty.rdthree.com/issues"
   },
   "license": {
     "type": "MIT",
