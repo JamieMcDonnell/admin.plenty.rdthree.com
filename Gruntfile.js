@@ -133,6 +133,7 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'node_modules/rainbowvis.js/rainbowvis.js', 
 				'node_modules/eventcollector/dist/eventcollector.bundle.js', 
 				'node_modules/bootstrap-slider/dist/bootstrap-slider.min.js',
+				'node_modules/numeral/min/numeral.min.js',
 				'bower_components/Chart.js/Chart.min.js',
 				'js/global.js',
 				'js/markerclusterer_compiled.js',

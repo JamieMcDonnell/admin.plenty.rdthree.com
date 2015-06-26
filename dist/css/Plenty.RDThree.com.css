@@ -1,5 +1,5 @@
 /*!
- * Plenty.rdthree.com v0.1 (http://plenty.rdthree.com)
+ * Plenty.rdthree.com v1.0.1 (http://plenty.rdthree.com)
  * Copyright 2015-2015 RDThree Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */

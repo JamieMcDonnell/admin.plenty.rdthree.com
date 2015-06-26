@@ -1502,6 +1502,14 @@ function hasOwnProperty(obj, prop) {
  * ========================================================= */
 !function(a,b){if("function"==typeof define&&define.amd)define(["jquery"],b);else if("object"==typeof module&&module.exports){var c;try{c=require("jquery")}catch(d){c=null}module.exports=b(c)}else a.Slider=b(a.jQuery)}(this,function(a){var b;return function(a){"use strict";function b(){}function c(a){function c(b){b.prototype.option||(b.prototype.option=function(b){a.isPlainObject(b)&&(this.options=a.extend(!0,this.options,b))})}function e(b,c){a.fn[b]=function(e){if("string"==typeof e){for(var g=d.call(arguments,1),h=0,i=this.length;i>h;h++){var j=this[h],k=a.data(j,b);if(k)if(a.isFunction(k[e])&&"_"!==e.charAt(0)){var l=k[e].apply(k,g);if(void 0!==l&&l!==k)return l}else f("no such method '"+e+"' for "+b+" instance");else f("cannot call methods on "+b+" prior to initialization; attempted to call '"+e+"'")}return this}var m=this.map(function(){var d=a.data(this,b);return d?(d.option(e),d._init()):(d=new c(this,e),a.data(this,b,d)),a(this)});return!m||m.length>1?m:m[0]}}if(a){var f="undefined"==typeof console?b:function(a){console.error(a)};return a.bridget=function(a,b){c(b),e(a,b)},a.bridget}}var d=Array.prototype.slice;c(a)}(a),function(a){function c(b,c){function d(a,b){var c="data-slider-"+b.replace(/_/g,"-"),d=a.getAttribute(c);try{return JSON.parse(d)}catch(e){return d}}"string"==typeof b?this.element=document.querySelector(b):b instanceof HTMLElement&&(this.element=b),c=c?c:{};for(var f=Object.keys(this.defaultOptions),g=0;g<f.length;g++){var h=f[g],i=c[h];i="undefined"!=typeof i?i:d(this.element,h),i=null!==i?i:this.defaultOptions[h],this.options||(this.options={}),this.options[h]=i}var j,k,l,m,n,o=this.element.style.width,p=!1,q=this.element.parentNode;if(this.sliderElem)p=!0;else{this.sliderElem=document.createElement("div"),this.sliderElem.className="slider";var r=document.createElement("div");if(r.className="slider-track",k=document.createElement("div"),k.className="slider-track-low",j=document.createElement("div"),j.className="slider-selection",l=document.createElement("div"),l.className="slider-track-high",m=document.createElement("div"),m.className="slider-handle min-slider-handle",n=document.createElement("div"),n.className="slider-handle max-slider-handle",r.appendChild(k),r.appendChild(j),r.appendChild(l),this.ticks=[],Array.isArray(this.options.ticks)&&this.options.ticks.length>0){for(g=0;g<this.options.ticks.length;g++){var s=document.createElement("div");s.className="slider-tick",this.ticks.push(s),r.appendChild(s)}j.className+=" tick-slider-selection"}if(r.appendChild(m),r.appendChild(n),this.tickLabels=[],Array.isArray(this.options.ticks_labels)&&this.options.ticks_labels.length>0)for(this.tickLabelContainer=document.createElement("div"),this.tickLabelContainer.className="slider-tick-label-container",g=0;g<this.options.ticks_labels.length;g++){var t=document.createElement("div");t.className="slider-tick-label",t.innerHTML=this.options.ticks_labels[g],this.tickLabels.push(t),this.tickLabelContainer.appendChild(t)}var u=function(a){var b=document.createElement("div");b.className="tooltip-arrow";var c=document.createElement("div");c.className="tooltip-inner",a.appendChild(b),a.appendChild(c)},v=document.createElement("div");v.className="tooltip tooltip-main",u(v);var w=document.createElement("div");w.className="tooltip tooltip-min",u(w);var x=document.createElement("div");x.className="tooltip tooltip-max",u(x),this.sliderElem.appendChild(r),this.sliderElem.appendChild(v),this.sliderElem.appendChild(w),this.sliderElem.appendChild(x),this.tickLabelContainer&&this.sliderElem.appendChild(this.tickLabelContainer),q.insertBefore(this.sliderElem,this.element),this.element.style.display="none"}if(a&&(this.$element=a(this.element),this.$sliderElem=a(this.sliderElem)),this.eventToCallbackMap={},this.sliderElem.id=this.options.id,this.touchCapable="ontouchstart"in window||window.DocumentTouch&&document instanceof window.DocumentTouch,this.tooltip=this.sliderElem.querySelector(".tooltip-main"),this.tooltipInner=this.tooltip.querySelector(".tooltip-inner"),this.tooltip_min=this.sliderElem.querySelector(".tooltip-min"),this.tooltipInner_min=this.tooltip_min.querySelector(".tooltip-inner"),this.tooltip_max=this.sliderElem.querySelector(".tooltip-max"),this.tooltipInner_max=this.tooltip_max.querySelector(".tooltip-inner"),e[this.options.scale]&&(this.options.scale=e[this.options.scale]),p===!0&&(this._removeClass(this.sliderElem,"slider-horizontal"),this._removeClass(this.sliderElem,"slider-vertical"),this._removeClass(this.tooltip,"hide"),this._removeClass(this.tooltip_min,"hide"),this._removeClass(this.tooltip_max,"hide"),["left","top","width","height"].forEach(function(a){this._removeProperty(this.trackLow,a),this._removeProperty(this.trackSelection,a),this._removeProperty(this.trackHigh,a)},this),[this.handle1,this.handle2].forEach(function(a){this._removeProperty(a,"left"),this._removeProperty(a,"top")},this),[this.tooltip,this.tooltip_min,this.tooltip_max].forEach(function(a){this._removeProperty(a,"left"),this._removeProperty(a,"top"),this._removeProperty(a,"margin-left"),this._removeProperty(a,"margin-top"),this._removeClass(a,"right"),this._removeClass(a,"top")},this)),"vertical"===this.options.orientation?(this._addClass(this.sliderElem,"slider-vertical"),this.stylePos="top",this.mousePos="pageY",this.sizePos="offsetHeight",this._addClass(this.tooltip,"right"),this.tooltip.style.left="100%",this._addClass(this.tooltip_min,"right"),this.tooltip_min.style.left="100%",this._addClass(this.tooltip_max,"right"),this.tooltip_max.style.left="100%"):(this._addClass(this.sliderElem,"slider-horizontal"),this.sliderElem.style.width=o,this.options.orientation="horizontal",this.stylePos="left",this.mousePos="pageX",this.sizePos="offsetWidth",this._addClass(this.tooltip,"top"),this.tooltip.style.top=-this.tooltip.outerHeight-14+"px",this._addClass(this.tooltip_min,"top"),this.tooltip_min.style.top=-this.tooltip_min.outerHeight-14+"px",this._addClass(this.tooltip_max,"top"),this.tooltip_max.style.top=-this.tooltip_max.outerHeight-14+"px"),Array.isArray(this.options.ticks)&&this.options.ticks.length>0&&(this.options.max=Math.max.apply(Math,this.options.ticks),this.options.min=Math.min.apply(Math,this.options.ticks)),Array.isArray(this.options.value)?this.options.range=!0:this.options.range&&(this.options.value=[this.options.value,this.options.max]),this.trackLow=k||this.trackLow,this.trackSelection=j||this.trackSelection,this.trackHigh=l||this.trackHigh,"none"===this.options.selection&&(this._addClass(this.trackLow,"hide"),this._addClass(this.trackSelection,"hide"),this._addClass(this.trackHigh,"hide")),this.handle1=m||this.handle1,this.handle2=n||this.handle2,p===!0)for(this._removeClass(this.handle1,"round triangle"),this._removeClass(this.handle2,"round triangle hide"),g=0;g<this.ticks.length;g++)this._removeClass(this.ticks[g],"round triangle hide");var y=["round","triangle","custom"],z=-1!==y.indexOf(this.options.handle);if(z)for(this._addClass(this.handle1,this.options.handle),this._addClass(this.handle2,this.options.handle),g=0;g<this.ticks.length;g++)this._addClass(this.ticks[g],this.options.handle);this.offset=this._offset(this.sliderElem),this.size=this.sliderElem[this.sizePos],this.setValue(this.options.value),this.handle1Keydown=this._keydown.bind(this,0),this.handle1.addEventListener("keydown",this.handle1Keydown,!1),this.handle2Keydown=this._keydown.bind(this,1),this.handle2.addEventListener("keydown",this.handle2Keydown,!1),this.mousedown=this._mousedown.bind(this),this.touchCapable&&this.sliderElem.addEventListener("touchstart",this.mousedown,!1),this.sliderElem.addEventListener("mousedown",this.mousedown,!1),"hide"===this.options.tooltip?(this._addClass(this.tooltip,"hide"),this._addClass(this.tooltip_min,"hide"),this._addClass(this.tooltip_max,"hide")):"always"===this.options.tooltip?(this._showTooltip(),this._alwaysShowTooltip=!0):(this.showTooltip=this._showTooltip.bind(this),this.hideTooltip=this._hideTooltip.bind(this),this.sliderElem.addEventListener("mouseenter",this.showTooltip,!1),this.sliderElem.addEventListener("mouseleave",this.hideTooltip,!1),this.handle1.addEventListener("focus",this.showTooltip,!1),this.handle1.addEventListener("blur",this.hideTooltip,!1),this.handle2.addEventListener("focus",this.showTooltip,!1),this.handle2.addEventListener("blur",this.hideTooltip,!1)),this.options.enabled?this.enable():this.disable()}var d={formatInvalidInputErrorMsg:function(a){return"Invalid input value '"+a+"' passed in"},callingContextNotSliderInstance:"Calling context element does not have instance of Slider bound to it. Check your code to make sure the JQuery object returned from the call to the slider() initializer is calling the method"},e={linear:{toValue:function(a){var b=a/100*(this.options.max-this.options.min);if(this.options.ticks_positions.length>0){for(var c,d,e,f=0,g=0;g<this.options.ticks_positions.length;g++)if(a<=this.options.ticks_positions[g]){c=g>0?this.options.ticks[g-1]:0,e=g>0?this.options.ticks_positions[g-1]:0,d=this.options.ticks[g],f=this.options.ticks_positions[g];break}if(g>0){var h=(a-e)/(f-e);b=c+h*(d-c)}}var i=this.options.min+Math.round(b/this.options.step)*this.options.step;return i<this.options.min?this.options.min:i>this.options.max?this.options.max:i},toPercentage:function(a){if(this.options.max===this.options.min)return 0;if(this.options.ticks_positions.length>0){for(var b,c,d,e=0,f=0;f<this.options.ticks.length;f++)if(a<=this.options.ticks[f]){b=f>0?this.options.ticks[f-1]:0,d=f>0?this.options.ticks_positions[f-1]:0,c=this.options.ticks[f],e=this.options.ticks_positions[f];break}if(f>0){var g=(a-b)/(c-b);return d+g*(e-d)}}return 100*(a-this.options.min)/(this.options.max-this.options.min)}},logarithmic:{toValue:function(a){var b=0===this.options.min?0:Math.log(this.options.min),c=Math.log(this.options.max),d=Math.exp(b+(c-b)*a/100);return d=this.options.min+Math.round((d-this.options.min)/this.options.step)*this.options.step,d<this.options.min?this.options.min:d>this.options.max?this.options.max:d},toPercentage:function(a){if(this.options.max===this.options.min)return 0;var b=Math.log(this.options.max),c=0===this.options.min?0:Math.log(this.options.min),d=0===a?0:Math.log(a);return 100*(d-c)/(b-c)}}};if(b=function(a,b){return c.call(this,a,b),this},b.prototype={_init:function(){},constructor:b,defaultOptions:{id:"",min:0,max:10,step:1,precision:0,orientation:"horizontal",value:5,range:!1,selection:"before",tooltip:"show",tooltip_split:!1,handle:"round",reversed:!1,enabled:!0,formatter:function(a){return Array.isArray(a)?a[0]+" : "+a[1]:a},natural_arrow_keys:!1,ticks:[],ticks_positions:[],ticks_labels:[],ticks_snap_bounds:0,scale:"linear",focus:!1},over:!1,inDrag:!1,getValue:function(){return this.options.range?this.options.value:this.options.value[0]},setValue:function(a,b,c){a||(a=0);var d=this.getValue();this.options.value=this._validateInputValue(a);var e=this._applyPrecision.bind(this);this.options.range?(this.options.value[0]=e(this.options.value[0]),this.options.value[1]=e(this.options.value[1]),this.options.value[0]=Math.max(this.options.min,Math.min(this.options.max,this.options.value[0])),this.options.value[1]=Math.max(this.options.min,Math.min(this.options.max,this.options.value[1]))):(this.options.value=e(this.options.value),this.options.value=[Math.max(this.options.min,Math.min(this.options.max,this.options.value))],this._addClass(this.handle2,"hide"),this.options.value[1]="after"===this.options.selection?this.options.max:this.options.min),this.percentage=this.options.max>this.options.min?[this._toPercentage(this.options.value[0]),this._toPercentage(this.options.value[1]),100*this.options.step/(this.options.max-this.options.min)]:[0,0,100],this._layout();var f=this.options.range?this.options.value:this.options.value[0];return b===!0&&this._trigger("slide",f),d!==f&&c===!0&&this._trigger("change",{oldValue:d,newValue:f}),this._setDataVal(f),this},destroy:function(){this._removeSliderEventHandlers(),this.sliderElem.parentNode.removeChild(this.sliderElem),this.element.style.display="",this._cleanUpEventCallbacksMap(),this.element.removeAttribute("data"),a&&(this._unbindJQueryEventHandlers(),this.$element.removeData("slider"))},disable:function(){return this.options.enabled=!1,this.handle1.removeAttribute("tabindex"),this.handle2.removeAttribute("tabindex"),this._addClass(this.sliderElem,"slider-disabled"),this._trigger("slideDisabled"),this},enable:function(){return this.options.enabled=!0,this.handle1.setAttribute("tabindex",0),this.handle2.setAttribute("tabindex",0),this._removeClass(this.sliderElem,"slider-disabled"),this._trigger("slideEnabled"),this},toggle:function(){return this.options.enabled?this.disable():this.enable(),this},isEnabled:function(){return this.options.enabled},on:function(a,b){return this._bindNonQueryEventHandler(a,b),this},getAttribute:function(a){return a?this.options[a]:this.options},setAttribute:function(a,b){return this.options[a]=b,this},refresh:function(){return this._removeSliderEventHandlers(),c.call(this,this.element,this.options),a&&a.data(this.element,"slider",this),this},relayout:function(){return this._layout(),this},_removeSliderEventHandlers:function(){this.handle1.removeEventListener("keydown",this.handle1Keydown,!1),this.handle1.removeEventListener("focus",this.showTooltip,!1),this.handle1.removeEventListener("blur",this.hideTooltip,!1),this.handle2.removeEventListener("keydown",this.handle2Keydown,!1),this.handle2.removeEventListener("focus",this.handle2Keydown,!1),this.handle2.removeEventListener("blur",this.handle2Keydown,!1),this.sliderElem.removeEventListener("mouseenter",this.showTooltip,!1),this.sliderElem.removeEventListener("mouseleave",this.hideTooltip,!1),this.sliderElem.removeEventListener("touchstart",this.mousedown,!1),this.sliderElem.removeEventListener("mousedown",this.mousedown,!1)},_bindNonQueryEventHandler:function(a,b){void 0===this.eventToCallbackMap[a]&&(this.eventToCallbackMap[a]=[]),this.eventToCallbackMap[a].push(b)},_cleanUpEventCallbacksMap:function(){for(var a=Object.keys(this.eventToCallbackMap),b=0;b<a.length;b++){var c=a[b];this.eventToCallbackMap[c]=null}},_showTooltip:function(){this.options.tooltip_split===!1?(this._addClass(this.tooltip,"in"),this.tooltip_min.style.display="none",this.tooltip_max.style.display="none"):(this._addClass(this.tooltip_min,"in"),this._addClass(this.tooltip_max,"in"),this.tooltip.style.display="none"),this.over=!0},_hideTooltip:function(){this.inDrag===!1&&this.alwaysShowTooltip!==!0&&(this._removeClass(this.tooltip,"in"),this._removeClass(this.tooltip_min,"in"),this._removeClass(this.tooltip_max,"in")),this.over=!1},_layout:function(){var a;if(a=this.options.reversed?[100-this.percentage[0],this.percentage[1]]:[this.percentage[0],this.percentage[1]],this.handle1.style[this.stylePos]=a[0]+"%",this.handle2.style[this.stylePos]=a[1]+"%",Array.isArray(this.options.ticks)&&this.options.ticks.length>0){var b=Math.max.apply(Math,this.options.ticks),c=Math.min.apply(Math,this.options.ticks),d="vertical"===this.options.orientation?"height":"width",e="vertical"===this.options.orientation?"marginTop":"marginLeft",f=this.size/(this.options.ticks.length-1);if(this.tickLabelContainer){var g=0;if(0===this.options.ticks_positions.length)this.tickLabelContainer.style[e]=-f/2+"px",g=this.tickLabelContainer.offsetHeight;else for(h=0;h<this.tickLabelContainer.childNodes.length;h++)this.tickLabelContainer.childNodes[h].offsetHeight>g&&(g=this.tickLabelContainer.childNodes[h].offsetHeight);"horizontal"===this.options.orientation&&(this.sliderElem.style.marginBottom=g+"px")}for(var h=0;h<this.options.ticks.length;h++){var i=this.options.ticks_positions[h]||100*(this.options.ticks[h]-c)/(b-c);this.ticks[h].style[this.stylePos]=i+"%",this._removeClass(this.ticks[h],"in-selection"),this.options.range?i>=a[0]&&i<=a[1]&&this._addClass(this.ticks[h],"in-selection"):"after"===this.options.selection&&i>=a[0]?this._addClass(this.ticks[h],"in-selection"):"before"===this.options.selection&&i<=a[0]&&this._addClass(this.ticks[h],"in-selection"),this.tickLabels[h]&&(this.tickLabels[h].style[d]=f+"px",void 0!==this.options.ticks_positions[h]&&(this.tickLabels[h].style.position="absolute",this.tickLabels[h].style[this.stylePos]=this.options.ticks_positions[h]+"%",this.tickLabels[h].style[e]=-f/2+"px"))}}if("vertical"===this.options.orientation)this.trackLow.style.top="0",this.trackLow.style.height=Math.min(a[0],a[1])+"%",this.trackSelection.style.top=Math.min(a[0],a[1])+"%",this.trackSelection.style.height=Math.abs(a[0]-a[1])+"%",this.trackHigh.style.bottom="0",this.trackHigh.style.height=100-Math.min(a[0],a[1])-Math.abs(a[0]-a[1])+"%";else{this.trackLow.style.left="0",this.trackLow.style.width=Math.min(a[0],a[1])+"%",this.trackSelection.style.left=Math.min(a[0],a[1])+"%",this.trackSelection.style.width=Math.abs(a[0]-a[1])+"%",this.trackHigh.style.right="0",this.trackHigh.style.width=100-Math.min(a[0],a[1])-Math.abs(a[0]-a[1])+"%";var j=this.tooltip_min.getBoundingClientRect(),k=this.tooltip_max.getBoundingClientRect();j.right>k.left?(this._removeClass(this.tooltip_max,"top"),this._addClass(this.tooltip_max,"bottom"),this.tooltip_max.style.top="18px"):(this._removeClass(this.tooltip_max,"bottom"),this._addClass(this.tooltip_max,"top"),this.tooltip_max.style.top=this.tooltip_min.style.top)}var l;if(this.options.range){l=this.options.formatter(this.options.value),this._setText(this.tooltipInner,l),this.tooltip.style[this.stylePos]=(a[1]+a[0])/2+"%","vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px"),"vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px");var m=this.options.formatter(this.options.value[0]);this._setText(this.tooltipInner_min,m);var n=this.options.formatter(this.options.value[1]);this._setText(this.tooltipInner_max,n),this.tooltip_min.style[this.stylePos]=a[0]+"%","vertical"===this.options.orientation?this._css(this.tooltip_min,"margin-top",-this.tooltip_min.offsetHeight/2+"px"):this._css(this.tooltip_min,"margin-left",-this.tooltip_min.offsetWidth/2+"px"),this.tooltip_max.style[this.stylePos]=a[1]+"%","vertical"===this.options.orientation?this._css(this.tooltip_max,"margin-top",-this.tooltip_max.offsetHeight/2+"px"):this._css(this.tooltip_max,"margin-left",-this.tooltip_max.offsetWidth/2+"px")}else l=this.options.formatter(this.options.value[0]),this._setText(this.tooltipInner,l),this.tooltip.style[this.stylePos]=a[0]+"%","vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px")},_removeProperty:function(a,b){a.style.removeProperty?a.style.removeProperty(b):a.style.removeAttribute(b)},_mousedown:function(a){if(!this.options.enabled)return!1;this.offset=this._offset(this.sliderElem),this.size=this.sliderElem[this.sizePos];var b=this._getPercentage(a);if(this.options.range){var c=Math.abs(this.percentage[0]-b),d=Math.abs(this.percentage[1]-b);this.dragged=d>c?0:1}else this.dragged=0;this.percentage[this.dragged]=this.options.reversed?100-b:b,this._layout(),this.touchCapable&&(document.removeEventListener("touchmove",this.mousemove,!1),document.removeEventListener("touchend",this.mouseup,!1)),this.mousemove&&document.removeEventListener("mousemove",this.mousemove,!1),this.mouseup&&document.removeEventListener("mouseup",this.mouseup,!1),this.mousemove=this._mousemove.bind(this),this.mouseup=this._mouseup.bind(this),this.touchCapable&&(document.addEventListener("touchmove",this.mousemove,!1),document.addEventListener("touchend",this.mouseup,!1)),document.addEventListener("mousemove",this.mousemove,!1),document.addEventListener("mouseup",this.mouseup,!1),this.inDrag=!0;var e=this._calculateValue();return this._trigger("slideStart",e),this._setDataVal(e),this.setValue(e,!1,!0),this._pauseEvent(a),this.options.focus&&this._triggerFocusOnHandle(this.dragged),!0},_triggerFocusOnHandle:function(a){0===a&&this.handle1.focus(),1===a&&this.handle2.focus()},_keydown:function(a,b){if(!this.options.enabled)return!1;var c;switch(b.keyCode){case 37:case 40:c=-1;break;case 39:case 38:c=1}if(c){if(this.options.natural_arrow_keys){var d="vertical"===this.options.orientation&&!this.options.reversed,e="horizontal"===this.options.orientation&&this.options.reversed;(d||e)&&(c=-c)}var f=this.options.value[a]+c*this.options.step;return this.options.range&&(f=[a?this.options.value[0]:f,a?f:this.options.value[1]]),this._trigger("slideStart",f),this._setDataVal(f),this.setValue(f,!0,!0),this._trigger("slideStop",f),this._setDataVal(f),this._layout(),this._pauseEvent(b),!1}},_pauseEvent:function(a){a.stopPropagation&&a.stopPropagation(),a.preventDefault&&a.preventDefault(),a.cancelBubble=!0,a.returnValue=!1},_mousemove:function(a){if(!this.options.enabled)return!1;var b=this._getPercentage(a);this._adjustPercentageForRangeSliders(b),this.percentage[this.dragged]=this.options.reversed?100-b:b,this._layout();var c=this._calculateValue(!0);return this.setValue(c,!0,!0),!1},_adjustPercentageForRangeSliders:function(a){this.options.range&&(0===this.dragged&&this.percentage[1]<a?(this.percentage[0]=this.percentage[1],this.dragged=1):1===this.dragged&&this.percentage[0]>a&&(this.percentage[1]=this.percentage[0],this.dragged=0))},_mouseup:function(){if(!this.options.enabled)return!1;this.touchCapable&&(document.removeEventListener("touchmove",this.mousemove,!1),document.removeEventListener("touchend",this.mouseup,!1)),document.removeEventListener("mousemove",this.mousemove,!1),document.removeEventListener("mouseup",this.mouseup,!1),this.inDrag=!1,this.over===!1&&this._hideTooltip();var a=this._calculateValue(!0);return this._layout(),this._trigger("slideStop",a),this._setDataVal(a),!1},_calculateValue:function(a){var b;if(this.options.range?(b=[this.options.min,this.options.max],0!==this.percentage[0]&&(b[0]=this._toValue(this.percentage[0]),b[0]=this._applyPrecision(b[0])),100!==this.percentage[1]&&(b[1]=this._toValue(this.percentage[1]),b[1]=this._applyPrecision(b[1]))):(b=this._toValue(this.percentage[0]),b=parseFloat(b),b=this._applyPrecision(b)),a){for(var c=[b,1/0],d=0;d<this.options.ticks.length;d++){var e=Math.abs(this.options.ticks[d]-b);e<=c[1]&&(c=[this.options.ticks[d],e])}if(c[1]<=this.options.ticks_snap_bounds)return c[0]}return b},_applyPrecision:function(a){var b=this.options.precision||this._getNumDigitsAfterDecimalPlace(this.options.step);return this._applyToFixedAndParseFloat(a,b)},_getNumDigitsAfterDecimalPlace:function(a){var b=(""+a).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return b?Math.max(0,(b[1]?b[1].length:0)-(b[2]?+b[2]:0)):0},_applyToFixedAndParseFloat:function(a,b){var c=a.toFixed(b);return parseFloat(c)},_getPercentage:function(a){!this.touchCapable||"touchstart"!==a.type&&"touchmove"!==a.type||(a=a.touches[0]);var b=a[this.mousePos],c=this.offset[this.stylePos],d=b-c,e=d/this.size*100;return e=Math.round(e/this.percentage[2])*this.percentage[2],Math.max(0,Math.min(100,e))},_validateInputValue:function(a){if("number"==typeof a)return a;if(Array.isArray(a))return this._validateArray(a),a;throw new Error(d.formatInvalidInputErrorMsg(a))},_validateArray:function(a){for(var b=0;b<a.length;b++){var c=a[b];if("number"!=typeof c)throw new Error(d.formatInvalidInputErrorMsg(c))}},_setDataVal:function(a){var b="value: '"+a+"'";this.element.setAttribute("data",b),this.element.setAttribute("value",a),this.element.value=a},_trigger:function(b,c){c=c||0===c?c:void 0;var d=this.eventToCallbackMap[b];if(d&&d.length)for(var e=0;e<d.length;e++){var f=d[e];f(c)}a&&this._triggerJQueryEvent(b,c)},_triggerJQueryEvent:function(a,b){var c={type:a,value:b};this.$element.trigger(c),this.$sliderElem.trigger(c)},_unbindJQueryEventHandlers:function(){this.$element.off(),this.$sliderElem.off()},_setText:function(a,b){"undefined"!=typeof a.innerText?a.innerText=b:"undefined"!=typeof a.textContent&&(a.textContent=b)},_removeClass:function(a,b){for(var c=b.split(" "),d=a.className,e=0;e<c.length;e++){var f=c[e],g=new RegExp("(?:\\s|^)"+f+"(?:\\s|$)");d=d.replace(g," ")}a.className=d.trim()},_addClass:function(a,b){for(var c=b.split(" "),d=a.className,e=0;e<c.length;e++){var f=c[e],g=new RegExp("(?:\\s|^)"+f+"(?:\\s|$)"),h=g.test(d);h||(d+=" "+f)}a.className=d.trim()},_offsetLeft:function(a){for(var b=a.offsetLeft;(a=a.offsetParent)&&!isNaN(a.offsetLeft);)b+=a.offsetLeft;return b},_offsetTop:function(a){for(var b=a.offsetTop;(a=a.offsetParent)&&!isNaN(a.offsetTop);)b+=a.offsetTop;return b},_offset:function(a){return{left:this._offsetLeft(a),top:this._offsetTop(a)}},_css:function(b,c,d){if(a)a.style(b,c,d);else{var e=c.replace(/^-ms-/,"ms-").replace(/-([\da-z])/gi,function(a,b){return b.toUpperCase()});b.style[e]=d}},_toValue:function(a){return this.options.scale.toValue.apply(this,[a])},_toPercentage:function(a){return this.options.scale.toPercentage.apply(this,[a])}},a){var f=a.fn.slider?"bootstrapSlider":"slider";a.bridget(f,b)}}(a),b});
 /*!
+ * numeral.js
+ * version : 1.5.3
+ * author : Adam Draper
+ * license : MIT
+ * http://adamwdraper.github.com/Numeral-js/
+ */
+(function(){function a(a){this._value=a}function b(a,b,c,d){var e,f,g=Math.pow(10,b);return f=(c(a*g)/g).toFixed(b),d&&(e=new RegExp("0{1,"+d+"}$"),f=f.replace(e,"")),f}function c(a,b,c){var d;return d=b.indexOf("$")>-1?e(a,b,c):b.indexOf("%")>-1?f(a,b,c):b.indexOf(":")>-1?g(a,b):i(a._value,b,c)}function d(a,b){var c,d,e,f,g,i=b,j=["KB","MB","GB","TB","PB","EB","ZB","YB"],k=!1;if(b.indexOf(":")>-1)a._value=h(b);else if(b===q)a._value=0;else{for("."!==o[p].delimiters.decimal&&(b=b.replace(/\./g,"").replace(o[p].delimiters.decimal,".")),c=new RegExp("[^a-zA-Z]"+o[p].abbreviations.thousand+"(?:\\)|(\\"+o[p].currency.symbol+")?(?:\\))?)?$"),d=new RegExp("[^a-zA-Z]"+o[p].abbreviations.million+"(?:\\)|(\\"+o[p].currency.symbol+")?(?:\\))?)?$"),e=new RegExp("[^a-zA-Z]"+o[p].abbreviations.billion+"(?:\\)|(\\"+o[p].currency.symbol+")?(?:\\))?)?$"),f=new RegExp("[^a-zA-Z]"+o[p].abbreviations.trillion+"(?:\\)|(\\"+o[p].currency.symbol+")?(?:\\))?)?$"),g=0;g<=j.length&&!(k=b.indexOf(j[g])>-1?Math.pow(1024,g+1):!1);g++);a._value=(k?k:1)*(i.match(c)?Math.pow(10,3):1)*(i.match(d)?Math.pow(10,6):1)*(i.match(e)?Math.pow(10,9):1)*(i.match(f)?Math.pow(10,12):1)*(b.indexOf("%")>-1?.01:1)*((b.split("-").length+Math.min(b.split("(").length-1,b.split(")").length-1))%2?1:-1)*Number(b.replace(/[^0-9\.]+/g,"")),a._value=k?Math.ceil(a._value):a._value}return a._value}function e(a,b,c){var d,e,f=b.indexOf("$"),g=b.indexOf("("),h=b.indexOf("-"),j="";return b.indexOf(" $")>-1?(j=" ",b=b.replace(" $","")):b.indexOf("$ ")>-1?(j=" ",b=b.replace("$ ","")):b=b.replace("$",""),e=i(a._value,b,c),1>=f?e.indexOf("(")>-1||e.indexOf("-")>-1?(e=e.split(""),d=1,(g>f||h>f)&&(d=0),e.splice(d,0,o[p].currency.symbol+j),e=e.join("")):e=o[p].currency.symbol+j+e:e.indexOf(")")>-1?(e=e.split(""),e.splice(-1,0,j+o[p].currency.symbol),e=e.join("")):e=e+j+o[p].currency.symbol,e}function f(a,b,c){var d,e="",f=100*a._value;return b.indexOf(" %")>-1?(e=" ",b=b.replace(" %","")):b=b.replace("%",""),d=i(f,b,c),d.indexOf(")")>-1?(d=d.split(""),d.splice(-1,0,e+"%"),d=d.join("")):d=d+e+"%",d}function g(a){var b=Math.floor(a._value/60/60),c=Math.floor((a._value-60*b*60)/60),d=Math.round(a._value-60*b*60-60*c);return b+":"+(10>c?"0"+c:c)+":"+(10>d?"0"+d:d)}function h(a){var b=a.split(":"),c=0;return 3===b.length?(c+=60*Number(b[0])*60,c+=60*Number(b[1]),c+=Number(b[2])):2===b.length&&(c+=60*Number(b[0]),c+=Number(b[1])),Number(c)}function i(a,c,d){var e,f,g,h,i,j,k=!1,l=!1,m=!1,n="",r=!1,s=!1,t=!1,u=!1,v=!1,w="",x="",y=Math.abs(a),z=["B","KB","MB","GB","TB","PB","EB","ZB","YB"],A="",B=!1;if(0===a&&null!==q)return q;if(c.indexOf("(")>-1?(k=!0,c=c.slice(1,-1)):c.indexOf("+")>-1&&(l=!0,c=c.replace(/\+/g,"")),c.indexOf("a")>-1&&(r=c.indexOf("aK")>=0,s=c.indexOf("aM")>=0,t=c.indexOf("aB")>=0,u=c.indexOf("aT")>=0,v=r||s||t||u,c.indexOf(" a")>-1?(n=" ",c=c.replace(" a","")):c=c.replace("a",""),y>=Math.pow(10,12)&&!v||u?(n+=o[p].abbreviations.trillion,a/=Math.pow(10,12)):y<Math.pow(10,12)&&y>=Math.pow(10,9)&&!v||t?(n+=o[p].abbreviations.billion,a/=Math.pow(10,9)):y<Math.pow(10,9)&&y>=Math.pow(10,6)&&!v||s?(n+=o[p].abbreviations.million,a/=Math.pow(10,6)):(y<Math.pow(10,6)&&y>=Math.pow(10,3)&&!v||r)&&(n+=o[p].abbreviations.thousand,a/=Math.pow(10,3))),c.indexOf("b")>-1)for(c.indexOf(" b")>-1?(w=" ",c=c.replace(" b","")):c=c.replace("b",""),g=0;g<=z.length;g++)if(e=Math.pow(1024,g),f=Math.pow(1024,g+1),a>=e&&f>a){w+=z[g],e>0&&(a/=e);break}return c.indexOf("o")>-1&&(c.indexOf(" o")>-1?(x=" ",c=c.replace(" o","")):c=c.replace("o",""),x+=o[p].ordinal(a)),c.indexOf("[.]")>-1&&(m=!0,c=c.replace("[.]",".")),h=a.toString().split(".")[0],i=c.split(".")[1],j=c.indexOf(","),i?(i.indexOf("[")>-1?(i=i.replace("]",""),i=i.split("["),A=b(a,i[0].length+i[1].length,d,i[1].length)):A=b(a,i.length,d),h=A.split(".")[0],A=A.split(".")[1].length?o[p].delimiters.decimal+A.split(".")[1]:"",m&&0===Number(A.slice(1))&&(A="")):h=b(a,null,d),h.indexOf("-")>-1&&(h=h.slice(1),B=!0),j>-1&&(h=h.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g,"$1"+o[p].delimiters.thousands)),0===c.indexOf(".")&&(h=""),(k&&B?"(":"")+(!k&&B?"-":"")+(!B&&l?"+":"")+h+A+(x?x:"")+(n?n:"")+(w?w:"")+(k&&B?")":"")}function j(a,b){o[a]=b}function k(a){var b=a.toString().split(".");return b.length<2?1:Math.pow(10,b[1].length)}function l(){var a=Array.prototype.slice.call(arguments);return a.reduce(function(a,b){var c=k(a),d=k(b);return c>d?c:d},-1/0)}var m,n="1.5.3",o={},p="en",q=null,r="0,0",s="undefined"!=typeof module&&module.exports;m=function(b){return m.isNumeral(b)?b=b.value():0===b||"undefined"==typeof b?b=0:Number(b)||(b=m.fn.unformat(b)),new a(Number(b))},m.version=n,m.isNumeral=function(b){return b instanceof a},m.language=function(a,b){if(!a)return p;if(a&&!b){if(!o[a])throw new Error("Unknown language : "+a);p=a}return(b||!o[a])&&j(a,b),m},m.languageData=function(a){if(!a)return o[p];if(!o[a])throw new Error("Unknown language : "+a);return o[a]},m.language("en",{delimiters:{thousands:",",decimal:"."},abbreviations:{thousand:"k",million:"m",billion:"b",trillion:"t"},ordinal:function(a){var b=a%10;return 1===~~(a%100/10)?"th":1===b?"st":2===b?"nd":3===b?"rd":"th"},currency:{symbol:"$"}}),m.zeroFormat=function(a){q="string"==typeof a?a:null},m.defaultFormat=function(a){r="string"==typeof a?a:"0.0"},"function"!=typeof Array.prototype.reduce&&(Array.prototype.reduce=function(a,b){"use strict";if(null===this||"undefined"==typeof this)throw new TypeError("Array.prototype.reduce called on null or undefined");if("function"!=typeof a)throw new TypeError(a+" is not a function");var c,d,e=this.length>>>0,f=!1;for(1<arguments.length&&(d=b,f=!0),c=0;e>c;++c)this.hasOwnProperty(c)&&(f?d=a(d,this[c],c,this):(d=this[c],f=!0));if(!f)throw new TypeError("Reduce of empty array with no initial value");return d}),m.fn=a.prototype={clone:function(){return m(this)},format:function(a,b){return c(this,a?a:r,void 0!==b?b:Math.round)},unformat:function(a){return"[object Number]"===Object.prototype.toString.call(a)?a:d(this,a?a:r)},value:function(){return this._value},valueOf:function(){return this._value},set:function(a){return this._value=Number(a),this},add:function(a){function b(a,b){return a+c*b}var c=l.call(null,this._value,a);return this._value=[this._value,a].reduce(b,0)/c,this},subtract:function(a){function b(a,b){return a-c*b}var c=l.call(null,this._value,a);return this._value=[a].reduce(b,this._value*c)/c,this},multiply:function(a){function b(a,b){var c=l(a,b);return a*c*b*c/(c*c)}return this._value=[this._value,a].reduce(b,1),this},divide:function(a){function b(a,b){var c=l(a,b);return a*c/(b*c)}return this._value=[this._value,a].reduce(b),this},difference:function(a){return Math.abs(m(this._value).subtract(a).value())}},s&&(module.exports=m),"undefined"==typeof ender&&(this.numeral=m),"function"==typeof define&&define.amd&&define([],function(){return m})}).call(this);
+/*!
  * Chart.js
  * http://chartjs.org/
  * Version: 1.0.2
@@ -2749,12 +2757,7 @@ plenty_admin.MAPS.create_map = function(mapId, mapOptions) {
 		return bounds;
 	}
 	
-	//set options for this map
-	//$.extend(_mapOptions, mapOptions);
-	
-	plenty_admin.MAPS.map = new google.maps.Map(document.getElementById(mapId), mapOptions);
-	
-	return plenty_admin.MAPS.map;
+	return new google.maps.Map(document.getElementById(mapId), mapOptions);
 }
 
 plenty_admin.MAPS.set_on_idle_event = function(map, handler){
@@ -3159,7 +3162,9 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events){
 		strokeOpacity: 0.8,
 		strokeWeight: 2,
 		fillOpacity: 0.35,
-		editable: fieldData.editable
+		editable: fieldData.editable,
+		title: fieldData.fieldName,
+		name: fieldData.fieldName
 	});
 	
 	if(fieldData.fieldId){
@@ -4262,6 +4267,81 @@ plenty_admin.MAPS.location_search = function(map, target) {
 		setup_map_search();
 	}
 }
+
+plenty_admin.MAPS.polygon_tooltip = function(){
+	var id = 'tt';
+	var top = 3;
+	var left = 3;
+	var maxw = 300;
+	var speed = 10;
+	var timer = 20;
+	var endalpha = 95;
+	var alpha = 0;
+	var tt,t,c,b,h;
+	var ie = document.all ? true : false;
+	return{
+		show:function(v,w){
+			if(tt == null){
+				tt = document.createElement('div');
+				tt.setAttribute('id',id);
+				t = document.createElement('div');
+				t.setAttribute('id',id + 'top');
+				c = document.createElement('div');
+				c.setAttribute('id',id + 'cont');
+				b = document.createElement('div');
+				b.setAttribute('id',id + 'bot');
+				tt.appendChild(t);
+				tt.appendChild(c);
+				tt.appendChild(b);
+				document.body.appendChild(tt);
+				tt.style.opacity = 0;
+				tt.style.filter = 'alpha(opacity=0)';
+				document.onmousemove = this.pos;
+			}
+			tt.style.display = 'block';
+			c.innerHTML = v;
+			tt.style.width = w ? w + 'px' : 'auto';
+			if(!w && ie){
+				t.style.display = 'none';
+				b.style.display = 'none';
+				tt.style.width = tt.offsetWidth;
+				t.style.display = 'block';
+				b.style.display = 'block';
+			}
+			if(tt.offsetWidth > maxw){tt.style.width = maxw + 'px'}
+			h = parseInt(tt.offsetHeight) + top;
+			clearInterval(tt.timer);
+			tt.timer = setInterval(function(){plenty_admin.MAPS.polygon_tooltip.fade(1)},timer);
+		},
+		pos:function(e){
+			var u = ie ? event.clientY + document.documentElement.scrollTop : e.pageY;
+			var l = ie ? event.clientX + document.documentElement.scrollLeft : e.pageX;
+			tt.style.top = (u - h) + 'px';
+			tt.style.left = (l + left) + 'px';
+		},
+		fade:function(d){
+			var a = alpha;
+			if((a != endalpha && d == 1) || (a != 0 && d == -1)){
+				var i = speed;
+				if(endalpha - a < speed && d == 1){
+					i = endalpha - a;
+				}else if(alpha < speed && d == -1){
+					i = a;
+				}
+				alpha = a + (i * d);
+				tt.style.opacity = alpha * .01;
+				tt.style.filter = 'alpha(opacity=' + alpha + ')';
+			}else{
+				clearInterval(tt.timer);
+				if(d == -1){tt.style.display = 'none'}
+			}
+		},
+		hide:function(){
+			clearInterval(tt.timer);
+			tt.timer = setInterval(function(){plenty_admin.MAPS.polygon_tooltip.fade(-1)},timer);
+		}
+	};
+}();
 //*********************** settings.js **************************//
 // send the user back to the login page if they have no auth token
 if(!store.get("basicAuth")){
@@ -4473,54 +4553,11 @@ plenty_admin.UI.field.dates = {
 	end:		null /*d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours()+1)+":"+d.getMinutes()*/
 };
 
-/*
-Chart.defaults.global.customTooltips = function(tooltip) {
-	//console.log("tooltip: ", tooltip);
-	var tooltipEl = $('#chartjs-tooltip');
-
-	if (!tooltip) {
-		tooltipEl.css({
-			opacity: 0
-		});
-		return;
-	}
-
-	tooltipEl.removeClass('above below');
-	tooltipEl.addClass(tooltip.yAlign);
-
-	var innerHtml = '';
-	
-	if(tooltip.labels){
-	for (var i = tooltip.labels.length - 1; i >= 0; i--) {
-		innerHtml += [
-			'<div class="chartjs-tooltip-section">',
-			'	<span class="chartjs-tooltip-key" style="background-color:' + tooltip.legendColors[i].fill + '"></span>',
-			'	<span class="chartjs-tooltip-value">' + tooltip.labels[i] + '</span>',
-			'</div>'
-		].join('');
-	}
-	}else{
-		innerHtml = ['<div class="chartjs-tooltip-section">',
-			'	<span class="chartjs-tooltip-value">' + tooltip.text + '</span>',
-			'</div>'].join('');
-	}
-	
-	tooltipEl.html(innerHtml);
-
-	tooltipEl.css({
-		opacity: 1,
-		left: tooltip.chart.canvas.offsetLeft + tooltip.x + 'px',
-		top: tooltip.chart.canvas.offsetTop + tooltip.y + 'px',
-		fontFamily: tooltip.fontFamily,
-		fontSize: tooltip.fontSize,
-		fontStyle: tooltip.fontStyle,
-	});
-};
-*/
-
 //method to initiate the field page
 plenty_admin.UI.field.init = function(fieldObj, context){
 	console.log("plenty_admin.UI.field.init", fieldObj);
+	
+	plenty_admin.UI.field.clear();
 	
 	switch(context){
 		case "settings":
@@ -4541,9 +4578,7 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 				  }, function(map, fieldObj, polygon){
 					plenty_admin.UI.field.polygon = polygon;
 				});
-				plenty_admin.UI.currentScreen.fadeIn("normal", function(){
-					plenty_admin.HELPER.hideLoadingOverlay();
-				});
+				plenty_admin.UI.currentScreen.fadeIn("normal");
 			});
 		break;
 		
@@ -4569,9 +4604,7 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 				
 				plenty_admin.UI.currentScreen
 				.addClass("fill-area-content flexbox-item-grow")
-				plenty_admin.UI.currentScreen.fadeIn("normal", function(){
-					plenty_admin.HELPER.hideLoadingOverlay();
-				});
+				plenty_admin.UI.currentScreen.fadeIn("normal");
 			})
 			.parent()
 			.find(".filter_controls")
@@ -4658,6 +4691,41 @@ plenty_admin.REST.get_field_equipments_with_fieldId = function(fieldCropId, call
 	});
 }
 
+plenty_admin.UI.field.clear = function(){
+	//destroy all graphs
+	for(var g=0; g<plenty_admin.UI.field.renderedGraphs.length; g++){
+		var graph = plenty_admin.UI.field.renderedGraphs[g];
+		graph.destroy();
+	}
+	
+	//clear weatherEvents
+	if(plenty_admin.UI.field.weatherEventsContainer){
+		plenty_admin.UI.field.weatherEventsContainer
+		.find(".event")
+		.remove();
+	}
+	
+	//clear activities
+	if(plenty_admin.UI.field.activityTimelineContainer){
+		plenty_admin.UI.field.activityTimelineContainer
+		.find(".activity")
+		.remove();
+	}
+	
+	//clear activities
+	if(plenty_admin.UI.field.activityListContainer){
+		plenty_admin.UI.field.activityListContainer
+		.find(".activity")
+		.remove();
+	}
+	
+	//destroy the year slider
+	if(plenty_admin.UI.field.field_year_slider){
+		plenty_admin.UI.field.field_year_slider
+		.slider("destroy");
+	}
+}
+
 plenty_admin.UI.field.populate = function(fieldObj){
 	plenty_admin.REST.get_fieldCrops_order_by_year_descending(fieldObj.id, function(fieldData){
 		console.log("get_field_order_by_year_descending: ", fieldData);
@@ -4671,9 +4739,9 @@ plenty_admin.UI.field.populate = function(fieldObj){
 		
 		console.log("fieldCropsByYear", fieldCropsByYear);
 		
-		var field_year_slider = plenty_admin.UI.field.DOM.find(".field_year_slider");
+		plenty_admin.UI.field.field_year_slider = plenty_admin.UI.field.DOM.find(".field_year_slider");
 		
-		field_year_slider
+		plenty_admin.UI.field.field_year_slider
 		.slider({
 			min: parseInt(fieldData[fieldData.length-1].year),
 			max: parseInt(fieldData[0].year),
@@ -4684,23 +4752,27 @@ plenty_admin.UI.field.populate = function(fieldObj){
 				//return 'Current value: ' + value;
 			}
 		}) //set up tooltip to show year and crop for that year
+		.off("slide")
 		.on("slide", function(){
 			//console.log("SLIDER SLIDE");
 		})
+		.off("slideStart")
 		.on("slideStart", function(e){
 			console.log("SLIDER SLIDESTART: ", $(this), e, e.target);
 		})
+		.off("slideStop")
 		.on("slideStop", function(){
 			console.log("SLIDER SLIDESTOP");
 		})
+		.off("change")
 		.on("change", function(e){
 			console.log("SLIDER CHANGE", e.value.newValue);
 			//get initial activities for this crop Id
 			var cropYear = fieldCropsByYear[e.value.newValue];
 			var cropName = plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name;
 			
-			console.log("cropYear:", cropYear);
-			console.log("cropName:", cropName);
+			//console.log("cropYear:", cropYear);
+			//console.log("cropName:", cropName);
 			
 			plenty_admin.UI.field.update_field_year(cropYear);
 			
@@ -4720,6 +4792,9 @@ plenty_admin.UI.field.populate = function(fieldObj){
 			console.log("changed: ", hash);
 			
 			if(hash === "#finances"){
+				if(plenty_admin.UI.field.financesGraph){
+					plenty_admin.UI.field.financesGraph.destroy();
+				}
 				plenty_admin.UI.field.renderFinancesGraph();
 			}
 		});
@@ -4734,11 +4809,11 @@ plenty_admin.UI.field.populate = function(fieldObj){
 			plenty_admin.UI.field.updateWeatherGraph(hash);
 		});
 		
-		plenty_admin.UI.field.update_field_year(fieldCropsByYear[parseInt(field_year_slider.slider('getValue'))]);
+		plenty_admin.UI.field.update_field_year(fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))]);
 		
 		plenty_admin.UI.field.DOM
 		.find(".current_year_crop")
-		.text(field_year_slider.slider('getValue')+" - "+plenty_admin.DATA.cropTypes[fieldCropsByYear[parseInt(field_year_slider.slider('getValue'))].cropTypeId].name);
+		.text(plenty_admin.UI.field.field_year_slider.slider('getValue')+" - "+plenty_admin.DATA.cropTypes[fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))].cropTypeId].name);
 	});
 }
 
@@ -4747,34 +4822,54 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 		case "#temp":
 			//create the temp graph object if it does not yet exist
 			if(!plenty_admin.UI.field.tempGraph){
-				plenty_admin.UI.field.renderTempGraph();
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
+			}else{
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.tempGraph;
 			}
 		break;
 		
 		case "#moisture":
 			//create the moisture graph object if it does not yet exist
 			if(!plenty_admin.UI.field.moistureGraph){
-				plenty_admin.UI.field.renderMoistureGraph();
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
+			}else{
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.moistureGraph;
 			}
 		break;
 		
 		case "#precip":
 			//create the moisture graph object if it does not yet exist
 			if(!plenty_admin.UI.field.precipGraph){
-				plenty_admin.UI.field.renderPrecipGraph();
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
+			}else{
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.precipGraph;
 			}
 		break;
 		
 		case "#gdd":
 			//create the moisture graph object if it does not yet exist
 			if(!plenty_admin.UI.field.gddGraph){
-				plenty_admin.UI.field.renderGDDGraph();
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
+			}else{
+				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.gddGraph;
 			}
 		break;
 	}
+	
+	//set width of dom element that offsets the weather events and activities
+	var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
+	keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+	
+	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
+	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
+	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+	
+	plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
 }
 
 plenty_admin.UI.field.update_field_year = function (cropYear){
+	console.log("update_field_year", cropYear);
+	plenty_admin.HELPER.showLoadingOverlay();
 	plenty_admin.REST.get_field_equipments_with_fieldId(cropYear.id, function(fieldEquipment){
 		console.log("get_field_equipments_with_fieldId", fieldEquipment);
 	});
@@ -4782,6 +4877,8 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 	//pull in activities once weatherDays have loaded	
 	plenty_admin.REST.get_activities_by_field_crop_order_by_desc(cropYear.cropTypeId, function(activitiesForCropType){
 		console.log("get_activities_by_field_crop_order_by_desc", activitiesForCropType);
+		
+		plenty_admin.UI.field.activitiesForCropType = activitiesForCropType;
 		
 		var startDate = plenty_admin.HELPER.formateJavaDate(activitiesForCropType[0].startTime);
 		//HACK - Date ranges on activities provided to narrow to return results
@@ -4912,21 +5009,25 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			
 			switch(hash){
 				case "#temp":
-					plenty_admin.UI.field.renderTempGraph();
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
 				break;
 				
 				case "#moisture":
-					plenty_admin.UI.field.renderMoistureGraph();
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
 				break;
 				
 				case "#precip":
-					plenty_admin.UI.field.renderPrecipGraph();
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
 				break;
 				
 				case "#gdd":
-					plenty_admin.UI.field.renderGDDGraph();
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
 				break;
 			}
+			
+			//set width of dom element that offsets the weather events and activities
+			var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
+			keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
 			
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
@@ -4939,21 +5040,29 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 		//THIS IS A HACK AND SHOULD BE REMOVED IN GLOBAL.JS ONCE THE API WORKS
 		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 			plenty_admin.UI.field.renderActivities(activitiesForCropType);
+			plenty_admin.HELPER.hideLoadingOverlay();
 		});	
 		
 		plenty_admin.REST.get_activity_finances_for_date_range(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(fieldCropActivityFinances){
 			console.log("get_activity_finances_for_date_range", fieldCropActivityFinances);
 			plenty_admin.UI.field.fieldCropActivityFinances = fieldCropActivityFinances;
+			
+			plenty_admin.UI.field.renderFinancesGraph();
 		});
 	});
 }
 
 plenty_admin.UI.field.renderWeatherEvents = function(events, hash){
-	var eventsContainer = plenty_admin.UI.field.DOM.find(".tab-content .weatherEvents."+hash+"");
+	plenty_admin.UI.field.weatherEventsContainer = plenty_admin.UI.field.DOM.find(".tab-content .weatherEvents."+hash);
+	
+	//remove any existing events
+	plenty_admin.UI.field.weatherEventsContainer
+	.find(".event")
+	.remove();
 	
 	for(var e=0; e<events.length; e++){
 		var wE = events[e];
-		var leftPos = ((parseInt(eventsContainer.width()) / plenty_admin.UI.field.weatherDays.length)*wE.dayIndex)-8;
+		var leftPos = ((parseInt(plenty_admin.UI.field.weatherEventsContainer.width()) / plenty_admin.UI.field.weatherDays.length)*wE.dayIndex)-8;
 		
 		if(leftPos < 0){
 			leftPos = 0;
@@ -4976,17 +5085,21 @@ plenty_admin.UI.field.renderWeatherEvents = function(events, hash){
 		var weatherEventHTML = $("<div class='event' data-toggle='tooltip' data-placement='top' title='"+(wE.detail ? wE.detail : wE.deatil)+": "+wE.amount.toFixed(2)+uom+"' style='left:"+leftPos+"px'><i class='"+wE.type+" "+wE.iconClass+"'></i></div>");
 		
 		weatherEventHTML
-		.tooltip();
+		.tooltip({container:"body"});
 		
-		eventsContainer.append(weatherEventHTML);
+		plenty_admin.UI.field.weatherEventsContainer.append(weatherEventHTML);
 	}
 }
 
-plenty_admin.UI.field.renderActivities = function(activities){
-	var timelineContainer = plenty_admin.UI.field.DOM.find(".activitiesTimeline .activities");
-	var activityListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #activities tbody");
+plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
+	plenty_admin.UI.field.activityTimelineContainer = plenty_admin.UI.field.DOM.find(".activitiesTimeline .activities");
+	plenty_admin.UI.field.activityListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #activities tbody");
 	
-	console.log("activityListContainer", activityListContainer);
+	//clear activity timeline
+	plenty_admin.UI.field.activityTimelineContainer
+	.find(".activity")
+	.remove();
+	
 	for(var a=0; a<activities.length; a++){
 		var activity = activities[a];
 		
@@ -5012,7 +5125,7 @@ plenty_admin.UI.field.renderActivities = function(activities){
 		
 		console.log("activity", activity);
 		
-		var dayWidth = parseInt(timelineContainer.width()) / plenty_admin.UI.field.weatherDays.length;
+		var dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / plenty_admin.UI.field.weatherDays.length;
 		var leftPos = dayWidth*activity.startOffsetDays;
 		var eventWidth = dayWidth*activity.duration;
 		
@@ -5031,30 +5144,32 @@ plenty_admin.UI.field.renderActivities = function(activities){
 			html:true
 		});
 		
-		timelineContainer.append(activityHTML);
+		plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
 		
-		//build the activity list item
-		var activityItem = [
-				"<tr>",
-					"<td>",
-						activity.state,
-					"</td>",
-					"<td>",
-						plenty_admin.DATA.activityTypes[activity.activityTypeId],
-					"</td>",
-					"<td>",
-						activity.startDate.date,
-					"</td>",
-					"<td>",
-						activity.duration,
-					"</td>",
-					"<td class='text-right'>",
-						activity.cost,
-					"</td>",
-				"</tr>"
-		].join("");
-		
-		activityListContainer.append(activityItem);
+		if(!timelineOnly){
+			//build the activity list item
+			var activityItem = [
+					"<tr class='activity'>",
+						"<td>",
+							activity.state,
+						"</td>",
+						"<td>",
+							plenty_admin.DATA.activityTypes[activity.activityTypeId],
+						"</td>",
+						"<td>",
+							activity.startDate.date,
+						"</td>",
+						"<td>",
+							activity.duration,
+						"</td>",
+						"<td class='text-right'>",
+							activity.cost,
+						"</td>",
+					"</tr>"
+			].join("");
+			
+			plenty_admin.UI.field.activityListContainer.append(activityItem);
+		}
 	}
 }
 
@@ -5146,9 +5261,15 @@ plenty_admin.UI.field.renderTempGraph = function(){
 		
 		};
 		
+		var helpers = Chart.helpers;
+	
+		console.log("TEMP helpers", helpers);
+		
 		plenty_admin.UI.field.tempGraph = new Chart(plenty_admin.UI.field.tempGraphEl.get(0).getContext("2d")).Line(tempGraphData, tempGraphOptions);
 		plenty_admin.UI.field.tempGraph.datasetId = "temp"; 
 		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.tempGraph);
+		
+		return plenty_admin.UI.field.tempGraph;
 }
 
 plenty_admin.UI.field.renderMoistureGraph = function(){
@@ -5195,6 +5316,8 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 		plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).Line(moistureGraphData, moistureGraphOptions);
 		plenty_admin.UI.field.moistureGraph.datasetId = "dewPt";
 		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.moistureGraph);
+		
+		return plenty_admin.UI.field.moistureGraph;
 }
 
 plenty_admin.UI.field.renderPrecipGraph = function(){
@@ -5221,6 +5344,8 @@ plenty_admin.UI.field.renderPrecipGraph = function(){
 		plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).Line(precipGraphData, precipGraphOptions);
 		plenty_admin.UI.field.precipGraph.datasetId = "precipAmt";
 		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.precipGraph);
+		
+		return plenty_admin.UI.field.precipGraph;
 }
 
 plenty_admin.UI.field.renderGDDGraph = function(){
@@ -5247,6 +5372,8 @@ plenty_admin.UI.field.renderGDDGraph = function(){
 		plenty_admin.UI.field.gddGraph = new Chart(plenty_admin.UI.field.gddGraphEl.get(0).getContext("2d")).Line(GDDGraphData, GDDGraphOptions);
 		plenty_admin.UI.field.gddGraph.datasetId = "gddTotalToToday";
 		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.gddGraph);
+		
+		return plenty_admin.UI.field.gddGraph;
 }
 
 plenty_admin.UI.field.renderFinancesGraph = function(){
@@ -5281,7 +5408,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 			},
 			{
 				amount: 825.00,
-				name: "Pest COntrol"
+				name: "Pest Control"
 			},
 			{
 				amount: 544.00,
@@ -5315,11 +5442,14 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\"><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
+		tooltipTemplate: "<%=label%>: <%= numeral(value).format('($00[.]00)') %> | <%= numeral(circumference / 6.283).format('(0[.][00]%)') %>",
 		animateRotate: true
 	};
 	
 	var helpers = Chart.helpers;
+	
+	console.log("helpers", helpers);
 	
 	plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
 	
@@ -5342,17 +5472,23 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
 		helpers.addEvent(legendNode, 'mouseover', function () {
 			var activeSegment = plenty_admin.UI.field.financesGraph.segments[index];
+			
+			var pct = numeral(activeSegment.circumference / 6.283).format('(0[.][00]%)');
+			
 			activeSegment.save();
 			activeSegment.fillColor = activeSegment.highlightColor;
 			activeSegment.innerRadius = 60;
 			plenty_admin.UI.field.financesGraph.showTooltip([activeSegment]);
 			activeSegment.restore();
 			
-			$(this)
+			$(legendNode)
 			.css({"background-color": $(this).data("hovercolour")})
 			.addClass("active")
-			.find("span")
+			.find("span.swatch")
 			.css({"background-color": activeSegment.highlightColor})
+			.end()
+			.find("span.pct")
+			.text(pct);
 		});
 	});
 	
@@ -5362,12 +5498,14 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 		.find("li")
 		.css({"background-color": "transparent"})
 		.removeClass("active")
-		.find("span")
+		.find("span.swatch")
 		.each(function(){
 			$(this)
 			.css({"background-color": $(this).closest("li").data("hovercolour")});
-		});
-		
+		})
+		.end()
+		.find("span.pct")
+		.text("");
 	});
 	
 	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);
@@ -5402,16 +5540,16 @@ plenty_admin.UI.map.init = function(){
 			streetViewControl:false
 		}
 		
-		plenty_admin.MAPS.create_map("map-container", mapOptions);
+		plenty_admin.MAPS.mainMap = plenty_admin.MAPS.create_map("map-container", mapOptions);
 		
 		//add the location search tools to the map
 		//plenty_admin.MAPS.location_search(plenty_admin.MAPS.map, plenty_admin.UI.map.DOM);
 		
 		//update the map when the user finishes interacting with it
-		plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.map, function(e){
+		plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.mainMap, function(e){
 			console.log("map bounds changed");
 			
-			var zoom = plenty_admin.MAPS.map.getZoom();
+			var zoom = plenty_admin.MAPS.mainMap.getZoom();
 			//console.log("map bounds: ", bounds.getNorthEast(), bounds.getSouthWest());
 			console.log("map zoom: ", zoom);
 			
@@ -5420,15 +5558,15 @@ plenty_admin.UI.map.init = function(){
 				plenty_admin.UI.map.add_equipment_to_map();
 			}
 		});
-		plenty_admin.MAPS.set_on_click_event(plenty_admin.MAPS.map, function(e){
+		plenty_admin.MAPS.set_on_click_event(plenty_admin.MAPS.mainMap, function(e){
 			console.log("map clicked");
 			plenty_admin.UI.filters.toggleFilters("close");	
 			plenty_admin.UI.map.farms_quickfilter.popover("hide");
 			plenty_admin.UI.map.orgs_quickfilter.popover("hide");
 		});
 		
-		plenty_admin.MAPS.add_field_control(plenty_admin.MAPS.map);
-		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.map);
+		plenty_admin.MAPS.add_field_control(plenty_admin.MAPS.mainMap);
+		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.mainMap);
 		
 		//prepare all data type lists and wait till they've loaded
 		plenty_admin.DATA.eventCollector = window.eventcollector(4, 10000);
@@ -5498,7 +5636,7 @@ plenty_admin.UI.map.init = function(){
 }
 
 plenty_admin.UI.map.add_equipment_to_map = function(boundary){
-	var bounds = plenty_admin.MAPS.map.getBounds();
+	var bounds = plenty_admin.MAPS.mainMap.getBounds();
 	var boundary = {};
 	
 	boundary.maxLongitude = bounds.getNorthEast().F;
@@ -5540,8 +5678,8 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		});
 		
 		if(equipment.length > 0){
-			plenty_admin.MAPS.map.fitBounds(plenty_admin.UI.map.latlngbounds);
-			var markerCluster = new MarkerClusterer(plenty_admin.MAPS.map, plenty_admin.MAPS.equipment_pins);
+			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+			var markerCluster = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.MAPS.equipment_pins);
 		}
 	});
 }
@@ -5558,8 +5696,8 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 		var fieldBoundaries = boundaryPoints().data;
 		
 		//clear the map
-		if(plenty_admin.MAPS.map.clusterer){
-			plenty_admin.MAPS.map.clusterer.clearMarkers();
+		if(plenty_admin.MAPS.mainMap.clusterer){
+			plenty_admin.MAPS.mainMap.clusterer.clearMarkers();
 		}
 		
 		var allCropTypes =  {};
@@ -5597,7 +5735,7 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 		if(plenty_admin.MAPS.legend){
 			plenty_admin.MAPS.update_map_legend(legendItems);
 		}else{
-			plenty_admin.MAPS.add_map_legend(plenty_admin.MAPS.map, legendItems);
+			plenty_admin.MAPS.add_map_legend(plenty_admin.MAPS.mainMap, legendItems);
 		}
 		
 		plenty_admin.UI.map.filtered_field_polygons = [];
@@ -5623,7 +5761,9 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 					editable: false,
 					fieldId: field.fieldId,
 					id: field.fieldId,
-					fieldName: "",
+					fieldName: $.grep(fieldIDs, function(_field, f){
+						return field.fieldId === _field.id;
+					})[0].name,
 					isCoords: true,
 					isCluster: true,
 					cropType: field.cropTypeName
@@ -5639,8 +5779,19 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 							strokeOpacity: 1,
 							fillOpacity: .65
 						});
+						
+						plenty_admin.MAPS.polygon_tooltip.show("<strong>"+fieldData.fieldName+"</strong><br /><p>Right click for options</p>");
 					}, 
 					onMouseOut: function(event){ //onMouseOut handler
+						//console.log("poly mouseout: ", this, event);
+						this.setOptions({
+							strokeOpacity: .8,
+							fillOpacity: .35
+						});
+						
+						plenty_admin.MAPS.polygon_tooltip.hide();
+					}, 
+					onMouseMove: function(event){ //onMouseOut handler
 						//console.log("poly mouseout: ", this, event);
 						this.setOptions({
 							strokeOpacity: .8,
@@ -5658,8 +5809,9 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 							fullFieldObject.rc_lng = event.latLng.lng();
 							
 							console.log("fullFieldObject", fullFieldObject);
-							plenty_admin.MAPS.show_polygon_context_menu(fullFieldObject, plenty_admin.MAPS.map, "map_context_menu");
+							plenty_admin.MAPS.show_polygon_context_menu(fullFieldObject, plenty_admin.MAPS.mainMap, "map_context_menu");
 						});
+						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onClick: function(event){ //onClick handler
 						console.log("polygon clicked: ", this.getPath().getArray());
@@ -5716,11 +5868,11 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 		
 		if(fieldBoundaries.length > 0){
 			//center and zoom the map to the bounds of the polygons
-			plenty_admin.MAPS.map.fitBounds(plenty_admin.UI.map.latlngbounds);
+			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 		}
 		
 		//cluster the polygons and render clusters on the map
-		plenty_admin.MAPS.map.clusterer = new MarkerClusterer(plenty_admin.MAPS.map, plenty_admin.UI.map.filtered_field_polygons);
+		plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);
 	});
 }
 

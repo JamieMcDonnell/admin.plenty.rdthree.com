@@ -509,15 +509,21 @@
 			<div class="col-xs-3 prn pln"> <!-- required for floating -->
 			  <!-- Nav tabs -->
 			  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
-				<li class="active"><a href="#activities" data-toggle="tab">Activities</a></li>
-				<li><a href="#finances" data-toggle="tab">Finances</a></li>
+			  	<li class="active"><a href="#finances" data-toggle="tab">Finances</a></li>
+				<li><a href="#activities" data-toggle="tab">Activities</a></li>
 				<li><a href="#equipment" data-toggle="tab">Equipment</a></li>
 			  </ul>
 			</div>
 			<div class="col-xs-9 pln prn">
 				<!-- Tab panes -->
 				<div class="tab-content ptn pbn">
-				  <table class="tab-pane active table table-striped table-hover mbn fitTable" id="activities">
+					<div class="tab-pane active graph flexbox-parent flexbox-item-grow" id="finances">
+				  	<div class="doughnut">
+				  		<canvas class="flexbox-item flexbox-item-grow"></canvas>
+					</div>
+					<div class="legend flexbox-item flexbox-item-grow"></div>
+				  </div>
+				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="activities">
 				  	<thead>
 						<tr>
 							<th width="25%">
@@ -540,12 +546,6 @@
 					<tbody>
 					</tbody>
 				  </table>
-				  <div class="tab-pane graph flexbox-parent flexbox-item-grow" id="finances">
-				  	<div class="doughnut">
-				  		<canvas class="flexbox-item flexbox-item-grow"></canvas>
-					</div>
-					<div class="legend flexbox-item flexbox-item-grow"></div>
-				  </div>
 				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="equipment">
 				  	<thead>
 						<tr>
@@ -583,9 +583,14 @@
 		<div class="col-xs-9 pln prn flexbox-item flexbox-item-grow">
 			<!-- Tab panes -->
 			<div class="tab-content ptn pbn flexbox-parent flexbox-item-grow">
-				<div class="weatherEvents temp flexbox-item"></div>
-				<div class="weatherEvents precip flexbox-item"></div>
-				<div class="weatherEvents wind flexbox-item"></div>
+				<div class="weatherEventsWrapper flexbox-item">
+					<div class="keyOffset"></div>
+					<div class="weatherEventsRows">
+						<div class="weatherEvents temp"></div>
+						<div class="weatherEvents precip"></div>
+						<div class="weatherEvents wind"></div>
+					</div>
+				</div>
 				<div class="tab-pane graph active flexbox-parent flexbox-item-grow" id="gdd">
 					<p class="mbn flexbox-item"><b>Level</b></p>
 					<canvas class="flexbox-item flexbox-item-grow"></canvas>
@@ -611,6 +616,7 @@
 		 Activities
 		</h3>
 		<div class="col-xs-9">
+			<div class="keyOffset"></div>
 			<div class="activities"></div>
 		</div>
 	</div>

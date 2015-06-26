@@ -1,5 +1,5 @@
 /*!
- * Plenty.rdthree.com v0.1 (http://plenty.rdthree.com)
+ * Plenty.rdthree.com v1.0.1 (http://plenty.rdthree.com)
  * Copyright 2015-2015 RDThree Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
@@ -2903,6 +2903,12 @@ body {
 #field-container .field_preview #field_map {
   height: 160px;
 }
+#field-container .keyOffset {
+  position: relative;
+  display: block;
+  float: left;
+  height: 45px;
+}
 #field-container .field_asset_data,
 #field-container .field_asset_data .col-xs-9 {
   position: absolute;
@@ -2935,15 +2941,15 @@ body {
 #field-container .field_asset_data .col-xs-9 #finances .doughnut,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 #finances .doughnut {
   position: absolute;
-  width: 75% !important;
+  width: 60% !important;
   height: 100% !important;
 }
 #field-container .field_asset_data .col-xs-9 .legend,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 .legend {
   position: absolute;
   top: 0;
-  left: 75%;
-  width: 25%;
+  left: 60%;
+  width: 40%;
   height: 100%;
 }
 #field-container .field_asset_data .col-xs-9 .legend ul,
@@ -2952,14 +2958,15 @@ body {
 }
 #field-container .field_asset_data .col-xs-9 .legend ul li,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li {
+  margin-bottom: 5px;
   list-style: none;
 }
 #field-container .field_asset_data .col-xs-9 .legend ul li.active,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li.active {
   color: #fff;
 }
-#field-container .field_asset_data .col-xs-9 .legend ul li span,
-#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li span {
+#field-container .field_asset_data .col-xs-9 .legend ul li span.swatch,
+#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li span.swatch {
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -2984,12 +2991,15 @@ body {
   height: 100%;
   padding-left: 15px;
 }
-#field-container .field_weather_data .tab-content .weatherEvents {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows {
+  overflow: hidden;
+}
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents {
   position: relative;
   display: block;
   height: 15px;
 }
-#field-container .field_weather_data .tab-content .weatherEvents .event {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents .event {
   position: absolute;
   left: 40px;
   width: 16px;
@@ -2999,20 +3009,20 @@ body {
   text-align: center;
   background-color: rgba(0, 0, 0, .35);
 }
-#field-container .field_weather_data .tab-content .weatherEvents .event:hover {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents .event:hover {
   background-color: rgba(0, 0, 0, .85);
 }
-#field-container .field_weather_data .tab-content .weatherEvents .event i {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents .event i {
   display: block;
   font-size: 11px;
 }
-#field-container .field_weather_data .tab-content .weatherEvents.temp {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents.temp {
   background-color: #fffac2;
 }
-#field-container .field_weather_data .tab-content .weatherEvents.precip {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents.precip {
   background-color: #23abe9;
 }
-#field-container .field_weather_data .tab-content .weatherEvents.wind {
+#field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents.wind {
   background-color: #77bc7d;
 }
 #field-container .tab-pane {
@@ -3029,10 +3039,12 @@ body {
 #field-container table.table.tab-pane.active {
   display: block;
 }
-#field-container .activitiesTimeline .activities {
-  position: relative;
-  display: block;
+#field-container .activitiesTimeline .keyOffset {
   height: 33px;
+}
+#field-container .activitiesTimeline .activities {
+  height: 33px;
+  overflow: hidden;
   background-color: #a2a795;
 }
 #field-container .activitiesTimeline .activities .activity {
@@ -3170,6 +3182,13 @@ body.map .fill-area-content {
   height: 20px;
   margin-right: 5px;
   vertical-align: middle;
+}
+#tt {
+  position: absolute;
+  z-index: 1000;
+  max-width: 200px;
+  padding: 10px;
+  background-color: #fff;
 }
 /* LESS Document */
 #loadingOverlay {

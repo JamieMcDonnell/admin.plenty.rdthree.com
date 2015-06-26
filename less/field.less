@@ -5,6 +5,12 @@
 			height:160px;
 		}
 	}
+	.keyOffset{
+		position:relative;
+		display:block;
+		height:45px;
+		float:left;
+	}
 	.field_asset_data,
 	.field_asset_data .col-xs-9{
 		  position: absolute;
@@ -31,29 +37,30 @@
 				 position:relative;
 				 
 				 .doughnut{
-					width:75% !important; 
+					width:60% !important; 
 					position:absolute;
 					height:100% !important;
 				 }
 			 }
 			 .legend{
-				width:25%; 
+				width:40%; 
 				top:0;
 				position:absolute;
 				height:100%;
-				left:75%;
+				left:60%;
 				
 				ul{
 					padding:0;
 					
 					li{
 						list-style:none;
+						margin-bottom:5px;
 						
 						&.active{
 							color:@white;
 						}
 						
-						span{
+						span.swatch{
 							  width: 20px;
 							  height: 20px;
 							  display: inline-block;
@@ -85,39 +92,45 @@
 			}
 		}
 		.tab-content{
-			.weatherEvents{
-				height:15px;
-				display:block;
-				position:relative;
-				
-				.event{
-					width:16px;
-					height:13px;
-					position:absolute;
-					left:40px;
-					background-color:rgba(0,0,0,.35);
-					color:#fff;
-					padding:2px;
-					text-align:center;
+			.weatherEventsWrapper{
+				.weatherEventsRows{
+					overflow:hidden;
 					
-					&:hover{
-						background-color:rgba(0,0,0,.85);
-					}
-					
-					i{
-						font-size:11px;
+					.weatherEvents{
+						height:15px;
 						display:block;
+						position:relative;
+						
+						.event{
+							width:16px;
+							height:13px;
+							position:absolute;
+							left:40px;
+							background-color:rgba(0,0,0,.35);
+							color:#fff;
+							padding:2px;
+							text-align:center;
+							
+							&:hover{
+								background-color:rgba(0,0,0,.85);
+							}
+							
+							i{
+								font-size:11px;
+								display:block;
+							}
+						}
+						
+						&.temp{
+							background-color:@brand-soft-cream;
+						}
+						&.precip{
+							background-color:#23abe9;
+						}
+						&.wind{
+							background-color:#77bc7d;
+						}
 					}
-				}
-				
-				&.temp{
-					background-color:@brand-soft-cream;
-				}
-				&.precip{
-					background-color:#23abe9;
-				}
-				&.wind{
-					background-color:#77bc7d;
 				}
 			}
 		}
@@ -137,11 +150,13 @@
 	}
 	
 	.activitiesTimeline{
+		.keyOffset{
+			height:33px;
+		}
 		.activities{
 			height:33px;
-			display:block;
+			overflow:hidden;
 			background-color:#a2a795;
-			position:relative;
 			
 			.activity{
 				width:30px;
