@@ -509,6 +509,13 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
 			
+			//ensure if the window changes size the weather events are refitted
+			$(window).on("resize",function(){
+				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
+				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
+				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+			});
+			
 			plenty_admin.DATA.eventCollector.done("event 1");
 		});
 		
@@ -516,6 +523,12 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 		//THIS IS A HACK AND SHOULD BE REMOVED IN GLOBAL.JS ONCE THE API WORKS
 		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 			plenty_admin.UI.field.renderActivities(activitiesForCropType);
+			
+			//ensure if the window changes size the activities are refitted
+			$(window).on("resize",function(){
+				plenty_admin.UI.field.renderActivities(activitiesForCropType);
+			});
+			
 			plenty_admin.HELPER.hideLoadingOverlay();
 		});	
 		
