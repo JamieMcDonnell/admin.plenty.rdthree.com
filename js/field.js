@@ -38,6 +38,35 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 	switch(context){
 		case "settings":
 			plenty_admin.HELPER.showLoadingOverlay();
+  
+			  plenty_admin.UI.field.DOM.attrchange({
+				trackValues: true, /* Default to false, if set to true the event object is 
+							updated with old and new value.*/
+				callback: function (event) { 
+					//event               - event object
+					//event.attributeName - Name of the attribute modified
+					//event.oldValue      - Previous value of the modified attribute
+					//event.newValue      - New value of the modified attribute
+					//Triggered when the selected elements attribute is added/updated/removed
+					//ceck for display none and remove position attributes
+					//console.log("attr changed: ", event.attributeName, " --- ", event.newValue, parseFloat(event.newValue.slice(9)));
+					if(
+						event.newValue.indexOf("opacity") > -1 
+					){
+						var opacity = Math.round(parseFloat(event.newValue.slice(9)));
+						if(opacity > .999 && !plenty_admin.UI.field.hasLayout){
+							//field layout has been shown
+							plenty_admin.UI.field.fitFieldLayout("fit");
+							console.log("attr changed: ", event.attributeName, event.newValue);
+						}
+					}else if(event.newValue.indexOf("display") > -1 && event.newValue.indexOf("none") > -1){
+						//field has been hidden, clear settings on body
+						console.log("attr changed: ", event.attributeName, event.newValue);
+						plenty_admin.UI.field.fitFieldLayout("clear");
+					}
+				}        
+			});
+
 			plenty_admin.UI.currentScreen
 			.fadeOut("normal", function(){
 				plenty_admin.UI.currentScreen = plenty_admin.UI.field.DOM;
@@ -54,6 +83,7 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 				  }, function(map, fieldObj, polygon){
 					plenty_admin.UI.field.polygon = polygon;
 				});
+				
 				plenty_admin.UI.currentScreen.fadeIn("normal");
 			});
 		break;
@@ -85,6 +115,30 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 			.parent()
 			.find(".filter_controls")
 			.fadeOut("fast");
+		break;
+	}
+}
+
+plenty_admin.UI.field.hasLayout = false;
+plenty_admin.UI.field.fitFieldLayout = function(state){
+	switch (state){
+		case "fit":
+			$("body")
+			.height($(window).height())
+			.css({"overflow":"hidden"});
+			
+			plenty_admin.UI.field.DOM
+			.height($(window).height() - ($(".navbar").height() + $("footer.footer").height()));
+			plenty_admin.UI.field.hasLayout = true;
+		break;
+		
+		case "clear":
+			$("body")
+			.removeAttr("style");
+			
+			plenty_admin.UI.field.DOM
+			.prop("style", "");
+			plenty_admin.UI.field.hasLayout = false;
 		break;
 	}
 }
@@ -907,7 +961,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	//set the canvas height
-	plenty_admin.UI.field.financesGraphEl.height(plenty_admin.UI.field.financesGraphEl.parent().height());
+	//plenty_admin.UI.field.financesGraphEl.parent().css({"height":plenty_admin.UI.field.financesGraphEl.parent().height()});
 	
 	//holder for graph data set
 	var financesData = [];
@@ -931,7 +985,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
 		tooltipTemplate: "<%=label%>: <%= numeral(value).format('($00[.]00)') %> | <%= numeral(circumference / 6.283).format('(0[.][00]%)') %>",
 		animateRotate: true
 	};
@@ -956,6 +1010,21 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	legendHolder
 	.html("")
 	.append($legendHTML);
+	
+	var resetLegentStyle = function(legendHolder){
+		$(legendHolder)
+		.find("li")
+		.css({"background-color": "transparent"})
+		.removeClass("active")
+		.find("span.swatch")
+		.each(function(){
+			$(this)
+			.css({"background-color": $(this).closest("li").data("hovercolour")});
+		})
+		.end()
+		.find("span.pct")
+		.text("");
+	}
 	
 	// Include a html legend template after the module doughnut itself
 	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
@@ -983,18 +1052,41 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	
 	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
 		plenty_admin.UI.field.financesGraph.draw();
-		$(legendHolder)
-		.find("li")
-		.css({"background-color": "transparent"})
-		.removeClass("active")
-		.find("span.swatch")
-		.each(function(){
-			$(this)
-			.css({"background-color": $(this).closest("li").data("hovercolour")});
-		})
-		.end()
-		.find("span.pct")
-		.text("");
+		resetLegentStyle(legendHolder);
+	});
+	
+	//highlight key element when hovering segment
+	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
+		var activePoints = plenty_admin.UI.field.financesGraph.getSegmentsAtEvent(evt);
+		if(activePoints.length > 0){
+			console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+			legendHolder
+			.find("li")
+			.removeClass("active");
+			
+			var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+			var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+			var pct = numeral(activePoints[0].circumference / 6.283).format('(0[.][00]%)');
+			
+			resetLegentStyle(legendHolder);
+			
+			legendItem
+			.addClass("active")
+			.css({"background-color": legendItem.data("hovercolour")})
+			.find("span.swatch")
+			.css({"background-color": activePoints[0].highlightColor})
+			.end()
+			.find("span.pct")
+			.text(pct);
+		}else{
+			resetLegentStyle(legendHolder);
+		}
+		// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+	});
+	
+	//clear segment highlight onMouseOut
+	plenty_admin.UI.field.financesGraphEl.on("mouseout", function(evt){
+		resetLegentStyle(legendHolder);
 	});
 	
 	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);

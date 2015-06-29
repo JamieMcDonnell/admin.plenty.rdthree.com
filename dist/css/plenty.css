@@ -2981,6 +2981,11 @@ body {
   left: 25%;
   height: 100%;
 }
+#field-container .field_weather_data .col-xs-9 .graph {
+  background: transparent url(../img/scales/zadoks.gif-01.svg) no-repeat 0 28px;
+  -webkit-background-size: 100% 50%;
+          background-size: 100% 50%;
+}
 #field-container .field_weather_data .col-xs-3 {
   position: absolute;
   height: 100%;
@@ -3078,19 +3083,16 @@ body.map *:after {
      -moz-box-sizing: border-box;
           box-sizing: border-box;
 }
-html.map #map-wrapper,
-body.map #map-wrapper {
+#map-wrapper {
   position: relative;
 }
-html.map #map-wrapper h1.filters_toggle,
-body.map #map-wrapper h1.filters_toggle {
+#map-wrapper h1.filters_toggle {
   position: absolute;
   top: 10px;
   right: 10px;
   background-color: #fff;
 }
-html.map #map-wrapper #map-container,
-body.map #map-wrapper #map-container {
+#map-wrapper #map-container {
   position: absolute !important;
   top: 0;
   right: 0;
@@ -3099,8 +3101,7 @@ body.map #map-wrapper #map-container {
   z-index: 2;
   height: 100%;
 }
-html.map .flexbox-parent,
-body.map .flexbox-parent {
+.flexbox-parent {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -3128,16 +3129,14 @@ body.map .flexbox-parent {
           align-content: stretch;
   /* Extra space in Cross Axis */
 }
-html.map .flexbox-item-grow,
-body.map .flexbox-item-grow {
+.flexbox-item-grow {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
   /* same as flex: 1 1 auto; */
 }
-html.map .fill-area,
-body.map .fill-area {
+.fill-area {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -3163,8 +3162,7 @@ body.map .fill-area {
           align-content: stretch;
   /* Extra space in Cross Axis */
 }
-html.map .fill-area-content,
-body.map .fill-area-content {
+.fill-area-content {
   /* Needed for when the area gets squished too far and there is content that can't be displayed */
   overflow: hidden;
 }

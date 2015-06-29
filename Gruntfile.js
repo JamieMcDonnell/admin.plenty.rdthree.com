@@ -137,6 +137,7 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'bower_components/Chart.js/Chart.min.js',
 				'js/global.js',
 				'js/markerclusterer_compiled.js',
+				'js/attrchange_ext.js',
 				'js/inline-editing.js',
 				'js/maps.js',
 				'js/settings.js', 

@@ -2665,6 +2665,121 @@ function A(a,b){var c=[];c.push("background-image:url("+a.da+");");c.push("backg
 k.prototype.getExtendedBounds=k.prototype.v;k.prototype.getMap=k.prototype.getMap;k.prototype.getMarkers=k.prototype.o;k.prototype.getMaxZoom=k.prototype.I;k.prototype.getStyles=k.prototype.z;k.prototype.getTotalClusters=k.prototype.U;k.prototype.getTotalMarkers=k.prototype.V;k.prototype.redraw=k.prototype.i;k.prototype.removeMarker=k.prototype.Y;k.prototype.removeMarkers=k.prototype.Z;k.prototype.resetViewport=k.prototype.m;k.prototype.repaint=k.prototype.L;k.prototype.setCalculator=k.prototype.$;
 k.prototype.setGridSize=k.prototype.aa;k.prototype.setMaxZoom=k.prototype.ba;k.prototype.onAdd=k.prototype.onAdd;k.prototype.draw=k.prototype.draw;s.prototype.getCenter=s.prototype.getCenter;s.prototype.getSize=s.prototype.T;s.prototype.getMarkers=s.prototype.o;t.prototype.onAdd=t.prototype.onAdd;t.prototype.draw=t.prototype.draw;t.prototype.onRemove=t.prototype.onRemove;
 })();
+(function($) {
+	function isDOMAttrModifiedSupported() {
+		var p = document.createElement('p');
+		var flag = false;
+
+		if (p.addEventListener) {
+			p.addEventListener('DOMAttrModified', function() {
+				flag = true
+			}, false);
+		} else if (p.attachEvent) {
+			p.attachEvent('onDOMAttrModified', function() {
+				flag = true
+			});
+		} else { return false; }
+		p.setAttribute('id', 'target');
+		return flag;
+	}
+
+	function checkAttributes(chkAttr, e) {
+		if (chkAttr) {
+			var attributes = this.data('attr-old-value');
+
+			if (e.attributeName.indexOf('style') >= 0) {
+				if (!attributes['style'])
+					attributes['style'] = {}; //initialize
+				var keys = e.attributeName.split('.');
+				e.attributeName = keys[0];
+				e.oldValue = attributes['style'][keys[1]]; //old value
+				e.newValue = keys[1] + ':'
+						+ this.prop("style")[$.camelCase(keys[1])]; //new value
+				attributes['style'][keys[1]] = e.newValue;
+			} else {
+				e.oldValue = attributes[e.attributeName];
+				e.newValue = this.attr(e.attributeName);
+				attributes[e.attributeName] = e.newValue;
+			}
+
+			this.data('attr-old-value', attributes); //update the old value object
+		}
+	}
+
+	//initialize Mutation Observer
+	var MutationObserver = window.MutationObserver
+			|| window.WebKitMutationObserver;
+
+	$.fn.attrchange = function(a, b) {
+		if (typeof a == 'object') {//core
+			var cfg = {
+				trackValues : false,
+				callback : $.noop
+			};
+			//backward compatibility
+			if (typeof a === "function") { cfg.callback = a; } else { $.extend(cfg, a); }
+
+			if (cfg.trackValues) { //get attributes old value
+				this.each(function(i, el) {
+					var attributes = {};
+					for ( var attr, i = 0, attrs = el.attributes, l = attrs.length; i < l; i++) {
+						attr = attrs.item(i);
+						attributes[attr.nodeName] = attr.value;
+					}
+					$(this).data('attr-old-value', attributes);
+				});
+			}
+
+			if (MutationObserver) { //Modern Browsers supporting MutationObserver
+				var mOptions = {
+					subtree : false,
+					attributes : true,
+					attributeOldValue : cfg.trackValues
+				};
+				var observer = new MutationObserver(function(mutations) {
+					mutations.forEach(function(e) {
+						var _this = e.target;
+						//get new value if trackValues is true
+						if (cfg.trackValues) {							
+							e.newValue = $(_this).attr(e.attributeName);
+						}						
+						if ($(_this).data('attrchange-status') === 'connected') { //execute if connected
+							cfg.callback.call(_this, e);
+						}
+					});
+				});
+
+				return this.data('attrchange-method', 'Mutation Observer').data('attrchange-status', 'connected')
+						.data('attrchange-obs', observer).each(function() {
+							observer.observe(this, mOptions);
+						});
+			} else if (isDOMAttrModifiedSupported()) { //Opera
+				//Good old Mutation Events
+				return this.data('attrchange-method', 'DOMAttrModified').data('attrchange-status', 'connected').on('DOMAttrModified', function(event) {
+					if (event.originalEvent) { event = event.originalEvent; }//jQuery normalization is not required 
+					event.attributeName = event.attrName; //property names to be consistent with MutationObserver
+					event.oldValue = event.prevValue; //property names to be consistent with MutationObserver
+					if ($(this).data('attrchange-status') === 'connected') { //disconnected logically
+						cfg.callback.call(this, event);
+					}
+				});
+			} else if ('onpropertychange' in document.body) { //works only in IE		
+				return this.data('attrchange-method', 'propertychange').data('attrchange-status', 'connected').on('propertychange', function(e) {
+					e.attributeName = window.event.propertyName;
+					//to set the attr old value
+					checkAttributes.call($(this), cfg.trackValues, e);
+					if ($(this).data('attrchange-status') === 'connected') { //disconnected logically
+						cfg.callback.call(this, e);
+					}
+				});
+			}
+			return this;
+		} else if (typeof a == 'string' && $.fn.attrchange.hasOwnProperty('extensions') &&
+				$.fn.attrchange['extensions'].hasOwnProperty(a)) { //extensions/options
+			return $.fn.attrchange['extensions'][a].call(this, b);
+		}
+	}
+})(jQuery);
 //configure inline editing plugin
 $.fn.editable.defaults.mode = 'popup';
 // create the maps namespace in the admin object
@@ -4562,6 +4677,35 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 	switch(context){
 		case "settings":
 			plenty_admin.HELPER.showLoadingOverlay();
+  
+			  plenty_admin.UI.field.DOM.attrchange({
+				trackValues: true, /* Default to false, if set to true the event object is 
+							updated with old and new value.*/
+				callback: function (event) { 
+					//event               - event object
+					//event.attributeName - Name of the attribute modified
+					//event.oldValue      - Previous value of the modified attribute
+					//event.newValue      - New value of the modified attribute
+					//Triggered when the selected elements attribute is added/updated/removed
+					//ceck for display none and remove position attributes
+					//console.log("attr changed: ", event.attributeName, " --- ", event.newValue, parseFloat(event.newValue.slice(9)));
+					if(
+						event.newValue.indexOf("opacity") > -1 
+					){
+						var opacity = Math.round(parseFloat(event.newValue.slice(9)));
+						if(opacity > .999 && !plenty_admin.UI.field.hasLayout){
+							//field layout has been shown
+							plenty_admin.UI.field.fitFieldLayout("fit");
+							console.log("attr changed: ", event.attributeName, event.newValue);
+						}
+					}else if(event.newValue.indexOf("display") > -1 && event.newValue.indexOf("none") > -1){
+						//field has been hidden, clear settings on body
+						console.log("attr changed: ", event.attributeName, event.newValue);
+						plenty_admin.UI.field.fitFieldLayout("clear");
+					}
+				}        
+			});
+
 			plenty_admin.UI.currentScreen
 			.fadeOut("normal", function(){
 				plenty_admin.UI.currentScreen = plenty_admin.UI.field.DOM;
@@ -4578,6 +4722,7 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 				  }, function(map, fieldObj, polygon){
 					plenty_admin.UI.field.polygon = polygon;
 				});
+				
 				plenty_admin.UI.currentScreen.fadeIn("normal");
 			});
 		break;
@@ -4609,6 +4754,30 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 			.parent()
 			.find(".filter_controls")
 			.fadeOut("fast");
+		break;
+	}
+}
+
+plenty_admin.UI.field.hasLayout = false;
+plenty_admin.UI.field.fitFieldLayout = function(state){
+	switch (state){
+		case "fit":
+			$("body")
+			.height($(window).height())
+			.css({"overflow":"hidden"});
+			
+			plenty_admin.UI.field.DOM
+			.height($(window).height() - ($(".navbar").height() + $("footer.footer").height()));
+			plenty_admin.UI.field.hasLayout = true;
+		break;
+		
+		case "clear":
+			$("body")
+			.removeAttr("style");
+			
+			plenty_admin.UI.field.DOM
+			.prop("style", "");
+			plenty_admin.UI.field.hasLayout = false;
 		break;
 	}
 }
@@ -5431,7 +5600,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	//set the canvas height
-	plenty_admin.UI.field.financesGraphEl.height(plenty_admin.UI.field.financesGraphEl.parent().height());
+	//plenty_admin.UI.field.financesGraphEl.parent().css({"height":plenty_admin.UI.field.financesGraphEl.parent().height()});
 	
 	//holder for graph data set
 	var financesData = [];
@@ -5455,7 +5624,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
 		tooltipTemplate: "<%=label%>: <%= numeral(value).format('($00[.]00)') %> | <%= numeral(circumference / 6.283).format('(0[.][00]%)') %>",
 		animateRotate: true
 	};
@@ -5480,6 +5649,21 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	legendHolder
 	.html("")
 	.append($legendHTML);
+	
+	var resetLegentStyle = function(legendHolder){
+		$(legendHolder)
+		.find("li")
+		.css({"background-color": "transparent"})
+		.removeClass("active")
+		.find("span.swatch")
+		.each(function(){
+			$(this)
+			.css({"background-color": $(this).closest("li").data("hovercolour")});
+		})
+		.end()
+		.find("span.pct")
+		.text("");
+	}
 	
 	// Include a html legend template after the module doughnut itself
 	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
@@ -5507,18 +5691,41 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	
 	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
 		plenty_admin.UI.field.financesGraph.draw();
-		$(legendHolder)
-		.find("li")
-		.css({"background-color": "transparent"})
-		.removeClass("active")
-		.find("span.swatch")
-		.each(function(){
-			$(this)
-			.css({"background-color": $(this).closest("li").data("hovercolour")});
-		})
-		.end()
-		.find("span.pct")
-		.text("");
+		resetLegentStyle(legendHolder);
+	});
+	
+	//highlight key element when hovering segment
+	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
+		var activePoints = plenty_admin.UI.field.financesGraph.getSegmentsAtEvent(evt);
+		if(activePoints.length > 0){
+			console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+			legendHolder
+			.find("li")
+			.removeClass("active");
+			
+			var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+			var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+			var pct = numeral(activePoints[0].circumference / 6.283).format('(0[.][00]%)');
+			
+			resetLegentStyle(legendHolder);
+			
+			legendItem
+			.addClass("active")
+			.css({"background-color": legendItem.data("hovercolour")})
+			.find("span.swatch")
+			.css({"background-color": activePoints[0].highlightColor})
+			.end()
+			.find("span.pct")
+			.text(pct);
+		}else{
+			resetLegentStyle(legendHolder);
+		}
+		// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+	});
+	
+	//clear segment highlight onMouseOut
+	plenty_admin.UI.field.financesGraphEl.on("mouseout", function(evt){
+		resetLegentStyle(legendHolder);
 	});
 	
 	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);
