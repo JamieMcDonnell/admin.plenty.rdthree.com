@@ -436,29 +436,38 @@ plenty_admin.MAPS.draw_CLU_polygon = function(points, editable, polygonId){
 	return CLU_polygon;
 }
 
-plenty_admin.MAPS.draw_pin = function(position, onMouseOver, onMouseOut, onClick, itemObj){
-	//var myLatLng = new google.maps.LatLng(-33.890542, 151.274856);
+plenty_admin.MAPS.draw_pin = function(pinData, pinEvents){
 	var equipment_marker = new google.maps.Marker({
-		position: position,
+		position: pinData.latlng,
 		map: plenty_admin.MAPS.mainMap,
-		icon: itemObj.image,
+		icon: pinData.image,
 		animation: google.maps.Animation.DROP,
-		title: itemObj.name
+		title: pinData.name,
+		draggable: pinData.draggable,
+		zIndex:1
 	});
 	
-	equipment_marker.id = itemObj.id;
-	equipment_marker.name = itemObj.name;
+	equipment_marker.id = pinData.id;
+	equipment_marker.name = pinData.name;
 	
-	if(onMouseOver){
-		google.maps.event.addListener(equipment_marker, "mouseover", onMouseOver); 
+	if(pinEvents.onMouseOver){
+		google.maps.event.addListener(equipment_marker, "mouseover", pinEvents.onMouseOver); 
 	}
 	
-	if(onMouseOut){
-		google.maps.event.addListener(equipment_marker, "mouseout", onMouseOut); 
+	if(pinEvents.onMouseOut){
+		google.maps.event.addListener(equipment_marker, "mouseout", pinEvents.onMouseOut); 
 	}
 	
-	if(onClick){
-		google.maps.event.addListener(equipment_marker, "click", onClick); 
+	if(pinEvents.onClick){
+		google.maps.event.addListener(equipment_marker, "click", pinEvents.onClick); 
+	}
+	
+	if(pinEvents.onRightClick){
+		google.maps.event.addListener(equipment_marker, "rightclick", pinEvents.onRightClick); 
+	}
+	
+	if(pinEvents.onDragEnd){
+		google.maps.event.addListener(equipment_marker, "dragend", pinEvents.onDragEnd); 
 	}
 	
 	plenty_admin.MAPS.equipment_pins.push(equipment_marker);
@@ -677,6 +686,35 @@ plenty_admin.MAPS.openInfoWindow = function(position, map){
 	plenty_admin.MAPS.infoWindow.open(map);
 }
 
+plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, ev){
+	console.log("show_equipment_pin_context_menu", pinData, ev);
+	if(plenty_admin.MAPS.infoWindow)
+	{
+		plenty_admin.MAPS.infoWindow.close();
+	}
+	
+	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
+	
+	$.get("ajax/equipment_pin_context.html", function(contentString){
+		//store the returned html
+		plenty_admin.MAPS.infoWindowContent = contentString;
+		
+		google.maps.event.addListener(plenty_admin.MAPS.infoWindow, 'domready', function(content){ 
+			plenty_admin.MAPS.infoWindowContent = $(".context-menu");
+			
+			plenty_admin.MAPS.infoWindowContent
+			.find(".delete_equipment a")
+			.click(function(){
+				//alert("insert equipment");
+				plenty_admin.MAPS.delete_fixed_equipment(pinData, plenty_admin.MAPS.mainMap);
+				return false;
+			});
+		});
+		
+		plenty_admin.MAPS.openInfoWindow(pinData.latlng, plenty_admin.MAPS.mainMap);
+	});
+}
+
 plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name){
 	if(plenty_admin.MAPS.infoWindow)
 	{
@@ -704,14 +742,14 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 						}
 						
 						
-						plenty_admin.MAPS.showEditFieldForm(fieldData, plenty_admin.MAPS.map);
+						plenty_admin.MAPS.showEditFieldForm(fieldData, plenty_admin.MAPS.mainMap);
 						return false;
 					})
 					.end()
 					.find(".insert_equipment a")
 					.click(function(){
 						//alert("insert equipment");
-						plenty_admin.MAPS.add_fixed_equipment(fieldData, plenty_admin.MAPS.map);
+						plenty_admin.MAPS.add_fixed_equipment(fieldData, plenty_admin.MAPS.mainMap);
 						return false;
 					});
 				break;
@@ -719,7 +757,38 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 		});
 		
 		var clickPoint = new google.maps.LatLng(fieldData.rc_lat, fieldData.rc_lng);
-		plenty_admin.MAPS.openInfoWindow(clickPoint, map);
+		plenty_admin.MAPS.openInfoWindow(clickPoint, plenty_admin.MAPS.mainMap);
+	});
+}
+
+plenty_admin.MAPS.delete_fixed_equipment = function(pinData, map){
+	if(plenty_admin.MAPS.infoWindow){
+		plenty_admin.MAPS.infoWindow.close();
+	}
+	
+	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
+	
+	$.get("ajax/delete-equipment-form.html", function(contentString){
+		plenty_admin.MAPS.infoWindowContent = contentString;
+		
+		google.maps.event.addListener(plenty_admin.MAPS.infoWindow, 'domready', function(content){ 
+			plenty_admin.MAPS.infoWindowContent = $(".deleteEquipment");
+			
+			plenty_admin.MAPS.infoWindowContent
+			.find("button.delete")
+			.click(function(){
+				plenty_admin.MAPS.infoWindow.close();
+				return false;
+			})
+			.end()
+			.find("button.cancel")
+			.click(function(){
+				plenty_admin.MAPS.infoWindow.close();
+				return false;
+			});
+		});
+		
+		plenty_admin.MAPS.openInfoWindow(pinData.latlng, map);
 	});
 }
 
@@ -745,9 +814,12 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			.remove();
 			
 			var equipOptionsHTML = "";
-			for(var f=0; f<plenty_admin.DATA.data_source.equipmentTypes.length; f++){
-				var equip = plenty_admin.DATA.data_source.equipmentTypes[f];
-				equipOptionsHTML += "<option value='"+equip.id+"'>"+equip.name+"</option>";
+			
+			for(id in plenty_admin.DATA.equipmentTypes){
+				if(plenty_admin.DATA.equipmentTypes.hasOwnProperty(id)){
+					var equip = plenty_admin.DATA.equipmentTypes[id];
+					equipOptionsHTML += "<option value='"+id+"'>"+equip.name+"</option>";
+				}
 			}
 			
 			$equipList.append(equipOptionsHTML);
@@ -786,6 +858,12 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			.find("button.finish")
 			.click(function(){
 			plenty_admin.MAPS.infoWindow.close();
+				return false;	
+			})
+			.end()
+			.find("button.cancel")
+			.click(function(){
+				plenty_admin.MAPS.infoWindow.close();
 				return false;	
 			})
 			.end()

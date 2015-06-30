@@ -9,6 +9,8 @@ plenty_admin.UI.map.orgs_quickfilter = plenty_admin.UI.map.filterControls.find("
 plenty_admin.UI.map.minCLUZoom = 15;
 plenty_admin.UI.map.applicableFilters = ["organizations", "farms", "fields", "cropTypes", "plans"];
 plenty_admin.UI.map.filtered_field_polygons = [];
+plenty_admin.UI.map.MODAL_liveEquipment = plenty_admin.UI.map.DOM.parent().find(".modal#equipment-live");
+plenty_admin.UI.map.MODAL_equipment = plenty_admin.UI.map.DOM.parent().find(".modal#equipment");
 //method to initiate the field page
 plenty_admin.UI.map.init = function(){
 	console.log("plenty_admin.UI.map.init");
@@ -140,19 +142,33 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					latitude:38.03148542362175,
 					longitude: -95.5297395615873,
 					equipmentTypeId: 1,
+					name: "John Deere ATV",
 					id:1,	
+					live: false
 				},
 				{
 					latitude:38.03271888116563,
 					longitude: -95.52987739298443,
 					equipmentTypeId: 2,
+					name: "John Deere Tractor",
+					data:{
+						depth:"1.2m",
+						angle:"33degrees"
+					},
 					id:2,	
+					live: true
 				},
 				{
 					latitude:38.031950730093264,
 					longitude: -95.5293030472672,
 					equipmentTypeId: 3,
+					name: "John Deere Spreader",
+					data:{
+						depth:"1.2m",
+						angle:"33degrees"
+					},
 					id:3,	
+					live:true
 				},
 			]
 		}
@@ -175,30 +191,73 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 				boundaryLatLngs.push(latlng);
 				plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[e]);
 				
-				 equip.image = {
-					url: "img/map-markers/"+equip.equipmentTypeId+".svg",
-					// This marker is 20 pixels wide by 32 pixels tall.
-					size: new google.maps.Size(50, 50),
-					// The origin for this image is 0,0.
-					origin: new google.maps.Point(0,0),
-					// The anchor for this image is the base of the flagpole at 0,32.
-					anchor: new google.maps.Point(0, 25)
+				equip.image = {
+						url: "img/map-markers/"+equip.equipmentTypeId+".svg",
+						// This marker is 20 pixels wide by 32 pixels tall.
+						size: new google.maps.Size(50, 50),
+						// The origin for this image is 0,0.
+						origin: new google.maps.Point(0,0),
+						// The anchor for this image is the base of the flagpole at 0,32.
+						anchor: new google.maps.Point(20, 50)
 				};
 				
+				equip.latlng = latlng;
+				
+				equip.draggable = true;
+				
+				var pinEvents = {
+					onMouseOver: function(event){ //mouseover event
+						this.setOptions({zIndex:10});
+					}, 
+					onMouseOut: function(event){ //mouseout event
+						this.setOptions({zIndex:1});
+					}, 
+					onClick: function(event){ //click event
+						var modal;
+						if(equip.live){
+							modal = plenty_admin.UI.map.MODAL_liveEquipment;
+						}else{
+							modal = plenty_admin.UI.map.MODAL_equipment;
+						}
+						
+						modal
+						.find(".modal-title")
+						.text(equip.name)
+						.end()
+						.find(".type")
+						.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
+						.end()
+						.find(".image img").prop("src", "")
+						.end()
+						.find(".lat")
+						.text(equip.latlng.A)
+						.end()
+						.find(".lng")
+						.text(equip.latlng.F)
+						.end()
+						.find(".depth span")
+						.text((equip.data ? equip.data.depth : "-"))
+						.end()
+						.find(".angle span")
+						.text((equip.data ? equip.data.angle : "-"))
+						.end()
+						.find(".editable")
+						.editable(plenty_admin.REST.inline_editing_options)
+						.end()
+						.modal("show");
+						
+					}, 
+					onRightClick: function(event){ //right click event
+						console.log("event:", event, equip);
+						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
+					},
+					onDragEnd: function(event){ //drag end event
+						console.log("event:", event, equip);
+						alert("drag end - save new equipment position?", equip);
+					}
+				};
 				//draw the pin on the map
-				plenty_admin.MAPS.draw_pin(
-					latlng, 
-					function(event){ //mouseover event
-						
-					}, 
-					function(event){ //mouseout event
-						
-					}, 
-					function(event){ //click event
-						
-					}, 
-					equip //the equipment object
-				);
+				plenty_admin.MAPS.draw_pin(equip, pinEvents);
 			}
 		});
 		
