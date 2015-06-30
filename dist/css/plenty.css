@@ -2943,6 +2943,11 @@ body {
   position: absolute;
   width: 60% !important;
   height: 100% !important;
+  padding: 5px;
+}
+#field-container .field_asset_data .col-xs-9 #finances .doughnut .doughnutWrapper,
+#field-container .field_asset_data .col-xs-9 .col-xs-9 #finances .doughnut .doughnutWrapper {
+  height: 100%;
 }
 #field-container .field_asset_data .col-xs-9 .legend,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 .legend {
@@ -2951,6 +2956,7 @@ body {
   left: 60%;
   width: 40%;
   height: 100%;
+  overflow: auto;
 }
 #field-container .field_asset_data .col-xs-9 .legend ul,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul {
@@ -2976,15 +2982,33 @@ body {
 #field-container .field_weather_data {
   position: relative;
 }
+#field-container .field_weather_data svg.def {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: none;
+}
 #field-container .field_weather_data .col-xs-9 {
   position: absolute;
   left: 25%;
   height: 100%;
 }
-#field-container .field_weather_data .col-xs-9 .graph {
-  background: transparent url(../img/scales/zadoks.gif-01.svg) no-repeat 0 28px;
-  -webkit-background-size: 100% 50%;
-          background-size: 100% 50%;
+#field-container .field_weather_data .col-xs-9 .graph .graph-wrapper {
+  position: relative;
+  height: 100%;
+}
+#field-container .field_weather_data .col-xs-9 .graph .graph-wrapper svg.scale {
+  position: absolute;
+  z-index: 0;
+}
+#field-container .field_weather_data .col-xs-9 .graph .graph-wrapper canvas {
+  position: absolute;
+  z-index: 1;
+  height: 100% !important;
 }
 #field-container .field_weather_data .col-xs-3 {
   position: absolute;
@@ -3030,12 +3054,18 @@ body {
 #field-container .field_weather_data .tab-content .weatherEventsWrapper .weatherEventsRows .weatherEvents.wind {
   background-color: #77bc7d;
 }
-#field-container .tab-pane {
+#field-container .tab-content {
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-radius: 6px;
+}
+#field-container .tab-content .tab-pane {
   display: none;
   width: 100%;
   height: 100%;
 }
-#field-container .tab-pane.active {
+#field-container .tab-content .tab-pane.active {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;

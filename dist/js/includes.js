@@ -2499,7 +2499,13 @@ plenty_admin.HELPER.formateJavaDate = function(unix_timestamp){
 	  var hour = (a.getHours() < 10 ? "0"+a.getHours() : a.getHours());
 	  var min = (a.getMinutes() < 10 ? "0"+a.getMinutes() : a.getMinutes());
 	  var sec = (a.getSeconds() < 10 ? "0"+a.getSeconds() : a.getSeconds());
-	  var _date = month + ' ' + date;
+	  var _date = (month ? month.slice(0,4) : month) + ' ' + date;
+	  
+	  /* HACK for empty dates */
+	  if(_date.indexOf("unde") > -1 || _date.indexOf("NaN") > -1){
+		_date = "April 21";  
+	  }
+	  
 	  var time = hour + ':' + min + ':' + sec;
 	  var date_time = _date + ' ' +  time;
 	  return {
@@ -3224,8 +3230,9 @@ plenty_admin.MAPS.draw_pin = function(position, onMouseOver, onMouseOut, onClick
 	//var myLatLng = new google.maps.LatLng(-33.890542, 151.274856);
 	var equipment_marker = new google.maps.Marker({
 		position: position,
-		map: plenty_admin.MAPS.map,
+		map: plenty_admin.MAPS.mainMap,
 		icon: itemObj.image,
+		animation: google.maps.Animation.DROP,
 		title: itemObj.name
 	});
 	
@@ -3323,7 +3330,7 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events){
 		  return lastCenter;
 		};
 	}else{
-		field_polygon.setMap(plenty_admin.MAPS.map);
+		field_polygon.setMap(plenty_admin.MAPS.mainMap);
 	}
 	
 	plenty_admin.UI.map.filtered_field_polygons.push(field_polygon);
@@ -3376,25 +3383,19 @@ plenty_admin.MAPS.get_static_maps_url = function(mapDetails){
 	return mapUrl;
 }
 
-plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable){
-	console.log("draw_field_on_map: ", fieldObj, mapOptions);
+plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable, polyPath){
+	//console.log("draw_field_on_map: ", fieldObj, mapOptions, polyPath);
 	
 	var itemLatLng = new google.maps.LatLng(fieldObj.latitude, fieldObj.longitude);
 	//console.log("itemLatLng: ", itemLatLng);
 	
-	plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(fieldObj.id, 1 /* We are only interested in field boundaries here*/, function(boundaries){
-		console.log("got boundaries for field: ", boundaries);
-		
+	if(polyPath){
 		//load map
 		plenty_admin.MAPS.map = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
 		
-		fieldObj.boundaries = boundaries;
+		fieldObj.boundaries = polyPath;
 		fieldObj.editable = editable;
-		
-		var fieldData = {
-			boundaries:boundaries,
-			editable: editable
-		};
+		fieldObj.isCoords = true;
 		
 		var poly_events = {
 			onEdit: function(){
@@ -3403,7 +3404,6 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 				plenty_admin.MAPS.infoWindowContent
 				.find("#edit_field_acres")
 				.val(newArea);
-				
 			}
 		};
 		
@@ -3414,7 +3414,36 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 		if(callback && typeof callback === "function"){
 			callback(plenty_admin.MAPS.map, fieldObj, polygon);  
 		}
-	});
+	}else{
+		plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(fieldObj.id, 1 /* We are only interested in field boundaries here*/, function(boundaries){
+			console.log("got boundaries for field: ", boundaries);
+			
+			//load map
+			plenty_admin.MAPS.map = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
+			
+			fieldObj.boundaries = boundaries;
+			fieldObj.editable = editable;
+			
+			var poly_events = {
+				onEdit: function(){
+					// onEdit handler
+					var newArea = plenty_admin.MAPS.get_polygon_area(polygon);
+					plenty_admin.MAPS.infoWindowContent
+					.find("#edit_field_acres")
+					.val(newArea);
+					
+				}
+			};
+			
+			var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events);
+			
+			plenty_admin.MAPS.zoomToPolygon(polygon);
+			
+			if(callback && typeof callback === "function"){
+				callback(plenty_admin.MAPS.map, fieldObj, polygon);  
+			}
+		});
+	}
 	
 	return fieldObj;
 }
@@ -4656,6 +4685,7 @@ plenty_admin.UI.field.financesGraphEl = plenty_admin.UI.field.DOM.find(".tab-con
 
 /* Set up the global properties of the charts plugin*/
 Chart.defaults.global.responsive = true;
+Chart.defaults.global.maintainAspectRatio = false;
 Chart.defaults.Line.scaleShowHorizontalLines = true;
 Chart.defaults.Line.scaleShowVerticalLines = true;
 Chart.defaults.Line.scaleShowGridLines = true;
@@ -4669,8 +4699,8 @@ plenty_admin.UI.field.dates = {
 };
 
 //method to initiate the field page
-plenty_admin.UI.field.init = function(fieldObj, context){
-	console.log("plenty_admin.UI.field.init", fieldObj);
+plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
+	console.log("plenty_admin.UI.field.init", fieldObj, polyPath);
 	
 	plenty_admin.UI.field.clear();
 	
@@ -4745,7 +4775,7 @@ plenty_admin.UI.field.init = function(fieldObj, context){
 					disableDoubleClickZoom: true
 				  }, function(map, fieldObj, polygon){
 					plenty_admin.UI.field.polygon = polygon;
-				});
+				}, false, polyPath);
 				
 				plenty_admin.UI.currentScreen
 				.addClass("fill-area-content flexbox-item-grow")
@@ -4987,6 +5017,7 @@ plenty_admin.UI.field.populate = function(fieldObj){
 }
 
 plenty_admin.UI.field.updateWeatherGraph = function(hash){
+	var graph = "";
 	switch(hash){
 		case "#temp":
 			//create the temp graph object if it does not yet exist
@@ -4995,6 +5026,7 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 			}else{
 				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.tempGraph;
 			}
+			graph = "tempGraph";
 		break;
 		
 		case "#moisture":
@@ -5004,6 +5036,7 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 			}else{
 				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.moistureGraph;
 			}
+			graph = "moistureGraph";
 		break;
 		
 		case "#precip":
@@ -5013,6 +5046,7 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 			}else{
 				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.precipGraph;
 			}
+			graph = "precipGraph";
 		break;
 		
 		case "#gdd":
@@ -5022,6 +5056,7 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 			}else{
 				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.gddGraph;
 			}
+			graph = "gddGraph";
 		break;
 	}
 	
@@ -5032,6 +5067,8 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
 	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
 	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+	
+	plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
 	
 	plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
 }
@@ -5096,7 +5133,6 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 					}
 			}
 			
-			var precipCumulative = 0;
 			var label_inc = 0;
 			var label_step = 3;
 			
@@ -5175,28 +5211,34 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			//update the graph in the currently visible tab
 			var selectedGraph = plenty_admin.UI.field.weatherTabs.DOM.find(".nav-tabs li.active a").prop("href")
 			var hash = selectedGraph.substring(selectedGraph.indexOf('#'));
-			
+			var graph = "";
 			switch(hash){
 				case "#temp":
 					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
+					graph = "tempGraph";
 				break;
 				
 				case "#moisture":
 					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
+					graph = "moistureGraph";
 				break;
 				
 				case "#precip":
 					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
+					graph = "precipGraph";
 				break;
 				
 				case "#gdd":
 					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
+					graph = "gddGraph";
 				break;
 			}
 			
 			//set width of dom element that offsets the weather events and activities
 			var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
 			keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+			
+			plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
 			
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
@@ -5207,6 +5249,8 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
 				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
 				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+				
+				plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
 			});
 			
 			plenty_admin.DATA.eventCollector.done("event 1");
@@ -5418,22 +5462,22 @@ plenty_admin.UI.field.renderTempGraph = function(){
 			datasets: [
 				{
 					label: "Min",
-					fillColor: "rgba(220,220,220,0.2)",
-					strokeColor: "rgba(220,220,220,1)",
-					pointColor: "rgba(220,220,220,1)",
+					fillColor: "rgba(142,220,244,0.2)",
+					strokeColor: "rgba(142,220,244,1)",
+					pointColor: "rgba(108,202,224,1)",
 					pointStrokeColor: "#fff",
 					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(220,220,220,1)",
+					pointHighlightStroke: "rgba(142,220,244,1)",
 					data: plenty_admin.UI.field.weatherDays.minTemp
 				},
 				{
 					label: "Max",
-					fillColor: "rgba(151,187,205,0.2)",
-					strokeColor: "rgba(151,187,205,1)",
-					pointColor: "rgba(151,187,205,1)",
+					fillColor: "rgba(249,216,110,0.2)",
+					strokeColor: "rgba(249,216,110,1)",
+					pointColor: "rgba(239,193,63,1)",
 					pointStrokeColor: "#fff",
 					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(151,187,205,1)",
+					pointHighlightStroke: "rgba(249,216,110,1)",
 					data: plenty_admin.UI.field.weatherDays.maxTemp
 				}
 			]
@@ -5445,13 +5489,25 @@ plenty_admin.UI.field.renderTempGraph = function(){
 		
 		var helpers = Chart.helpers;
 	
-		console.log("TEMP helpers", helpers);
-		
 		plenty_admin.UI.field.tempGraph = new Chart(plenty_admin.UI.field.tempGraphEl.get(0).getContext("2d")).Line(tempGraphData, tempGraphOptions);
 		plenty_admin.UI.field.tempGraph.datasetId = "temp"; 
 		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.tempGraph);
 		
 		return plenty_admin.UI.field.tempGraph;
+}
+plenty_admin.UI.field.scaleScale = function(graphEl){
+	console.log("graphEl", graphEl);
+	var scaleWidth = graphEl.width();
+	var scaleHeight = graphEl.height();
+		
+	graphEl
+	.parent()
+	.find("svg.scale")
+	.prop("viewBox", "0 0 "+scaleWidth+" "+plenty_admin.UI.field.currentGraph.scale.endPoint)
+	.width(scaleWidth - plenty_admin.UI.field.currentGraph.datasets[0].points[0].x)
+	.height(plenty_admin.UI.field.currentGraph.scale.endPoint)
+	.css({"left": plenty_admin.UI.field.currentGraph.datasets[0].points[0].x})
+	.fadeIn("fast");
 }
 
 plenty_admin.UI.field.renderMoistureGraph = function(){
@@ -5508,12 +5564,12 @@ plenty_admin.UI.field.renderPrecipGraph = function(){
 			datasets: [
 				{
 					label: "Precipitation",
-					fillColor: "rgba(220,220,220,0.2)",
-					strokeColor: "rgba(220,220,220,1)",
-					pointColor: "rgba(220,220,220,1)",
+					fillColor: "rgba(136,242,201,0.2)",
+					strokeColor: "rgba(136,242,201,1)",
+					pointColor: "rgba(97,226,174,1)",
 					pointStrokeColor: "#fff",
 					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(220,220,220,1)",
+					pointHighlightStroke: "rgba(136,242,201,1)",
 					data: plenty_admin.UI.field.weatherDays.percipTotalToToday
 				}
 			]
@@ -5536,12 +5592,12 @@ plenty_admin.UI.field.renderGDDGraph = function(){
 			datasets: [
 				{
 					label: "GDD",
-					fillColor: "rgba(220,220,220,0.2)",
-					strokeColor: "rgba(220,220,220,1)",
-					pointColor: "rgba(220,220,220,1)",
+					fillColor: "rgba(185,244,146,0.2)",
+					strokeColor: "rgba(185,244,146,1)",
+					pointColor: "rgba(150,234,96,1)",
 					pointStrokeColor: "#fff",
 					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(220,220,220,1)",
+					pointHighlightStroke: "rgba(185,244,146,1)",
 					data: plenty_admin.UI.field.weatherDays.gddTotalToToday
 				}
 			]
@@ -5611,7 +5667,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	for(var f=0; f<finances.length; f++){
 		var finance = finances[f];
 		finance.colour = "#"+plenty_admin.UI.brand_palette.colourAt(f);
-		console.log("finance.colour", finance.colour);
+		//console.log("finance.colour", finance.colour);
 		
 		var segment = {
 			value:		finance.amount,
@@ -5624,24 +5680,25 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
 		tooltipTemplate: "<%=label%>: <%= numeral(value).format('($00[.]00)') %> | <%= numeral(circumference / 6.283).format('(0[.][00]%)') %>",
 		animateRotate: true
 	};
 	
 	var helpers = Chart.helpers;
 	
-	console.log("helpers", helpers);
+	//console.log("helpers", helpers);
 	
 	plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
 	
-	console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
+	//console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
 	
 	//add a legend for this graph
 	var $legendHTML = $(plenty_admin.UI.field.financesGraph.generateLegend());
 	
 	var legendHolder = 
 	plenty_admin.UI.field.financesGraphEl
+	.parent()
 	.parent()
 	.parent()
 	.find(".legend");
@@ -5698,7 +5755,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
 		var activePoints = plenty_admin.UI.field.financesGraph.getSegmentsAtEvent(evt);
 		if(activePoints.length > 0){
-			console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+			//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
 			legendHolder
 			.find("li")
 			.removeClass("active");
@@ -5865,41 +5922,81 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 	boundary.minLatitude = bounds.getSouthWest().A;
 	
 	plenty_admin.REST.fields.getEquipmentLocationForFilter(boundary, function(equipmentData){
-		console.log("Equipment", equipmentData);
 		//get array of equipment elements
 		var equipment = equipmentData;
 		
+		//HACK!!! Add some hard coded equipment because the DB is not returning any
+		if(equipment.length == 0){
+			equipment = [
+				{
+					latitude:38.03148542362175,
+					longitude: -95.5297395615873,
+					equipmentTypeId: 1,
+					id:1,	
+				},
+				{
+					latitude:38.03271888116563,
+					longitude: -95.52987739298443,
+					equipmentTypeId: 2,
+					id:2,	
+				},
+				{
+					latitude:38.031950730093264,
+					longitude: -95.5293030472672,
+					equipmentTypeId: 3,
+					id:3,	
+				},
+			]
+		}
+		
+		console.log("Equipment", equipmentData);
+		
+		var boundaryLatLngs = [];
+		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-			//get a google latlng object for each element
-			var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+			var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+				return pin.id === equip.id;
+			});
 			
-			//extend the map boundary to include all points
-			boundaryLatLngs.push(latlng);
-			plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
-			
-			//create the equipment item object
-			equip.image = "img/map-markers/default.png";
-			
-			//draw the pin on the map
-			plenty_admin.MAPS.draw_pin(
-				latlng, 
-				function(event){ //mouseover event
-					
-				}, 
-				function(event){ //mouseout event
-					
-				}, 
-				function(event){ //click event
-					
-				}, 
-				equip //the equipment object
-			);
+			if(iconExists.length === 0){
+				//get a google latlng object for each element
+				var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+				
+				//extend the map boundary to include all points
+				boundaryLatLngs.push(latlng);
+				plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[e]);
+				
+				 equip.image = {
+					url: "img/map-markers/"+equip.equipmentTypeId+".svg",
+					// This marker is 20 pixels wide by 32 pixels tall.
+					size: new google.maps.Size(50, 50),
+					// The origin for this image is 0,0.
+					origin: new google.maps.Point(0,0),
+					// The anchor for this image is the base of the flagpole at 0,32.
+					anchor: new google.maps.Point(0, 25)
+				};
+				
+				//draw the pin on the map
+				plenty_admin.MAPS.draw_pin(
+					latlng, 
+					function(event){ //mouseover event
+						
+					}, 
+					function(event){ //mouseout event
+						
+					}, 
+					function(event){ //click event
+						
+					}, 
+					equip //the equipment object
+				);
+			}
 		});
 		
 		if(equipment.length > 0){
-			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
-			var markerCluster = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.MAPS.equipment_pins);
+			//plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+			//var markerCluster = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.MAPS.equipment_pins);
 		}
 	});
 }
@@ -5985,7 +6082,7 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 						return field.fieldId === _field.id;
 					})[0].name,
 					isCoords: true,
-					isCluster: true,
+					//isCluster: false,
 					cropType: field.cropTypeName
 				};
 				
@@ -6028,19 +6125,19 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 							fullFieldObject.rc_lat = event.latLng.lat();
 							fullFieldObject.rc_lng = event.latLng.lng();
 							
-							console.log("fullFieldObject", fullFieldObject);
+							//console.log("fullFieldObject", fullFieldObject);
 							plenty_admin.MAPS.show_polygon_context_menu(fullFieldObject, plenty_admin.MAPS.mainMap, "map_context_menu");
 						});
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onClick: function(event){ //onClick handler
-						console.log("polygon clicked: ", this.getPath().getArray());
+						//console.log("polygon clicked: ", this.getPath().getArray());
 						var thisPoly = this;
 						var polyPath = this.getPath().getArray();
 						
-						console.log("polyPath 111", polyPath);
 						//get field by ID
 						plenty_admin.REST.fields.getFieldById(this.id, function(fieldObj){
+							//console.log("polyPath", polyPath);
 							fieldObj.fillColor = thisPoly.fillColor;
 							fieldObj.strokeColor = thisPoly.strokeColor;
 							fieldObj.boundaries = polyPath;
@@ -6077,7 +6174,7 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 							.end()
 							.prepend(plenty_admin.UI.build_breadcrumb_trail(field_breadcrumb));
 							
-							plenty_admin.UI.field.init(fieldObj, "map");
+							plenty_admin.UI.field.init(fieldObj, "map"/*, polyPath */);
 						});
 					}
 				};
@@ -6092,7 +6189,7 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 		}
 		
 		//cluster the polygons and render clusters on the map
-		plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);
+		//plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);
 	});
 }
 

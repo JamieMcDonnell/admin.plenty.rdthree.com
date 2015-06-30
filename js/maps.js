@@ -440,8 +440,9 @@ plenty_admin.MAPS.draw_pin = function(position, onMouseOver, onMouseOut, onClick
 	//var myLatLng = new google.maps.LatLng(-33.890542, 151.274856);
 	var equipment_marker = new google.maps.Marker({
 		position: position,
-		map: plenty_admin.MAPS.map,
+		map: plenty_admin.MAPS.mainMap,
 		icon: itemObj.image,
+		animation: google.maps.Animation.DROP,
 		title: itemObj.name
 	});
 	
@@ -539,7 +540,7 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events){
 		  return lastCenter;
 		};
 	}else{
-		field_polygon.setMap(plenty_admin.MAPS.map);
+		field_polygon.setMap(plenty_admin.MAPS.mainMap);
 	}
 	
 	plenty_admin.UI.map.filtered_field_polygons.push(field_polygon);
@@ -592,25 +593,19 @@ plenty_admin.MAPS.get_static_maps_url = function(mapDetails){
 	return mapUrl;
 }
 
-plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable){
-	console.log("draw_field_on_map: ", fieldObj, mapOptions);
+plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable, polyPath){
+	//console.log("draw_field_on_map: ", fieldObj, mapOptions, polyPath);
 	
 	var itemLatLng = new google.maps.LatLng(fieldObj.latitude, fieldObj.longitude);
 	//console.log("itemLatLng: ", itemLatLng);
 	
-	plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(fieldObj.id, 1 /* We are only interested in field boundaries here*/, function(boundaries){
-		console.log("got boundaries for field: ", boundaries);
-		
+	if(polyPath){
 		//load map
 		plenty_admin.MAPS.map = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
 		
-		fieldObj.boundaries = boundaries;
+		fieldObj.boundaries = polyPath;
 		fieldObj.editable = editable;
-		
-		var fieldData = {
-			boundaries:boundaries,
-			editable: editable
-		};
+		fieldObj.isCoords = true;
 		
 		var poly_events = {
 			onEdit: function(){
@@ -619,7 +614,6 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 				plenty_admin.MAPS.infoWindowContent
 				.find("#edit_field_acres")
 				.val(newArea);
-				
 			}
 		};
 		
@@ -630,7 +624,36 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 		if(callback && typeof callback === "function"){
 			callback(plenty_admin.MAPS.map, fieldObj, polygon);  
 		}
-	});
+	}else{
+		plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(fieldObj.id, 1 /* We are only interested in field boundaries here*/, function(boundaries){
+			console.log("got boundaries for field: ", boundaries);
+			
+			//load map
+			plenty_admin.MAPS.map = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
+			
+			fieldObj.boundaries = boundaries;
+			fieldObj.editable = editable;
+			
+			var poly_events = {
+				onEdit: function(){
+					// onEdit handler
+					var newArea = plenty_admin.MAPS.get_polygon_area(polygon);
+					plenty_admin.MAPS.infoWindowContent
+					.find("#edit_field_acres")
+					.val(newArea);
+					
+				}
+			};
+			
+			var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events);
+			
+			plenty_admin.MAPS.zoomToPolygon(polygon);
+			
+			if(callback && typeof callback === "function"){
+				callback(plenty_admin.MAPS.map, fieldObj, polygon);  
+			}
+		});
+	}
 	
 	return fieldObj;
 }

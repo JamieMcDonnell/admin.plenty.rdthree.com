@@ -977,7 +977,13 @@ plenty_admin.HELPER.formateJavaDate = function(unix_timestamp){
 	  var hour = (a.getHours() < 10 ? "0"+a.getHours() : a.getHours());
 	  var min = (a.getMinutes() < 10 ? "0"+a.getMinutes() : a.getMinutes());
 	  var sec = (a.getSeconds() < 10 ? "0"+a.getSeconds() : a.getSeconds());
-	  var _date = month + ' ' + date;
+	  var _date = (month ? month.slice(0,4) : month) + ' ' + date;
+	  
+	  /* HACK for empty dates */
+	  if(_date.indexOf("unde") > -1 || _date.indexOf("NaN") > -1){
+		_date = "April 21";  
+	  }
+	  
 	  var time = hour + ':' + min + ':' + sec;
 	  var date_time = _date + ' ' +  time;
 	  return {
