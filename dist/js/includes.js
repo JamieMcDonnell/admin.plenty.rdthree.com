@@ -3606,22 +3606,32 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 			.click(function(){
 				var iconIndex = null;
 				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					console.log("GREP: ", pin, p);
+					//console.log("GREP: ", pin, p);
 					if(pinData.id === pin.id)
 					{
 						iconIndex = p;
 					}
 				});
 				
-				console.log("before remove pin: ", plenty_admin.MAPS.equipment_pins, iconIndex);
-				//remove the pin from the map
-				plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
-				//remove the pin from the array
-				plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+				var equipmentDto = {};
+				//equipmentDto.id = pinData.id;
+				equipmentDto.latitude = ev.latLng.A;
+				equipmentDto.longitude = ev.latLng.F;
+				equipmentDto.name = pinData.name;
 				
-				console.log("after remove pin: ", plenty_admin.MAPS.equipment_pins);
-				
-				plenty_admin.UI.map.add_equipment_to_map();
+				plenty_admin.REST.updateEquipment.put(pinData.id, equipmentDto)
+				.then(
+						function(updatedEquipment){
+							console.log("equipment updated: ", updatedEquipment);
+							
+							//remove the pin from the map
+							plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
+							//remove the pin from the array
+							plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+							//update the pin
+							plenty_admin.UI.map.add_equipment_to_map();
+						}
+					);
 				
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
@@ -3689,17 +3699,17 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			.find("button.add-equipment")
 			.click(function(e){
 				var equipmentObj = {};
-				equipmentObj.name = plenty_admin.MAPS.infoWindowContent.find("input#add_equipment_name").val();
-				equipmentObj.equipmentTypeId = [];
+				equipmentObj.equipmentName = plenty_admin.MAPS.infoWindowContent.find("input#add_equipment_name").val();
+				equipmentObj.equipmentTypeIds = [];
 				plenty_admin.MAPS.infoWindowContent.find("select#add_equipment_type option:selected").each(function(){
-					equipmentObj.equipmentTypeId.push(parseInt($(this).val()));
+					equipmentObj.equipmentTypeIds.push(parseInt($(this).val()));
 				});
 				equipmentObj.latitude = fieldData.rc_lat;
 				equipmentObj.longitude = fieldData.rc_lng;
 				equipmentObj.fieldId = fieldData.id;
 				
 				console.log("equipmentObj", equipmentObj);
-				plenty_admin.REST.insertEquipment.post(equipmentObj)
+				plenty_admin.REST.insertFieldEquipment.post(equipmentObj)
 				.then(
 					function(equipment){
 						console.log("added new equipment:", equipment);
@@ -5258,6 +5268,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			console.log("get_weather_days_with_dateRange", weatherDays);
 			
 			plenty_admin.UI.field.weatherDays = {
+					date: [],
 					dates: [],
 					months: [],
 					labels: [],
@@ -5290,7 +5301,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			
 			for(var wO = 0; wO < weatherDays.length; wO++){
 				weatherOb = weatherDays[wO];
-				var obTime = plenty_admin.HELPER.formateJavaDate(weatherOb.observationTime);
+				var obTime = plenty_admin.HELPER.formateJavaDate(weatherOb.date);
 				
 				//create labelling sets for graphs
 				plenty_admin.UI.field.weatherDays.dates.push(obTime.date);
@@ -5317,6 +5328,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 				
 				for(prop in weatherOb){
 					if(weatherOb.hasOwnProperty(prop)){
+						//console.log("prop:", prop);
 						if(prop === "weatherEvents"){
 							for(var w=0; w<weatherOb[prop].length; w++){
 								var wEvent = weatherOb[prop][w];
@@ -6080,6 +6092,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		var equipment = equipmentData;
 		
 		//HACK!!! Add some hard coded equipment because the DB is not returning any
+		/*
 		if(equipment.length == 0){
 			equipment = [
 				{
@@ -6158,6 +6171,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 				},
 			]
 		}
+		*/
 		
 		console.log("Equipment", equipment);
 		
@@ -6165,88 +6179,107 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-			var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-				return pin.id === equip.id;
-			});
-			
-			if(iconExists.length === 0){
-				//get a google latlng object for each element
-				var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+		//for(index in equipment){
+			//if(equipment.hasOwnProperty(index)){
+				//var equip = equipment[index];
 				
-				//extend the map boundary to include all points
-				boundaryLatLngs.push(latlng);
-				plenty_admin.UI.map.latlngbounds.extend(latlng);
+				//HACK - Add missing data
+				if(!equip.equipmentTypeId){
+					equip.equipmentTypeId = 1;
+				}
 				
-				equip.image = {
-						url: "img/map-markers/"+equip.equipmentTypeId+".svg",
-						// This marker is 20 pixels wide by 32 pixels tall.
-						size: new google.maps.Size(50, 50),
-						// The origin for this image is 0,0.
-						origin: new google.maps.Point(0,0),
-						// The anchor for this image is the base of the flagpole at 0,32.
-						anchor: new google.maps.Point(20, 50)
-				};
+				if(!equip.live){
+					equip.live = true;
+				}
 				
-				equip.latlng = latlng;
+				if(!equip.pic){
+					equip.pic = "jd-r4040i.jpg";
+				}
 				
-				equip.draggable = true;
 				
-				var pinEvents = {
-					onMouseOver: function(event){ //mouseover event
-						this.setOptions({zIndex:10});
-						this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
-					}, 
-					onMouseOut: function(event){ //mouseout event
-						this.setOptions({zIndex:1});
-						this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
-					}, 
-					onClick: function(event){ //click event
-						var modal;
-						if(equip.live){
-							modal = plenty_admin.UI.map.MODAL_liveEquipment;
-						}else{
-							modal = plenty_admin.UI.map.MODAL_equipment;
+				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					return pin.id === equip.id;
+				});
+				
+				if(iconExists.length === 0){
+					//get a google latlng object for each element
+					var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+					
+					//extend the map boundary to include all points
+					boundaryLatLngs.push(latlng);
+					plenty_admin.UI.map.latlngbounds.extend(latlng);
+					
+					equip.image = {
+							url: "img/map-markers/"+equip.equipmentTypeId+".svg",
+							// This marker is 20 pixels wide by 32 pixels tall.
+							size: new google.maps.Size(50, 50),
+							// The origin for this image is 0,0.
+							origin: new google.maps.Point(0,0),
+							// The anchor for this image is the base of the flagpole at 0,32.
+							anchor: new google.maps.Point(20, 50)
+					};
+					
+					equip.latlng = latlng;
+					
+					equip.draggable = true;
+					
+					var pinEvents = {
+						onMouseOver: function(event){ //mouseover event
+							this.setOptions({zIndex:10});
+							this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
+						}, 
+						onMouseOut: function(event){ //mouseout event
+							this.setOptions({zIndex:1});
+							this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
+						}, 
+						onClick: function(event){ //click event
+							var modal;
+							if(equip.live){
+								modal = plenty_admin.UI.map.MODAL_liveEquipment;
+							}else{
+								modal = plenty_admin.UI.map.MODAL_equipment;
+							}
+							
+							modal
+							.find(".modal-title")
+							.text(equip.name)
+							.end()
+							.find(".type")
+							.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
+							.end()
+							.find(".image img").prop("src", "img/equipment/"+equip.pic)
+							.end()
+							.find(".lat")
+							.text(equip.latlng.A)
+							.end()
+							.find(".lng")
+							.text(equip.latlng.F)
+							.end()
+							.find(".depth span")
+							.text((equip.data ? equip.data.depth : "-"))
+							.end()
+							.find(".angle span")
+							.text((equip.data ? equip.data.angle : "-"))
+							.end()
+							.find(".editable")
+							.editable(plenty_admin.REST.inline_editing_options)
+							.end()
+							.modal("show");
+							
+						}, 
+						onRightClick: function(event){ //right click event
+							console.log("event:", event, equip);
+							plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
+						},
+						onDragEnd: function(event){ //drag end event
+							console.log("event:", event, equip);
+							plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
 						}
-						
-						modal
-						.find(".modal-title")
-						.text(equip.name)
-						.end()
-						.find(".type")
-						.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
-						.end()
-						.find(".image img").prop("src", "img/equipment/"+equip.pic)
-						.end()
-						.find(".lat")
-						.text(equip.latlng.A)
-						.end()
-						.find(".lng")
-						.text(equip.latlng.F)
-						.end()
-						.find(".depth span")
-						.text((equip.data ? equip.data.depth : "-"))
-						.end()
-						.find(".angle span")
-						.text((equip.data ? equip.data.angle : "-"))
-						.end()
-						.find(".editable")
-						.editable(plenty_admin.REST.inline_editing_options)
-						.end()
-						.modal("show");
-						
-					}, 
-					onRightClick: function(event){ //right click event
-						console.log("event:", event, equip);
-						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
-					},
-					onDragEnd: function(event){ //drag end event
-						console.log("event:", event, equip);
-						plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
-					}
-				};
-				//draw the pin on the map
-				plenty_admin.MAPS.draw_pin(equip, pinEvents);
-			}
+					};
+					//draw the pin on the map
+					plenty_admin.MAPS.draw_pin(equip, pinEvents);
+				}
+			//}
 		});
 		
 		if(equipment.length > 0){
@@ -7327,6 +7360,8 @@ plenty_admin.REST.insertFieldCrop = plenty_admin.api.all("fieldCrops/insertField
 plenty_admin.REST.updateFieldCrop = plenty_admin.api.all("fieldCrops/updateFieldCrop");
 plenty_admin.REST.deleteFieldCrop = plenty_admin.api.all("fieldCrops/deleteFieldCrop");
 
+plenty_admin.REST.insertFieldEquipment = plenty_admin.api.all("fieldEquipment/insertWithNewEquipment");
+
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){
 	//set the current organization
@@ -7689,7 +7724,7 @@ plenty_admin.UI.organization.insertX = function(itemId, hash){
 
 plenty_admin.UI.organization.updateX = function(new_item, hash, el, callback){
 	//insert the provided data of the provided hash type
-	plenty_admin.REST["update"+plenty_admin.HELPER.capitalizeFirstLetter(hash)].post(new_item)
+	plenty_admin.REST["update"+plenty_admin.HELPER.capitalizeFirstLetter(hash)].put(new_item)
 		.then(
 			function(updatedX){
 				console.log(hash+" Updated: ", updatedX, updatedX.body());

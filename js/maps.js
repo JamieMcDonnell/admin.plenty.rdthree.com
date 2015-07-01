@@ -816,22 +816,32 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 			.click(function(){
 				var iconIndex = null;
 				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					console.log("GREP: ", pin, p);
+					//console.log("GREP: ", pin, p);
 					if(pinData.id === pin.id)
 					{
 						iconIndex = p;
 					}
 				});
 				
-				console.log("before remove pin: ", plenty_admin.MAPS.equipment_pins, iconIndex);
-				//remove the pin from the map
-				plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
-				//remove the pin from the array
-				plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+				var equipmentDto = {};
+				//equipmentDto.id = pinData.id;
+				equipmentDto.latitude = ev.latLng.A;
+				equipmentDto.longitude = ev.latLng.F;
+				equipmentDto.name = pinData.name;
 				
-				console.log("after remove pin: ", plenty_admin.MAPS.equipment_pins);
-				
-				plenty_admin.UI.map.add_equipment_to_map();
+				plenty_admin.REST.updateEquipment.put(pinData.id, equipmentDto)
+				.then(
+						function(updatedEquipment){
+							console.log("equipment updated: ", updatedEquipment);
+							
+							//remove the pin from the map
+							plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
+							//remove the pin from the array
+							plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+							//update the pin
+							plenty_admin.UI.map.add_equipment_to_map();
+						}
+					);
 				
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
@@ -899,17 +909,17 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			.find("button.add-equipment")
 			.click(function(e){
 				var equipmentObj = {};
-				equipmentObj.name = plenty_admin.MAPS.infoWindowContent.find("input#add_equipment_name").val();
-				equipmentObj.equipmentTypeId = [];
+				equipmentObj.equipmentName = plenty_admin.MAPS.infoWindowContent.find("input#add_equipment_name").val();
+				equipmentObj.equipmentTypeIds = [];
 				plenty_admin.MAPS.infoWindowContent.find("select#add_equipment_type option:selected").each(function(){
-					equipmentObj.equipmentTypeId.push(parseInt($(this).val()));
+					equipmentObj.equipmentTypeIds.push(parseInt($(this).val()));
 				});
 				equipmentObj.latitude = fieldData.rc_lat;
 				equipmentObj.longitude = fieldData.rc_lng;
 				equipmentObj.fieldId = fieldData.id;
 				
 				console.log("equipmentObj", equipmentObj);
-				plenty_admin.REST.insertEquipment.post(equipmentObj)
+				plenty_admin.REST.insertFieldEquipment.post(equipmentObj)
 				.then(
 					function(equipment){
 						console.log("added new equipment:", equipment);

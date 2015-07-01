@@ -35,6 +35,8 @@ plenty_admin.REST.insertFieldCrop = plenty_admin.api.all("fieldCrops/insertField
 plenty_admin.REST.updateFieldCrop = plenty_admin.api.all("fieldCrops/updateFieldCrop");
 plenty_admin.REST.deleteFieldCrop = plenty_admin.api.all("fieldCrops/deleteFieldCrop");
 
+plenty_admin.REST.insertFieldEquipment = plenty_admin.api.all("fieldEquipment/insertWithNewEquipment");
+
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){
 	//set the current organization
@@ -397,7 +399,7 @@ plenty_admin.UI.organization.insertX = function(itemId, hash){
 
 plenty_admin.UI.organization.updateX = function(new_item, hash, el, callback){
 	//insert the provided data of the provided hash type
-	plenty_admin.REST["update"+plenty_admin.HELPER.capitalizeFirstLetter(hash)].post(new_item)
+	plenty_admin.REST["update"+plenty_admin.HELPER.capitalizeFirstLetter(hash)].put(new_item)
 		.then(
 			function(updatedX){
 				console.log(hash+" Updated: ", updatedX, updatedX.body());

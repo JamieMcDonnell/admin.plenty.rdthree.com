@@ -438,6 +438,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			console.log("get_weather_days_with_dateRange", weatherDays);
 			
 			plenty_admin.UI.field.weatherDays = {
+					date: [],
 					dates: [],
 					months: [],
 					labels: [],
@@ -470,7 +471,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			
 			for(var wO = 0; wO < weatherDays.length; wO++){
 				weatherOb = weatherDays[wO];
-				var obTime = plenty_admin.HELPER.formateJavaDate(weatherOb.observationTime);
+				var obTime = plenty_admin.HELPER.formateJavaDate(weatherOb.date);
 				
 				//create labelling sets for graphs
 				plenty_admin.UI.field.weatherDays.dates.push(obTime.date);
@@ -497,6 +498,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 				
 				for(prop in weatherOb){
 					if(weatherOb.hasOwnProperty(prop)){
+						//console.log("prop:", prop);
 						if(prop === "weatherEvents"){
 							for(var w=0; w<weatherOb[prop].length; w++){
 								var wEvent = weatherOb[prop][w];

@@ -136,6 +136,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		var equipment = equipmentData;
 		
 		//HACK!!! Add some hard coded equipment because the DB is not returning any
+		/*
 		if(equipment.length == 0){
 			equipment = [
 				{
@@ -214,6 +215,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 				},
 			]
 		}
+		*/
 		
 		console.log("Equipment", equipment);
 		
@@ -221,88 +223,107 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-			var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-				return pin.id === equip.id;
-			});
-			
-			if(iconExists.length === 0){
-				//get a google latlng object for each element
-				var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+		//for(index in equipment){
+			//if(equipment.hasOwnProperty(index)){
+				//var equip = equipment[index];
 				
-				//extend the map boundary to include all points
-				boundaryLatLngs.push(latlng);
-				plenty_admin.UI.map.latlngbounds.extend(latlng);
+				//HACK - Add missing data
+				if(!equip.equipmentTypeId){
+					equip.equipmentTypeId = 1;
+				}
 				
-				equip.image = {
-						url: "img/map-markers/"+equip.equipmentTypeId+".svg",
-						// This marker is 20 pixels wide by 32 pixels tall.
-						size: new google.maps.Size(50, 50),
-						// The origin for this image is 0,0.
-						origin: new google.maps.Point(0,0),
-						// The anchor for this image is the base of the flagpole at 0,32.
-						anchor: new google.maps.Point(20, 50)
-				};
+				if(!equip.live){
+					equip.live = true;
+				}
 				
-				equip.latlng = latlng;
+				if(!equip.pic){
+					equip.pic = "jd-r4040i.jpg";
+				}
 				
-				equip.draggable = true;
 				
-				var pinEvents = {
-					onMouseOver: function(event){ //mouseover event
-						this.setOptions({zIndex:10});
-						this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
-					}, 
-					onMouseOut: function(event){ //mouseout event
-						this.setOptions({zIndex:1});
-						this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
-					}, 
-					onClick: function(event){ //click event
-						var modal;
-						if(equip.live){
-							modal = plenty_admin.UI.map.MODAL_liveEquipment;
-						}else{
-							modal = plenty_admin.UI.map.MODAL_equipment;
+				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					return pin.id === equip.id;
+				});
+				
+				if(iconExists.length === 0){
+					//get a google latlng object for each element
+					var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+					
+					//extend the map boundary to include all points
+					boundaryLatLngs.push(latlng);
+					plenty_admin.UI.map.latlngbounds.extend(latlng);
+					
+					equip.image = {
+							url: "img/map-markers/"+equip.equipmentTypeId+".svg",
+							// This marker is 20 pixels wide by 32 pixels tall.
+							size: new google.maps.Size(50, 50),
+							// The origin for this image is 0,0.
+							origin: new google.maps.Point(0,0),
+							// The anchor for this image is the base of the flagpole at 0,32.
+							anchor: new google.maps.Point(20, 50)
+					};
+					
+					equip.latlng = latlng;
+					
+					equip.draggable = true;
+					
+					var pinEvents = {
+						onMouseOver: function(event){ //mouseover event
+							this.setOptions({zIndex:10});
+							this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
+						}, 
+						onMouseOut: function(event){ //mouseout event
+							this.setOptions({zIndex:1});
+							this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
+						}, 
+						onClick: function(event){ //click event
+							var modal;
+							if(equip.live){
+								modal = plenty_admin.UI.map.MODAL_liveEquipment;
+							}else{
+								modal = plenty_admin.UI.map.MODAL_equipment;
+							}
+							
+							modal
+							.find(".modal-title")
+							.text(equip.name)
+							.end()
+							.find(".type")
+							.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
+							.end()
+							.find(".image img").prop("src", "img/equipment/"+equip.pic)
+							.end()
+							.find(".lat")
+							.text(equip.latlng.A)
+							.end()
+							.find(".lng")
+							.text(equip.latlng.F)
+							.end()
+							.find(".depth span")
+							.text((equip.data ? equip.data.depth : "-"))
+							.end()
+							.find(".angle span")
+							.text((equip.data ? equip.data.angle : "-"))
+							.end()
+							.find(".editable")
+							.editable(plenty_admin.REST.inline_editing_options)
+							.end()
+							.modal("show");
+							
+						}, 
+						onRightClick: function(event){ //right click event
+							console.log("event:", event, equip);
+							plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
+						},
+						onDragEnd: function(event){ //drag end event
+							console.log("event:", event, equip);
+							plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
 						}
-						
-						modal
-						.find(".modal-title")
-						.text(equip.name)
-						.end()
-						.find(".type")
-						.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
-						.end()
-						.find(".image img").prop("src", "img/equipment/"+equip.pic)
-						.end()
-						.find(".lat")
-						.text(equip.latlng.A)
-						.end()
-						.find(".lng")
-						.text(equip.latlng.F)
-						.end()
-						.find(".depth span")
-						.text((equip.data ? equip.data.depth : "-"))
-						.end()
-						.find(".angle span")
-						.text((equip.data ? equip.data.angle : "-"))
-						.end()
-						.find(".editable")
-						.editable(plenty_admin.REST.inline_editing_options)
-						.end()
-						.modal("show");
-						
-					}, 
-					onRightClick: function(event){ //right click event
-						console.log("event:", event, equip);
-						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
-					},
-					onDragEnd: function(event){ //drag end event
-						console.log("event:", event, equip);
-						plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
-					}
-				};
-				//draw the pin on the map
-				plenty_admin.MAPS.draw_pin(equip, pinEvents);
-			}
+					};
+					//draw the pin on the map
+					plenty_admin.MAPS.draw_pin(equip, pinEvents);
+				}
+			//}
 		});
 		
 		if(equipment.length > 0){
