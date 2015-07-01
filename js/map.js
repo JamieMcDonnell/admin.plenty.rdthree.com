@@ -250,9 +250,11 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 				var pinEvents = {
 					onMouseOver: function(event){ //mouseover event
 						this.setOptions({zIndex:10});
+						this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
 					}, 
 					onMouseOut: function(event){ //mouseout event
 						this.setOptions({zIndex:1});
+						this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
 					}, 
 					onClick: function(event){ //click event
 						var modal;

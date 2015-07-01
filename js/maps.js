@@ -706,12 +706,12 @@ plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, ev){
 			.find(".delete_equipment a")
 			.click(function(){
 				//alert("insert equipment");
-				plenty_admin.MAPS.delete_fixed_equipment(pinData, plenty_admin.MAPS.mainMap);
+				plenty_admin.MAPS.delete_fixed_equipment(pinData, ev);
 				return false;
 			});
 		});
 		
-		plenty_admin.MAPS.openInfoWindow(pinData.latlng, plenty_admin.MAPS.mainMap);
+		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
 	});
 }
 
@@ -740,7 +740,6 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 						if(plenty_admin.MAPS.infoWindow){
 							plenty_admin.MAPS.infoWindow.close();
 						}
-						
 						
 						plenty_admin.MAPS.showEditFieldForm(fieldData, plenty_admin.MAPS.mainMap);
 						return false;
@@ -778,6 +777,10 @@ plenty_admin.MAPS.delete_fixed_equipment = function(pinData, ev){
 			.find("button.delete")
 			.click(function(){
 				plenty_admin.MAPS.infoWindow.close();
+				plenty_admin.REST.deleteEquipment.delete(pinData.id)
+				.then(function(deletedEquipment){
+					console.log("equipment deleted: ", deletedEquipment);
+				});
 				return false;
 			})
 			.end()
@@ -897,8 +900,15 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			.click(function(e){
 				var equipmentObj = {};
 				equipmentObj.name = plenty_admin.MAPS.infoWindowContent.find("input#add_equipment_name").val();
+				equipmentObj.equipmentTypeId = [];
+				plenty_admin.MAPS.infoWindowContent.find("select#add_equipment_type option:selected").each(function(){
+					equipmentObj.equipmentTypeId.push(parseInt($(this).val()));
+				});
 				equipmentObj.latitude = fieldData.rc_lat;
 				equipmentObj.longitude = fieldData.rc_lng;
+				equipmentObj.fieldId = fieldData.id;
+				
+				console.log("equipmentObj", equipmentObj);
 				plenty_admin.REST.insertEquipment.post(equipmentObj)
 				.then(
 					function(equipment){
@@ -910,6 +920,8 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 							.parent()
 							.find(".add_equipment_success_wrapper")
 							.fadeIn("fast");
+							
+							plenty_admin.UI.map.add_equipment_to_map();
 						});
 					}
 				)
