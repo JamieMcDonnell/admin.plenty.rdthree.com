@@ -761,7 +761,7 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 	});
 }
 
-plenty_admin.MAPS.delete_fixed_equipment = function(pinData, map){
+plenty_admin.MAPS.delete_fixed_equipment = function(pinData, ev){
 	if(plenty_admin.MAPS.infoWindow){
 		plenty_admin.MAPS.infoWindow.close();
 	}
@@ -785,10 +785,72 @@ plenty_admin.MAPS.delete_fixed_equipment = function(pinData, map){
 			.click(function(){
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
-			});
+			})
+			.end()
+			.find(".name")
+			.text(pinData.name);
 		});
 		
-		plenty_admin.MAPS.openInfoWindow(pinData.latlng, map);
+		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
+	});
+}
+
+plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
+	if(plenty_admin.MAPS.infoWindow){
+		plenty_admin.MAPS.infoWindow.close();
+	}
+	
+	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
+	
+	$.get("ajax/update-equipment-position.html", function(contentString){
+		plenty_admin.MAPS.infoWindowContent = contentString;
+		
+		google.maps.event.addListener(plenty_admin.MAPS.infoWindow, 'domready', function(content){ 
+			plenty_admin.MAPS.infoWindowContent = $(".updateEquipment");
+			
+			plenty_admin.MAPS.infoWindowContent
+			.find("button.save")
+			.click(function(){
+				var iconIndex = null;
+				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					console.log("GREP: ", pin, p);
+					if(pinData.id === pin.id)
+					{
+						iconIndex = p;
+					}
+				});
+				
+				console.log("before remove pin: ", plenty_admin.MAPS.equipment_pins, iconIndex);
+				//remove the pin from the map
+				plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
+				//remove the pin from the array
+				plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+				
+				console.log("after remove pin: ", plenty_admin.MAPS.equipment_pins);
+				
+				plenty_admin.UI.map.add_equipment_to_map();
+				
+				plenty_admin.MAPS.infoWindow.close();
+				return false;
+			})
+			.end()
+			.find("button.cancel")
+			.click(function(){
+				plenty_admin.MAPS.infoWindow.close();
+				return false;
+			})
+			.end()
+			.find(".lat")
+			.text(ev.latLng.A)
+			.end()
+			.find(".lng")
+			.text(ev.latLng.F)
+			.end()
+			.find(".name")
+			.text(pinData.name);
+		});
+		
+		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
 	});
 }
 

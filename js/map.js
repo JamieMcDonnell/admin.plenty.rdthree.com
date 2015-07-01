@@ -142,7 +142,8 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					latitude:38.03148542362175,
 					longitude: -95.5297395615873,
 					equipmentTypeId: 1,
-					name: "John Deere ATV",
+					name: "XUV550",
+					pic:"xuv550.jpeg",
 					id:1,	
 					live: false
 				},
@@ -150,7 +151,8 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					latitude:38.03271888116563,
 					longitude: -95.52987739298443,
 					equipmentTypeId: 2,
-					name: "John Deere Tractor",
+					name: "9420",
+					pic:"jd-9420.png",
 					data:{
 						depth:"1.2m",
 						angle:"33degrees"
@@ -159,21 +161,61 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					live: true
 				},
 				{
-					latitude:38.031950730093264,
-					longitude: -95.5293030472672,
+					latitude:38.03159579759556,
+					longitude: -95.52724310303358,
 					equipmentTypeId: 3,
-					name: "John Deere Spreader",
+					name: "DN 345",
 					data:{
 						depth:"1.2m",
 						angle:"33degrees"
 					},
 					id:3,	
+					pic:"jd-dn345.jpg",
+					live:true
+				},
+				{
+					latitude:38.033049319789015,
+					longitude: -95.52745768766295,
+					equipmentTypeId: 4,
+					name: "325",
+					data:{
+						depth:"1.2m",
+						angle:"33degrees"
+					},
+					id:4,	
+					pic:"jd-325.jpeg",
+					live:false
+				},
+				{
+					latitude:38.030361971218554,
+					longitude: -95.52745768766295,
+					equipmentTypeId: 5,
+					name: "DR-18",
+					data:{
+						depth:"1.2m",
+						angle:"33degrees"
+					},
+					id:5,	
+					pic:"jd-dr18.jpg",
+					live:false
+				},
+				{
+					latitude:38.030361971218554,
+					longitude: -95.52784392676114,
+					equipmentTypeId: 6,
+					name: "R4040i",
+					data:{
+						depth:"1.2m",
+						angle:"33degrees"
+					},
+					id:6,	
+					pic:"jd-r4040i.jpg",
 					live:true
 				},
 			]
 		}
 		
-		console.log("Equipment", equipmentData);
+		console.log("Equipment", equipment);
 		
 		var boundaryLatLngs = [];
 		
@@ -189,7 +231,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 				
 				//extend the map boundary to include all points
 				boundaryLatLngs.push(latlng);
-				plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[e]);
+				plenty_admin.UI.map.latlngbounds.extend(latlng);
 				
 				equip.image = {
 						url: "img/map-markers/"+equip.equipmentTypeId+".svg",
@@ -227,7 +269,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 						.find(".type")
 						.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
 						.end()
-						.find(".image img").prop("src", "")
+						.find(".image img").prop("src", "img/equipment/"+equip.pic)
 						.end()
 						.find(".lat")
 						.text(equip.latlng.A)
@@ -253,7 +295,7 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					},
 					onDragEnd: function(event){ //drag end event
 						console.log("event:", event, equip);
-						alert("drag end - save new equipment position?", equip);
+						plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
 					}
 				};
 				//draw the pin on the map
