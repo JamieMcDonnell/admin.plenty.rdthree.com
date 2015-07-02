@@ -16,13 +16,14 @@ plenty_admin.UI.settings = {};
 plenty_admin.UI.settings.organization = {};
 plenty_admin.UI.settings.DOM = plenty_admin.UI.main.DOM.find("#settings");
 plenty_admin.UI.currentScreen = plenty_admin.UI.settings.DOM;
+plenty_admin.UI.settings.new_organization = plenty_admin.UI.settings.DOM.find(".newOrgContainer");
 
 
 //create HTML for an organization element in the settings
 plenty_admin.UI.settings.organization.create = function(org){
-	//console.log("plenty_admin.UI.settings.organization.create:", org, plenty_admin.DATA.organizationTypes);
+	console.log("plenty_admin.UI.settings.organization.create:", org, plenty_admin.DATA.organizationTypes, plenty_admin.DATA.organizationTypes[org.organizationTypeId]);
 	var org_html = '<div class="col-xs-12 col-sm-6 col-md-4 organization" data-orgid="'+org.id+'">'+
-			  		'<div style="text-align:center" class="panel panel-primary">'+
+			  		'<div class="panel panel-primary text-center">'+
 						'<div class="panel-heading">'+
 				  			'<h2 class="panel-title text-center editable" data-type="text" data-name="name" data-pk="'+org.id+'/organizations" data-title="Name this Organization">'+org.name+'</h2>'+
 				  			'<p class="text-muted editable" data-type="select" data-name="organizationTypeId" data-pk="'+org.id+'/organizations" data-title="Choose the Organization Type" data-source="[{value: 0, text: \'Landowner\'}, {value: 2, text: \'Custom Farmer\'}, {value: 3, text: \'Service Provider\'}, {value: 4, text: \'Vendor\'}]">'+plenty_admin.DATA.organizationTypes[org.organizationTypeId].name+'</p>'+
@@ -142,7 +143,9 @@ plenty_admin.UI.settings.init = function(){
 	plenty_admin.UI.settings.organizations = plenty_admin.UI.settings.DOM.find(".organizations");
 	
 	//empty it's current contents
-	plenty_admin.UI.settings.organizations.html("");
+	plenty_admin.UI.settings.organizations
+	.find(".organization")
+	.remove();
 	
 	//loop organizations and inject Organizations DOM
 	for(id in plenty_admin.DATA.organizations){
@@ -153,7 +156,8 @@ plenty_admin.UI.settings.init = function(){
 			
 			var org = plenty_admin.DATA.organizations[id];
 			
-			plenty_admin.UI.settings.organizations.append(plenty_admin.UI.settings.organization.create(org));
+			//TODO: this should go before NEW ORGANIZATION and not PREPENDED
+			plenty_admin.UI.settings.organizations.prepend(plenty_admin.UI.settings.organization.create(org));
 		}
 	}
 	//build the breadcrumb trail object
@@ -176,5 +180,93 @@ plenty_admin.UI.settings.init = function(){
 };
 
 $( document ).on( "organization_data_ready", function( event, orgs ) {
+	plenty_admin.UI.settings.new_organization
+	.find("button.newOrg")
+	.off("click")
+	.on("click", function(){
+		var $form = $(this).closest(".panel").find("form");
+		var organizationDto = {};
+		organizationDto.name = $form.find("#new_org_name").val();
+		organizationDto.organizationTypeId = parseInt($form.find("#new_org_type").val());
+		organizationDto.addressLine1 = $form.find("#new_org_address_1").val();
+		organizationDto.addressLine2 = $form.find("#new_org_address_2").val();
+		organizationDto.city = $form.find("#new_org_city").val();
+		organizationDto.state = $form.find("#new_org_state").val();
+		organizationDto.zip = $form.find("#new_org_zip").val();
+		
+		console.log("organizationDto: ", organizationDto);
+		
+		$form
+		.fadeOut("fast", function(){
+			plenty_admin.UI.settings.new_organization
+			.find(".alert-info")
+			.fadeIn("fast");
+		});
+		plenty_admin.REST.insertOrganization.post(organizationDto).then(
+			function(insertedOrg){
+				console.log("organization inserted: ", insertedOrg().data);
+				
+				var roleData = {
+					organizationId:insertedOrg().data.id,
+					userId: plenty_admin.DATA.userDetails.id,
+					roleTypeId:1
+				};
+				plenty_admin.REST.insertRole.post(roleData).then(function(newUser){
+					plenty_admin.UI.settings.new_organization
+					.find(".alert-info")
+					.fadeOut("fast", function(){
+						plenty_admin.UI.settings.new_organization
+						.find(".alert-success")
+						.fadeIn("fast");
+						
+						var to = setTimeout(function(){
+							plenty_admin.UI.settings.new_organization
+							.find(".alert-success")
+							.fadeOut("fast", function(){
+								$form
+								.fadeIn("fast");
+							});
+						}, 5000);
+					});
+					
+					//TODO: this should go before NEW ORGANIZATION and not PREPENDED
+					plenty_admin.UI.settings.organizations.prepend(plenty_admin.UI.settings.organization.create(insertedOrg().data));
+				});
+			},
+			function(){
+				plenty_admin.UI.settings.new_organization
+				.find(".alert-info")
+				.fadeOut("fast", function(){
+					plenty_admin.UI.settings.new_organization
+					.find(".alert-danger")
+					.fadeIn("fast");
+					
+					var to = setTimeout(function(){
+						plenty_admin.UI.settings.new_organization
+						.find(".alert-danger")
+						.fadeOut("fast", function(){
+							$form
+							.fadeIn("fast");
+						});
+					}, 5000);
+				});
+			}
+		)
+		return false;
+	})
+	.end()
+	.find("a.moreDetailsToggle")
+	.off("click")
+	.on("click", function(){
+		$(this)
+		.find("span")
+		.toggle()
+		.end()
+		.parent()
+		.find(".more-details")
+		.slideToggle();
+		return false;
+	});
+	
     plenty_admin.UI.settings.init();
 });

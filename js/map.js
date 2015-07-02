@@ -530,6 +530,7 @@ $( document ).on( "map_data_ready", function( event, orgs ) {
 
 	//populate filter panel options based on current user filters
 	plenty_admin.DATA.load_user_filters(function(filters){	
+		console.log("filters", filters);
 		plenty_admin.DATA.userFilters = filters().data;
 		plenty_admin.DATA.data_source = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList;
 		plenty_admin.DATA.update_filters(function(){

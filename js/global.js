@@ -369,16 +369,6 @@ plenty_admin.REST.getActivityTypes = function(){
 			},
 			function(err){
 				console.error("getting activity types failed: ", err);
-				//make some fake data to use while API is built
-				var FAKE_activityTypes = {
-					1: "Ploughing",
-					2: "Tilling",
-					3: "Spraying"
-				};
-				
-				plenty_admin.DATA.activityTypes = FAKE_activityTypes;
-				
-				plenty_admin.DATA.eventCollector.done("event 1");
 			});
 }
 

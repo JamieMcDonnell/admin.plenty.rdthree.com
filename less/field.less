@@ -61,6 +61,7 @@
 					li{
 						list-style:none;
 						margin-bottom:5px;
+						text-transform:capitalize;
 						
 						&.active{
 							color:@white;
@@ -189,7 +190,38 @@
 	table.table.tab-pane.active{
 		display:block;
 	}
-	
+	.cropSurveysWrapper{
+		position:absolute;
+		bottom:70px;
+		left:0;
+		width: 100%;
+  		padding: 0 15px;
+		z-index:4;
+		pointer-events: none;
+		
+		.keyOffset{
+			height:33px;
+		}
+		.cropSurveys{
+			height:33px;
+			overflow:hidden;
+			background-color:transparent;
+			position:relative;
+			
+			.cropSurvey{
+				width:33px;
+				height:33px;
+				top:0px;
+				position:absolute;
+				left:40px;
+				font-size: 30px;
+				padding: 0;
+				background: none;
+				border: none;
+				pointer-events: all;
+			}
+		}
+	}
 	.activitiesTimeline{
 		.keyOffset{
 			height:33px;
@@ -198,6 +230,7 @@
 			height:33px;
 			overflow:hidden;
 			background-color:#a2a795;
+			position:relative;
 			
 			.activity{
 				width:30px;
@@ -207,6 +240,11 @@
 				left:40px;
 				background-color:@white;
 			}
+		}
+	}
+	.yearSlider{
+		.current_year_crop{
+			text-transform:capitalize;
 		}
 	}
 }

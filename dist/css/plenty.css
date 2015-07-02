@@ -2889,6 +2889,34 @@ body {
   padding: .5em;
   background-color: #fff;
 }
+/* LESS Document */
+body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+.newOrgContainer form .more-details {
+  display: none;
+}
+.newOrgContainer form .form-group {
+  margin-bottom: 5px;
+}
+.newOrgContainer form .form-group .control-label {
+  padding: 0 5px 0 0;
+  margin-top: 5px;
+  text-align: right;
+}
+.newOrgContainer form .form-group .col-sm-10 {
+  padding: 0;
+}
+.newOrgContainer form .form-group .col-sm-10 input,
+.newOrgContainer form .form-group .col-sm-10 select {
+  width: 100%;
+}
+.newOrgContainer .alert {
+  display: none;
+}
 .navbar .brand img {
   height: 50px;
 }
@@ -2965,6 +2993,7 @@ body {
 #field-container .field_asset_data .col-xs-9 .legend ul li,
 #field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li {
   margin-bottom: 5px;
+  text-transform: capitalize;
   list-style: none;
 }
 #field-container .field_asset_data .col-xs-9 .legend ul li.active,
@@ -3074,10 +3103,41 @@ body {
 #field-container table.table.tab-pane.active {
   display: block;
 }
+#field-container .cropSurveysWrapper {
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  z-index: 4;
+  width: 100%;
+  padding: 0 15px;
+  pointer-events: none;
+}
+#field-container .cropSurveysWrapper .keyOffset {
+  height: 33px;
+}
+#field-container .cropSurveysWrapper .cropSurveys {
+  position: relative;
+  height: 33px;
+  overflow: hidden;
+  background-color: transparent;
+}
+#field-container .cropSurveysWrapper .cropSurveys .cropSurvey {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  width: 33px;
+  height: 33px;
+  padding: 0;
+  font-size: 30px;
+  pointer-events: all;
+  background: none;
+  border: none;
+}
 #field-container .activitiesTimeline .keyOffset {
   height: 33px;
 }
 #field-container .activitiesTimeline .activities {
+  position: relative;
   height: 33px;
   overflow: hidden;
   background-color: #a2a795;
@@ -3089,6 +3149,9 @@ body {
   width: 30px;
   height: 28px;
   background-color: #fff;
+}
+#field-container .yearSlider .current_year_crop {
+  text-transform: capitalize;
 }
 body.map #field-container {
   z-index: 100;

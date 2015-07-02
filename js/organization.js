@@ -17,7 +17,7 @@ plenty_admin.UI.organization.BUTTON_delete_multiple = plenty_admin.UI.organizati
 plenty_admin.UI.organization.filter_by_farm = plenty_admin.UI.organization.DOM.find("select.filter-by-farm");
 
 // create references to common entity APIs
-var entities = ["Farm", "User", "Equipment", "Product", "Plan", "Skill", "Payment", "Role", "Interest"];
+var entities = ["Farm", "User", "Equipment", "Product", "Plan", "Skill", "Payment", "Role", "Interest", "Organization"];
 
 for(var e=0; e < entities.length; e++){
 	var entity = entities[e];

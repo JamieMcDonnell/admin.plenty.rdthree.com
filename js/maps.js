@@ -22,16 +22,16 @@ plenty_admin.MAPS.add_field = function(mapId, location, zoom, map_search_target)
 	var add_field_map = MAPS.create_map(mapId, mapOptions);
 	plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.map, function(e){
 		console.log("map bounds changed");
-		plenty_admin.MAPS.show_clu_boundaries();
+		plenty_admin.MAPS.show_clu_boundaries(plenty_admin.MAPS.map);
 	});
 	//MAPS.drawingManager.init(add_field_map);
 	MAPS.location_search(plenty_admin.MAPS.map, map_search_target);
 }
 
 //get CLU boundaries for current map bounds
-plenty_admin.MAPS.show_clu_boundaries = function(){
-	var bounds = plenty_admin.MAPS.map.getBounds();
-	var zoom = plenty_admin.MAPS.map.getZoom();
+plenty_admin.MAPS.show_clu_boundaries = function(map){
+	var bounds = map.getBounds();
+	var zoom = map.getZoom();
 	console.log("map bounds: ", bounds.getNorthEast(), bounds.getSouthWest());
 	console.log("map zoom: ", zoom);
 	
@@ -163,10 +163,10 @@ plenty_admin.MAPS.add_field_control = function(map){
 				.style.color = '#fff';
 				
 				plenty_admin.MAPS.add_field_state = 0;
-				plenty_admin.MAPS.map.setZoom(plenty_admin.UI.map.minCLUZoom);
-				plenty_admin.MAPS.show_clu_boundaries();
+				plenty_admin.MAPS.mainMap.setZoom(plenty_admin.UI.map.minCLUZoom);
+				plenty_admin.MAPS.show_clu_boundaries(plenty_admin.MAPS.mainMap);
 				plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.map, function(e){
-					plenty_admin.MAPS.show_clu_boundaries();
+					plenty_admin.MAPS.show_clu_boundaries(plenty_admin.MAPS.mainMap);
 				});
 			}
 		});
@@ -206,7 +206,7 @@ plenty_admin.MAPS.add_zoom_to_fields_control = function(map){
 		controlUI.appendChild(controlText);
 		
 		google.maps.event.addDomListener(controlUI, 'click', function() {
-			plenty_admin.MAPS.map.fitBounds(plenty_admin.UI.map.latlngbounds);
+			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 		});
 	}
 	

@@ -136,7 +136,7 @@ plenty_admin.UI.filters.update_filters = function(){
 	//console.log("updated local filters: ", plenty_admin.DATA.userFilters);
 	
 	plenty_admin.DATA.update_filters(function(returned_filters){
-		//console.log("filters updated: ", returned_filters, returned_filters.body());
+		console.log("filters updated: ", returned_filters, returned_filters.body());
 		plenty_admin.DATA.userFilters = returned_filters.body();
 	});
 }
