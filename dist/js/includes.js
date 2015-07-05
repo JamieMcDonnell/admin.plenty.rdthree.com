@@ -2587,6 +2587,15 @@ plenty_admin.HELPER.colorLuminance = function(hex, lum) {
 
 	return rgb;
 }
+
+plenty_admin.HELPER.hexToRgb = function(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
 /*
 plenty_admin.HELPER.get_colour_range = function(listItems){
 	console.log("plenty_admin.UI.brand_palette: ", plenty_admin.UI.brand_palette, listItems);
@@ -3540,32 +3549,45 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 	});
 }
 
-plenty_admin.MAPS.delete_fixed_equipment = function(pinData, ev){
+plenty_admin.MAPS.delete_field_equipment = function(pinData, ev){
 	if(plenty_admin.MAPS.infoWindow){
 		plenty_admin.MAPS.infoWindow.close();
 	}
 	
 	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
 	
-	$.get("ajax/delete-equipment-form.html", function(contentString){
+	$.get("ajax/delete-field-equipment.html", function(contentString){
 		plenty_admin.MAPS.infoWindowContent = contentString;
 		
 		google.maps.event.addListener(plenty_admin.MAPS.infoWindow, 'domready', function(content){ 
-			plenty_admin.MAPS.infoWindowContent = $(".deleteEquipment");
+			plenty_admin.MAPS.infoWindowContent = $(".updateEquipment");
 			
 			plenty_admin.MAPS.infoWindowContent
-			.find("button.delete")
+			.find("button.disassociate")
 			.click(function(){
+				
+				plenty_admin.REST.deleteFieldEquipment.delete(pinData.fieldEquipmentDto.id)
+				.then(
+						function(deletedFieldEquipment){
+							console.log("field equipment deleted: ", deletedFieldEquipment);
+						}
+					);
+				
 				plenty_admin.MAPS.infoWindow.close();
-				plenty_admin.REST.deleteEquipment.delete(pinData.id)
-				.then(function(deletedEquipment){
-					console.log("equipment deleted: ", deletedEquipment);
-				});
 				return false;
 			})
 			.end()
 			.find("button.cancel")
 			.click(function(){
+				var iconIndex = null;
+				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					//console.log("GREP: ", pin, p);
+					if(pinData.id === pin.id)
+					{
+						iconIndex = p;
+					}
+				});
+				plenty_admin.MAPS.equipment_pins[iconIndex].setPosition(pinData.latlng);
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
 			})
@@ -3603,13 +3625,11 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 					}
 				});
 				
-				var equipmentDto = {};
-				//equipmentDto.id = pinData.id;
+				var equipmentDto = pinData.equipmentWithTypesDto.equipmentDto;
 				equipmentDto.latitude = ev.latLng.A;
 				equipmentDto.longitude = ev.latLng.F;
-				equipmentDto.name = pinData.name;
 				
-				plenty_admin.REST.updateEquipment.put(pinData.id, equipmentDto)
+				plenty_admin.REST.updateEquipment.post(equipmentDto)
 				.then(
 						function(updatedEquipment){
 							console.log("equipment updated: ", updatedEquipment);
@@ -3629,6 +3649,15 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 			.end()
 			.find("button.cancel")
 			.click(function(){
+				var iconIndex = null;
+				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					//console.log("GREP: ", pin, p);
+					if(pinData.id === pin.id)
+					{
+						iconIndex = p;
+					}
+				});
+				plenty_admin.MAPS.equipment_pins[iconIndex].setPosition(pinData.latlng);
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
 			})
@@ -3641,6 +3670,113 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 			.end()
 			.find(".name")
 			.text(pinData.name);
+		});
+		
+		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
+	});
+}
+
+plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pinData, fieldData, ev){
+	if(plenty_admin.MAPS.infoWindow){
+		plenty_admin.MAPS.infoWindow.close();
+	}
+	
+	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
+	
+	$.get("ajax/change-equipment-position-and-field.html", function(contentString){
+		plenty_admin.MAPS.infoWindowContent = contentString;
+		
+		google.maps.event.addListener(plenty_admin.MAPS.infoWindow, 'domready', function(content){ 
+			plenty_admin.MAPS.infoWindowContent = $(".updateEquipment");
+			
+			plenty_admin.MAPS.infoWindowContent
+			.find("button.save")
+			.click(function(){
+				var iconIndex = null;
+				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					//console.log("GREP: ", pin, p);
+					if(pinData.id === pin.id)
+					{
+						iconIndex = p;
+					}
+				});
+				
+				var equipmentDto = pinData.equipmentWithTypesDto.equipmentDto;
+				equipmentDto.latitude = ev.latLng.A;
+				equipmentDto.longitude = ev.latLng.F;
+				
+				plenty_admin.DATA.eventCollector = window.eventcollector(2, 10000);
+				
+				plenty_admin.REST.updateEquipment.post(equipmentDto)
+				.then(
+					function(updatedEquipment){
+						console.log("equipment updated: ", updatedEquipment);
+						
+						plenty_admin.DATA.eventCollector.done("event 1");
+					}
+				);
+				
+				//update field equipment
+				var feDto = pinData.fieldEquipmentDto;
+				feDto.fieldId = fieldData.id;
+				/*
+				var feDto = {
+					fieldId : fieldData.id,
+					equipmentId: pinData.equipmentWithTypesDto.equipmentDto.id,
+					id: pinData.fieldEquipmentDto.id,
+					created: pinData.fieldEquipmentDto.created,
+					lastModified: pinData.fieldEquipmentDto.lastModified
+				};
+				*/
+				
+				plenty_admin.REST.updateFieldEquipment
+				.post(feDto)
+				.then(function(returnedFE){
+					console.log("field equipment updated: ", returnedFE);
+					
+					plenty_admin.DATA.eventCollector.done("event 2");
+				});
+					
+				plenty_admin.DATA.eventCollector.on('alldone', function(total) {
+					//remove the pin from the map
+					plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
+					//remove the pin from the array
+					plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+					//update the pin
+					plenty_admin.UI.map.add_equipment_to_map();
+					
+					plenty_admin.MAPS.infoWindow.close();
+				});	
+				
+				
+				return false;
+			})
+			.end()
+			.find("button.cancel")
+			.click(function(){var iconIndex = null;
+				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					//console.log("GREP: ", pin, p);
+					if(pinData.id === pin.id)
+					{
+						iconIndex = p;
+					}
+				});
+				plenty_admin.MAPS.equipment_pins[iconIndex].setPosition(pinData.latlng);
+				plenty_admin.MAPS.infoWindow.close();
+				return false;
+			})
+			.end()
+			.find(".lat")
+			.text(ev.latLng.A)
+			.end()
+			.find(".lng")
+			.text(ev.latLng.F)
+			.end()
+			.find(".equipment_name")
+			.text(pinData.name)
+			.end()
+			.find(".field_name")
+			.text(fieldData.name)
 		});
 		
 		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
@@ -4160,6 +4296,7 @@ plenty_admin.MAPS.hide_clu_polygons = function(except){
 	}
 }
 
+/*
 plenty_admin.MAPS.remove_all_polygons = function(polygons){
 	//loop through the field boundaries on the map and set their map to null
 	for(var b=0; b<polygons.length; b++){
@@ -4168,6 +4305,7 @@ plenty_admin.MAPS.remove_all_polygons = function(polygons){
 		boundary.removePolygon();
 	}
 }
+*/
 
 plenty_admin.MAPS.show_clu_polygons = function(except){
 	//loop through the CLU boundaries on the map and set their map to null
@@ -5353,26 +5491,9 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			console.log("get_weather_days_with_dateRange", weatherDays);
 			
 			plenty_admin.UI.field.weatherDays = {
-					date: [],
 					dates: [],
 					months: [],
 					labels: [],
-					
-					gddToday: [],
-					
-					gddTotalToToday: [],
-					
-					maxTemp: [],
-					
-					minTemp: [],
-					
-					percipToday: [],
-					
-					percipTotalToToday: [],
-					
-					cropSurvey: [],
-					
-					moisture: [],
 					
 					weatherEvents: {
 						precip: [],
@@ -5419,6 +5540,9 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 					if(weatherOb.hasOwnProperty(prop)){
 						//console.log("prop:", prop);
 						if(prop === "weatherEvents"){
+							if(!plenty_admin.UI.field.weatherDays[prop]){
+								plenty_admin.UI.field.weatherDays[prop] = [];
+							}
 							for(var w=0; w<weatherOb[prop].length; w++){
 								var wEvent = weatherOb[prop][w];
 								wEvent.weatherDayDate = obTime;
@@ -5450,7 +5574,24 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 									break;
 								}
 							}
+						}else if(prop === "moisture"){
+							if(!plenty_admin.UI.field.weatherDays[prop]){
+								plenty_admin.UI.field.weatherDays[prop] = {};
+							}
+							console.log("how many depths? :", prop, weatherOb[prop].length);
+							for(var w=0; w<weatherOb[prop].length; w++){
+								var moistureDepth = weatherOb[prop][w];
+								//console.log("moisture depth: ", w, moistureDepth);
+								if(!plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth]){
+									plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth] = [];
+								}
+								
+								plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth].push(moistureDepth.moisture /* !!! HACK !!!*/ + (Math.random() * (10 - 100) + 10));
+							}
 						}else{
+							if(!plenty_admin.UI.field.weatherDays[prop]){
+								plenty_admin.UI.field.weatherDays[prop] = [];
+							}
 							plenty_admin.UI.field.weatherDays[prop].push(weatherOb[prop]);
 						}
 					}
@@ -5616,6 +5757,50 @@ plenty_admin.UI.field.renderCropSurveys = function(cropSurveys){
 	}
 }
 
+plenty_admin.UI.field.getActivityIconClass = function(activityTypeId){
+	console.log("getActivityIconClass", activityTypeId);
+	var iconClass = null;
+	switch(activityTypeId){
+			case 1:
+			case "SoilTest":
+				iconClass = "pif pif-soil-test";
+			break;
+			
+			case 2:
+			case "StarterFertilizer":
+			case "LateFertilizer":
+				iconClass = "pif pif-fertilizer";
+			break;
+			
+			case 3:
+			case "Tilling":
+				iconClass = "pif pif-tilling";
+			break;
+			
+			case 5:
+			case "EarlyNitrogen":
+				iconClass = "pif pif-early-nitrogen";
+			break;
+			
+			case 6:
+			case "LateNitrogen":
+				iconClass = "pif pif-late-nitrogen";
+			break;
+			
+			case 7:
+			case "PestControl":
+				iconClass = "pif pif-pest-control";
+			break;
+			
+			case 8:
+			case "Harvest":
+				iconClass = "pif pif-harvest";
+			break;
+		}
+		
+		return iconClass;
+}
+
 plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 	plenty_admin.UI.field.activityTimelineContainer = plenty_admin.UI.field.DOM.find(".activitiesTimeline .activities");
 	plenty_admin.UI.field.activityListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #activities tbody");
@@ -5628,20 +5813,8 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 	for(var a=0; a<activities.length; a++){
 		var activity = activities[a];
 		
+		activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
 		
-		switch(activity.activityTypeId){
-			case 1:
-				activity.iconClass = "fa fa-car";
-			break;
-			
-			case 2:
-				activity.iconClass = "fa fa-rocket";
-			break;
-			
-			case 3:
-				activity.iconClass = "fa fa-ship";
-			break;
-		}
 		
 		activity.startDate = plenty_admin.HELPER.formateJavaDate(activity.startTime);
 		activity.endDate = plenty_admin.HELPER.formateJavaDate(activity.endTime);
@@ -5662,11 +5835,16 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 			leftPos = 0;
 		}
 		
-		var activityHTML = $("<div class='activity' data-toggle='tooltip' data-placement='top' title='"+plenty_admin.UI.field.getActivityTooltipTitle(activity)+"' style='left:"+leftPos+"px; width:"+eventWidth+"px'><i class='"+plenty_admin.DATA.activityTypes[activity.activityTypeId].name.toLowerCase()+" "+activity.iconClass+"'></i></div>");
+		if(leftPos + eventWidth > plenty_admin.UI.field.activityTimelineContainer.width()){
+			leftPos = plenty_admin.UI.field.activityTimelineContainer.width() - eventWidth;
+		}
+		
+		var activityHTML = $("<div class='activity' data-toggle='tooltip' data-placement='top' title='"+plenty_admin.UI.field.getActivityTooltipTitle(activity)+"' style='left:"+leftPos+"px; width:"+eventWidth+"px'><i class='"+plenty_admin.DATA.activityTypes[activity.activityTypeId].name.toLowerCase().replace(/ /g, "")+" "+activity.iconClass+"'></i></div>");
 		
 		activityHTML
 		.tooltip({
-			html:true
+			html:true,
+			container:"body"
 		});
 		
 		plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
@@ -5675,6 +5853,9 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 			//build the activity list item
 			var activityItem = [
 					"<tr class='activity'>",
+						"<td>",
+							"<i class='"+activity.iconClass+"'></i>",
+						"</td>",
 						"<td>",
 							activity.state,
 						"</td>",
@@ -5703,20 +5884,52 @@ plenty_admin.UI.field.renderEquipment = function(equipment){
 	
 	console.log("equipmentListContainer", equipmentListContainer);
 	for(var a=0; a<equipment.length; a++){
-		var equipmentItem = equipment[a];
+		var equipmentItem = equipment[a].equipmentDto;
 		
 		//set the icons for different equipment types
 		switch(equipmentItem.equipmentTypeId){
 			case 1:
-				equipmentItem.iconClass = "fa fa-car";
+				equipmentItem.iconClass = "pif pif-atv";
 			break;
 			
 			case 2:
-				equipmentItem.iconClass = "fa fa-rocket";
+				equipmentItem.iconClass = "pif pif-tractor";
 			break;
 			
 			case 3:
-				equipmentItem.iconClass = "fa fa-ship";
+				equipmentItem.iconClass = "pif pif-spreader";
+			break;
+			
+			case 4:
+				equipmentItem.iconClass = "pif pif-offset-disk";
+			break;
+			
+			case 5:
+				equipmentItem.iconClass = "pif pif-planter";
+			break;
+			
+			case 6:
+				equipmentItem.iconClass = "pif pif-sprayer";
+			break;
+			
+			case 7:
+				equipmentItem.iconClass = "pif pif-combine";
+			break;
+			
+			case 8:
+				equipmentItem.iconClass = "pif pif-grain-cart";
+			break;
+			
+			case 9:
+				equipmentItem.iconClass = "pif pif-grain-truck";
+			break;
+			
+			case 10:
+				equipmentItem.iconClass = "pif pif-pipe";
+			break;
+			
+			case 11:
+				equipmentItem.iconClass = "pif pif-well";
 			break;
 		}
 		
@@ -5725,6 +5938,9 @@ plenty_admin.UI.field.renderEquipment = function(equipment){
 		//build the activity list item
 		var equipmentItemHTML = [
 				"<tr>",
+					"<td>",
+						"<i class='"+equipmentItem.iconClass+"'></i>",
+					"</td>",
 					"<td>",
 						plenty_admin.DATA.equipmentTypes[equipmentItem.equipmentTypeId],
 					"</td>",
@@ -5745,13 +5961,15 @@ plenty_admin.UI.field.renderEquipment = function(equipment){
 }
 
 plenty_admin.UI.field.getActivityTooltipTitle = function(activity){
-	var title = plenty_admin.DATA.activityTypes[activity.activityTypeId].name+
+	var title = //'<i class=\''+activity.iconClass+'\' style=\'width:40px; height:40px; margin:0 auto;\'/>'+
+				//"<br/>"+
+				plenty_admin.DATA.activityTypes[activity.activityTypeId].name+
 				"<br/>"+
 				activity.startDate.date+
 				"<br/>"+
 				"$"+
 				activity.cost;
-	
+	console.log("activity tooltip title:", title);
 	return title;
 }
 
@@ -5842,40 +6060,37 @@ plenty_admin.UI.field.scaleScale = function(graphEl){
 }
 
 plenty_admin.UI.field.renderMoistureGraph = function(){
+	//create dynamic moisture datasets
+	var datasets = [];
+	var index = 0;
+	plenty_admin.UI.brand_palette.setNumberRange(0, Object.keys(plenty_admin.UI.field.weatherDays.moisture).length);
+	
+	//for(var m=0; m<plenty_admin.UI.field.weatherDays.moisture.length; m++){
+	for(depth in plenty_admin.UI.field.weatherDays.moisture){
+		if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
+			console.log("colour: ", index, "#"+plenty_admin.UI.brand_palette.colourAt(index), plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index)));
+			var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
+			var colour = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index));
+			var dataset = {
+				label: moistureDepth.depth,
+				fillColor: "rgba("+colour.r+","+colour.g+","+colour.b+",0.2)", //define
+				strokeColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
+				pointColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba("+plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index))+",1)",
+				data: moistureDepth
+			};
+			datasets.push(dataset);
+			index +=1;
+		}
+	}
+	
+	console.log("moisture datasets: ", datasets);
+	
 	var moistureGraphData = {
 			labels: plenty_admin.UI.field.weatherDays.labels,
-			datasets: [
-				{
-					label: "Min",
-					fillColor: "rgba(220,220,220,0.2)",
-					strokeColor: "rgba(220,220,220,1)",
-					pointColor: "rgba(220,220,220,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(220,220,220,1)",
-					data: plenty_admin.UI.field.weatherDays.dewPt.min
-				},
-				{
-					label: "Max",
-					fillColor: "rgba(151,187,205,0.2)",
-					strokeColor: "rgba(151,187,205,1)",
-					pointColor: "rgba(151,187,205,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(151,187,205,1)",
-					data: plenty_admin.UI.field.weatherDays.dewPt.max
-				},
-				{
-					label: "Avg",
-					fillColor: "rgba(151,2,15,0.2)",
-					strokeColor: "rgba(151,2,15,1)",
-					pointColor: "rgba(151,2,15,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(151,2,15,1)",
-					data: plenty_admin.UI.field.weatherDays.dewPt.avg
-				}
-			]
+			datasets: datasets
 		};
 		
 		var moistureGraphOptions = {
@@ -5883,7 +6098,7 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 		};
 		
 		plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).Line(moistureGraphData, moistureGraphOptions);
-		plenty_admin.UI.field.moistureGraph.datasetId = "dewPt";
+		plenty_admin.UI.field.moistureGraph.datasetId = "moisture";
 		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.moistureGraph);
 		
 		return plenty_admin.UI.field.moistureGraph;
@@ -5954,18 +6169,17 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	//colour palette for graph segments
 	plenty_admin.UI.brand_palette.setNumberRange(0, finances.length);
 	
-	//for(var f=0; f<finances.length; f++){
 	for(index in finances){
 		if(finances.hasOwnProperty(index)){
 			var finance = finances[index];
+			console.log("finance", finance);
 			finance.colour = "#"+plenty_admin.UI.brand_palette.colourAt(index);
-			//console.log("finance.colour", finance.colour);
-			
+
 			var segment = {
 				value:		finance.cost,
 				color:		finance.colour,
 				highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
-				label: 		finance.activityTypeName
+				label: 		finance.activityTypeName,
 			};
 			
 			financesData.push(segment);
@@ -5973,7 +6187,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"<%=plenty_admin.UI.field.getActivityIconClass(segments[i].label.replace(/ /g, \"\"))%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
 		tooltipTemplate: "<%=label%>: <%= numeral(value).format('($00[.]00)') %> | <%= numeral(circumference / 6.283).format('(0[.][00]%)') %>",
 		animateRotate: true
 	};
@@ -6220,126 +6434,40 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		//get array of equipment elements
 		var equipment = equipmentData;
 		
-		//HACK!!! Add some hard coded equipment because the DB is not returning any
-		/*
-		if(equipment.length == 0){
-			equipment = [
-				{
-					latitude:38.03148542362175,
-					longitude: -95.5297395615873,
-					equipmentTypeId: 1,
-					name: "XUV550",
-					pic:"xuv550.jpeg",
-					id:1,	
-					live: false
-				},
-				{
-					latitude:38.03271888116563,
-					longitude: -95.52987739298443,
-					equipmentTypeId: 2,
-					name: "9420",
-					pic:"jd-9420.png",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:2,	
-					live: true
-				},
-				{
-					latitude:38.03159579759556,
-					longitude: -95.52724310303358,
-					equipmentTypeId: 3,
-					name: "DN 345",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:3,	
-					pic:"jd-dn345.jpg",
-					live:true
-				},
-				{
-					latitude:38.033049319789015,
-					longitude: -95.52745768766295,
-					equipmentTypeId: 4,
-					name: "325",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:4,	
-					pic:"jd-325.jpeg",
-					live:false
-				},
-				{
-					latitude:38.030361971218554,
-					longitude: -95.52745768766295,
-					equipmentTypeId: 5,
-					name: "DR-18",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:5,	
-					pic:"jd-dr18.jpg",
-					live:false
-				},
-				{
-					latitude:38.030361971218554,
-					longitude: -95.52784392676114,
-					equipmentTypeId: 6,
-					name: "R4040i",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:6,	
-					pic:"jd-r4040i.jpg",
-					live:true
-				},
-			]
-		}
-		*/
-		
 		console.log("Equipment", equipment);
 		
 		var boundaryLatLngs = [];
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-		//for(index in equipment){
-			//if(equipment.hasOwnProperty(index)){
-				//var equip = equipment[index];
-				
-				//HACK - Add missing data
-				if(!equip.equipmentTypeId){
-					equip.equipmentTypeId = 1;
-				}
-				
-				if(!equip.live){
-					equip.live = true;
+				if(
+					!Array.isArray(equip.equipmentWithTypesDto.equipmentTypes[0])
+					&& typeof equip.equipmentWithTypesDto.equipmentTypes[0] != "object"
+				){
+					var equipTypeName = equip.equipmentWithTypesDto.equipmentTypes[0];
+					equip.equipmentWithTypesDto.equipmentTypes[0] = {
+						name: equipTypeName,
+						id:1
+					};
 				}
 				
 				if(!equip.pic){
 					equip.pic = "jd-r4040i.jpg";
 				}
-				
-				
 				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					return pin.id === equip.id;
+					return pin.id === equip.equipmentWithTypesDto.equipmentDto.id;
 				});
 				
 				if(iconExists.length === 0){
 					//get a google latlng object for each element
-					var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+					var latlng = new google.maps.LatLng(equip.equipmentWithTypesDto.equipmentDto.latitude, equip.equipmentWithTypesDto.equipmentDto.longitude);
 					
 					//extend the map boundary to include all points
 					boundaryLatLngs.push(latlng);
 					plenty_admin.UI.map.latlngbounds.extend(latlng);
 					
 					equip.image = {
-							url: "img/map-markers/"+equip.equipmentTypeId+".svg",
+							url: "img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg",
 							// This marker is 20 pixels wide by 32 pixels tall.
 							size: new google.maps.Size(50, 50),
 							// The origin for this image is 0,0.
@@ -6348,6 +6476,8 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 							anchor: new google.maps.Point(20, 50)
 					};
 					
+					equip.id = equip.equipmentWithTypesDto.equipmentDto.id;
+					
 					equip.latlng = latlng;
 					
 					equip.draggable = true;
@@ -6355,11 +6485,11 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					var pinEvents = {
 						onMouseOver: function(event){ //mouseover event
 							this.setOptions({zIndex:10});
-							this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
+							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+"-hover.svg");
 						}, 
 						onMouseOut: function(event){ //mouseout event
 							this.setOptions({zIndex:1});
-							this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
+							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg");
 						}, 
 						onClick: function(event){ //click event
 							var modal;
@@ -6371,10 +6501,10 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 							
 							modal
 							.find(".modal-title")
-							.text(equip.name)
+							.text(equip.equipmentDto.name)
 							.end()
 							.find(".type")
-							.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
+							.text(equip.equipmentWithTypesDto.equipmentTypes[0].name)
 							.end()
 							.find(".image img").prop("src", "img/equipment/"+equip.pic)
 							.end()
@@ -6402,7 +6532,30 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 						},
 						onDragEnd: function(event){ //drag end event
 							console.log("event:", event, equip);
-							plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
+							
+							//check if the point has been moved to another polygon or is not in a polygon
+							var matchedPoly = null;
+							for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
+								var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
+								if(google.maps.geometry.poly.containsLocation(event.latLng, polygon)){
+									console.log("Point is inside a polygon: ", polygon);
+									matchedPoly = polygon;
+									break;
+								}
+							}
+							
+							if(matchedPoly){
+								if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
+									console.log("do you want top move this equipment within this field?");
+									plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
+								}else{
+									console.log("Do you what to assosciate this equipment with a different field");
+									plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, event);
+								}
+							}else{
+								console.log("are you sure you want to disassociate this equipment with any fields???");
+								plenty_admin.MAPS.delete_field_equipment(equip, event);
+							}
 						}
 					};
 					//draw the pin on the map
@@ -6597,8 +6750,12 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 				};
 				
 				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events);
+				
+				plenty_admin.UI.map.filtered_field_polygons.push(polygon);
 			}	
 		});
+		
+		
 		
 		if(fieldBoundaries.length > 0){
 			//center and zoom the map to the bounds of the polygons
@@ -7491,6 +7648,8 @@ plenty_admin.REST.updateFieldCrop = plenty_admin.api.all("fieldCrops/updateField
 plenty_admin.REST.deleteFieldCrop = plenty_admin.api.all("fieldCrops/deleteFieldCrop");
 
 plenty_admin.REST.insertFieldEquipment = plenty_admin.api.all("fieldEquipment/insertWithNewEquipment");
+plenty_admin.REST.updateFieldEquipment = plenty_admin.api.all("fieldEquipment/updateFieldEquipment");
+plenty_admin.REST.deleteFieldEquipment = plenty_admin.api.all("fieldEquipment/deleteFieldEquipment");
 
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){

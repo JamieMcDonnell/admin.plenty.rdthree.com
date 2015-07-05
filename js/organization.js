@@ -36,6 +36,8 @@ plenty_admin.REST.updateFieldCrop = plenty_admin.api.all("fieldCrops/updateField
 plenty_admin.REST.deleteFieldCrop = plenty_admin.api.all("fieldCrops/deleteFieldCrop");
 
 plenty_admin.REST.insertFieldEquipment = plenty_admin.api.all("fieldEquipment/insertWithNewEquipment");
+plenty_admin.REST.updateFieldEquipment = plenty_admin.api.all("fieldEquipment/updateFieldEquipment");
+plenty_admin.REST.deleteFieldEquipment = plenty_admin.api.all("fieldEquipment/deleteFieldEquipment");
 
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){

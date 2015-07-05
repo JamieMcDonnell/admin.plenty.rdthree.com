@@ -135,126 +135,40 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 		//get array of equipment elements
 		var equipment = equipmentData;
 		
-		//HACK!!! Add some hard coded equipment because the DB is not returning any
-		/*
-		if(equipment.length == 0){
-			equipment = [
-				{
-					latitude:38.03148542362175,
-					longitude: -95.5297395615873,
-					equipmentTypeId: 1,
-					name: "XUV550",
-					pic:"xuv550.jpeg",
-					id:1,	
-					live: false
-				},
-				{
-					latitude:38.03271888116563,
-					longitude: -95.52987739298443,
-					equipmentTypeId: 2,
-					name: "9420",
-					pic:"jd-9420.png",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:2,	
-					live: true
-				},
-				{
-					latitude:38.03159579759556,
-					longitude: -95.52724310303358,
-					equipmentTypeId: 3,
-					name: "DN 345",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:3,	
-					pic:"jd-dn345.jpg",
-					live:true
-				},
-				{
-					latitude:38.033049319789015,
-					longitude: -95.52745768766295,
-					equipmentTypeId: 4,
-					name: "325",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:4,	
-					pic:"jd-325.jpeg",
-					live:false
-				},
-				{
-					latitude:38.030361971218554,
-					longitude: -95.52745768766295,
-					equipmentTypeId: 5,
-					name: "DR-18",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:5,	
-					pic:"jd-dr18.jpg",
-					live:false
-				},
-				{
-					latitude:38.030361971218554,
-					longitude: -95.52784392676114,
-					equipmentTypeId: 6,
-					name: "R4040i",
-					data:{
-						depth:"1.2m",
-						angle:"33degrees"
-					},
-					id:6,	
-					pic:"jd-r4040i.jpg",
-					live:true
-				},
-			]
-		}
-		*/
-		
 		console.log("Equipment", equipment);
 		
 		var boundaryLatLngs = [];
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-		//for(index in equipment){
-			//if(equipment.hasOwnProperty(index)){
-				//var equip = equipment[index];
-				
-				//HACK - Add missing data
-				if(!equip.equipmentTypeId){
-					equip.equipmentTypeId = 1;
-				}
-				
-				if(!equip.live){
-					equip.live = true;
+				if(
+					!Array.isArray(equip.equipmentWithTypesDto.equipmentTypes[0])
+					&& typeof equip.equipmentWithTypesDto.equipmentTypes[0] != "object"
+				){
+					var equipTypeName = equip.equipmentWithTypesDto.equipmentTypes[0];
+					equip.equipmentWithTypesDto.equipmentTypes[0] = {
+						name: equipTypeName,
+						id:1
+					};
 				}
 				
 				if(!equip.pic){
 					equip.pic = "jd-r4040i.jpg";
 				}
-				
-				
 				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					return pin.id === equip.id;
+					return pin.id === equip.equipmentWithTypesDto.equipmentDto.id;
 				});
 				
 				if(iconExists.length === 0){
 					//get a google latlng object for each element
-					var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+					var latlng = new google.maps.LatLng(equip.equipmentWithTypesDto.equipmentDto.latitude, equip.equipmentWithTypesDto.equipmentDto.longitude);
 					
 					//extend the map boundary to include all points
 					boundaryLatLngs.push(latlng);
 					plenty_admin.UI.map.latlngbounds.extend(latlng);
 					
 					equip.image = {
-							url: "img/map-markers/"+equip.equipmentTypeId+".svg",
+							url: "img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg",
 							// This marker is 20 pixels wide by 32 pixels tall.
 							size: new google.maps.Size(50, 50),
 							// The origin for this image is 0,0.
@@ -263,6 +177,8 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 							anchor: new google.maps.Point(20, 50)
 					};
 					
+					equip.id = equip.equipmentWithTypesDto.equipmentDto.id;
+					
 					equip.latlng = latlng;
 					
 					equip.draggable = true;
@@ -270,11 +186,11 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 					var pinEvents = {
 						onMouseOver: function(event){ //mouseover event
 							this.setOptions({zIndex:10});
-							this.setIcon("img/map-markers/"+equip.equipmentTypeId+"-hover.svg");
+							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+"-hover.svg");
 						}, 
 						onMouseOut: function(event){ //mouseout event
 							this.setOptions({zIndex:1});
-							this.setIcon("img/map-markers/"+equip.equipmentTypeId+".svg");
+							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg");
 						}, 
 						onClick: function(event){ //click event
 							var modal;
@@ -286,10 +202,10 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 							
 							modal
 							.find(".modal-title")
-							.text(equip.name)
+							.text(equip.equipmentDto.name)
 							.end()
 							.find(".type")
-							.text(plenty_admin.DATA.equipmentTypes[equip.equipmentTypeId].name)
+							.text(equip.equipmentWithTypesDto.equipmentTypes[0].name)
 							.end()
 							.find(".image img").prop("src", "img/equipment/"+equip.pic)
 							.end()
@@ -317,7 +233,30 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 						},
 						onDragEnd: function(event){ //drag end event
 							console.log("event:", event, equip);
-							plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
+							
+							//check if the point has been moved to another polygon or is not in a polygon
+							var matchedPoly = null;
+							for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
+								var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
+								if(google.maps.geometry.poly.containsLocation(event.latLng, polygon)){
+									console.log("Point is inside a polygon: ", polygon);
+									matchedPoly = polygon;
+									break;
+								}
+							}
+							
+							if(matchedPoly){
+								if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
+									console.log("do you want top move this equipment within this field?");
+									plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
+								}else{
+									console.log("Do you what to assosciate this equipment with a different field");
+									plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, event);
+								}
+							}else{
+								console.log("are you sure you want to disassociate this equipment with any fields???");
+								plenty_admin.MAPS.delete_field_equipment(equip, event);
+							}
 						}
 					};
 					//draw the pin on the map
@@ -512,8 +451,12 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 				};
 				
 				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events);
+				
+				plenty_admin.UI.map.filtered_field_polygons.push(polygon);
 			}	
 		});
+		
+		
 		
 		if(fieldBoundaries.length > 0){
 			//center and zoom the map to the bounds of the polygons

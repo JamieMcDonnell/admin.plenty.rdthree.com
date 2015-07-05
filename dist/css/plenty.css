@@ -3008,6 +3008,13 @@ body {
   margin-right: 5px;
   vertical-align: middle;
 }
+#field-container .field_asset_data .col-xs-9 .legend ul li span.swatch i,
+#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li span.swatch i {
+  width: 100%;
+  line-height: 1.5;
+  color: #fff;
+  text-align: center;
+}
 #field-container .field_weather_data {
   position: relative;
 }
@@ -3117,8 +3124,8 @@ body {
 }
 #field-container .cropSurveysWrapper .cropSurveys {
   position: relative;
-  height: 33px;
-  overflow: hidden;
+  height: 35px;
+  overflow: auto;
   background-color: transparent;
 }
 #field-container .cropSurveysWrapper .cropSurveys .cropSurvey {
@@ -3126,7 +3133,7 @@ body {
   top: 0;
   left: 40px;
   width: 33px;
-  height: 33px;
+  height: 35px;
   padding: 0;
   font-size: 30px;
   pointer-events: all;
@@ -3503,5 +3510,88 @@ body.map *:after {
 .modal.org_item_modal.skills .add_to_org_form.skills,
 .modal.org_item_modal.payments .add_to_org_form.payments {
   display: block;
+}
+@font-face {
+  font-family: 'plenty-icon-font';
+  font-style: normal;
+  font-weight: normal;
+
+  src: url('../fonts/plenty-icon-font.eot?-3dm85j');
+  src: url('../fonts/plenty-icon-font.eot?#iefix-3dm85j') format('embedded-opentype'), url('../fonts/plenty-icon-font.ttf?-3dm85j') format('truetype'), url('../fonts/plenty-icon-font.woff?-3dm85j') format('woff'), url('../fonts/plenty-icon-font.svg?-3dm85j#plenty-icon-font') format('svg');
+}
+[class^="pif-"],
+[class*=" pif-"] {
+  display: inline-block;
+  font-family: 'plenty-icon-font';
+  font-size: inherit;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-transform: none;
+  -webkit-transform: translate(0, 0);
+      -ms-transform: translate(0, 0);
+       -o-transform: translate(0, 0);
+          transform: translate(0, 0);
+
+  speak: none;
+  text-rendering: auto;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.pif-pest-control:before {
+  content: "\e60a";
+}
+.pif-harvest:before {
+  content: "\e60b";
+}
+.pif-soil-test:before {
+  content: "\e60c";
+}
+.pif-planting:before {
+  content: "\e60d";
+}
+.pif-fertilizer:before {
+  content: "\e60e";
+}
+.pif-tilling:before {
+  content: "\e60f";
+}
+.pif-late-nitrogen:before {
+  content: "\e610";
+}
+.pif-early-nitrogen:before {
+  content: "\e611";
+}
+.pif-spreader:before {
+  content: "\e605";
+}
+.pif-sprayer:before {
+  content: "\e606";
+}
+.pif-grain-cart:before {
+  content: "\e607";
+}
+.pif-combine:before {
+  content: "\e608";
+}
+.pif-offset-disk:before {
+  content: "\e609";
+}
+.pif-atv:before {
+  content: "\e600";
+}
+.pif-pipe:before {
+  content: "\e601";
+}
+.pif-spray-plane:before {
+  content: "\e602";
+}
+.pif-tractor:before {
+  content: "\e603";
+}
+.pif-well:before {
+  content: "\e604";
 }
 /*# sourceMappingURL=plenty.css.map */
