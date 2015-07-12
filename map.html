@@ -14,12 +14,13 @@
         <div class="fill-area-content flexbox-item-grow" id="map-wrapper">
 			<div class="col-sm-12 pln prn" id="map-container"></div>
 			{{ include('snippets/filters.html') }}
-			{{ include('snippets/equipment-modals.html') }}
         </div>
     </div>
 	{{ include('snippets/footer-DOM.html') }}
 </div>
 	{{ include('snippets/loadingOverlay.html') }}
+	{{ include('snippets/equipment-modals.html') }}
+	{{ include('snippets/activity-modal.html') }}
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
 	{{ include('snippets/footer-scripts.html') }}
 	<script type="text/javascript">

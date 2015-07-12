@@ -106,6 +106,14 @@ body.map footer.footer {
 .truncate.truncate-250 {
   width: 250px;
 }
+.modal.equipment .equipmentObservationHeaders {
+  display: none;
+}
+.modal.equipment.MOVEABLE .equipmentObservationHeaders.MOVEABLE,
+.modal.equipment.WELL .equipmentObservationHeaders.WELL,
+.modal.equipment.SOIL_MOISTURE .equipmentObservationHeaders.SOIL_MOISTURE {
+  display: block;
+}
 .clear {
   clear: both !important;
 }
@@ -170,6 +178,9 @@ footer .links li:last-of-type {
   padding-right: 0;
   margin-right: 0;
   border-right: none;
+}
+.pointer {
+  cursor: pointer;
 }
 /* List group items */
 .list-group .list-group-item {
@@ -2943,6 +2954,10 @@ body {
   left: 25%;
   height: 100%;
 }
+#field-container .field_asset_data .noTab,
+#field-container .field_asset_data .col-xs-9 .noTab {
+  border: none;
+}
 #field-container .field_asset_data .col-xs-3,
 #field-container .field_asset_data .col-xs-9 .col-xs-3,
 #field-container .field_asset_data .col-xs-3 ul,
@@ -2984,36 +2999,6 @@ body {
   left: 60%;
   width: 40%;
   height: 100%;
-  overflow: auto;
-}
-#field-container .field_asset_data .col-xs-9 .legend ul,
-#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul {
-  padding: 0;
-}
-#field-container .field_asset_data .col-xs-9 .legend ul li,
-#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li {
-  margin-bottom: 5px;
-  text-transform: capitalize;
-  list-style: none;
-}
-#field-container .field_asset_data .col-xs-9 .legend ul li.active,
-#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li.active {
-  color: #fff;
-}
-#field-container .field_asset_data .col-xs-9 .legend ul li span.swatch,
-#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li span.swatch {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-  vertical-align: middle;
-}
-#field-container .field_asset_data .col-xs-9 .legend ul li span.swatch i,
-#field-container .field_asset_data .col-xs-9 .col-xs-9 .legend ul li span.swatch i {
-  width: 100%;
-  line-height: 1.5;
-  color: #fff;
-  text-align: center;
 }
 #field-container .field_weather_data {
   position: relative;
@@ -3160,11 +3145,78 @@ body {
 #field-container .yearSlider .current_year_crop {
   text-transform: capitalize;
 }
+.legend {
+  overflow: auto;
+}
+.legend ul {
+  padding: 0;
+}
+.legend ul li {
+  margin-bottom: 5px;
+  text-transform: capitalize;
+  list-style: none;
+}
+.legend ul li.active {
+  color: #fff;
+}
+.legend ul li span.swatch {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.legend ul li span.swatch i {
+  width: 100%;
+  line-height: 1.5;
+  color: #fff;
+  text-align: center;
+}
+.legend ul li span.pct {
+  pointer-events: none;
+}
 body.map #field-container {
   z-index: 100;
   width: 100%;
   height: 100%;
   background-color: #fff;
+}
+@media (max-width: 992px) {
+  #field-container .field_preview {
+    float: left;
+    width: 25%;
+  }
+  #field-container .field_asset_data {
+    position: absolute;
+    left: 25%;
+    width: 75%;
+    height: 100%;
+  }
+}
+.modal#activity .modal-body .taskGraphRow {
+  min-height: 200px;
+}
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend {
+  position: absolute;
+  height: 100%;
+  overflow-y: auto;
+  font-size: 13px;
+}
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskHeader {
+  margin-bottom: 0;
+}
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem {
+  margin-bottom: 1px;
+}
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.equipmentTaskItem:last-child,
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.laborTaskItem:last-child,
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.productTaskItem:last-child {
+  margin-bottom: 10px;
+}
+.modal#activity .modal-body .taskGraphRow .col-xs-6.graph {
+  position: absolute;
+  left: 50%;
+  height: 100%;
 }
 html.map,
 body.map {
@@ -3272,6 +3324,7 @@ body.map *:after {
 }
 #map_legend .legend_item {
   margin-bottom: 5px;
+  text-transform: capitalize;
   list-style: none;
 }
 #map_legend .legend_item .legend_swatch {
@@ -3287,6 +3340,54 @@ body.map *:after {
   max-width: 200px;
   padding: 10px;
   background-color: #fff;
+}
+.marker {
+  position: absolute;
+  top: -50px;
+  left: -30.75px;
+  width: 61.5px;
+  height: 50px;
+  cursor: pointer;
+  -webkit-transition: all .35s ease;
+       -o-transition: all .35s ease;
+          transition: all .35s ease;
+  -webkit-transform: scale(0);
+      -ms-transform: scale(0);
+       -o-transform: scale(0);
+          transform: scale(0);
+  /* IE 9 */
+  -webkit-transform-origin: bottom center;
+      -ms-transform-origin: bottom center;
+  /* Chrome, Safari, Opera */
+       -o-transform-origin: bottom center;
+          transform-origin: bottom center;
+}
+.marker.in {
+  -webkit-transform: scale(.7);
+      -ms-transform: scale(.7);
+       -o-transform: scale(.7);
+          transform: scale(.7);
+}
+.marker.in.hover {
+          filter: contrast(2);
+  -webkit-transform: scale(1);
+      -ms-transform: scale(1);
+       -o-transform: scale(1);
+          transform: scale(1);
+
+  -webkit-filter: contrast(2);
+}
+.marker i {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  width: 20px;
+  height: 20px;
+  font-size: 21px;
+  line-height: .8;
+  color: #fff;
+  pointer-events: none;
+  cursor: pointer;
 }
 /* LESS Document */
 #loadingOverlay {
@@ -3370,13 +3471,14 @@ body.map *:after {
 }
 #filters-container h3.filter-title {
   margin: 10px 0 0 0;
-  font-size: 22px;
+  font-size: 21px;
   text-align: left;
   text-transform: capitalize;
 }
 #filters-container h3.filter-title span.icon {
-  width: 33px;
-  height: 33px;
+  width: 26px;
+  height: 26px;
+  margin: 0 5px;
 }
 #filters-container .filter-set.organizations span.icon {
   background: url(../img/filter-icons/organizations.svg) no-repeat 0 0;
@@ -3422,6 +3524,11 @@ body.map *:after {
 #filters-container ul li.show-filters a:hover {
   text-decoration: none;
   background: #0072ab;
+}
+#filters-container ul li.show-filters a i {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 #filters-container ul li a {
   display: block;
@@ -3539,6 +3646,9 @@ body.map *:after {
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.pif-moisture-sensor:before {
+  content: "\e612";
 }
 .pif-pest-control:before {
   content: "\e60a";

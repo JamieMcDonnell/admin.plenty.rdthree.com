@@ -12,91 +12,93 @@
 			<div id="settings">
 				<div class="row organizations">
 					<div class='col-xs-12 col-sm-6 col-md-4 newOrgContainer pull-left'>
-					<div class="panel panel-success">
-						<div class="panel-heading">
-				  			<h2 class="panel-title text-center">New Organization</h2>
-						</div>
-						<div class="panel-body">
-						<form class="form-inline">
-  							<div class="form-group overflowFix col-sm-12 pln prn">
-								<label for="new_org_name" class="col-sm-2 control-label">Name</label>
-								<div class="col-sm-10">
-									<input type="text" id="new_org_name" placeholder="Organization Name" class="form-control" required></input>
-								</div>
+						<div class="panel panel-success">
+							<div class="panel-heading">
+								<h2 class="panel-title text-center">New Organization</h2>
 							</div>
-							<div class="form-group overflowFix col-sm-12 pln prn">
-								<label for="new_org_type" class="col-sm-2 control-label">Type</label>
-								<div class="col-sm-10">
-									<select class="form-control" id="new_org_type" required>
-										<option value="1">Service Provider</option>
-										<option value="2">Client</option>
-										<option value="3">Vendor</option>
-									</select>
-								</div>
+							<div class="panel-body">
+								<form class="form-inline">
+									<div class="form-group overflowFix col-sm-12 pln prn">
+										<label for="new_org_name" class="col-sm-2 control-label">Name</label>
+										<div class="col-sm-10">
+											<input type="text" id="new_org_name" placeholder="Organization Name" class="form-control" required>
+											</input>
+										</div>
+									</div>
+									<div class="form-group overflowFix col-sm-12 pln prn">
+										<label for="new_org_type" class="col-sm-2 control-label">Type</label>
+										<div class="col-sm-10">
+											<select class="form-control" id="new_org_type" required>
+												<option value="1">Service Provider</option>
+												<option value="2">Client</option>
+												<option value="3">Vendor</option>
+											</select>
+										</div>
+									</div>
+									<a href="" class="pull-right mts mbs moreDetailsToggle"><span><i class="glyphicon glyphicon-triangle-bottom"></i>More Details</span><span style="display:none;"><i class="glyphicon glyphicon-triangle-top"></i> Less Details</span></a>
+									<div class="more-details overflowFix clear">
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_address_1" class="col-sm-2 control-label">Address Line 1</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_address_1" placeholder="e.g. 123 Royale Ave." class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_address_2" class="col-sm-2 control-label">Address Line 2</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_address_2" placeholder="e.g. Denhamshire" class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_city" class="col-sm-2 control-label">City</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_city" placeholder="e.g. Chicago" class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_state" class="col-sm-2 control-label">State</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_state" placeholder="e.g. IL" class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_zip" class="col-sm-2 control-label">Zip</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_zip" placeholder="e.g. 60613" class="form-control">
+												</input>
+											</div>
+										</div>
+									</div>
+									<button class='btn btn-success btn-lrg newOrg btn-block'><span class="glyphicon glyphicon-plus"></span> Create New Organization</button>
+								</form>
+								<div class="alert alert-success">
+									<h3>Organization Added Successfully</h3>
+									<i class="glyphicon glyphicon-ok"></i> </div>
+								<div class="alert alert-danger">
+									<h3>Adding an organization failed</h3>
+									<p>Please try again</p>
+									<i class="fa fa-warning"></i> </div>
+								<div class="alert alert-info">
+									<h3>Adding organization - please wait</h3>
+									<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i> </div>
 							</div>
-							<a href="" class="pull-right mts mbs moreDetailsToggle"><span><i class="glyphicon glyphicon-triangle-bottom"></i>More Details</span><span style="display:none;"><i class="glyphicon glyphicon-triangle-top"></i> Less Details</span></a>
-							<div class="more-details overflowFix clear">
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_address_1" class="col-sm-2 control-label">Address Line 1</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_address_1" placeholder="e.g. 123 Royale Ave." class="form-control"></input>
-									</div>
-								</div>
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_address_2" class="col-sm-2 control-label">Address Line 2</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_address_2" placeholder="e.g. Denhamshire" class="form-control"></input>
-									</div>
-								</div>
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_city" class="col-sm-2 control-label">City</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_city" placeholder="e.g. Chicago" class="form-control"></input>
-									</div>
-								</div>	
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_state" class="col-sm-2 control-label">State</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_state" placeholder="e.g. IL" class="form-control"></input>
-									</div>
-								</div>	
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_zip" class="col-sm-2 control-label">Zip</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_zip" placeholder="e.g. 60613" class="form-control"></input>
-									</div>
-								</div>
-							</div>
-							<button class='btn btn-success btn-lrg newOrg btn-block'><span class="glyphicon glyphicon-plus"></span> Create New Organization</button>
-						</form>
-						<div class="alert alert-success">
-							<h3>Organization Added Successfully</h3>
-							<i class="glyphicon glyphicon-ok"></i>
-						</div>
-						<div class="alert alert-danger">
-							<h3>Adding an organization failed</h3>
-							<p>Please try again</p>
-							<i class="fa fa-warning"></i>
-						</div>
-						<div class="alert alert-info">
-							<h3>Adding organization - please wait</h3>
-							<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
 						</div>
 					</div>
 				</div>
 			</div>
 			{{ include('snippets/organization.html') }}
-			{{ include('snippets/field.html', {"breadcrumbs": true}) }}
-		</div>
+			{{ include('snippets/field.html', {"breadcrumbs": true}) }} </div>
 	</div>
 </div>
-</div>
-	{{ include('snippets/loadingOverlay.html') }}
-	{{ include('snippets/set-id-and-password.html') }}
-	{{ include('snippets/footer.html') }}
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
-	<script type="text/javascript">
+{{ include('snippets/loadingOverlay.html') }}
+	{{ include('snippets/set-id-and-password.html') }} 
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script> 
+{{ include('snippets/footer.html') }} 
+<script type="text/javascript">
 		plenty_admin.init("settings");
 	</script>
-</body>
-</html>
+</body></html>

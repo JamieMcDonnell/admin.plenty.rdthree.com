@@ -1,6 +1,7 @@
 //*********************** map.js **************************//
 //create namespace for map layout
 plenty_admin.UI.map = {};
+plenty_admin.UI.map.allCropTypes =  {};
 plenty_admin.UI.map.DOM = plenty_admin.UI.DOM.find("#map-container");
 plenty_admin.UI.map.filterControls = $(".filter_controls");
 plenty_admin.UI.map.toggleFilters = plenty_admin.UI.map.filterControls.find(".toggleFilters a");
@@ -9,8 +10,9 @@ plenty_admin.UI.map.orgs_quickfilter = plenty_admin.UI.map.filterControls.find("
 plenty_admin.UI.map.minCLUZoom = 15;
 plenty_admin.UI.map.applicableFilters = ["organizations", "farms", "fields", "cropTypes", "plans"];
 plenty_admin.UI.map.filtered_field_polygons = [];
-plenty_admin.UI.map.MODAL_liveEquipment = plenty_admin.UI.map.DOM.parent().find(".modal#equipment-live");
-plenty_admin.UI.map.MODAL_equipment = plenty_admin.UI.map.DOM.parent().find(".modal#equipment");
+plenty_admin.UI.map.MODAL_equipment = $("body").find(".modal#equipment");
+plenty_admin.UI.map.MODAL_activity = $("body").find(".modal#activity");
+plenty_admin.UI.field.taskFinancesGraphEl = plenty_admin.UI.map.MODAL_activity.find("canvas#taskGraph");
 //method to initiate the field page
 plenty_admin.UI.map.init = function(){
 	console.log("plenty_admin.UI.map.init");
@@ -46,7 +48,7 @@ plenty_admin.UI.map.init = function(){
 			}
 		});
 		plenty_admin.MAPS.set_on_click_event(plenty_admin.MAPS.mainMap, function(e){
-			console.log("map clicked");
+			console.log("map clicked", e);
 			plenty_admin.UI.filters.toggleFilters("close");	
 			plenty_admin.UI.map.farms_quickfilter.popover("hide");
 			plenty_admin.UI.map.orgs_quickfilter.popover("hide");
@@ -56,11 +58,13 @@ plenty_admin.UI.map.init = function(){
 		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.mainMap);
 		
 		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(4, 10000);
+		plenty_admin.DATA.eventCollector = window.eventcollector(5, 10000);
 		plenty_admin.REST.getCropTypes();
 		plenty_admin.REST.getTillageTypes();
 		plenty_admin.REST.getIrrigationTypes();
-		plenty_admin.REST.getEquipmentTypes();
+		//plenty_admin.REST.getEquipmentTypes();
+		plenty_admin.REST.getBrandTypes();
+		plenty_admin.REST.getGrowthMethods();
 		
 		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 			plenty_admin.HELPER.hideLoadingOverlay();
@@ -122,146 +126,109 @@ plenty_admin.UI.map.init = function(){
 	
 }
 
-plenty_admin.UI.map.add_equipment_to_map = function(boundary){
+plenty_admin.UI.map.add_equipment_to_map = function(){
 	var bounds = plenty_admin.MAPS.mainMap.getBounds();
 	var boundary = {};
 	
-	boundary.maxLongitude = bounds.getNorthEast().F;
-	boundary.minLongitude = bounds.getSouthWest().F;
-	boundary.maxLatitude = bounds.getNorthEast().A;
-	boundary.minLatitude = bounds.getSouthWest().A;
+	boundary.maxLongitude = bounds.getNorthEast().lng();
+	boundary.minLongitude = bounds.getSouthWest().lng();
+	boundary.maxLatitude = bounds.getNorthEast().lat();
+	boundary.minLatitude = bounds.getSouthWest().lat();
+	
+	console.log("BOUNDARY: ", bounds, bounds.getNorthEast(), boundary);
 	
 	plenty_admin.REST.fields.getEquipmentLocationForFilter(boundary, function(equipmentData){
 		//get array of equipment elements
 		var equipment = equipmentData;
 		
-		console.log("Equipment", equipment);
+		console.log("Equipments", equipment);
 		
 		var boundaryLatLngs = [];
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-				if(
-					!Array.isArray(equip.equipmentWithTypesDto.equipmentTypes[0])
-					&& typeof equip.equipmentWithTypesDto.equipmentTypes[0] != "object"
-				){
-					var equipTypeName = equip.equipmentWithTypesDto.equipmentTypes[0];
-					equip.equipmentWithTypesDto.equipmentTypes[0] = {
-						name: equipTypeName,
-						id:1
-					};
-				}
+			var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+				return pin.id === equip.id;
+			});
+			
+			if(iconExists.length === 0){
+				//get a google latlng object for each element
+				var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
 				
-				if(!equip.pic){
-					equip.pic = "jd-r4040i.jpg";
-				}
-				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					return pin.id === equip.equipmentWithTypesDto.equipmentDto.id;
-				});
+				//extend the map boundary to include all points
+				boundaryLatLngs.push(latlng);
 				
-				if(iconExists.length === 0){
-					//get a google latlng object for each element
-					var latlng = new google.maps.LatLng(equip.equipmentWithTypesDto.equipmentDto.latitude, equip.equipmentWithTypesDto.equipmentDto.longitude);
-					
-					//extend the map boundary to include all points
-					boundaryLatLngs.push(latlng);
-					plenty_admin.UI.map.latlngbounds.extend(latlng);
-					
-					equip.image = {
-							url: "img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg",
-							// This marker is 20 pixels wide by 32 pixels tall.
-							size: new google.maps.Size(50, 50),
-							// The origin for this image is 0,0.
-							origin: new google.maps.Point(0,0),
-							// The anchor for this image is the base of the flagpole at 0,32.
-							anchor: new google.maps.Point(20, 50)
-					};
-					
-					equip.id = equip.equipmentWithTypesDto.equipmentDto.id;
-					
-					equip.latlng = latlng;
-					
-					equip.draggable = true;
-					
-					var pinEvents = {
-						onMouseOver: function(event){ //mouseover event
-							this.setOptions({zIndex:10});
-							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+"-hover.svg");
-						}, 
-						onMouseOut: function(event){ //mouseout event
-							this.setOptions({zIndex:1});
-							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg");
-						}, 
-						onClick: function(event){ //click event
-							var modal;
-							if(equip.live){
-								modal = plenty_admin.UI.map.MODAL_liveEquipment;
-							}else{
-								modal = plenty_admin.UI.map.MODAL_equipment;
-							}
-							
-							modal
-							.find(".modal-title")
-							.text(equip.equipmentDto.name)
-							.end()
-							.find(".type")
-							.text(equip.equipmentWithTypesDto.equipmentTypes[0].name)
-							.end()
-							.find(".image img").prop("src", "img/equipment/"+equip.pic)
-							.end()
-							.find(".lat")
-							.text(equip.latlng.A)
-							.end()
-							.find(".lng")
-							.text(equip.latlng.F)
-							.end()
-							.find(".depth span")
-							.text((equip.data ? equip.data.depth : "-"))
-							.end()
-							.find(".angle span")
-							.text((equip.data ? equip.data.angle : "-"))
-							.end()
-							.find(".editable")
-							.editable(plenty_admin.REST.inline_editing_options)
-							.end()
-							.modal("show");
-							
-						}, 
-						onRightClick: function(event){ //right click event
-							console.log("event:", event, equip);
-							plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
-						},
-						onDragEnd: function(event){ //drag end event
-							console.log("event:", event, equip);
-							
-							//check if the point has been moved to another polygon or is not in a polygon
-							var matchedPoly = null;
-							for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
-								var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
-								if(google.maps.geometry.poly.containsLocation(event.latLng, polygon)){
-									console.log("Point is inside a polygon: ", polygon);
-									matchedPoly = polygon;
-									break;
-								}
-							}
-							
-							if(matchedPoly){
-								if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
-									console.log("do you want top move this equipment within this field?");
-									plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
-								}else{
-									console.log("Do you what to assosciate this equipment with a different field");
-									plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, event);
-								}
-							}else{
-								console.log("are you sure you want to disassociate this equipment with any fields???");
-								plenty_admin.MAPS.delete_field_equipment(equip, event);
+				plenty_admin.UI.map.latlngbounds.extend(latlng);
+				
+				equip.latlng = latlng;
+				
+				var pinEvents = {
+					onMouseOver: function(event){ //mouseover event
+						//console.log("hover marker: ", this, $(this.markerContent_));
+						$(this.markerContent_)
+						.find(".marker")
+						.addClass("hover");
+						
+						$(this.markerWrapper_)
+						.css({
+							zIndex:10
+						});
+						
+						plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equip.name+"</strong><br /><p>Drag to reposition, right click to delete</p>");
+					}, 
+					onMouseOut: function(event){ //mouseout event
+						$(this.markerContent_)
+						.find(".marker")
+						.removeClass("hover");
+						
+						$(this.markerWrapper_)
+						.css({
+							zIndex:1
+						});
+						
+						plenty_admin.MAPS.polygon_tooltip.hide();
+					}, 
+					onClick: function(event){ //click event
+						//event.stopPropagation();
+						plenty_admin.UI.field.show_equipment_modal(equip);
+					}, 
+					onRightClick: function(event){ //right click event
+						console.log("event:", this, equip);
+						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
+					},
+					onDragEnd: function(){ //drag end event
+						var that = this;
+						console.log("onDragEnd:", equip, that);
+						//check if the point has been moved to another polygon or is not in a polygon
+						var matchedPoly = null;
+						for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
+							var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
+							if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
+								console.log("Point is inside a polygon: ", polygon);
+								matchedPoly = polygon;
+								break;
 							}
 						}
-					};
-					//draw the pin on the map
-					plenty_admin.MAPS.draw_pin(equip, pinEvents);
-				}
+						
+						if(matchedPoly){
+							if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
+								console.log("do you want top move this equipment within this field?");
+								plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+							}else{
+								console.log("Do you what to assosciate this equipment with a different field");
+								plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
+							}
+						}else{
+							console.log("are you sure you want to disassociate this equipment with any fields???");
+							plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+							plenty_admin.MAPS.delete_field_equipment(equip, that);
+						}
+						return false;
+					}
+				};
+				//draw the pin on the map
+				plenty_admin.MAPS.draw_pin(equip, pinEvents);
+			}
 			//}
 		});
 		
@@ -272,10 +239,110 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 	});
 }
 
-plenty_admin.UI.map.populate = function(fieldIDs){
+plenty_admin.UI.field.show_activity_modal = function(activity, taskFinances){
+	console.log("show_activity_modal", activity, taskFinances);
+	plenty_admin.UI.map.MODAL_activity
+	.find(".modal-title")
+	.text(plenty_admin.DATA.activityTypes[activity.activityTypeId].name)
+	.end()
+	.on("shown.bs.modal", function(){
+		plenty_admin.UI.field.renderTaskFinancesGraph(taskFinances);
+		plenty_admin.UI.field.renderTasks(taskFinances);
+	})
+	.modal("show");
+};
+
+plenty_admin.UI.field.show_equipment_modal = function(equip){
+	console.log("show_equipment_modal", equip);
+	
+	plenty_admin.REST.fields.getEquipmentImage(equip.id, function(imageString){
+		console.log("imageString", imageString);
+		plenty_admin.UI.map.MODAL_equipment
+		.find(".image").html("<img src='data:image/jpeg;base64,"+ imageString +"' width='100%'/>");
+	});
+	
+	plenty_admin.UI.map.MODAL_equipment
+	.removeClass("MOVEABLE WELL SOIL_MOISTURE")
+	.addClass(equip.equipmentObservationDto.type)
+	.find(".modal-title")
+	.text(equip.name)
+	.end()
+	.find(".type")
+	.text(equip.equipmentTypeIds[0].name)
+	.end()
+	.find(".lat")
+	.text(equip.latitude)
+	.end()
+	.find(".lng")
+	.text(equip.longitude)
+	
+	switch(equip.equipmentObservationDto.type){
+		case "MOVEABLE":
+			plenty_admin.UI.map.MODAL_equipment
+			.find(".equipmentObservationHeaders.MOVEABLE")
+			.find(".speed b")
+			.text(equip.equipmentObservationDto.speed)
+			.end()
+			.find(".fuel b")
+			.text(equip.equipmentObservationDto.fuelAmount);
+		break;
+		
+		case "WELL":
+			plenty_admin.UI.map.MODAL_equipment
+			.find(".equipmentObservationHeaders.WELL")
+			.find(".time b")
+			.text(plenty_admin.HELPER.formatJavaDate(equip.equipmentObservationDto.observationTime).time)
+			.end()
+			.find(".reading b")
+			.text(equip.equipmentObservationDto.meterReading);
+		break;
+		
+		case "SOIL_MOISTURE":
+			plenty_admin.UI.map.MODAL_equipment
+			.find(".equipmentObservationHeaders.SOIL_MOISTURE")
+			.find(".time b")
+			.text(plenty_admin.HELPER.formatJavaDate(equip.equipmentObservationDto.observationTime).time)
+			.end()
+			.find(".soilDepthUOM")
+			.text(equip.equipmentObservationDto.depthUOM.name)
+			.end()
+			.find(".moistureUOM")
+			.text(equip.equipmentObservationDto.moistureUOM.name);
+			
+			for(var b=0; b<equip.equipmentObservationDto.readings.length; b++){
+				var reading = equip.equipmentObservationDto.readings[b];
+				var readingROW = [
+					"<tr>",
+						"<td>",
+							reading.depth,
+						"</td>",
+						"<td>",
+							reading.moisture,
+						"</td>",
+					"</tr>",
+				].join("");
+				
+				plenty_admin.UI.map.MODAL_equipment
+				.find(".equipmentObservationHeaders.SOIL_MOISTURE tbody")
+				.append(readingROW);
+			}
+			
+			//loop measuremends
+			//create rows to add to the table
+			
+		break;
+	}
+	
+	plenty_admin.UI.map.MODAL_equipment
+	.find(".editable")
+	.editable(plenty_admin.REST.inline_editing_options)
+	.end()
+	.modal("show");
+}
+
+plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 	// loop filtered fields and put them on the map
-	//plenty_admin.MAPS.zoomToPolygon(polygon);
-	console.log("plenty_admin.UI.map.populate", fieldIDs);
+	console.log("plenty_admin.UI.map.populate", fieldIDs, noZoom);
 	plenty_admin.UI.map.latlngbounds = new google.maps.LatLngBounds();
 	
 	//get the boundary points, grouped by field ID for the current filter
@@ -286,36 +353,38 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 		//clear the map
 		if(plenty_admin.MAPS.mainMap.clusterer){
 			plenty_admin.MAPS.mainMap.clusterer.clearMarkers();
+		}else{
+			plenty_admin.MAPS.remove_all_polygons(plenty_admin.UI.map.filtered_field_polygons);
 		}
 		
-		var allCropTypes =  {};
+		plenty_admin.UI.map.filtered_field_polygons = [];
 	
 		//console.log("fields", fields);
 		
 		//extract unique crop types from provided field boundaries
 		fieldBoundaries.forEach(function(field, p){
-			var cropTypeExists = $.grep(allCropTypes, function(crop, c){
+			var cropTypeExists = $.grep(plenty_admin.UI.map.allCropTypes, function(crop, c){
 				return crop.label === field.cropTypeName;
 			}).length > 0;
 			
 			
 			if(!cropTypeExists){
-				allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
+				plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
 			}
 		});
 		
 		
-		console.log("allCropTypes", allCropTypes);
+		console.log("plenty_admin.UI.map.allCropTypes", plenty_admin.UI.map.allCropTypes);
 		
 		//add a legend to the map based on the filtered fields
-		plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(allCropTypes).length > 0 ? Object.keys(allCropTypes).length : 100));
+		plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(plenty_admin.UI.map.allCropTypes).length > 0 ? Object.keys(plenty_admin.UI.map.allCropTypes).length : 100));
 		
 		var legendItems = {};
 		var inc = 0;
 		//for(var c=0; c<allCropTypes.length; c++){
-		for(id in allCropTypes){
-			if(allCropTypes.hasOwnProperty(id)){
-				legendItems[id] = {color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), colour: "#"+(allCropTypes[id].toLowerCase() === "none" || allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), label : allCropTypes[id]};
+		for(id in plenty_admin.UI.map.allCropTypes){
+			if(plenty_admin.UI.map.allCropTypes.hasOwnProperty(id)){
+				legendItems[id] = {color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), colour: "#"+(plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "none" || plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), label : plenty_admin.UI.map.allCropTypes[id]};
 				inc += 1;
 			}
 		}
@@ -326,8 +395,6 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 			plenty_admin.MAPS.add_map_legend(plenty_admin.MAPS.mainMap, legendItems);
 		}
 		
-		plenty_admin.UI.map.filtered_field_polygons = [];
-		
 		fieldBoundaries.forEach(function(field,i){
 			//console.log("field", field);
 			var boundaryLatLngs = [];
@@ -337,21 +404,28 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 				var latlng = new google.maps.LatLng(xy.latitude, xy.longitude, true);
 				latlng.seqNumber = xy.seqNumber;
 				boundaryLatLngs.push(latlng);
-				plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
+				
+				if(!noZoom){
+					plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
+				}
 			});
 			
-			console.log("processed boundary: ", boundaryLatLngs);
+			//console.log("processed boundary: ", boundaryLatLngs);
 			
-			//if the boundary has points, draew them and center the map on them
+			var fieldNameObj = $.grep(fieldIDs, function(_field, f){
+				return field.fieldId === _field.id;
+			});
+			var fieldName = "NO NAME";
+			(fieldNameObj.length > 0 ? fieldName = fieldNameObj[0].name : null);
+			
+			//if the boundary has points, draw them and center the map on them
 			if(boundaryLatLngs.length > 2){
 				var fieldData = {
 					boundaries: boundaryLatLngs,
 					editable: false,
 					fieldId: field.fieldId,
 					id: field.fieldId,
-					fieldName: $.grep(fieldIDs, function(_field, f){
-						return field.fieldId === _field.id;
-					})[0].name,
+					fieldName: fieldName,
 					isCoords: true,
 					//isCluster: false,
 					cropType: field.cropTypeName
@@ -402,9 +476,16 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onClick: function(event){ //onClick handler
-						//console.log("polygon clicked: ", this.getPath().getArray());
+						console.log("polygon clicked: ", event, $(event.eb.target), $(event.eb.target).hasClass("marker"));
 						var thisPoly = this;
 						var polyPath = this.getPath().getArray();
+						
+						//only move to field screen
+						//if a polygon has been clicked, not a marker
+						if($(event.eb.target).hasClass("marker")){
+							console.log("marker clicked instead of poly - return!");
+							return;
+						}
 						
 						//get field by ID
 						plenty_admin.REST.fields.getFieldById(this.id, function(fieldObj){
@@ -421,13 +502,16 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 									clickHandler:function(){
 										plenty_admin.UI.currentScreen
 										.fadeOut("normal", function(){
+											plenty_admin.UI.field.clear();
 											plenty_admin.UI.currentScreen = plenty_admin.UI.map.DOM;
 											plenty_admin.UI.currentScreen
 											.closest(".fill-area")
 											.fadeIn("normal")
 											.parent()
 											.find(".filter_controls")
-											.fadeIn("fast");
+											.fadeIn("fast", function(){
+												plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+											});
 										});
 										return false;
 									}
@@ -450,18 +534,22 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 					}
 				};
 				
-				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events);
+				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events, plenty_admin.MAPS.mainMap);
 				
 				plenty_admin.UI.map.filtered_field_polygons.push(polygon);
 			}	
 		});
 		
 		
-		
-		if(fieldBoundaries.length > 0){
+		if(fieldBoundaries.length > 0 && !noZoom){
 			//center and zoom the map to the bounds of the polygons
 			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 		}
+		
+		//recenter fields if map size changes
+		$(window).on("resize",function(){
+			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+		});
 		
 		//cluster the polygons and render clusters on the map
 		//plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);

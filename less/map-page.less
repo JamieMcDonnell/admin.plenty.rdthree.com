@@ -78,6 +78,7 @@ body.map{
 	.legend_item{
 		margin-bottom:5px;
 		list-style:none;
+		text-transform:capitalize;
 		
 		.legend_swatch{
 			width: 20px;
@@ -95,4 +96,37 @@ body.map{
 	background-color:@white;
 	padding:10px;
 	max-width:200px;
+}
+.marker{
+		transition: all 0.35s ease;
+		-ms-transform-origin: bottom center; /* IE 9 */
+		-webkit-transform-origin: bottom center; /* Chrome, Safari, Opera */
+		transform-origin: bottom center;
+		position:absolute;
+		cursor:pointer;
+		width:61.5px;
+		height: 50px;
+		top: -50px;
+  		left: -30.75px;
+		transform: scale(0);
+	&.in{
+		transform: scale(.7);
+		
+		&.hover{
+			transform: scale(1);
+			filter: contrast(2);
+		}
+	}
+	i{
+		pointer-events: none;
+		position:absolute;
+		cursor:pointer;
+		width:20px;
+		height: 20px;
+		top:10px;
+		left: 20px;
+		color: #fff;
+		font-size: 21px;
+		line-height: .8;
+	}
 }

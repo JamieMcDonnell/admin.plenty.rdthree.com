@@ -15,6 +15,14 @@ plenty_admin.REST = {};
 plenty_admin.REST.URL = '52.5.118.250:8080/plenty';
 plenty_admin.REST.fullURL = "http://"+plenty_admin.REST.URL;
 
+/* set up the timezone conversion library */
+/*
+timezoneJS.timezone.zoneFileBasePath = 'js/tz';
+timezoneJS.timezone.init({ callback: function(ev){
+	console.log("timezone-js is now ready: ", ev);
+} });
+*/
+
 plenty_admin.init = function(context){
 	plenty_admin.state = context;
 	//setup the logout link
@@ -46,11 +54,12 @@ plenty_admin.init = function(context){
 				// load all dependency packages befire initiating the settings
 				plenty_admin.DATA.load_user_organizations(function(orgsForUser){
 					plenty_admin.DATA.getInitialOrganizationData(orgsForUser, function(){
-						plenty_admin.DATA.eventCollector = window.eventcollector(4, 10000);
+						plenty_admin.DATA.eventCollector = window.eventcollector(5, 10000);
 						plenty_admin.REST.getEquipmentTypes();
 						plenty_admin.REST.getRoleTypes();
 						plenty_admin.REST.getOrganizationTypes();
 						plenty_admin.REST.getBoundaryTypes();
+						plenty_admin.REST.getGrowthMethods();
 						plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
 						  //console.log('event %d of %d emitted', fired, total);
 						  //console.log('event description:', data);
@@ -351,7 +360,33 @@ plenty_admin.REST.getEquipmentTypes = function(){
 				.remove()
 				.append(equipTypesHTML);
 				
-				plenty_admin.DATA.eventCollector.done("event 1");
+				plenty_admin.DATA.eventCollector.done("equipment");
+			});
+}
+
+// get all equipment types and store them
+plenty_admin.REST.brandTypes = plenty_admin.api.all("brands/getAllBrands");
+plenty_admin.REST.getBrandTypes = function(){
+	plenty_admin.DATA.brandTypes = {};
+	plenty_admin.REST.brandTypes.getAll()
+		.then(
+			function(brandTypesReturn){
+				plenty_admin.DATA.brandTypes = plenty_admin.REST.get_object_from_data(brandTypesReturn.body());
+				console.log("Get brand types finished");
+				
+				//populate equipment type lists:
+				var brandTypesHTML = "";
+				for(var e=0; e< plenty_admin.DATA.brandTypes.length; e++){
+					var brand = plenty_admin.DATA.brandTypes[e];
+					brandTypesHTML += "<option value='"+brand.id+"'>"+brand.name+"</option>";
+				}
+				plenty_admin.UI.DOM
+				.find(".brand_type_list")
+				.find("option")
+				.remove()
+				.append(brandTypesHTML);
+				
+				plenty_admin.DATA.eventCollector.done("Brands");
 			});
 }
 
@@ -365,7 +400,7 @@ plenty_admin.REST.getActivityTypes = function(){
 				plenty_admin.DATA.activityTypes = plenty_admin.REST.get_object_from_data(activityTypesReturn.body());
 				console.log("Get activity types finished");
 				
-				plenty_admin.DATA.eventCollector.done("event 1");
+				plenty_admin.DATA.eventCollector.done("activities");
 			},
 			function(err){
 				console.error("getting activity types failed: ", err);
@@ -382,7 +417,7 @@ plenty_admin.REST.getRoleTypes = function(){
 			function(roleTypesReturn){
 				plenty_admin.DATA.roleTypes = plenty_admin.REST.get_object_from_data(roleTypesReturn.body());
 				console.log("Get role types finished");
-				plenty_admin.DATA.eventCollector.done("event 2");
+				plenty_admin.DATA.eventCollector.done("roles");
 			});
 }
 
@@ -448,6 +483,19 @@ plenty_admin.REST.getBoundaryTypes = function(){
 				plenty_admin.DATA.boundaryTypes = plenty_admin.REST.get_object_from_data(boundaryTypes.body());
 				console.log("Get boundary types finished");
 				plenty_admin.DATA.eventCollector.done("event 4");
+			});
+}
+
+// get all growth methods and store them
+plenty_admin.REST.growthMethods = plenty_admin.api.all("cropStage/getAllGrowthMethods");
+plenty_admin.REST.getGrowthMethods = function(){
+	plenty_admin.DATA.growthMethods = {};
+	plenty_admin.REST.growthMethods.getAll()
+		.then(
+			function(growthMethods){
+				plenty_admin.DATA.growthMethods = plenty_admin.REST.get_object_from_data(growthMethods.body());
+				console.log("Get growth methods finished");
+				plenty_admin.DATA.eventCollector.done("growth methods");
 			});
 }
 
@@ -615,7 +663,7 @@ plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(b
 		);
 }
 
-plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox = function(boundary, callback){
+plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox = function(boundary, callback, map){
 	//get fields related to this farm
 	plenty_admin.REST.fields.CLUBoundaryPointsForBoundingBox = plenty_admin.api.one("cluBoundaries/getByBoundinBox", boundary.maxLongitude+"/"+boundary.minLongitude+"/"+boundary.maxLatitude+"/"+boundary.minLatitude);
 	
@@ -631,7 +679,7 @@ plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox = function(boundary,
 				}
 				
 				if(callback && typeof callback === "function"){
-					callback(CLUboundaryPointsSet);
+					callback(CLUboundaryPointsSet, map);
 				}
 			});
 }
@@ -684,6 +732,18 @@ plenty_admin.REST.fields.getFieldById = function(id, callback){
 			console.log(" fieldById: ", fieldObj.body()());
 			if(callback && typeof callback == "function"){
 				callback(fieldObj.body()());
+			}
+		});
+}
+
+plenty_admin.REST.fields.getEquipmentImage = function(equipmentId, callback){
+	plenty_admin.REST.equipmentImage = plenty_admin.api.all("equipmentFiles/getImage");
+	plenty_admin.REST.equipmentImage.get(equipmentId)
+	.then(
+		function(equipmentImageString){
+			console.log(" equipmentImageString: ", equipmentImageString().data);
+			if(callback && typeof callback == "function"){
+				callback(equipmentImageString().data);
 			}
 		});
 }
@@ -745,6 +805,8 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 	fullFieldObject.tillageTypeId = parseInt(fieldObj.tillageTypeId);
 	delete fieldObj.tillageTypeId;
 	
+	fullFieldObject.growthMethodId = parseInt(fieldObj.growthMethodId);
+	
 	fullFieldObject.year = 2015;
 	
 	fullFieldObject.fieldDto = fieldObj;
@@ -770,7 +832,6 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 					.append($fieldHTML);
 					
 					plenty_admin.UI.organization.addItemFunctionality($fieldHTML);
-					
 				break;
 				
 				case "map":
@@ -780,7 +841,7 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 					plenty_admin.DATA.update_filters(function(returned_filters){
 						//console.log("filters updated: ", returned_filters, returned_filters.body());
 						plenty_admin.DATA.userFilters = returned_filters.body();
-					});
+					}, null, false);
 				break;
 				
 				//create dummy weather observations for new field
@@ -958,31 +1019,26 @@ plenty_admin.HELPER.get_singular_selected_hash = function(){
 	var hashSingular = url.substring(url.indexOf('#')+1, url.lastIndexOf("s"));
 	return hashSingular;
 }
-plenty_admin.HELPER.formateJavaDate = function(unix_timestamp){
+plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 	var a = new Date(unix_timestamp);
-	  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-	  var year = a.getFullYear();
-	  var month = months[a.getMonth()];
-	  var date = a.getDate();
-	  var hour = (a.getHours() < 10 ? "0"+a.getHours() : a.getHours());
-	  var min = (a.getMinutes() < 10 ? "0"+a.getMinutes() : a.getMinutes());
-	  var sec = (a.getSeconds() < 10 ? "0"+a.getSeconds() : a.getSeconds());
-	  var _date = (month ? month.slice(0,4) : month) + ' ' + date;
-	  
-	  /* HACK for empty dates */
-	  if(_date.indexOf("unde") > -1 || _date.indexOf("NaN") > -1){
-		_date = "April 21";  
-	  }
-	  
-	  var time = hour + ':' + min + ':' + sec;
-	  var date_time = _date + ' ' +  time;
-	  return {
-		  		date_time: time, 
-				date: _date,
-				time: time,
-				month: month,
-				obj: a
-			};
+	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	var year = a.getUTCFullYear();
+	var month = months[a.getUTCMonth()];
+	var date = a.getUTCDate();
+	var hour = (a.getUTCHours() < 10 ? "0"+a.getUTCHours()-1 : a.getUTCHours()-1);
+	var min = (a.getUTCMinutes() < 10 ? "0"+a.getUTCMinutes() : a.getUTCMinutes());
+	var sec = (a.getUTCSeconds() < 10 ? "0"+a.getUTCSeconds() : a.getUTCSeconds());
+	var _date = (month ? month.slice(0,4) : month) + ' ' + date;
+	
+	var time = hour + ':' + min + ':' + sec;
+	var date_time = _date + ' ' +  time;
+	return {
+			date_time: time, 
+			date: _date,
+			time: time,
+			month: month,
+			obj: a
+		};
 }
 plenty_admin.HELPER.treatAsUTC = function(date) {
 	if(typeof date === "object"){
@@ -1074,34 +1130,6 @@ plenty_admin.HELPER.hexToRgb = function(hex) {
         b: parseInt(result[3], 16)
     } : null;
 }
-/*
-plenty_admin.HELPER.get_colour_range = function(listItems){
-	console.log("plenty_admin.UI.brand_palette: ", plenty_admin.UI.brand_palette, listItems);
-	
-	var startPoint = Math.round(plenty_admin.UI.brand_palette.length /2);
-	
-	var direction = "forward";
-	var increment = 1;
-	
-	var colour_range = [];
-	
-	for(var c=0; c<listItems.length; c++){
-		console.log("add colour to range: ", direction, increment, colour_range);
-		if(direction === "forward"){
-			colour_range.push(plenty_admin.UI.brand_palette[startPoint + (listItems.length * increment)]);
-			
-			direction = "back";
-		}else{
-			colour_range.push(plenty_admin.UI.brand_palette[startPoint - (listItems.length * increment)]);
-			direction = "forward"
-		}
-		
-		increment += 1;
-	}
-	console.log("colour_range", colour_range);
-	return colour_range;
-}
-*/
 
 //wrapper function for testing a specific, hard coded REST call
 plenty_admin.HELPER.testAPICall = function(call, id){
@@ -1111,6 +1139,58 @@ plenty_admin.HELPER.testAPICall = function(call, id){
 		function(returnData){
 			console.log(call+" GOT", returnData);
 		});
+}
+
+plenty_admin.HELPER.base64ArrayBuffer = function(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+
+  return base64;
 }
 
 //plenty_admin.HELPER.testAPICall("fields/getField", 1);

@@ -13,9 +13,13 @@
 	}
 	.field_asset_data,
 	.field_asset_data .col-xs-9{
-		  position: absolute;
+		position: absolute;
 		  left: 25%;
 		  height: 100%;
+		  
+		.noTab{
+			border:none;
+		}
 		  
 		  .col-xs-3,
 		  .col-xs-3 ul{
@@ -53,36 +57,6 @@
 				position:absolute;
 				height:100%;
 				left:60%;
-				overflow:auto;
-				
-				ul{
-					padding:0;
-					
-					li{
-						list-style:none;
-						margin-bottom:5px;
-						text-transform:capitalize;
-						
-						&.active{
-							color:@white;
-						}
-						
-						span.swatch{
-							  width: 20px;
-							  height: 20px;
-							  display: inline-block;
-							  vertical-align: middle;
-							  margin-right: 5px;
-							  
-							  i{
-								color:#fff;
-								text-align:center;
-								width:100%;
-								line-height:1.5;  
-							  }
-						}
-					}
-				}
 			 }
 		  }
 	}
@@ -253,8 +227,45 @@
 		.current_year_crop{
 			text-transform:capitalize;
 		}
-	}
+	}  
 }
+
+.legend{
+	overflow:auto;
+	
+	ul{
+		padding:0;
+		
+		li{
+			list-style:none;
+			margin-bottom:5px;
+			text-transform:capitalize;
+			
+			&.active{
+				color:@white;
+			}
+			
+			span.swatch{
+				  width: 20px;
+				  height: 20px;
+				  display: inline-block;
+				  vertical-align: middle;
+				  margin-right: 5px;
+				  
+				  i{
+					color:#fff;
+					text-align:center;
+					width:100%;
+					line-height:1.5;  
+				  }
+			}
+			
+			span.pct{
+				pointer-events: none;
+			}
+		}
+	}
+ }
 
 body.map{
 	#field-container{
@@ -262,5 +273,51 @@ body.map{
 		width: 100%;
 		height: 100%;
 		background-color:@white;
+	}
+}
+@media (max-width: 992px){
+	#field-container .field_preview{
+		width:25%;
+		float:left;
+	}
+	#field-container .field_asset_data{
+		  position: absolute;
+		  left: 25%;
+		  height: 100%;
+		  width: 75%;
+	}
+}
+.modal#activity{
+	.modal-body{
+		.taskGraphRow{
+			min-height:200px;
+			.col-xs-6.legend{
+				position:absolute;
+				height:100%;
+				overflow-y:auto;
+				font-size:13px;
+				
+				li{
+					&.taskHeader{
+						margin-bottom:0;
+					}
+					
+					&.taskItem{
+						margin-bottom:1px;
+						
+						&.equipmentTaskItem:last-child,
+						&.laborTaskItem:last-child,
+						&.productTaskItem:last-child{
+							margin-bottom:10px;
+						}
+					}
+				}
+			}
+			.col-xs-6.graph{
+				position:absolute;
+				height:100%;
+				left:50%;
+			}
+		}
 	}
 }

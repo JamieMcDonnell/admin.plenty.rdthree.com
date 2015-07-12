@@ -67,75 +67,80 @@
 			<div id="settings">
 				<div class="row organizations">
 					<div class='col-xs-12 col-sm-6 col-md-4 newOrgContainer pull-left'>
-					<div class="panel panel-success">
-						<div class="panel-heading">
-				  			<h2 class="panel-title text-center">New Organization</h2>
-						</div>
-						<div class="panel-body">
-						<form class="form-inline">
-  							<div class="form-group overflowFix col-sm-12 pln prn">
-								<label for="new_org_name" class="col-sm-2 control-label">Name</label>
-								<div class="col-sm-10">
-									<input type="text" id="new_org_name" placeholder="Organization Name" class="form-control" required></input>
-								</div>
+						<div class="panel panel-success">
+							<div class="panel-heading">
+								<h2 class="panel-title text-center">New Organization</h2>
 							</div>
-							<div class="form-group overflowFix col-sm-12 pln prn">
-								<label for="new_org_type" class="col-sm-2 control-label">Type</label>
-								<div class="col-sm-10">
-									<select class="form-control" id="new_org_type" required>
-										<option value="1">Service Provider</option>
-										<option value="2">Client</option>
-										<option value="3">Vendor</option>
-									</select>
-								</div>
+							<div class="panel-body">
+								<form class="form-inline">
+									<div class="form-group overflowFix col-sm-12 pln prn">
+										<label for="new_org_name" class="col-sm-2 control-label">Name</label>
+										<div class="col-sm-10">
+											<input type="text" id="new_org_name" placeholder="Organization Name" class="form-control" required>
+											</input>
+										</div>
+									</div>
+									<div class="form-group overflowFix col-sm-12 pln prn">
+										<label for="new_org_type" class="col-sm-2 control-label">Type</label>
+										<div class="col-sm-10">
+											<select class="form-control" id="new_org_type" required>
+												<option value="1">Service Provider</option>
+												<option value="2">Client</option>
+												<option value="3">Vendor</option>
+											</select>
+										</div>
+									</div>
+									<a href="" class="pull-right mts mbs moreDetailsToggle"><span><i class="glyphicon glyphicon-triangle-bottom"></i>More Details</span><span style="display:none;"><i class="glyphicon glyphicon-triangle-top"></i> Less Details</span></a>
+									<div class="more-details overflowFix clear">
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_address_1" class="col-sm-2 control-label">Address Line 1</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_address_1" placeholder="e.g. 123 Royale Ave." class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_address_2" class="col-sm-2 control-label">Address Line 2</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_address_2" placeholder="e.g. Denhamshire" class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_city" class="col-sm-2 control-label">City</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_city" placeholder="e.g. Chicago" class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_state" class="col-sm-2 control-label">State</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_state" placeholder="e.g. IL" class="form-control">
+												</input>
+											</div>
+										</div>
+										<div class="form-group overflowFix col-sm-12 pln prn">
+											<label for="new_org_zip" class="col-sm-2 control-label">Zip</label>
+											<div class="col-sm-10">
+												<input type="text" id="new_org_zip" placeholder="e.g. 60613" class="form-control">
+												</input>
+											</div>
+										</div>
+									</div>
+									<button class='btn btn-success btn-lrg newOrg btn-block'><span class="glyphicon glyphicon-plus"></span> Create New Organization</button>
+								</form>
+								<div class="alert alert-success">
+									<h3>Organization Added Successfully</h3>
+									<i class="glyphicon glyphicon-ok"></i> </div>
+								<div class="alert alert-danger">
+									<h3>Adding an organization failed</h3>
+									<p>Please try again</p>
+									<i class="fa fa-warning"></i> </div>
+								<div class="alert alert-info">
+									<h3>Adding organization - please wait</h3>
+									<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i> </div>
 							</div>
-							<a href="" class="pull-right mts mbs moreDetailsToggle"><span><i class="glyphicon glyphicon-triangle-bottom"></i>More Details</span><span style="display:none;"><i class="glyphicon glyphicon-triangle-top"></i> Less Details</span></a>
-							<div class="more-details overflowFix clear">
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_address_1" class="col-sm-2 control-label">Address Line 1</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_address_1" placeholder="e.g. 123 Royale Ave." class="form-control"></input>
-									</div>
-								</div>
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_address_2" class="col-sm-2 control-label">Address Line 2</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_address_2" placeholder="e.g. Denhamshire" class="form-control"></input>
-									</div>
-								</div>
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_city" class="col-sm-2 control-label">City</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_city" placeholder="e.g. Chicago" class="form-control"></input>
-									</div>
-								</div>	
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_state" class="col-sm-2 control-label">State</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_state" placeholder="e.g. IL" class="form-control"></input>
-									</div>
-								</div>	
-								<div class="form-group overflowFix col-sm-12 pln prn">
-									<label for="new_org_zip" class="col-sm-2 control-label">Zip</label>
-									<div class="col-sm-10">
-										<input type="text" id="new_org_zip" placeholder="e.g. 60613" class="form-control"></input>
-									</div>
-								</div>
-							</div>
-							<button class='btn btn-success btn-lrg newOrg btn-block'><span class="glyphicon glyphicon-plus"></span> Create New Organization</button>
-						</form>
-						<div class="alert alert-success">
-							<h3>Organization Added Successfully</h3>
-							<i class="glyphicon glyphicon-ok"></i>
-						</div>
-						<div class="alert alert-danger">
-							<h3>Adding an organization failed</h3>
-							<p>Please try again</p>
-							<i class="fa fa-warning"></i>
-						</div>
-						<div class="alert alert-info">
-							<h3>Adding organization - please wait</h3>
-							<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
 						</div>
 					</div>
 				</div>
@@ -578,6 +583,9 @@
 			<div class="col-xs-3 prn pln"> <!-- required for floating -->
 			  <!-- Nav tabs -->
 			  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+			  	<li class="noTab"><h4 class="topLine ptn mtn mlm">Profit: <span class="profit pull-right mrs"></span></h4></li>
+				<li class="noTab"><h4 class="topLine ptn mtn mlm">Cost: <span class="cost pull-right mrs"></span></h4></li>
+				<li class="noTab"><h4 class="topLine ptn mtn mlm">Revenue: <span class="revenue pull-right mrs"></span></h4></li>
 			  	<li class="active"><a href="#finances" data-toggle="tab">Finances</a></li>
 				<li><a href="#activities" data-toggle="tab">Activities</a></li>
 				<li><a href="#equipment" data-toggle="tab">Equipment</a></li>
@@ -597,9 +605,7 @@
 				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="activities">
 				  	<thead>
 						<tr>
-							<th width="5%">
-								
-							</th>
+							<th width="5%"></th> <!--ICON-->
 							<th width="25%">
 								Status
 							</th>
@@ -623,9 +629,7 @@
 				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="equipment">
 				  	<thead>
 						<tr>
-							<th width="5%">
-								
-							</th>
+							<th width="5%"></th> <!--ICON-->
 							<th width="25%">
 								Equipment Type
 							</th>
@@ -633,10 +637,7 @@
 								Brand
 							</th>
 							<th width="25%">
-								Model
-							</th>
-							<th width="25%" class='text-right'>
-								Live Data
+								Name
 							</th>
 						</tr>
 					</thead>
@@ -1121,12 +1122,10 @@
 	</div>
 </div>
 
-
-		</div>
+ </div>
 	</div>
 </div>
-</div>
-	<div id="loadingOverlay">
+<div id="loadingOverlay">
 	<h1>Loading - Please Wait...</h1>
 	<i class="fa fa-refresh fa-spin"></i>
 </div>
@@ -1146,19 +1145,20 @@
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-	<!-- Bootstrap core JavaScript
+</div><!-- /.modal --> 
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script> 
+<!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script>if (!window.jQuery) { document.write('<script src="js/jquery-2.1.4.min.js"><\/script>'); }
 </script>
 <script src="js/Plenty.RDThree.com.min.js"></script>
-<script src="//use.typekit.net/jmc8hvz.js"></script>
-<script>try{Typekit.load();}catch(e){}</script>
 <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="js/includes.js"></script>
+<script src="//use.typekit.net/jmc8hvz.js"></script>
+<script>try{Typekit.load();}catch(e){}</script>
 <footer class="footer flexbox-item">
 	<div class="container-fluid">
 		<p class="pull-left">&copy; RoundThree LLC. 2015</p>
@@ -1168,10 +1168,8 @@
 		</ul>
 	</div>
 </footer>
-
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
-	<script type="text/javascript">
+ 
+<script type="text/javascript">
 		plenty_admin.init("settings");
 	</script>
-</body>
-</html>
+</body></html>

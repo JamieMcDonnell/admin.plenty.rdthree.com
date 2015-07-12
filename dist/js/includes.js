@@ -1520,6 +1520,7 @@ function hasOwnProperty(obj, prop) {
  */
 (function(){"use strict";var t=this,i=t.Chart,e=function(t){this.canvas=t.canvas,this.ctx=t;var i=function(t,i){return t["offset"+i]?t["offset"+i]:document.defaultView.getComputedStyle(t).getPropertyValue(i)},e=this.width=i(t.canvas,"Width"),n=this.height=i(t.canvas,"Height");t.canvas.width=e,t.canvas.height=n;var e=this.width=t.canvas.width,n=this.height=t.canvas.height;return this.aspectRatio=this.width/this.height,s.retinaScale(this),this};e.defaults={global:{animation:!0,animationSteps:60,animationEasing:"easeOutQuart",showScale:!0,scaleOverride:!1,scaleSteps:null,scaleStepWidth:null,scaleStartValue:null,scaleLineColor:"rgba(0,0,0,.1)",scaleLineWidth:1,scaleShowLabels:!0,scaleLabel:"<%=value%>",scaleIntegersOnly:!0,scaleBeginAtZero:!1,scaleFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",scaleFontSize:12,scaleFontStyle:"normal",scaleFontColor:"#666",responsive:!1,maintainAspectRatio:!0,showTooltips:!0,customTooltips:!1,tooltipEvents:["mousemove","touchstart","touchmove","mouseout"],tooltipFillColor:"rgba(0,0,0,0.8)",tooltipFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",tooltipFontSize:14,tooltipFontStyle:"normal",tooltipFontColor:"#fff",tooltipTitleFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",tooltipTitleFontSize:14,tooltipTitleFontStyle:"bold",tooltipTitleFontColor:"#fff",tooltipYPadding:6,tooltipXPadding:6,tooltipCaretSize:8,tooltipCornerRadius:6,tooltipXOffset:10,tooltipTemplate:"<%if (label){%><%=label%>: <%}%><%= value %>",multiTooltipTemplate:"<%= value %>",multiTooltipKeyBackground:"#fff",onAnimationProgress:function(){},onAnimationComplete:function(){}}},e.types={};var s=e.helpers={},n=s.each=function(t,i,e){var s=Array.prototype.slice.call(arguments,3);if(t)if(t.length===+t.length){var n;for(n=0;n<t.length;n++)i.apply(e,[t[n],n].concat(s))}else for(var o in t)i.apply(e,[t[o],o].concat(s))},o=s.clone=function(t){var i={};return n(t,function(e,s){t.hasOwnProperty(s)&&(i[s]=e)}),i},a=s.extend=function(t){return n(Array.prototype.slice.call(arguments,1),function(i){n(i,function(e,s){i.hasOwnProperty(s)&&(t[s]=e)})}),t},h=s.merge=function(){var t=Array.prototype.slice.call(arguments,0);return t.unshift({}),a.apply(null,t)},l=s.indexOf=function(t,i){if(Array.prototype.indexOf)return t.indexOf(i);for(var e=0;e<t.length;e++)if(t[e]===i)return e;return-1},r=(s.where=function(t,i){var e=[];return s.each(t,function(t){i(t)&&e.push(t)}),e},s.findNextWhere=function(t,i,e){e||(e=-1);for(var s=e+1;s<t.length;s++){var n=t[s];if(i(n))return n}},s.findPreviousWhere=function(t,i,e){e||(e=t.length);for(var s=e-1;s>=0;s--){var n=t[s];if(i(n))return n}},s.inherits=function(t){var i=this,e=t&&t.hasOwnProperty("constructor")?t.constructor:function(){return i.apply(this,arguments)},s=function(){this.constructor=e};return s.prototype=i.prototype,e.prototype=new s,e.extend=r,t&&a(e.prototype,t),e.__super__=i.prototype,e}),c=s.noop=function(){},u=s.uid=function(){var t=0;return function(){return"chart-"+t++}}(),d=s.warn=function(t){window.console&&"function"==typeof window.console.warn&&console.warn(t)},p=s.amd="function"==typeof define&&define.amd,f=s.isNumber=function(t){return!isNaN(parseFloat(t))&&isFinite(t)},g=s.max=function(t){return Math.max.apply(Math,t)},m=s.min=function(t){return Math.min.apply(Math,t)},v=(s.cap=function(t,i,e){if(f(i)){if(t>i)return i}else if(f(e)&&e>t)return e;return t},s.getDecimalPlaces=function(t){return t%1!==0&&f(t)?t.toString().split(".")[1].length:0}),S=s.radians=function(t){return t*(Math.PI/180)},x=(s.getAngleFromPoint=function(t,i){var e=i.x-t.x,s=i.y-t.y,n=Math.sqrt(e*e+s*s),o=2*Math.PI+Math.atan2(s,e);return 0>e&&0>s&&(o+=2*Math.PI),{angle:o,distance:n}},s.aliasPixel=function(t){return t%2===0?0:.5}),y=(s.splineCurve=function(t,i,e,s){var n=Math.sqrt(Math.pow(i.x-t.x,2)+Math.pow(i.y-t.y,2)),o=Math.sqrt(Math.pow(e.x-i.x,2)+Math.pow(e.y-i.y,2)),a=s*n/(n+o),h=s*o/(n+o);return{inner:{x:i.x-a*(e.x-t.x),y:i.y-a*(e.y-t.y)},outer:{x:i.x+h*(e.x-t.x),y:i.y+h*(e.y-t.y)}}},s.calculateOrderOfMagnitude=function(t){return Math.floor(Math.log(t)/Math.LN10)}),C=(s.calculateScaleRange=function(t,i,e,s,n){var o=2,a=Math.floor(i/(1.5*e)),h=o>=a,l=g(t),r=m(t);l===r&&(l+=.5,r>=.5&&!s?r-=.5:l+=.5);for(var c=Math.abs(l-r),u=y(c),d=Math.ceil(l/(1*Math.pow(10,u)))*Math.pow(10,u),p=s?0:Math.floor(r/(1*Math.pow(10,u)))*Math.pow(10,u),f=d-p,v=Math.pow(10,u),S=Math.round(f/v);(S>a||a>2*S)&&!h;)if(S>a)v*=2,S=Math.round(f/v),S%1!==0&&(h=!0);else if(n&&u>=0){if(v/2%1!==0)break;v/=2,S=Math.round(f/v)}else v/=2,S=Math.round(f/v);return h&&(S=o,v=f/S),{steps:S,stepValue:v,min:p,max:p+S*v}},s.template=function(t,i){function e(t,i){var e=/\W/.test(t)?new Function("obj","var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('"+t.replace(/[\r\t\n]/g," ").split("<%").join("	").replace(/((^|%>)[^\t]*)'/g,"$1\r").replace(/\t=(.*?)%>/g,"',$1,'").split("	").join("');").split("%>").join("p.push('").split("\r").join("\\'")+"');}return p.join('');"):s[t]=s[t];return i?e(i):e}if(t instanceof Function)return t(i);var s={};return e(t,i)}),w=(s.generateLabels=function(t,i,e,s){var o=new Array(i);return labelTemplateString&&n(o,function(i,n){o[n]=C(t,{value:e+s*(n+1)})}),o},s.easingEffects={linear:function(t){return t},easeInQuad:function(t){return t*t},easeOutQuad:function(t){return-1*t*(t-2)},easeInOutQuad:function(t){return(t/=.5)<1?.5*t*t:-0.5*(--t*(t-2)-1)},easeInCubic:function(t){return t*t*t},easeOutCubic:function(t){return 1*((t=t/1-1)*t*t+1)},easeInOutCubic:function(t){return(t/=.5)<1?.5*t*t*t:.5*((t-=2)*t*t+2)},easeInQuart:function(t){return t*t*t*t},easeOutQuart:function(t){return-1*((t=t/1-1)*t*t*t-1)},easeInOutQuart:function(t){return(t/=.5)<1?.5*t*t*t*t:-0.5*((t-=2)*t*t*t-2)},easeInQuint:function(t){return 1*(t/=1)*t*t*t*t},easeOutQuint:function(t){return 1*((t=t/1-1)*t*t*t*t+1)},easeInOutQuint:function(t){return(t/=.5)<1?.5*t*t*t*t*t:.5*((t-=2)*t*t*t*t+2)},easeInSine:function(t){return-1*Math.cos(t/1*(Math.PI/2))+1},easeOutSine:function(t){return 1*Math.sin(t/1*(Math.PI/2))},easeInOutSine:function(t){return-0.5*(Math.cos(Math.PI*t/1)-1)},easeInExpo:function(t){return 0===t?1:1*Math.pow(2,10*(t/1-1))},easeOutExpo:function(t){return 1===t?1:1*(-Math.pow(2,-10*t/1)+1)},easeInOutExpo:function(t){return 0===t?0:1===t?1:(t/=.5)<1?.5*Math.pow(2,10*(t-1)):.5*(-Math.pow(2,-10*--t)+2)},easeInCirc:function(t){return t>=1?t:-1*(Math.sqrt(1-(t/=1)*t)-1)},easeOutCirc:function(t){return 1*Math.sqrt(1-(t=t/1-1)*t)},easeInOutCirc:function(t){return(t/=.5)<1?-0.5*(Math.sqrt(1-t*t)-1):.5*(Math.sqrt(1-(t-=2)*t)+1)},easeInElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:1==(t/=1)?1:(e||(e=.3),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),-(s*Math.pow(2,10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e)))},easeOutElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:1==(t/=1)?1:(e||(e=.3),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),s*Math.pow(2,-10*t)*Math.sin(2*(1*t-i)*Math.PI/e)+1)},easeInOutElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:2==(t/=.5)?1:(e||(e=.3*1.5),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),1>t?-.5*s*Math.pow(2,10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e):s*Math.pow(2,-10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e)*.5+1)},easeInBack:function(t){var i=1.70158;return 1*(t/=1)*t*((i+1)*t-i)},easeOutBack:function(t){var i=1.70158;return 1*((t=t/1-1)*t*((i+1)*t+i)+1)},easeInOutBack:function(t){var i=1.70158;return(t/=.5)<1?.5*t*t*(((i*=1.525)+1)*t-i):.5*((t-=2)*t*(((i*=1.525)+1)*t+i)+2)},easeInBounce:function(t){return 1-w.easeOutBounce(1-t)},easeOutBounce:function(t){return(t/=1)<1/2.75?7.5625*t*t:2/2.75>t?1*(7.5625*(t-=1.5/2.75)*t+.75):2.5/2.75>t?1*(7.5625*(t-=2.25/2.75)*t+.9375):1*(7.5625*(t-=2.625/2.75)*t+.984375)},easeInOutBounce:function(t){return.5>t?.5*w.easeInBounce(2*t):.5*w.easeOutBounce(2*t-1)+.5}}),b=s.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(t){return window.setTimeout(t,1e3/60)}}(),P=s.cancelAnimFrame=function(){return window.cancelAnimationFrame||window.webkitCancelAnimationFrame||window.mozCancelAnimationFrame||window.oCancelAnimationFrame||window.msCancelAnimationFrame||function(t){return window.clearTimeout(t,1e3/60)}}(),L=(s.animationLoop=function(t,i,e,s,n,o){var a=0,h=w[e]||w.linear,l=function(){a++;var e=a/i,r=h(e);t.call(o,r,e,a),s.call(o,r,e),i>a?o.animationFrame=b(l):n.apply(o)};b(l)},s.getRelativePosition=function(t){var i,e,s=t.originalEvent||t,n=t.currentTarget||t.srcElement,o=n.getBoundingClientRect();return s.touches?(i=s.touches[0].clientX-o.left,e=s.touches[0].clientY-o.top):(i=s.clientX-o.left,e=s.clientY-o.top),{x:i,y:e}},s.addEvent=function(t,i,e){t.addEventListener?t.addEventListener(i,e):t.attachEvent?t.attachEvent("on"+i,e):t["on"+i]=e}),k=s.removeEvent=function(t,i,e){t.removeEventListener?t.removeEventListener(i,e,!1):t.detachEvent?t.detachEvent("on"+i,e):t["on"+i]=c},F=(s.bindEvents=function(t,i,e){t.events||(t.events={}),n(i,function(i){t.events[i]=function(){e.apply(t,arguments)},L(t.chart.canvas,i,t.events[i])})},s.unbindEvents=function(t,i){n(i,function(i,e){k(t.chart.canvas,e,i)})}),R=s.getMaximumWidth=function(t){var i=t.parentNode;return i.clientWidth},T=s.getMaximumHeight=function(t){var i=t.parentNode;return i.clientHeight},A=(s.getMaximumSize=s.getMaximumWidth,s.retinaScale=function(t){var i=t.ctx,e=t.canvas.width,s=t.canvas.height;window.devicePixelRatio&&(i.canvas.style.width=e+"px",i.canvas.style.height=s+"px",i.canvas.height=s*window.devicePixelRatio,i.canvas.width=e*window.devicePixelRatio,i.scale(window.devicePixelRatio,window.devicePixelRatio))}),M=s.clear=function(t){t.ctx.clearRect(0,0,t.width,t.height)},W=s.fontString=function(t,i,e){return i+" "+t+"px "+e},z=s.longestText=function(t,i,e){t.font=i;var s=0;return n(e,function(i){var e=t.measureText(i).width;s=e>s?e:s}),s},B=s.drawRoundedRectangle=function(t,i,e,s,n,o){t.beginPath(),t.moveTo(i+o,e),t.lineTo(i+s-o,e),t.quadraticCurveTo(i+s,e,i+s,e+o),t.lineTo(i+s,e+n-o),t.quadraticCurveTo(i+s,e+n,i+s-o,e+n),t.lineTo(i+o,e+n),t.quadraticCurveTo(i,e+n,i,e+n-o),t.lineTo(i,e+o),t.quadraticCurveTo(i,e,i+o,e),t.closePath()};e.instances={},e.Type=function(t,i,s){this.options=i,this.chart=s,this.id=u(),e.instances[this.id]=this,i.responsive&&this.resize(),this.initialize.call(this,t)},a(e.Type.prototype,{initialize:function(){return this},clear:function(){return M(this.chart),this},stop:function(){return P(this.animationFrame),this},resize:function(t){this.stop();var i=this.chart.canvas,e=R(this.chart.canvas),s=this.options.maintainAspectRatio?e/this.chart.aspectRatio:T(this.chart.canvas);return i.width=this.chart.width=e,i.height=this.chart.height=s,A(this.chart),"function"==typeof t&&t.apply(this,Array.prototype.slice.call(arguments,1)),this},reflow:c,render:function(t){return t&&this.reflow(),this.options.animation&&!t?s.animationLoop(this.draw,this.options.animationSteps,this.options.animationEasing,this.options.onAnimationProgress,this.options.onAnimationComplete,this):(this.draw(),this.options.onAnimationComplete.call(this)),this},generateLegend:function(){return C(this.options.legendTemplate,this)},destroy:function(){this.clear(),F(this,this.events);var t=this.chart.canvas;t.width=this.chart.width,t.height=this.chart.height,t.style.removeProperty?(t.style.removeProperty("width"),t.style.removeProperty("height")):(t.style.removeAttribute("width"),t.style.removeAttribute("height")),delete e.instances[this.id]},showTooltip:function(t,i){"undefined"==typeof this.activeElements&&(this.activeElements=[]);var o=function(t){var i=!1;return t.length!==this.activeElements.length?i=!0:(n(t,function(t,e){t!==this.activeElements[e]&&(i=!0)},this),i)}.call(this,t);if(o||i){if(this.activeElements=t,this.draw(),this.options.customTooltips&&this.options.customTooltips(!1),t.length>0)if(this.datasets&&this.datasets.length>1){for(var a,h,r=this.datasets.length-1;r>=0&&(a=this.datasets[r].points||this.datasets[r].bars||this.datasets[r].segments,h=l(a,t[0]),-1===h);r--);var c=[],u=[],d=function(){var t,i,e,n,o,a=[],l=[],r=[];return s.each(this.datasets,function(i){t=i.points||i.bars||i.segments,t[h]&&t[h].hasValue()&&a.push(t[h])}),s.each(a,function(t){l.push(t.x),r.push(t.y),c.push(s.template(this.options.multiTooltipTemplate,t)),u.push({fill:t._saved.fillColor||t.fillColor,stroke:t._saved.strokeColor||t.strokeColor})},this),o=m(r),e=g(r),n=m(l),i=g(l),{x:n>this.chart.width/2?n:i,y:(o+e)/2}}.call(this,h);new e.MultiTooltip({x:d.x,y:d.y,xPadding:this.options.tooltipXPadding,yPadding:this.options.tooltipYPadding,xOffset:this.options.tooltipXOffset,fillColor:this.options.tooltipFillColor,textColor:this.options.tooltipFontColor,fontFamily:this.options.tooltipFontFamily,fontStyle:this.options.tooltipFontStyle,fontSize:this.options.tooltipFontSize,titleTextColor:this.options.tooltipTitleFontColor,titleFontFamily:this.options.tooltipTitleFontFamily,titleFontStyle:this.options.tooltipTitleFontStyle,titleFontSize:this.options.tooltipTitleFontSize,cornerRadius:this.options.tooltipCornerRadius,labels:c,legendColors:u,legendColorBackground:this.options.multiTooltipKeyBackground,title:t[0].label,chart:this.chart,ctx:this.chart.ctx,custom:this.options.customTooltips}).draw()}else n(t,function(t){var i=t.tooltipPosition();new e.Tooltip({x:Math.round(i.x),y:Math.round(i.y),xPadding:this.options.tooltipXPadding,yPadding:this.options.tooltipYPadding,fillColor:this.options.tooltipFillColor,textColor:this.options.tooltipFontColor,fontFamily:this.options.tooltipFontFamily,fontStyle:this.options.tooltipFontStyle,fontSize:this.options.tooltipFontSize,caretHeight:this.options.tooltipCaretSize,cornerRadius:this.options.tooltipCornerRadius,text:C(this.options.tooltipTemplate,t),chart:this.chart,custom:this.options.customTooltips}).draw()},this);return this}},toBase64Image:function(){return this.chart.canvas.toDataURL.apply(this.chart.canvas,arguments)}}),e.Type.extend=function(t){var i=this,s=function(){return i.apply(this,arguments)};if(s.prototype=o(i.prototype),a(s.prototype,t),s.extend=e.Type.extend,t.name||i.prototype.name){var n=t.name||i.prototype.name,l=e.defaults[i.prototype.name]?o(e.defaults[i.prototype.name]):{};e.defaults[n]=a(l,t.defaults),e.types[n]=s,e.prototype[n]=function(t,i){var o=h(e.defaults.global,e.defaults[n],i||{});return new s(t,o,this)}}else d("Name not provided for this chart, so it hasn't been registered");return i},e.Element=function(t){a(this,t),this.initialize.apply(this,arguments),this.save()},a(e.Element.prototype,{initialize:function(){},restore:function(t){return t?n(t,function(t){this[t]=this._saved[t]},this):a(this,this._saved),this},save:function(){return this._saved=o(this),delete this._saved._saved,this},update:function(t){return n(t,function(t,i){this._saved[i]=this[i],this[i]=t},this),this},transition:function(t,i){return n(t,function(t,e){this[e]=(t-this._saved[e])*i+this._saved[e]},this),this},tooltipPosition:function(){return{x:this.x,y:this.y}},hasValue:function(){return f(this.value)}}),e.Element.extend=r,e.Point=e.Element.extend({display:!0,inRange:function(t,i){var e=this.hitDetectionRadius+this.radius;return Math.pow(t-this.x,2)+Math.pow(i-this.y,2)<Math.pow(e,2)},draw:function(){if(this.display){var t=this.ctx;t.beginPath(),t.arc(this.x,this.y,this.radius,0,2*Math.PI),t.closePath(),t.strokeStyle=this.strokeColor,t.lineWidth=this.strokeWidth,t.fillStyle=this.fillColor,t.fill(),t.stroke()}}}),e.Arc=e.Element.extend({inRange:function(t,i){var e=s.getAngleFromPoint(this,{x:t,y:i}),n=e.angle>=this.startAngle&&e.angle<=this.endAngle,o=e.distance>=this.innerRadius&&e.distance<=this.outerRadius;return n&&o},tooltipPosition:function(){var t=this.startAngle+(this.endAngle-this.startAngle)/2,i=(this.outerRadius-this.innerRadius)/2+this.innerRadius;return{x:this.x+Math.cos(t)*i,y:this.y+Math.sin(t)*i}},draw:function(t){var i=this.ctx;i.beginPath(),i.arc(this.x,this.y,this.outerRadius,this.startAngle,this.endAngle),i.arc(this.x,this.y,this.innerRadius,this.endAngle,this.startAngle,!0),i.closePath(),i.strokeStyle=this.strokeColor,i.lineWidth=this.strokeWidth,i.fillStyle=this.fillColor,i.fill(),i.lineJoin="bevel",this.showStroke&&i.stroke()}}),e.Rectangle=e.Element.extend({draw:function(){var t=this.ctx,i=this.width/2,e=this.x-i,s=this.x+i,n=this.base-(this.base-this.y),o=this.strokeWidth/2;this.showStroke&&(e+=o,s-=o,n+=o),t.beginPath(),t.fillStyle=this.fillColor,t.strokeStyle=this.strokeColor,t.lineWidth=this.strokeWidth,t.moveTo(e,this.base),t.lineTo(e,n),t.lineTo(s,n),t.lineTo(s,this.base),t.fill(),this.showStroke&&t.stroke()},height:function(){return this.base-this.y},inRange:function(t,i){return t>=this.x-this.width/2&&t<=this.x+this.width/2&&i>=this.y&&i<=this.base}}),e.Tooltip=e.Element.extend({draw:function(){var t=this.chart.ctx;t.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.xAlign="center",this.yAlign="above";var i=this.caretPadding=2,e=t.measureText(this.text).width+2*this.xPadding,s=this.fontSize+2*this.yPadding,n=s+this.caretHeight+i;this.x+e/2>this.chart.width?this.xAlign="left":this.x-e/2<0&&(this.xAlign="right"),this.y-n<0&&(this.yAlign="below");var o=this.x-e/2,a=this.y-n;if(t.fillStyle=this.fillColor,this.custom)this.custom(this);else{switch(this.yAlign){case"above":t.beginPath(),t.moveTo(this.x,this.y-i),t.lineTo(this.x+this.caretHeight,this.y-(i+this.caretHeight)),t.lineTo(this.x-this.caretHeight,this.y-(i+this.caretHeight)),t.closePath(),t.fill();break;case"below":a=this.y+i+this.caretHeight,t.beginPath(),t.moveTo(this.x,this.y+i),t.lineTo(this.x+this.caretHeight,this.y+i+this.caretHeight),t.lineTo(this.x-this.caretHeight,this.y+i+this.caretHeight),t.closePath(),t.fill()}switch(this.xAlign){case"left":o=this.x-e+(this.cornerRadius+this.caretHeight);break;case"right":o=this.x-(this.cornerRadius+this.caretHeight)}B(t,o,a,e,s,this.cornerRadius),t.fill(),t.fillStyle=this.textColor,t.textAlign="center",t.textBaseline="middle",t.fillText(this.text,o+e/2,a+s/2)}}}),e.MultiTooltip=e.Element.extend({initialize:function(){this.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.titleFont=W(this.titleFontSize,this.titleFontStyle,this.titleFontFamily),this.height=this.labels.length*this.fontSize+(this.labels.length-1)*(this.fontSize/2)+2*this.yPadding+1.5*this.titleFontSize,this.ctx.font=this.titleFont;var t=this.ctx.measureText(this.title).width,i=z(this.ctx,this.font,this.labels)+this.fontSize+3,e=g([i,t]);this.width=e+2*this.xPadding;var s=this.height/2;this.y-s<0?this.y=s:this.y+s>this.chart.height&&(this.y=this.chart.height-s),this.x>this.chart.width/2?this.x-=this.xOffset+this.width:this.x+=this.xOffset},getLineHeight:function(t){var i=this.y-this.height/2+this.yPadding,e=t-1;return 0===t?i+this.titleFontSize/2:i+(1.5*this.fontSize*e+this.fontSize/2)+1.5*this.titleFontSize},draw:function(){if(this.custom)this.custom(this);else{B(this.ctx,this.x,this.y-this.height/2,this.width,this.height,this.cornerRadius);var t=this.ctx;t.fillStyle=this.fillColor,t.fill(),t.closePath(),t.textAlign="left",t.textBaseline="middle",t.fillStyle=this.titleTextColor,t.font=this.titleFont,t.fillText(this.title,this.x+this.xPadding,this.getLineHeight(0)),t.font=this.font,s.each(this.labels,function(i,e){t.fillStyle=this.textColor,t.fillText(i,this.x+this.xPadding+this.fontSize+3,this.getLineHeight(e+1)),t.fillStyle=this.legendColorBackground,t.fillRect(this.x+this.xPadding,this.getLineHeight(e+1)-this.fontSize/2,this.fontSize,this.fontSize),t.fillStyle=this.legendColors[e].fill,t.fillRect(this.x+this.xPadding,this.getLineHeight(e+1)-this.fontSize/2,this.fontSize,this.fontSize)},this)}}}),e.Scale=e.Element.extend({initialize:function(){this.fit()},buildYLabels:function(){this.yLabels=[];for(var t=v(this.stepValue),i=0;i<=this.steps;i++)this.yLabels.push(C(this.templateString,{value:(this.min+i*this.stepValue).toFixed(t)}));this.yLabelWidth=this.display&&this.showLabels?z(this.ctx,this.font,this.yLabels):0},addXLabel:function(t){this.xLabels.push(t),this.valuesCount++,this.fit()},removeXLabel:function(){this.xLabels.shift(),this.valuesCount--,this.fit()},fit:function(){this.startPoint=this.display?this.fontSize:0,this.endPoint=this.display?this.height-1.5*this.fontSize-5:this.height,this.startPoint+=this.padding,this.endPoint-=this.padding;var t,i=this.endPoint-this.startPoint;for(this.calculateYRange(i),this.buildYLabels(),this.calculateXLabelRotation();i>this.endPoint-this.startPoint;)i=this.endPoint-this.startPoint,t=this.yLabelWidth,this.calculateYRange(i),this.buildYLabels(),t<this.yLabelWidth&&this.calculateXLabelRotation()},calculateXLabelRotation:function(){this.ctx.font=this.font;var t,i,e=this.ctx.measureText(this.xLabels[0]).width,s=this.ctx.measureText(this.xLabels[this.xLabels.length-1]).width;if(this.xScalePaddingRight=s/2+3,this.xScalePaddingLeft=e/2>this.yLabelWidth+10?e/2:this.yLabelWidth+10,this.xLabelRotation=0,this.display){var n,o=z(this.ctx,this.font,this.xLabels);this.xLabelWidth=o;for(var a=Math.floor(this.calculateX(1)-this.calculateX(0))-6;this.xLabelWidth>a&&0===this.xLabelRotation||this.xLabelWidth>a&&this.xLabelRotation<=90&&this.xLabelRotation>0;)n=Math.cos(S(this.xLabelRotation)),t=n*e,i=n*s,t+this.fontSize/2>this.yLabelWidth+8&&(this.xScalePaddingLeft=t+this.fontSize/2),this.xScalePaddingRight=this.fontSize/2,this.xLabelRotation++,this.xLabelWidth=n*o;this.xLabelRotation>0&&(this.endPoint-=Math.sin(S(this.xLabelRotation))*o+3)}else this.xLabelWidth=0,this.xScalePaddingRight=this.padding,this.xScalePaddingLeft=this.padding},calculateYRange:c,drawingArea:function(){return this.startPoint-this.endPoint},calculateY:function(t){var i=this.drawingArea()/(this.min-this.max);return this.endPoint-i*(t-this.min)},calculateX:function(t){var i=(this.xLabelRotation>0,this.width-(this.xScalePaddingLeft+this.xScalePaddingRight)),e=i/Math.max(this.valuesCount-(this.offsetGridLines?0:1),1),s=e*t+this.xScalePaddingLeft;return this.offsetGridLines&&(s+=e/2),Math.round(s)},update:function(t){s.extend(this,t),this.fit()},draw:function(){var t=this.ctx,i=(this.endPoint-this.startPoint)/this.steps,e=Math.round(this.xScalePaddingLeft);this.display&&(t.fillStyle=this.textColor,t.font=this.font,n(this.yLabels,function(n,o){var a=this.endPoint-i*o,h=Math.round(a),l=this.showHorizontalLines;t.textAlign="right",t.textBaseline="middle",this.showLabels&&t.fillText(n,e-10,a),0!==o||l||(l=!0),l&&t.beginPath(),o>0?(t.lineWidth=this.gridLineWidth,t.strokeStyle=this.gridLineColor):(t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor),h+=s.aliasPixel(t.lineWidth),l&&(t.moveTo(e,h),t.lineTo(this.width,h),t.stroke(),t.closePath()),t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor,t.beginPath(),t.moveTo(e-5,h),t.lineTo(e,h),t.stroke(),t.closePath()},this),n(this.xLabels,function(i,e){var s=this.calculateX(e)+x(this.lineWidth),n=this.calculateX(e-(this.offsetGridLines?.5:0))+x(this.lineWidth),o=this.xLabelRotation>0,a=this.showVerticalLines;0!==e||a||(a=!0),a&&t.beginPath(),e>0?(t.lineWidth=this.gridLineWidth,t.strokeStyle=this.gridLineColor):(t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor),a&&(t.moveTo(n,this.endPoint),t.lineTo(n,this.startPoint-3),t.stroke(),t.closePath()),t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor,t.beginPath(),t.moveTo(n,this.endPoint),t.lineTo(n,this.endPoint+5),t.stroke(),t.closePath(),t.save(),t.translate(s,o?this.endPoint+12:this.endPoint+8),t.rotate(-1*S(this.xLabelRotation)),t.font=this.font,t.textAlign=o?"right":"center",t.textBaseline=o?"middle":"top",t.fillText(i,0,0),t.restore()},this))}}),e.RadialScale=e.Element.extend({initialize:function(){this.size=m([this.height,this.width]),this.drawingArea=this.display?this.size/2-(this.fontSize/2+this.backdropPaddingY):this.size/2},calculateCenterOffset:function(t){var i=this.drawingArea/(this.max-this.min);return(t-this.min)*i},update:function(){this.lineArc?this.drawingArea=this.display?this.size/2-(this.fontSize/2+this.backdropPaddingY):this.size/2:this.setScaleSize(),this.buildYLabels()},buildYLabels:function(){this.yLabels=[];for(var t=v(this.stepValue),i=0;i<=this.steps;i++)this.yLabels.push(C(this.templateString,{value:(this.min+i*this.stepValue).toFixed(t)}))},getCircumference:function(){return 2*Math.PI/this.valuesCount},setScaleSize:function(){var t,i,e,s,n,o,a,h,l,r,c,u,d=m([this.height/2-this.pointLabelFontSize-5,this.width/2]),p=this.width,g=0;for(this.ctx.font=W(this.pointLabelFontSize,this.pointLabelFontStyle,this.pointLabelFontFamily),i=0;i<this.valuesCount;i++)t=this.getPointPosition(i,d),e=this.ctx.measureText(C(this.templateString,{value:this.labels[i]})).width+5,0===i||i===this.valuesCount/2?(s=e/2,t.x+s>p&&(p=t.x+s,n=i),t.x-s<g&&(g=t.x-s,a=i)):i<this.valuesCount/2?t.x+e>p&&(p=t.x+e,n=i):i>this.valuesCount/2&&t.x-e<g&&(g=t.x-e,a=i);l=g,r=Math.ceil(p-this.width),o=this.getIndexAngle(n),h=this.getIndexAngle(a),c=r/Math.sin(o+Math.PI/2),u=l/Math.sin(h+Math.PI/2),c=f(c)?c:0,u=f(u)?u:0,this.drawingArea=d-(u+c)/2,this.setCenterPoint(u,c)},setCenterPoint:function(t,i){var e=this.width-i-this.drawingArea,s=t+this.drawingArea;this.xCenter=(s+e)/2,this.yCenter=this.height/2},getIndexAngle:function(t){var i=2*Math.PI/this.valuesCount;return t*i-Math.PI/2},getPointPosition:function(t,i){var e=this.getIndexAngle(t);return{x:Math.cos(e)*i+this.xCenter,y:Math.sin(e)*i+this.yCenter}},draw:function(){if(this.display){var t=this.ctx;if(n(this.yLabels,function(i,e){if(e>0){var s,n=e*(this.drawingArea/this.steps),o=this.yCenter-n;if(this.lineWidth>0)if(t.strokeStyle=this.lineColor,t.lineWidth=this.lineWidth,this.lineArc)t.beginPath(),t.arc(this.xCenter,this.yCenter,n,0,2*Math.PI),t.closePath(),t.stroke();else{t.beginPath();for(var a=0;a<this.valuesCount;a++)s=this.getPointPosition(a,this.calculateCenterOffset(this.min+e*this.stepValue)),0===a?t.moveTo(s.x,s.y):t.lineTo(s.x,s.y);t.closePath(),t.stroke()}if(this.showLabels){if(t.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.showLabelBackdrop){var h=t.measureText(i).width;t.fillStyle=this.backdropColor,t.fillRect(this.xCenter-h/2-this.backdropPaddingX,o-this.fontSize/2-this.backdropPaddingY,h+2*this.backdropPaddingX,this.fontSize+2*this.backdropPaddingY)}t.textAlign="center",t.textBaseline="middle",t.fillStyle=this.fontColor,t.fillText(i,this.xCenter,o)}}},this),!this.lineArc){t.lineWidth=this.angleLineWidth,t.strokeStyle=this.angleLineColor;for(var i=this.valuesCount-1;i>=0;i--){if(this.angleLineWidth>0){var e=this.getPointPosition(i,this.calculateCenterOffset(this.max));t.beginPath(),t.moveTo(this.xCenter,this.yCenter),t.lineTo(e.x,e.y),t.stroke(),t.closePath()}var s=this.getPointPosition(i,this.calculateCenterOffset(this.max)+5);t.font=W(this.pointLabelFontSize,this.pointLabelFontStyle,this.pointLabelFontFamily),t.fillStyle=this.pointLabelFontColor;var o=this.labels.length,a=this.labels.length/2,h=a/2,l=h>i||i>o-h,r=i===h||i===o-h;t.textAlign=0===i?"center":i===a?"center":a>i?"left":"right",t.textBaseline=r?"middle":l?"bottom":"top",t.fillText(this.labels[i],s.x,s.y)}}}}}),s.addEvent(window,"resize",function(){var t;return function(){clearTimeout(t),t=setTimeout(function(){n(e.instances,function(t){t.options.responsive&&t.resize(t.render,!0)})},50)}}()),p?define(function(){return e}):"object"==typeof module&&module.exports&&(module.exports=e),t.Chart=e,e.noConflict=function(){return t.Chart=i,e}}).call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleBeginAtZero:!0,scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,barShowStroke:!0,barStrokeWidth:2,barValueSpacing:5,barDatasetSpacing:1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Bar",defaults:s,initialize:function(t){var s=this.options;this.ScaleClass=i.Scale.extend({offsetGridLines:!0,calculateBarX:function(t,i,e){var n=this.calculateBaseWidth(),o=this.calculateX(e)-n/2,a=this.calculateBarWidth(t);return o+a*i+i*s.barDatasetSpacing+a/2},calculateBaseWidth:function(){return this.calculateX(1)-this.calculateX(0)-2*s.barValueSpacing},calculateBarWidth:function(t){var i=this.calculateBaseWidth()-(t-1)*s.barDatasetSpacing;return i/t}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getBarsAtEvent(t):[];this.eachBars(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),this.BarClass=i.Rectangle.extend({strokeWidth:this.options.barStrokeWidth,showStroke:this.options.barShowStroke,ctx:this.chart.ctx}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,bars:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.bars.push(new this.BarClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.strokeColor,fillColor:i.fillColor,highlightFill:i.highlightFill||i.fillColor,highlightStroke:i.highlightStroke||i.strokeColor}))},this)},this),this.buildScale(t.labels),this.BarClass.prototype.base=this.scale.endPoint,this.eachBars(function(t,i,s){e.extend(t,{width:this.scale.calculateBarWidth(this.datasets.length),x:this.scale.calculateBarX(this.datasets.length,s,i),y:this.scale.endPoint}),t.save()},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachBars(function(t){t.save()}),this.render()},eachBars:function(t){e.each(this.datasets,function(i,s){e.each(i.bars,t,this,s)},this)},getBarsAtEvent:function(t){for(var i,s=[],n=e.getRelativePosition(t),o=function(t){s.push(t.bars[i])},a=0;a<this.datasets.length;a++)for(i=0;i<this.datasets[a].bars.length;i++)if(this.datasets[a].bars[i].inRange(n.x,n.y))return e.each(this.datasets,o),s;return s},buildScale:function(t){var i=this,s=function(){var t=[];return i.eachBars(function(i){t.push(i.value)}),t},n={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(s(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.barShowStroke?this.options.barStrokeWidth:0,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(n,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new this.ScaleClass(n)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].bars.push(new this.BarClass({value:t,label:i,x:this.scale.calculateBarX(this.datasets.length,e,this.scale.valuesCount+1),y:this.scale.endPoint,width:this.scale.calculateBarWidth(this.datasets.length),base:this.scale.endPoint,strokeColor:this.datasets[e].strokeColor,fillColor:this.datasets[e].fillColor}))
 },this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.bars.shift()},this),this.update()},reflow:function(){e.extend(this.BarClass.prototype,{y:this.scale.endPoint,base:this.scale.endPoint});var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();this.chart.ctx;this.scale.draw(i),e.each(this.datasets,function(t,s){e.each(t.bars,function(t,e){t.hasValue()&&(t.base=this.scale.endPoint,t.transition({x:this.scale.calculateBarX(this.datasets.length,s,e),y:this.scale.calculateY(t.value),width:this.scale.calculateBarWidth(this.datasets.length)},i).draw())},this)},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,percentageInnerCutout:50,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Doughnut",defaults:s,initialize:function(t){this.segments=[],this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,this.SegmentArc=i.Arc.extend({ctx:this.chart.ctx,x:this.chart.width/2,y:this.chart.height/2}),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.calculateTotal(t),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({value:t.value,outerRadius:this.options.animateScale?0:this.outerRadius,innerRadius:this.options.animateScale?0:this.outerRadius/100*this.options.percentageInnerCutout,fillColor:t.color,highlightColor:t.highlight||t.color,showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,startAngle:1.5*Math.PI,circumference:this.options.animateRotate?0:this.calculateCircumference(t.value),label:t.label})),e||(this.reflow(),this.update())},calculateCircumference:function(t){return 2*Math.PI*(Math.abs(t)/this.total)},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=Math.abs(t.value)},this)},update:function(){this.calculateTotal(this.segments),e.each(this.activeElements,function(t){t.restore(["fillColor"])}),e.each(this.segments,function(t){t.save()}),this.render()},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,e.each(this.segments,function(t){t.update({outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout})},this)},draw:function(t){var i=t?t:1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.calculateCircumference(t.value),outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout},i),t.endAngle=t.startAngle+t.circumference,t.draw(),0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle)},this)}}),i.types.Doughnut.extend({name:"Pie",defaults:e.merge(s,{percentageInnerCutout:0})})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,bezierCurve:!0,bezierCurveTension:.4,pointDot:!0,pointDotRadius:4,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Line",defaults:s,initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx,inRange:function(t){return Math.pow(t-this.x,2)<Math.pow(this.radius+this.hitDetectionRadius,2)}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this),this.buildScale(t.labels),this.eachPoints(function(t,i){e.extend(t,{x:this.scale.calculateX(i),y:this.scale.endPoint}),t.save()},this)},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachPoints(function(t){t.save()}),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.datasets,function(t){e.each(t.points,function(t){t.inRange(s.x,s.y)&&i.push(t)})},this),i},buildScale:function(t){var s=this,n=function(){var t=[];return s.eachPoints(function(i){t.push(i.value)}),t},o={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(n(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.pointDotRadius+this.options.pointDotStrokeWidth,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(o,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new i.Scale(o)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:this.scale.calculateX(this.scale.valuesCount+1),y:this.scale.endPoint,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.points.shift()},this),this.update()},reflow:function(){var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();var s=this.chart.ctx,n=function(t){return null!==t.value},o=function(t,i,s){return e.findNextWhere(i,n,s)||t},a=function(t,i,s){return e.findPreviousWhere(i,n,s)||t};this.scale.draw(i),e.each(this.datasets,function(t){var h=e.where(t.points,n);e.each(t.points,function(t,e){t.hasValue()&&t.transition({y:this.scale.calculateY(t.value),x:this.scale.calculateX(e)},i)},this),this.options.bezierCurve&&e.each(h,function(t,i){var s=i>0&&i<h.length-1?this.options.bezierCurveTension:0;t.controlPoints=e.splineCurve(a(t,h,i),t,o(t,h,i),s),t.controlPoints.outer.y>this.scale.endPoint?t.controlPoints.outer.y=this.scale.endPoint:t.controlPoints.outer.y<this.scale.startPoint&&(t.controlPoints.outer.y=this.scale.startPoint),t.controlPoints.inner.y>this.scale.endPoint?t.controlPoints.inner.y=this.scale.endPoint:t.controlPoints.inner.y<this.scale.startPoint&&(t.controlPoints.inner.y=this.scale.startPoint)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(h,function(t,i){if(0===i)s.moveTo(t.x,t.y);else if(this.options.bezierCurve){var e=a(t,h,i);s.bezierCurveTo(e.controlPoints.outer.x,e.controlPoints.outer.y,t.controlPoints.inner.x,t.controlPoints.inner.y,t.x,t.y)}else s.lineTo(t.x,t.y)},this),s.stroke(),this.options.datasetFill&&h.length>0&&(s.lineTo(h[h.length-1].x,this.scale.endPoint),s.lineTo(h[0].x,this.scale.endPoint),s.fillStyle=t.fillColor,s.closePath(),s.fill()),e.each(h,function(t){t.draw()})},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowLabelBackdrop:!0,scaleBackdropColor:"rgba(255,255,255,0.75)",scaleBeginAtZero:!0,scaleBackdropPaddingY:2,scaleBackdropPaddingX:2,scaleShowLine:!0,segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"PolarArea",defaults:s,initialize:function(t){this.segments=[],this.SegmentArc=i.Arc.extend({showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,ctx:this.chart.ctx,innerRadius:0,x:this.chart.width/2,y:this.chart.height/2}),this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,lineArc:!0,width:this.chart.width,height:this.chart.height,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,valuesCount:t.length}),this.updateScaleRange(t),this.scale.update(),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({fillColor:t.color,highlightColor:t.highlight||t.color,label:t.label,value:t.value,outerRadius:this.options.animateScale?0:this.scale.calculateCenterOffset(t.value),circumference:this.options.animateRotate?0:this.scale.getCircumference(),startAngle:1.5*Math.PI})),e||(this.reflow(),this.update())},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=t.value},this),this.scale.valuesCount=this.segments.length},updateScaleRange:function(t){var i=[];e.each(t,function(t){i.push(t.value)});var s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s,{size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2})},update:function(){this.calculateTotal(this.segments),e.each(this.segments,function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.updateScaleRange(this.segments),this.scale.update(),e.extend(this.scale,{xCenter:this.chart.width/2,yCenter:this.chart.height/2}),e.each(this.segments,function(t){t.update({outerRadius:this.scale.calculateCenterOffset(t.value)})},this)},draw:function(t){var i=t||1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.scale.getCircumference(),outerRadius:this.scale.calculateCenterOffset(t.value)},i),t.endAngle=t.startAngle+t.circumference,0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle),t.draw()},this),this.scale.draw()}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers;i.Type.extend({name:"Radar",defaults:{scaleShowLine:!0,angleShowLineOut:!0,scaleShowLabels:!1,scaleBeginAtZero:!0,angleLineColor:"rgba(0,0,0,.1)",angleLineWidth:1,pointLabelFontFamily:"'Arial'",pointLabelFontStyle:"normal",pointLabelFontSize:10,pointLabelFontColor:"#666",pointDot:!0,pointDotRadius:3,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'},initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx}),this.datasets=[],this.buildScale(t),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){var o;this.scale.animation||(o=this.scale.getPointPosition(n,this.scale.calculateCenterOffset(e))),s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,x:this.options.animation?this.scale.xCenter:o.x,y:this.options.animation?this.scale.yCenter:o.y,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this)},this),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=e.getRelativePosition(t),s=e.getAngleFromPoint({x:this.scale.xCenter,y:this.scale.yCenter},i),n=2*Math.PI/this.scale.valuesCount,o=Math.round((s.angle-1.5*Math.PI)/n),a=[];return(o>=this.scale.valuesCount||0>o)&&(o=0),s.distance<=this.scale.drawingArea&&e.each(this.datasets,function(t){a.push(t.points[o])}),a},buildScale:function(t){this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,angleLineColor:this.options.angleLineColor,angleLineWidth:this.options.angleShowLineOut?this.options.angleLineWidth:0,pointLabelFontColor:this.options.pointLabelFontColor,pointLabelFontSize:this.options.pointLabelFontSize,pointLabelFontFamily:this.options.pointLabelFontFamily,pointLabelFontStyle:this.options.pointLabelFontStyle,height:this.chart.height,width:this.chart.width,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,labels:t.labels,valuesCount:t.datasets[0].data.length}),this.scale.setScaleSize(),this.updateScaleRange(t.datasets),this.scale.buildYLabels()},updateScaleRange:function(t){var i=function(){var i=[];return e.each(t,function(t){t.data?i=i.concat(t.data):e.each(t.points,function(t){i.push(t.value)})}),i}(),s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s)},addData:function(t,i){this.scale.valuesCount++,e.each(t,function(t,e){var s=this.scale.getPointPosition(this.scale.valuesCount,this.scale.calculateCenterOffset(t));this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:s.x,y:s.y,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.labels.push(i),this.reflow(),this.update()},removeData:function(){this.scale.valuesCount--,this.scale.labels.shift(),e.each(this.datasets,function(t){t.points.shift()},this),this.reflow(),this.update()},update:function(){this.eachPoints(function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.scale,{width:this.chart.width,height:this.chart.height,size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2}),this.updateScaleRange(this.datasets),this.scale.setScaleSize(),this.scale.buildYLabels()},draw:function(t){var i=t||1,s=this.chart.ctx;this.clear(),this.scale.draw(),e.each(this.datasets,function(t){e.each(t.points,function(t,e){t.hasValue()&&t.transition(this.scale.getPointPosition(e,this.scale.calculateCenterOffset(t.value)),i)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(t.points,function(t,i){0===i?s.moveTo(t.x,t.y):s.lineTo(t.x,t.y)},this),s.closePath(),s.stroke(),s.fillStyle=t.fillColor,s.fill(),e.each(t.points,function(t){t.hasValue()&&t.draw()})},this)}})}.call(this);
+!function(a,b){"use strict";function c(c,g){var h=this;h.$el=a(c),h.el=c,h.id=e++,h.$window=a(b),h.$document=a(document),h.$el.bind("destroyed",a.proxy(h.teardown,h)),h.$clonedHeader=null,h.$originalHeader=null,h.isSticky=!1,h.hasBeenSticky=!1,h.leftOffset=null,h.topOffset=null,h.init=function(){h.$el.each(function(){var b=a(this);b.css("padding",0),h.$originalHeader=a("thead:first",this),h.$clonedHeader=h.$originalHeader.clone(),b.trigger("clonedHeader."+d,[h.$clonedHeader]),h.$clonedHeader.addClass("tableFloatingHeader"),h.$clonedHeader.css("display","none"),h.$originalHeader.addClass("tableFloatingHeaderOriginal"),h.$originalHeader.after(h.$clonedHeader),h.$printStyle=a('<style type="text/css" media="print">.tableFloatingHeader{display:none !important;}.tableFloatingHeaderOriginal{position:static !important;}</style>'),a("head").append(h.$printStyle)}),h.setOptions(g),h.updateWidth(),h.toggleHeaders(),h.bind()},h.destroy=function(){h.$el.unbind("destroyed",h.teardown),h.teardown()},h.teardown=function(){h.isSticky&&h.$originalHeader.css("position","static"),a.removeData(h.el,"plugin_"+d),h.unbind(),h.$clonedHeader.remove(),h.$originalHeader.removeClass("tableFloatingHeaderOriginal"),h.$originalHeader.css("visibility","visible"),h.$printStyle.remove(),h.el=null,h.$el=null},h.bind=function(){h.$scrollableArea.on("scroll."+d,h.toggleHeaders),h.isWindowScrolling||(h.$window.on("scroll."+d+h.id,h.setPositionValues),h.$window.on("resize."+d+h.id,h.toggleHeaders)),h.$scrollableArea.on("resize."+d,h.toggleHeaders),h.$scrollableArea.on("resize."+d,h.updateWidth)},h.unbind=function(){h.$scrollableArea.off("."+d,h.toggleHeaders),h.isWindowScrolling||(h.$window.off("."+d+h.id,h.setPositionValues),h.$window.off("."+d+h.id,h.toggleHeaders)),h.$scrollableArea.off("."+d,h.updateWidth)},h.toggleHeaders=function(){h.$el&&h.$el.each(function(){var b,c=a(this),e=h.isWindowScrolling?isNaN(h.options.fixedOffset)?h.options.fixedOffset.outerHeight():h.options.fixedOffset:h.$scrollableArea.offset().top+(isNaN(h.options.fixedOffset)?0:h.options.fixedOffset),f=c.offset(),g=h.$scrollableArea.scrollTop()+e,i=h.$scrollableArea.scrollLeft(),j=h.isWindowScrolling?g>f.top:e>f.top,k=(h.isWindowScrolling?g:0)<f.top+c.height()-h.$clonedHeader.height()-(h.isWindowScrolling?0:e);j&&k?(b=f.left-i+h.options.leftOffset,h.$originalHeader.css({position:"fixed","margin-top":h.options.marginTop,left:b,"z-index":3}),h.leftOffset=b,h.topOffset=e,h.$clonedHeader.css("display",""),h.isSticky||(h.isSticky=!0,h.updateWidth(),c.trigger("enabledStickiness."+d)),h.setPositionValues()):h.isSticky&&(h.$originalHeader.css("position","static"),h.$clonedHeader.css("display","none"),h.isSticky=!1,h.resetWidth(a("td,th",h.$clonedHeader),a("td,th",h.$originalHeader)),c.trigger("disabledStickiness."+d))})},h.setPositionValues=function(){var a=h.$window.scrollTop(),b=h.$window.scrollLeft();!h.isSticky||0>a||a+h.$window.height()>h.$document.height()||0>b||b+h.$window.width()>h.$document.width()||h.$originalHeader.css({top:h.topOffset-(h.isWindowScrolling?0:a),left:h.leftOffset-(h.isWindowScrolling?0:b)})},h.updateWidth=function(){if(h.isSticky){h.$originalHeaderCells||(h.$originalHeaderCells=a("th,td",h.$originalHeader)),h.$clonedHeaderCells||(h.$clonedHeaderCells=a("th,td",h.$clonedHeader));var b=h.getWidth(h.$clonedHeaderCells);h.setWidth(b,h.$clonedHeaderCells,h.$originalHeaderCells),h.$originalHeader.css("width",h.$clonedHeader.width())}},h.getWidth=function(c){var d=[];return c.each(function(c){var e,f=a(this);if("border-box"===f.css("box-sizing")){var g=f[0].getBoundingClientRect();e=g.width?g.width:g.right-g.left}else{var i=a("th",h.$originalHeader);if("collapse"===i.css("border-collapse"))if(b.getComputedStyle)e=parseFloat(b.getComputedStyle(this,null).width);else{var j=parseFloat(f.css("padding-left")),k=parseFloat(f.css("padding-right")),l=parseFloat(f.css("border-width"));e=f.outerWidth()-j-k-l}else e=f.width()}d[c]=e}),d},h.setWidth=function(a,b,c){b.each(function(b){var d=a[b];c.eq(b).css({"min-width":d,"max-width":d})})},h.resetWidth=function(b,c){b.each(function(b){var d=a(this);c.eq(b).css({"min-width":d.css("min-width"),"max-width":d.css("max-width")})})},h.setOptions=function(c){h.options=a.extend({},f,c),h.$scrollableArea=a(h.options.scrollableArea),h.isWindowScrolling=h.$scrollableArea[0]===b},h.updateOptions=function(a){h.setOptions(a),h.unbind(),h.bind(),h.updateWidth(),h.toggleHeaders()},h.init()}var d="stickyTableHeaders",e=0,f={fixedOffset:0,leftOffset:0,marginTop:0,scrollableArea:b};a.fn[d]=function(b){return this.each(function(){var e=a.data(this,"plugin_"+d);e?"string"==typeof b?e[b].apply(e):e.updateOptions(b):"destroy"!==b&&a.data(this,"plugin_"+d,new c(this,b))})}}(jQuery,window);
 'use strict';
 //define namespaces for global functionality sets
 var plenty_admin = {};
@@ -1536,6 +1537,14 @@ plenty_admin.UI.brand_palette.setSpectrum("#0076b2", "#93b222", "#788912");
 plenty_admin.REST = {};
 plenty_admin.REST.URL = '52.5.118.250:8080/plenty';
 plenty_admin.REST.fullURL = "http://"+plenty_admin.REST.URL;
+
+/* set up the timezone conversion library */
+/*
+timezoneJS.timezone.zoneFileBasePath = 'js/tz';
+timezoneJS.timezone.init({ callback: function(ev){
+	console.log("timezone-js is now ready: ", ev);
+} });
+*/
 
 plenty_admin.init = function(context){
 	plenty_admin.state = context;
@@ -1568,11 +1577,12 @@ plenty_admin.init = function(context){
 				// load all dependency packages befire initiating the settings
 				plenty_admin.DATA.load_user_organizations(function(orgsForUser){
 					plenty_admin.DATA.getInitialOrganizationData(orgsForUser, function(){
-						plenty_admin.DATA.eventCollector = window.eventcollector(4, 10000);
+						plenty_admin.DATA.eventCollector = window.eventcollector(5, 10000);
 						plenty_admin.REST.getEquipmentTypes();
 						plenty_admin.REST.getRoleTypes();
 						plenty_admin.REST.getOrganizationTypes();
 						plenty_admin.REST.getBoundaryTypes();
+						plenty_admin.REST.getGrowthMethods();
 						plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
 						  //console.log('event %d of %d emitted', fired, total);
 						  //console.log('event description:', data);
@@ -1873,7 +1883,33 @@ plenty_admin.REST.getEquipmentTypes = function(){
 				.remove()
 				.append(equipTypesHTML);
 				
-				plenty_admin.DATA.eventCollector.done("event 1");
+				plenty_admin.DATA.eventCollector.done("equipment");
+			});
+}
+
+// get all equipment types and store them
+plenty_admin.REST.brandTypes = plenty_admin.api.all("brands/getAllBrands");
+plenty_admin.REST.getBrandTypes = function(){
+	plenty_admin.DATA.brandTypes = {};
+	plenty_admin.REST.brandTypes.getAll()
+		.then(
+			function(brandTypesReturn){
+				plenty_admin.DATA.brandTypes = plenty_admin.REST.get_object_from_data(brandTypesReturn.body());
+				console.log("Get brand types finished");
+				
+				//populate equipment type lists:
+				var brandTypesHTML = "";
+				for(var e=0; e< plenty_admin.DATA.brandTypes.length; e++){
+					var brand = plenty_admin.DATA.brandTypes[e];
+					brandTypesHTML += "<option value='"+brand.id+"'>"+brand.name+"</option>";
+				}
+				plenty_admin.UI.DOM
+				.find(".brand_type_list")
+				.find("option")
+				.remove()
+				.append(brandTypesHTML);
+				
+				plenty_admin.DATA.eventCollector.done("Brands");
 			});
 }
 
@@ -1887,7 +1923,7 @@ plenty_admin.REST.getActivityTypes = function(){
 				plenty_admin.DATA.activityTypes = plenty_admin.REST.get_object_from_data(activityTypesReturn.body());
 				console.log("Get activity types finished");
 				
-				plenty_admin.DATA.eventCollector.done("event 1");
+				plenty_admin.DATA.eventCollector.done("activities");
 			},
 			function(err){
 				console.error("getting activity types failed: ", err);
@@ -1904,7 +1940,7 @@ plenty_admin.REST.getRoleTypes = function(){
 			function(roleTypesReturn){
 				plenty_admin.DATA.roleTypes = plenty_admin.REST.get_object_from_data(roleTypesReturn.body());
 				console.log("Get role types finished");
-				plenty_admin.DATA.eventCollector.done("event 2");
+				plenty_admin.DATA.eventCollector.done("roles");
 			});
 }
 
@@ -1970,6 +2006,19 @@ plenty_admin.REST.getBoundaryTypes = function(){
 				plenty_admin.DATA.boundaryTypes = plenty_admin.REST.get_object_from_data(boundaryTypes.body());
 				console.log("Get boundary types finished");
 				plenty_admin.DATA.eventCollector.done("event 4");
+			});
+}
+
+// get all growth methods and store them
+plenty_admin.REST.growthMethods = plenty_admin.api.all("cropStage/getAllGrowthMethods");
+plenty_admin.REST.getGrowthMethods = function(){
+	plenty_admin.DATA.growthMethods = {};
+	plenty_admin.REST.growthMethods.getAll()
+		.then(
+			function(growthMethods){
+				plenty_admin.DATA.growthMethods = plenty_admin.REST.get_object_from_data(growthMethods.body());
+				console.log("Get growth methods finished");
+				plenty_admin.DATA.eventCollector.done("growth methods");
 			});
 }
 
@@ -2137,7 +2186,7 @@ plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(b
 		);
 }
 
-plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox = function(boundary, callback){
+plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox = function(boundary, callback, map){
 	//get fields related to this farm
 	plenty_admin.REST.fields.CLUBoundaryPointsForBoundingBox = plenty_admin.api.one("cluBoundaries/getByBoundinBox", boundary.maxLongitude+"/"+boundary.minLongitude+"/"+boundary.maxLatitude+"/"+boundary.minLatitude);
 	
@@ -2153,7 +2202,7 @@ plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox = function(boundary,
 				}
 				
 				if(callback && typeof callback === "function"){
-					callback(CLUboundaryPointsSet);
+					callback(CLUboundaryPointsSet, map);
 				}
 			});
 }
@@ -2206,6 +2255,18 @@ plenty_admin.REST.fields.getFieldById = function(id, callback){
 			console.log(" fieldById: ", fieldObj.body()());
 			if(callback && typeof callback == "function"){
 				callback(fieldObj.body()());
+			}
+		});
+}
+
+plenty_admin.REST.fields.getEquipmentImage = function(equipmentId, callback){
+	plenty_admin.REST.equipmentImage = plenty_admin.api.all("equipmentFiles/getImage");
+	plenty_admin.REST.equipmentImage.get(equipmentId)
+	.then(
+		function(equipmentImageString){
+			console.log(" equipmentImageString: ", equipmentImageString().data);
+			if(callback && typeof callback == "function"){
+				callback(equipmentImageString().data);
 			}
 		});
 }
@@ -2267,6 +2328,8 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 	fullFieldObject.tillageTypeId = parseInt(fieldObj.tillageTypeId);
 	delete fieldObj.tillageTypeId;
 	
+	fullFieldObject.growthMethodId = parseInt(fieldObj.growthMethodId);
+	
 	fullFieldObject.year = 2015;
 	
 	fullFieldObject.fieldDto = fieldObj;
@@ -2292,7 +2355,6 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 					.append($fieldHTML);
 					
 					plenty_admin.UI.organization.addItemFunctionality($fieldHTML);
-					
 				break;
 				
 				case "map":
@@ -2302,7 +2364,7 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 					plenty_admin.DATA.update_filters(function(returned_filters){
 						//console.log("filters updated: ", returned_filters, returned_filters.body());
 						plenty_admin.DATA.userFilters = returned_filters.body();
-					});
+					}, null, false);
 				break;
 				
 				//create dummy weather observations for new field
@@ -2480,31 +2542,26 @@ plenty_admin.HELPER.get_singular_selected_hash = function(){
 	var hashSingular = url.substring(url.indexOf('#')+1, url.lastIndexOf("s"));
 	return hashSingular;
 }
-plenty_admin.HELPER.formateJavaDate = function(unix_timestamp){
+plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 	var a = new Date(unix_timestamp);
-	  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-	  var year = a.getFullYear();
-	  var month = months[a.getMonth()];
-	  var date = a.getDate();
-	  var hour = (a.getHours() < 10 ? "0"+a.getHours() : a.getHours());
-	  var min = (a.getMinutes() < 10 ? "0"+a.getMinutes() : a.getMinutes());
-	  var sec = (a.getSeconds() < 10 ? "0"+a.getSeconds() : a.getSeconds());
-	  var _date = (month ? month.slice(0,4) : month) + ' ' + date;
-	  
-	  /* HACK for empty dates */
-	  if(_date.indexOf("unde") > -1 || _date.indexOf("NaN") > -1){
-		_date = "April 21";  
-	  }
-	  
-	  var time = hour + ':' + min + ':' + sec;
-	  var date_time = _date + ' ' +  time;
-	  return {
-		  		date_time: time, 
-				date: _date,
-				time: time,
-				month: month,
-				obj: a
-			};
+	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	var year = a.getUTCFullYear();
+	var month = months[a.getUTCMonth()];
+	var date = a.getUTCDate();
+	var hour = (a.getUTCHours() < 10 ? "0"+a.getUTCHours()-1 : a.getUTCHours()-1);
+	var min = (a.getUTCMinutes() < 10 ? "0"+a.getUTCMinutes() : a.getUTCMinutes());
+	var sec = (a.getUTCSeconds() < 10 ? "0"+a.getUTCSeconds() : a.getUTCSeconds());
+	var _date = (month ? month.slice(0,4) : month) + ' ' + date;
+	
+	var time = hour + ':' + min + ':' + sec;
+	var date_time = _date + ' ' +  time;
+	return {
+			date_time: time, 
+			date: _date,
+			time: time,
+			month: month,
+			obj: a
+		};
 }
 plenty_admin.HELPER.treatAsUTC = function(date) {
 	if(typeof date === "object"){
@@ -2596,34 +2653,6 @@ plenty_admin.HELPER.hexToRgb = function(hex) {
         b: parseInt(result[3], 16)
     } : null;
 }
-/*
-plenty_admin.HELPER.get_colour_range = function(listItems){
-	console.log("plenty_admin.UI.brand_palette: ", plenty_admin.UI.brand_palette, listItems);
-	
-	var startPoint = Math.round(plenty_admin.UI.brand_palette.length /2);
-	
-	var direction = "forward";
-	var increment = 1;
-	
-	var colour_range = [];
-	
-	for(var c=0; c<listItems.length; c++){
-		console.log("add colour to range: ", direction, increment, colour_range);
-		if(direction === "forward"){
-			colour_range.push(plenty_admin.UI.brand_palette[startPoint + (listItems.length * increment)]);
-			
-			direction = "back";
-		}else{
-			colour_range.push(plenty_admin.UI.brand_palette[startPoint - (listItems.length * increment)]);
-			direction = "forward"
-		}
-		
-		increment += 1;
-	}
-	console.log("colour_range", colour_range);
-	return colour_range;
-}
-*/
 
 //wrapper function for testing a specific, hard coded REST call
 plenty_admin.HELPER.testAPICall = function(call, id){
@@ -2633,6 +2662,58 @@ plenty_admin.HELPER.testAPICall = function(call, id){
 		function(returnData){
 			console.log(call+" GOT", returnData);
 		});
+}
+
+plenty_admin.HELPER.base64ArrayBuffer = function(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+
+  return base64;
 }
 
 //plenty_admin.HELPER.testAPICall("fields/getField", 1);
@@ -2787,6 +2868,882 @@ k.prototype.setGridSize=k.prototype.aa;k.prototype.setMaxZoom=k.prototype.ba;k.p
 })(jQuery);
 //configure inline editing plugin
 $.fn.editable.defaults.mode = 'popup';
+// ==ClosureCompiler==
+// @compilation_level ADVANCED_OPTIMIZATIONS
+// @externs_url http://closure-compiler.googlecode.com/svn/trunk/contrib/externs/maps/google_maps_api_v3.js
+// @output_wrapper (function() {%output%})();
+// ==/ClosureCompiler==
+
+/**
+ * @license
+ * Copyright 2013 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * A RichMarker that allows any HTML/DOM to be added to a map and be draggable.
+ *
+ * @param {Object.<string, *>=} opt_options Optional properties to set.
+ * @extends {google.maps.OverlayView}
+ * @constructor
+ */
+function RichMarker(opt_options) {
+  var options = opt_options || {};
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.ready_ = false;
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.dragging_ = false;
+
+  if (opt_options['visible'] == undefined) {
+    opt_options['visible'] = true;
+  }
+
+  if (opt_options['shadow'] == undefined) {
+    opt_options['shadow'] = '7px -3px 5px rgba(88,88,88,0.7)';
+  }
+
+  if (opt_options['anchor'] == undefined) {
+    opt_options['anchor'] = RichMarkerPosition['BOTTOM'];
+  }
+
+  this.setValues(options);
+}
+RichMarker.prototype = new google.maps.OverlayView();
+window['RichMarker'] = RichMarker;
+
+
+/**
+ * Returns the current visibility state of the marker.
+ *
+ * @return {boolean} The visiblity of the marker.
+ */
+RichMarker.prototype.getVisible = function() {
+  return /** @type {boolean} */ (this.get('visible'));
+};
+RichMarker.prototype['getVisible'] = RichMarker.prototype.getVisible;
+
+
+/**
+ * Sets the visiblility state of the marker.
+ *
+ * @param {boolean} visible The visiblilty of the marker.
+ */
+RichMarker.prototype.setVisible = function(visible) {
+  this.set('visible', visible);
+};
+RichMarker.prototype['setVisible'] = RichMarker.prototype.setVisible;
+
+
+/**
+ *  The visible changed event.
+ */
+RichMarker.prototype.visible_changed = function() {
+  if (this.ready_) {
+    this.markerWrapper_.style['display'] = this.getVisible() ? '' : 'none';
+    this.draw();
+  }
+};
+RichMarker.prototype['visible_changed'] = RichMarker.prototype.visible_changed;
+
+
+/**
+ * Sets the marker to be flat.
+ *
+ * @param {boolean} flat If the marker is to be flat or not.
+ */
+RichMarker.prototype.setFlat = function(flat) {
+  this.set('flat', !!flat);
+};
+RichMarker.prototype['setFlat'] = RichMarker.prototype.setFlat;
+
+
+/**
+ * If the makrer is flat or not.
+ *
+ * @return {boolean} True the marker is flat.
+ */
+RichMarker.prototype.getFlat = function() {
+  return /** @type {boolean} */ (this.get('flat'));
+};
+RichMarker.prototype['getFlat'] = RichMarker.prototype.getFlat;
+
+
+/**
+ * Get the width of the marker.
+ *
+ * @return {Number} The width of the marker.
+ */
+RichMarker.prototype.getWidth = function() {
+  return /** @type {Number} */ (this.get('width'));
+};
+RichMarker.prototype['getWidth'] = RichMarker.prototype.getWidth;
+
+
+/**
+ * Get the height of the marker.
+ *
+ * @return {Number} The height of the marker.
+ */
+RichMarker.prototype.getHeight = function() {
+  return /** @type {Number} */ (this.get('height'));
+};
+RichMarker.prototype['getHeight'] = RichMarker.prototype.getHeight;
+
+
+/**
+ * Sets the marker's box shadow.
+ *
+ * @param {string} shadow The box shadow to set.
+ */
+RichMarker.prototype.setShadow = function(shadow) {
+  this.set('shadow', shadow);
+  this.flat_changed();
+};
+RichMarker.prototype['setShadow'] = RichMarker.prototype.setShadow;
+
+
+/**
+ * Gets the marker's box shadow.
+ *
+ * @return {string} The box shadow.
+ */
+RichMarker.prototype.getShadow = function() {
+  return /** @type {string} */ (this.get('shadow'));
+};
+RichMarker.prototype['getShadow'] = RichMarker.prototype.getShadow;
+
+
+/**
+ * Flat changed event.
+ */
+RichMarker.prototype.flat_changed = function() {
+  if (!this.ready_) {
+    return;
+  }
+
+  this.markerWrapper_.style['boxShadow'] =
+      this.markerWrapper_.style['webkitBoxShadow'] =
+      this.markerWrapper_.style['MozBoxShadow'] =
+      this.getFlat() ? '' : this.getShadow();
+};
+RichMarker.prototype['flat_changed'] = RichMarker.prototype.flat_changed;
+
+
+/**
+ * Sets the zIndex of the marker.
+ *
+ * @param {Number} index The index to set.
+ */
+RichMarker.prototype.setZIndex = function(index) {
+  this.set('zIndex', index);
+};
+RichMarker.prototype['setZIndex'] = RichMarker.prototype.setZIndex;
+
+
+/**
+ * Gets the zIndex of the marker.
+ *
+ * @return {Number} The zIndex of the marker.
+ */
+RichMarker.prototype.getZIndex = function() {
+  return /** @type {Number} */ (this.get('zIndex'));
+};
+RichMarker.prototype['getZIndex'] = RichMarker.prototype.getZIndex;
+
+
+/**
+ * zIndex changed event.
+ */
+RichMarker.prototype.zIndex_changed = function() {
+  if (this.getZIndex() && this.ready_) {
+    this.markerWrapper_.style.zIndex = this.getZIndex();
+  }
+};
+RichMarker.prototype['zIndex_changed'] = RichMarker.prototype.zIndex_changed;
+
+/**
+ * Whether the marker is draggable or not.
+ *
+ * @return {boolean} True if the marker is draggable.
+ */
+RichMarker.prototype.getDraggable = function() {
+  return /** @type {boolean} */ (this.get('draggable'));
+};
+RichMarker.prototype['getDraggable'] = RichMarker.prototype.getDraggable;
+
+
+/**
+ * Sets the marker to be draggable or not.
+ *
+ * @param {boolean} draggable If the marker is draggable or not.
+ */
+RichMarker.prototype.setDraggable = function(draggable) {
+  this.set('draggable', !!draggable);
+};
+RichMarker.prototype['setDraggable'] = RichMarker.prototype.setDraggable;
+
+
+/**
+ * Draggable property changed callback.
+ */
+RichMarker.prototype.draggable_changed = function() {
+  if (this.ready_) {
+    if (this.getDraggable()) {
+      this.addDragging_(this.markerWrapper_);
+    } else {
+      this.removeDragListeners_();
+    }
+  }
+};
+RichMarker.prototype['draggable_changed'] =
+    RichMarker.prototype.draggable_changed;
+
+
+/**
+ * Gets the postiton of the marker.
+ *
+ * @return {google.maps.LatLng} The position of the marker.
+ */
+RichMarker.prototype.getPosition = function() {
+  return /** @type {google.maps.LatLng} */ (this.get('position'));
+};
+RichMarker.prototype['getPosition'] = RichMarker.prototype.getPosition;
+
+
+/**
+ * Sets the position of the marker.
+ *
+ * @param {google.maps.LatLng} position The position to set.
+ */
+RichMarker.prototype.setPosition = function(position) {
+  this.set('position', position);
+};
+RichMarker.prototype['setPosition'] = RichMarker.prototype.setPosition;
+
+
+/**
+ * Position changed event.
+ */
+RichMarker.prototype.position_changed = function() {
+  this.draw();
+};
+RichMarker.prototype['position_changed'] =
+    RichMarker.prototype.position_changed;
+
+
+/**
+ * Gets the anchor.
+ *
+ * @return {google.maps.Size} The position of the anchor.
+ */
+RichMarker.prototype.getAnchor = function() {
+  return /** @type {google.maps.Size} */ (this.get('anchor'));
+};
+RichMarker.prototype['getAnchor'] = RichMarker.prototype.getAnchor;
+
+
+/**
+ * Sets the anchor.
+ *
+ * @param {RichMarkerPosition|google.maps.Size} anchor The anchor to set.
+ */
+RichMarker.prototype.setAnchor = function(anchor) {
+  this.set('anchor', anchor);
+};
+RichMarker.prototype['setAnchor'] = RichMarker.prototype.setAnchor;
+
+
+/**
+ * Anchor changed event.
+ */
+RichMarker.prototype.anchor_changed = function() {
+  this.draw();
+};
+RichMarker.prototype['anchor_changed'] = RichMarker.prototype.anchor_changed;
+
+
+/**
+ * Converts a HTML string to a document fragment.
+ *
+ * @param {string} htmlString The HTML string to convert.
+ * @return {Node} A HTML document fragment.
+ * @private
+ */
+RichMarker.prototype.htmlToDocumentFragment_ = function(htmlString) {
+  var tempDiv = document.createElement('DIV');
+  tempDiv.innerHTML = htmlString;
+  if (tempDiv.childNodes.length == 1) {
+    return /** @type {!Node} */ (tempDiv.removeChild(tempDiv.firstChild));
+  } else {
+    var fragment = document.createDocumentFragment();
+    while (tempDiv.firstChild) {
+      fragment.appendChild(tempDiv.firstChild);
+    }
+    return fragment;
+  }
+};
+
+
+/**
+ * Removes all children from the node.
+ *
+ * @param {Node} node The node to remove all children from.
+ * @private
+ */
+RichMarker.prototype.removeChildren_ = function(node) {
+  if (!node) {
+    return;
+  }
+
+  var child;
+  while (child = node.firstChild) {
+    node.removeChild(child);
+  }
+};
+
+
+/**
+ * Sets the content of the marker.
+ *
+ * @param {string|Node} content The content to set.
+ */
+RichMarker.prototype.setContent = function(content) {
+  this.set('content', content);
+};
+RichMarker.prototype['setContent'] = RichMarker.prototype.setContent;
+
+
+/**
+ * Get the content of the marker.
+ *
+ * @return {string|Node} The marker content.
+ */
+RichMarker.prototype.getContent = function() {
+  return /** @type {Node|string} */ (this.get('content'));
+};
+RichMarker.prototype['getContent'] = RichMarker.prototype.getContent;
+
+
+/**
+ * Sets the marker content and adds loading events to images
+ */
+RichMarker.prototype.content_changed = function() {
+  if (!this.markerContent_) {
+    // Marker content area doesnt exist.
+    return;
+  }
+
+  this.removeChildren_(this.markerContent_);
+  var content = this.getContent();
+  if (content) {
+    if (typeof content == 'string') {
+      content = content.replace(/^\s*([\S\s]*)\b\s*$/, '$1');
+      content = this.htmlToDocumentFragment_(content);
+    }
+    this.markerContent_.appendChild(content);
+
+    var that = this;
+    var images = this.markerContent_.getElementsByTagName('IMG');
+    for (var i = 0, image; image = images[i]; i++) {
+      // By default, a browser lets a image be dragged outside of the browser,
+      // so by calling preventDefault we stop this behaviour and allow the image
+      // to be dragged around the map and now out of the browser and onto the
+      // desktop.
+      google.maps.event.addDomListener(image, 'mousedown', function(e) {
+        if (that.getDraggable()) {
+          if (e.preventDefault) {
+            e.preventDefault();
+          }
+          e.returnValue = false;
+        }
+      });
+
+      // Because we don't know the size of an image till it loads, add a
+      // listener to the image load so the marker can resize and reposition
+      // itself to be the correct height.
+      google.maps.event.addDomListener(image, 'load', function() {
+        that.draw();
+      });
+    }
+
+    google.maps.event.trigger(this, 'domready');
+  }
+
+  if (this.ready_) {
+    this.draw();
+  }
+};
+RichMarker.prototype['content_changed'] = RichMarker.prototype.content_changed;
+
+/**
+ * Sets the cursor.
+ *
+ * @param {string} whichCursor What cursor to show.
+ * @private
+ */
+RichMarker.prototype.setCursor_ = function(whichCursor) {
+  if (!this.ready_) {
+    return;
+  }
+
+  var cursor = '';
+  if (navigator.userAgent.indexOf('Gecko/') !== -1) {
+    // Moz has some nice cursors :)
+    if (whichCursor == 'dragging') {
+      cursor = '-moz-grabbing';
+    }
+
+    if (whichCursor == 'dragready') {
+      cursor = '-moz-grab';
+    }
+
+    if (whichCursor == 'draggable') {
+      cursor = 'pointer';
+    }
+  } else {
+    if (whichCursor == 'dragging' || whichCursor == 'dragready') {
+      cursor = 'move';
+    }
+
+    if (whichCursor == 'draggable') {
+      cursor = 'pointer';
+    }
+  }
+
+  if (this.markerWrapper_.style.cursor != cursor) {
+    this.markerWrapper_.style.cursor = cursor;
+  }
+};
+
+/**
+ * Start dragging.
+ *
+ * @param {Event} e The event.
+ */
+RichMarker.prototype.startDrag = function(e) {
+  if (!this.getDraggable()) {
+    return;
+  }
+
+  if (!this.dragging_) {
+    this.dragging_ = true;
+    var map = this.getMap();
+    this.mapDraggable_ = map.get('draggable');
+    map.set('draggable', false);
+
+    // Store the current mouse position
+    this.mouseX_ = e.clientX;
+    this.mouseY_ = e.clientY;
+
+    this.setCursor_('dragready');
+
+    // Stop the text from being selectable while being dragged
+    this.markerWrapper_.style['MozUserSelect'] = 'none';
+    this.markerWrapper_.style['KhtmlUserSelect'] = 'none';
+    this.markerWrapper_.style['WebkitUserSelect'] = 'none';
+	
+	//position the tip of the marker at the mouse cursor
+	/*
+	var thisMarker = $(this.markerWrapper_).find(".marker");
+	var parentOffset = thisMarker.offset();
+	var relativeXPosition = (e.pageX - parentOffset.left); //offset -> method allows you to retrieve the current position of an element 'relative' to the document
+    var relativeYPosition = (e.pageY - parentOffset.top);
+	var xPositionOffset = (thisMarker.width()/2) - relativeXPosition;
+	var yPositionOffset = thisMarker.height() - relativeYPosition;
+	this.originalTop = parseFloat(thisMarker.css("top"));
+	this.originalLeft = parseFloat(thisMarker.css("left"));
+	console.log("OFFSET: ", this.originalLeft, xPositionOffset, this.originalTop, yPositionOffset);
+	
+	thisMarker.css({
+		left:this.originalLeft - xPositionOffset,
+		top: this.originalTop - yPositionOffset + 4
+	});
+	*/
+
+    this.markerWrapper_['unselectable'] = 'on';
+    this.markerWrapper_['onselectstart'] = function() {
+      return false;
+    };
+
+    this.addDraggingListeners_();
+
+    google.maps.event.trigger(this, 'dragstart');
+  }
+};
+
+
+/**
+ * Stop dragging.
+ */
+RichMarker.prototype.stopDrag = function(triggerEndDrag) {
+  if (!this.getDraggable()) {
+    return;
+  }
+
+  if (this.dragging_) {
+    this.dragging_ = false;
+    this.getMap().set('draggable', this.mapDraggable_);
+    this.mouseX_ = this.mouseY_ = this.mapDraggable_ = null;
+
+    // Allow the text to be selectable again
+    this.markerWrapper_.style['MozUserSelect'] = '';
+    this.markerWrapper_.style['KhtmlUserSelect'] = '';
+    this.markerWrapper_.style['WebkitUserSelect'] = '';
+    this.markerWrapper_['unselectable'] = 'off';
+    this.markerWrapper_['onselectstart'] = function() {};
+	
+	//reset the marker position
+	/*
+	var thisMarker = $(this.markerWrapper_).find(".marker");
+	thisMarker.css({
+		left:this.originalLeft,
+		top: this.originalTop
+	});
+	*/
+	
+    this.removeDraggingListeners_();
+
+    this.setCursor_('draggable');
+	if(triggerEndDrag){
+    	google.maps.event.trigger(this, 'dragend');
+	}
+    this.draw();
+  }
+};
+
+
+/**
+ * Handles the drag event.
+ *
+ * @param {Event} e The event.
+ */
+RichMarker.prototype.drag = function(e) {
+  if (!this.getDraggable() || !this.dragging_) {
+    // This object isn't draggable or we have stopped dragging
+    this.stopDrag();
+    return;
+  }
+
+  var dx = this.mouseX_ - e.clientX;
+  var dy = this.mouseY_ - e.clientY;
+
+  this.mouseX_ = e.clientX;
+  this.mouseY_ = e.clientY;
+
+  var left = parseInt(this.markerWrapper_.style['left'], 10) - dx;
+  var top = parseInt(this.markerWrapper_.style['top'], 10) - dy;
+
+  this.markerWrapper_.style['left'] = left + 'px';
+  this.markerWrapper_.style['top'] = top + 'px';
+
+  var offset = this.getOffset_();
+
+  // Set the position property and adjust for the anchor offset
+  var point = new google.maps.Point(left - offset.width, top - offset.height);
+  var projection = this.getProjection();
+  this.setPosition(projection.fromDivPixelToLatLng(point));
+
+  this.setCursor_('dragging');
+  google.maps.event.trigger(this, 'drag');
+};
+
+
+/**
+ * Removes the drag listeners associated with the marker.
+ *
+ * @private
+ */
+RichMarker.prototype.removeDragListeners_ = function() {
+  if (this.draggableListener_) {
+    google.maps.event.removeListener(this.draggableListener_);
+    delete this.draggableListener_;
+  }
+  this.setCursor_('');
+};
+
+
+/**
+ * Add dragability events to the marker.
+ *
+ * @param {Node} node The node to apply dragging to.
+ * @private
+ */
+RichMarker.prototype.addDragging_ = function(node) {
+  if (!node) {
+    return;
+  }
+
+  var that = this;
+  this.draggableListener_ =
+    google.maps.event.addDomListener(node, 'mousedown', function(e) {
+      that.startDrag(e);
+    });
+
+  this.setCursor_('draggable');
+};
+
+
+/**
+ * Add dragging listeners.
+ *
+ * @private
+ */
+RichMarker.prototype.addDraggingListeners_ = function() {
+  var that = this;
+  if (this.markerWrapper_.setCapture) {
+    this.markerWrapper_.setCapture(true);
+    this.draggingListeners_ = [
+      google.maps.event.addDomListener(this.markerWrapper_, 'mousemove', function(e) {
+		  that.mouseMoved = true;
+        that.drag(e);
+      }, true),
+      google.maps.event.addDomListener(this.markerWrapper_, 'mouseup', function(e) {
+		  e.stopPropagation();
+		  if(that.mouseMoved){
+        	that.stopDrag(true);
+		  }else{
+			  that.stopDrag();
+			  if(e.which == 1){
+			 	google.maps.event.trigger(that, 'click'); 
+			  }else if(e.which == 3){
+				  google.maps.event.trigger(that, 'rightclick'); 
+			  }
+		  }
+        that.markerWrapper_.releaseCapture();
+		that.mouseMoved = false;
+		return false;
+      }, true)
+    ];
+  } else {
+    this.draggingListeners_ = [
+      google.maps.event.addDomListener(window, 'mousemove', function(e) {
+		  that.mouseMoved = true;
+        that.drag(e);
+      }, true),
+      google.maps.event.addDomListener(window, 'mouseup', function(e) {
+		  e.stopPropagation();
+        if(that.mouseMoved){
+        	that.stopDrag(true);
+		  }else{
+			  that.stopDrag();
+			 if(e.which == 1){
+			 	google.maps.event.trigger(that, 'click'); 
+			  }else if(e.which == 3){
+				  google.maps.event.trigger(that, 'rightclick'); 
+			  }
+		  }
+		that.mouseMoved = false;
+		return false;
+      }, true)
+    ];
+  }
+};
+
+
+/**
+ * Remove dragging listeners.
+ *
+ * @private
+ */
+RichMarker.prototype.removeDraggingListeners_ = function() {
+  if (this.draggingListeners_) {
+    for (var i = 0, listener; listener = this.draggingListeners_[i]; i++) {
+      google.maps.event.removeListener(listener);
+    }
+    this.draggingListeners_.length = 0;
+  }
+};
+
+
+/**
+ * Get the anchor offset.
+ *
+ * @return {google.maps.Size} The size offset.
+ * @private
+ */
+RichMarker.prototype.getOffset_ = function() {
+  var anchor = this.getAnchor();
+  if (typeof anchor == 'object') {
+    return /** @type {google.maps.Size} */ (anchor);
+  }
+
+  var offset = new google.maps.Size(0, 0);
+  if (!this.markerContent_) {
+    return offset;
+  }
+
+  var width = this.markerContent_.offsetWidth;
+  var height = this.markerContent_.offsetHeight;
+
+  switch (anchor) {
+   case RichMarkerPosition['TOP_LEFT']:
+     break;
+   case RichMarkerPosition['TOP']:
+     offset.width = -width / 2;
+     break;
+   case RichMarkerPosition['TOP_RIGHT']:
+     offset.width = -width;
+     break;
+   case RichMarkerPosition['LEFT']:
+     offset.height = -height / 2;
+     break;
+   case RichMarkerPosition['MIDDLE']:
+     offset.width = -width / 2;
+     offset.height = -height / 2;
+     break;
+   case RichMarkerPosition['RIGHT']:
+     offset.width = -width;
+     offset.height = -height / 2;
+     break;
+   case RichMarkerPosition['BOTTOM_LEFT']:
+     offset.height = -height;
+     break;
+   case RichMarkerPosition['BOTTOM']:
+     offset.width = -width / 2;
+     offset.height = -height;
+     break;
+   case RichMarkerPosition['BOTTOM_RIGHT']:
+     offset.width = -width;
+     offset.height = -height;
+     break;
+  }
+
+  return offset;
+};
+
+
+/**
+ * Adding the marker to a map.
+ * Implementing the interface.
+ */
+RichMarker.prototype.onAdd = function() {
+  if (!this.markerWrapper_) {
+    this.markerWrapper_ = document.createElement('DIV');
+    this.markerWrapper_.style['position'] = 'absolute';
+  }
+
+  if (this.getZIndex()) {
+    this.markerWrapper_.style['zIndex'] = this.getZIndex();
+  }
+
+  this.markerWrapper_.style['display'] = this.getVisible() ? '' : 'none';
+
+  if (!this.markerContent_) {
+    this.markerContent_ = document.createElement('DIV');
+    this.markerWrapper_.appendChild(this.markerContent_);
+
+    var that = this;
+	 google.maps.event.addDomListener(this.markerContent_, 'rightclick', function(e) {
+		google.maps.event.trigger(that, 'rightclick');
+    });
+    google.maps.event.addDomListener(this.markerContent_, 'mouseover', function(e) {
+      google.maps.event.trigger(that, 'mouseover');
+    });
+    google.maps.event.addDomListener(this.markerContent_, 'mouseout', function(e) {
+      google.maps.event.trigger(that, 'mouseout');
+    });
+  }
+
+  this.ready_ = true;
+  this.content_changed();
+  this.flat_changed();
+  this.draggable_changed();
+
+  var panes = this.getPanes();
+  if (panes) {
+    panes.overlayMouseTarget.appendChild(this.markerWrapper_);
+  }
+
+  google.maps.event.trigger(this, 'ready');
+};
+RichMarker.prototype['onAdd'] = RichMarker.prototype.onAdd;
+
+
+/**
+ * Impelementing the interface.
+ */
+RichMarker.prototype.draw = function() {
+  if (!this.ready_ || this.dragging_) {
+    return;
+  }
+
+  var projection = this.getProjection();
+
+  if (!projection) {
+    // The map projection is not ready yet so do nothing
+    return;
+  }
+
+  var latLng = /** @type {google.maps.LatLng} */ (this.get('position'));
+  
+  var pos = projection.fromLatLngToDivPixel(latLng);
+
+  var offset = this.getOffset_();
+  this.markerWrapper_.style['top'] = (pos.y + offset.height) + 'px';
+  this.markerWrapper_.style['left'] = (pos.x + offset.width) + 'px';
+
+  var height = this.markerContent_.offsetHeight;
+  var width = this.markerContent_.offsetWidth;
+
+  if (width != this.get('width')) {
+    this.set('width', width);
+  }
+
+  if (height != this.get('height')) {
+    this.set('height', height);
+  }
+};
+RichMarker.prototype['draw'] = RichMarker.prototype.draw;
+
+
+/**
+ * Removing a marker from the map.
+ * Implementing the interface.
+ */
+RichMarker.prototype.onRemove = function() {
+  if (this.markerWrapper_ && this.markerWrapper_.parentNode) {
+    this.markerWrapper_.parentNode.removeChild(this.markerWrapper_);
+  }
+  this.removeDragListeners_();
+};
+RichMarker.prototype['onRemove'] = RichMarker.prototype.onRemove;
+
+
+/**
+ * RichMarker Anchor positions
+ * @enum {number}
+ */
+var RichMarkerPosition = {
+  'TOP_LEFT': 1,
+  'TOP': 2,
+  'TOP_RIGHT': 3,
+  'LEFT': 4,
+  'MIDDLE': 5,
+  'RIGHT': 6,
+  'BOTTOM_LEFT': 7,
+  'BOTTOM': 8,
+  'BOTTOM_RIGHT': 9
+};
+window['RichMarkerPosition'] = RichMarkerPosition;
 // create the maps namespace in the admin object
 plenty_admin.MAPS = {};
 plenty_admin.MAPS.strokeColour = '#758e1b';
@@ -2808,7 +3765,7 @@ plenty_admin.MAPS.add_field = function(mapId, location, zoom, map_search_target)
 			mapTypeControl:false,
 			streetViewControl:false
 		  }
-	var add_field_map = MAPS.create_map(mapId, mapOptions);
+	plenty_admin.MAPS.map = MAPS.create_map(mapId, mapOptions);
 	plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.map, function(e){
 		console.log("map bounds changed");
 		plenty_admin.MAPS.show_clu_boundaries(plenty_admin.MAPS.map);
@@ -2824,10 +3781,9 @@ plenty_admin.MAPS.show_clu_boundaries = function(map){
 	console.log("map bounds: ", bounds.getNorthEast(), bounds.getSouthWest());
 	console.log("map zoom: ", zoom);
 	
-	//if zoom is greater than min zoom get the CLU data and render it to the map
+	//if add field state is good get the CLU data and render it to the map
 	if(
-		zoom >= plenty_admin.UI.map.minCLUZoom
-		&& plenty_admin.MAPS.add_field_state == 0
+		plenty_admin.MAPS.add_field_state == 0
 	){
 		var boundary = {};
 		boundary.maxLongitude = bounds.getNorthEast().F;
@@ -2835,7 +3791,7 @@ plenty_admin.MAPS.show_clu_boundaries = function(map){
 		boundary.maxLatitude = bounds.getNorthEast().A;
 		boundary.minLatitude = bounds.getSouthWest().A;
 		plenty_admin.HELPER.showLoadingOverlay();
-		plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox(boundary, plenty_admin.MAPS.render_CLU_boundaries);
+		plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox(boundary, plenty_admin.MAPS.render_CLU_boundaries, map);
 	}
 }
 
@@ -2858,7 +3814,7 @@ plenty_admin.MAPS.edit_field = function(fieldData) {
 		fieldData.boundaries = paths;
 		console.log("fieldData", fieldData);
 		plenty_admin.MAPS.showEditFieldForm(fieldData, map);
-	}, false);
+	}, false, null, "map");
 }
 
 // create the map at a given location and return it
@@ -2888,12 +3844,12 @@ plenty_admin.MAPS.set_on_click_event = function(map, handler){
 	google.maps.event.addListener(map, 'dragstart', handler);
 }
 
-plenty_admin.MAPS.render_CLU_boundaries = function(boundaries){
-	console.log("render_CLU_boundaries: ", boundaries);
+plenty_admin.MAPS.render_CLU_boundaries = function(boundaries, map){
+	console.log("render_CLU_boundaries: ", boundaries, map);
 	plenty_admin.MAPS.hide_clu_polygons();
 	for(var b=0; b<boundaries.length; b++){
 		var boundary = boundaries[b];
-		plenty_admin.MAPS.draw_CLU_polygon(boundary, true);
+		plenty_admin.MAPS.draw_CLU_polygon(boundary, true, null, map);
 	}
 	plenty_admin.HELPER.hideLoadingOverlay();
 }
@@ -2901,39 +3857,40 @@ plenty_admin.MAPS.render_CLU_boundaries = function(boundaries){
 plenty_admin.MAPS.add_field_control = function(map){
 	function AddFieldControl(controlDiv, map) {
 		// Set CSS for the control border
-		var controlUI = document.createElement('div');
-		controlUI.style.backgroundColor = '#fff';
-		controlUI.style.border = '2px solid #fff';
-		controlUI.style.borderRadius = '3px';
-		controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-		controlUI.style.cursor = 'pointer';
-		controlUI.style.marginTop = '6px';
-		controlUI.style.marginRight = '6px';
-		controlUI.style.textAlign = 'center';
-		controlUI.title = 'Add Field';
-		controlDiv.appendChild(controlUI);
+		plenty_admin.MAPS.addFieldUI = document.createElement('div');
+		plenty_admin.MAPS.addFieldUI.className = "addFieldMapCtrl";
+		plenty_admin.MAPS.addFieldUI.style.backgroundColor = '#fff';
+		plenty_admin.MAPS.addFieldUI.style.border = '2px solid #fff';
+		plenty_admin.MAPS.addFieldUI.style.borderRadius = '3px';
+		plenty_admin.MAPS.addFieldUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+		plenty_admin.MAPS.addFieldUI.style.cursor = 'pointer';
+		plenty_admin.MAPS.addFieldUI.style.marginTop = '6px';
+		plenty_admin.MAPS.addFieldUI.style.marginRight = '6px';
+		plenty_admin.MAPS.addFieldUI.style.textAlign = 'center';
+		plenty_admin.MAPS.addFieldUI.title = 'Add Field';
+		controlDiv.appendChild(plenty_admin.MAPS.addFieldUI);
 		
 		// Set CSS for the control interior
-		var controlText = document.createElement('div');
-		controlText.style.color = '#0094de';
-		controlText.style.fontFamily = 'ff-enzo-web,Helvetica,Arial,sans-serif';
-		controlText.style.fontSize = '16px';
-		controlText.style.lineHeight = '20px';
-		controlText.style.paddingLeft = '5px';
-		controlText.style.paddingRight = '5px';
-		controlText.innerHTML = 'Add Field';
-		controlUI.appendChild(controlText);
+		plenty_admin.MAPS.addFieldText = document.createElement('div');
+		plenty_admin.MAPS.addFieldText.style.color = '#0094de';
+		plenty_admin.MAPS.addFieldText.style.fontFamily = 'ff-enzo-web,Helvetica,Arial,sans-serif';
+		plenty_admin.MAPS.addFieldText.style.fontSize = '16px';
+		plenty_admin.MAPS.addFieldText.style.lineHeight = '20px';
+		plenty_admin.MAPS.addFieldText.style.paddingLeft = '5px';
+		plenty_admin.MAPS.addFieldText.style.paddingRight = '5px';
+		plenty_admin.MAPS.addFieldText.innerHTML = 'Add Field';
+		plenty_admin.MAPS.addFieldUI.appendChild(plenty_admin.MAPS.addFieldText);
 		
-		google.maps.event.addDomListener(controlUI, 'click', function(e) {
+		google.maps.event.addDomListener(plenty_admin.MAPS.addFieldUI, 'click', function(e) {
 			var btn = $(e.target);
 			
 			if(btn.data("state") == "on"){
 				btn.data("state", "off");
 				
-				controlUI
+				plenty_admin.MAPS.addFieldUI
 				.style.backgroundColor = '#fff';
 				
-				controlText
+				plenty_admin.MAPS.addFieldText
 				.style.color = '#0094de';
 				
 				if(plenty_admin.MAPS.infoWindow){
@@ -2945,24 +3902,27 @@ plenty_admin.MAPS.add_field_control = function(map){
 			}else{
 				btn.data("state", "on");
 				
-				controlUI
+				plenty_admin.MAPS.addFieldUI
 				.style.backgroundColor = '#0094de';
 				
-				controlText
+				plenty_admin.MAPS.addFieldText
 				.style.color = '#fff';
 				
+				if(plenty_admin.MAPS.mainMap.getZoom() < plenty_admin.UI.map.minCLUZoom){
+					plenty_admin.MAPS.mainMap.setZoom(plenty_admin.UI.map.minCLUZoom);
+				}
+				
 				plenty_admin.MAPS.add_field_state = 0;
-				plenty_admin.MAPS.mainMap.setZoom(plenty_admin.UI.map.minCLUZoom);
-				plenty_admin.MAPS.show_clu_boundaries(plenty_admin.MAPS.mainMap);
-				plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.map, function(e){
-					plenty_admin.MAPS.show_clu_boundaries(plenty_admin.MAPS.mainMap);
+				plenty_admin.MAPS.show_clu_boundaries(map);
+				plenty_admin.MAPS.set_on_idle_event(map, function(e){
+					plenty_admin.MAPS.show_clu_boundaries(map);
 				});
 			}
 		});
 	}
 	
 	var addFieldControlDiv = document.createElement('div');
-	var addField = new AddFieldControl(addFieldControlDiv, map);
+	var addField = new AddFieldControl(addFieldControlDiv, plenty_admin.MAPS.mainMap);
 	
 	addFieldControlDiv.index = 1;
 	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(addFieldControlDiv);
@@ -3007,7 +3967,7 @@ plenty_admin.MAPS.add_zoom_to_fields_control = function(map){
 }
 
 plenty_admin.MAPS.add_map_legend = function(map, legendItems){
-	var legend_DOM = document.createElement("ul"); //$("<div id='map_legend'>Crop Types</div>");
+	var legend_DOM = document.createElement("ul");
 	legend_DOM.setAttribute("id", "map_legend");
 	
 	console.log("legendItems", legendItems, Object.keys(legendItems).length);
@@ -3174,7 +4134,7 @@ plenty_admin.MAPS.geocode = function(address, callback){
 	  });
 }
 
-plenty_admin.MAPS.draw_CLU_polygon = function(points, editable, polygonId){
+plenty_admin.MAPS.draw_CLU_polygon = function(points, editable, polygonId, map){
 	// Define the LatLng coordinates for the polygon's path.
 	var polygon_coords = [];
 	points.cluBoundaryPoins.forEach(function(xy, i) {
@@ -3216,56 +4176,65 @@ plenty_admin.MAPS.draw_CLU_polygon = function(points, editable, polygonId){
 							strokeOpacity: .6,
 							fillOpacity: .35
 						});
-		plenty_admin.MAPS.suggest_clu_field(CLU_polygon, plenty_admin.MAPS.map);
+		plenty_admin.MAPS.suggest_clu_field(CLU_polygon, map);
 	});
 	
-	CLU_polygon.setMap(plenty_admin.MAPS.map);
+	CLU_polygon.setMap(map);
 	
 	plenty_admin.MAPS.clu_boundaries.push(CLU_polygon);
 	return CLU_polygon;
 }
 
 plenty_admin.MAPS.draw_pin = function(pinData, pinEvents){
-	var equipment_marker = new google.maps.Marker({
-		position: pinData.latlng,
-		map: plenty_admin.MAPS.mainMap,
-		icon: pinData.image,
-		animation: google.maps.Animation.DROP,
-		title: pinData.name,
-		draggable: pinData.draggable,
-		zIndex:1
-	});
-	
-	equipment_marker.id = pinData.id;
-	equipment_marker.name = pinData.name;
-	
+	//console.log("draw_pin:", pinData);
+	var richMarker = new RichMarker({
+          position: pinData.latlng,
+          map: plenty_admin.MAPS.mainMap,
+		  anchor: RichMarkerPosition.BOTTOM,
+		  flat: true,
+          draggable: true,
+          content: '<div class="marker" data-id="'+pinData.id+'" style="background:transparent url(img/map-markers/bg.svg) no-repeat 0 0"><i class="pif pif-'+pinData.equipmentTypeIds[0].name.toLowerCase().replace(/ /g, "-")+'"></i><div>'
+          });
+		  
 	if(pinEvents.onMouseOver){
-		google.maps.event.addListener(equipment_marker, "mouseover", pinEvents.onMouseOver); 
+		google.maps.event.addListener(richMarker, "mouseover", pinEvents.onMouseOver); 
 	}
 	
 	if(pinEvents.onMouseOut){
-		google.maps.event.addListener(equipment_marker, "mouseout", pinEvents.onMouseOut); 
+		google.maps.event.addListener(richMarker, "mouseout", pinEvents.onMouseOut); 
 	}
 	
 	if(pinEvents.onClick){
-		google.maps.event.addListener(equipment_marker, "click", pinEvents.onClick); 
+		google.maps.event.addListener(richMarker, "click", pinEvents.onClick); 
 	}
 	
 	if(pinEvents.onRightClick){
-		google.maps.event.addListener(equipment_marker, "rightclick", pinEvents.onRightClick); 
+		google.maps.event.addListener(richMarker, "rightclick", pinEvents.onRightClick); 
 	}
 	
 	if(pinEvents.onDragEnd){
-		google.maps.event.addListener(equipment_marker, "dragend", pinEvents.onDragEnd); 
+		google.maps.event.addListener(richMarker, "dragend", pinEvents.onDragEnd); 
 	}
 	
-	plenty_admin.MAPS.equipment_pins.push(equipment_marker);
+	google.maps.event.addListener(richMarker, "ready", function(){
+		var that = this;
+		var to = setTimeout(function(){
+			$(that.markerContent_)
+			.find(".marker")
+			.addClass("in");
+		}, 10);
+		
+	});
 	
-	return equipment_marker;
+	richMarker.id = pinData.id;
+	
+	plenty_admin.MAPS.equipment_pins.push(richMarker);
+	
+	return richMarker;
 }
 
-plenty_admin.MAPS.draw_polygon = function(fieldData, events){	
-	console.log("draw polygon: ", fieldData);
+plenty_admin.MAPS.draw_polygon = function(fieldData, events, map){	
+	//console.log("draw polygon: ", fieldData, events, map);
 	// Define the LatLng coordinates for the polygon's path.
 	//console.log("draw_polygon:", points, Object.prototype.toString.call(points[0]));
 	//console.log("points", points);
@@ -3338,7 +4307,7 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events){
 		  return lastCenter;
 		};
 	}else{
-		field_polygon.setMap(plenty_admin.MAPS.mainMap);
+		field_polygon.setMap(map);
 	}
 	
 	plenty_admin.UI.map.filtered_field_polygons.push(field_polygon);
@@ -3346,8 +4315,8 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events){
 	return field_polygon;
 }
 
-plenty_admin.MAPS.zoomToPolygon = function(polygon){
-	plenty_admin.MAPS.map.fitBounds(polygon.getBounds());
+plenty_admin.MAPS.zoomToPolygon = function(polygon, map){
+	map.fitBounds(polygon.getBounds());
 }
 
 plenty_admin.MAPS.getBoundsZoomLevel = function(bounds, mapDim) {
@@ -3391,15 +4360,15 @@ plenty_admin.MAPS.get_static_maps_url = function(mapDetails){
 	return mapUrl;
 }
 
-plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable, polyPath){
-	//console.log("draw_field_on_map: ", fieldObj, mapOptions, polyPath);
+plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable, polyPath, mapID){
+	console.log("draw_field_on_map: ", fieldObj, mapOptions, polyPath);
 	
 	var itemLatLng = new google.maps.LatLng(fieldObj.latitude, fieldObj.longitude);
 	//console.log("itemLatLng: ", itemLatLng);
 	
 	if(polyPath){
 		//load map
-		plenty_admin.MAPS.map = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
+		plenty_admin.MAPS[mapID] = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
 		
 		fieldObj.boundaries = polyPath;
 		fieldObj.editable = editable;
@@ -3415,19 +4384,19 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 			}
 		};
 		
-		var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events);
+		var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events, plenty_admin.MAPS[mapID]);
 		
-		plenty_admin.MAPS.zoomToPolygon(polygon);
+		plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS[mapID]);
 		
 		if(callback && typeof callback === "function"){
-			callback(plenty_admin.MAPS.map, fieldObj, polygon);  
+			callback(plenty_admin.MAPS[mapID], fieldObj, polygon);  
 		}
 	}else{
 		plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(fieldObj.id, 1 /* We are only interested in field boundaries here*/, function(boundaries){
 			console.log("got boundaries for field: ", boundaries);
 			
 			//load map
-			plenty_admin.MAPS.map = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
+			plenty_admin.MAPS[mapID] = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
 			
 			fieldObj.boundaries = boundaries;
 			fieldObj.editable = editable;
@@ -3443,9 +4412,9 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 				}
 			};
 			
-			var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events);
+			var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events, plenty_admin.MAPS[mapID]);
 			
-			plenty_admin.MAPS.zoomToPolygon(polygon);
+			plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS[mapID]);
 			
 			if(callback && typeof callback === "function"){
 				callback(plenty_admin.MAPS.map, fieldObj, polygon);  
@@ -3475,8 +4444,8 @@ plenty_admin.MAPS.openInfoWindow = function(position, map){
 	plenty_admin.MAPS.infoWindow.open(map);
 }
 
-plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, ev){
-	console.log("show_equipment_pin_context_menu", pinData, ev);
+plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, marker){
+	console.log("show_equipment_pin_context_menu", pinData, marker);
 	if(plenty_admin.MAPS.infoWindow)
 	{
 		plenty_admin.MAPS.infoWindow.close();
@@ -3500,7 +4469,7 @@ plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, ev){
 			});
 		});
 		
-		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
+		plenty_admin.MAPS.openInfoWindow(marker.position, plenty_admin.MAPS.mainMap);
 	});
 }
 
@@ -3549,7 +4518,7 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 	});
 }
 
-plenty_admin.MAPS.delete_field_equipment = function(pinData, ev){
+plenty_admin.MAPS.delete_field_equipment = function(pinData, marker){
 	if(plenty_admin.MAPS.infoWindow){
 		plenty_admin.MAPS.infoWindow.close();
 	}
@@ -3570,6 +4539,10 @@ plenty_admin.MAPS.delete_field_equipment = function(pinData, ev){
 				.then(
 						function(deletedFieldEquipment){
 							console.log("field equipment deleted: ", deletedFieldEquipment);
+						}, function(){
+							alert("disassociating a field failed due to a server error");
+							var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
+							markerObj.marker.setPosition(pinData.latlng);
 						}
 					);
 				
@@ -3579,15 +4552,8 @@ plenty_admin.MAPS.delete_field_equipment = function(pinData, ev){
 			.end()
 			.find("button.cancel")
 			.click(function(){
-				var iconIndex = null;
-				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					//console.log("GREP: ", pin, p);
-					if(pinData.id === pin.id)
-					{
-						iconIndex = p;
-					}
-				});
-				plenty_admin.MAPS.equipment_pins[iconIndex].setPosition(pinData.latlng);
+				var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
+				markerObj.marker.setPosition(pinData.latlng);
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
 			})
@@ -3596,11 +4562,12 @@ plenty_admin.MAPS.delete_field_equipment = function(pinData, ev){
 			.text(pinData.name);
 		});
 		
-		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
+		plenty_admin.MAPS.openInfoWindow(marker.position, plenty_admin.MAPS.mainMap);
 	});
 }
 
-plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
+plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, marker){
+	console.log("update_fixed_equipment_position - pinData: ", pinData);
 	if(plenty_admin.MAPS.infoWindow){
 		plenty_admin.MAPS.infoWindow.close();
 	}
@@ -3616,18 +4583,13 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 			plenty_admin.MAPS.infoWindowContent
 			.find("button.save")
 			.click(function(){
-				var iconIndex = null;
-				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					//console.log("GREP: ", pin, p);
-					if(pinData.id === pin.id)
-					{
-						iconIndex = p;
-					}
-				});
+				var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
 				
-				var equipmentDto = pinData.equipmentWithTypesDto.equipmentDto;
-				equipmentDto.latitude = ev.latLng.A;
-				equipmentDto.longitude = ev.latLng.F;
+				var equipmentDto = pinData;
+				equipmentDto.latitude = marker.position.A;
+				equipmentDto.longitude = marker.position.F;
+				delete equipmentDto.latlng;
+				console.log("equipmentDto", equipmentDto);
 				
 				plenty_admin.REST.updateEquipment.post(equipmentDto)
 				.then(
@@ -3635,11 +4597,13 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 							console.log("equipment updated: ", updatedEquipment);
 							
 							//remove the pin from the map
-							plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
+							markerObj.marker.setMap(null);
 							//remove the pin from the array
-							plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+							plenty_admin.MAPS.equipment_pins.splice(markerObj.iconIndex, 1);
 							//update the pin
 							plenty_admin.UI.map.add_equipment_to_map();
+							//plenty_admin.MAPS.equipment_pins[markerObj.iconIndex].latitude = marker.position.A;
+							//plenty_admin.MAPS.equipment_pins[markerObj.iconIndex].longitude = marker.position.F;
 						}
 					);
 				
@@ -3649,34 +4613,42 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, ev){
 			.end()
 			.find("button.cancel")
 			.click(function(){
-				var iconIndex = null;
-				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					//console.log("GREP: ", pin, p);
-					if(pinData.id === pin.id)
-					{
-						iconIndex = p;
-					}
-				});
-				plenty_admin.MAPS.equipment_pins[iconIndex].setPosition(pinData.latlng);
+				var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
+				markerObj.marker.setPosition(pinData.latlng);
 				plenty_admin.MAPS.infoWindow.close();
 				return false;
 			})
 			.end()
 			.find(".lat")
-			.text(ev.latLng.A)
+			.text(marker.position.A)
 			.end()
 			.find(".lng")
-			.text(ev.latLng.F)
+			.text(marker.position.F)
 			.end()
 			.find(".name")
 			.text(pinData.name);
 		});
 		
-		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
+		plenty_admin.MAPS.openInfoWindow(marker.position, plenty_admin.MAPS.mainMap);
 	});
 }
+plenty_admin.MAPS.get_pin_from_array = function(pinData){
+	var iconIndex = null;
+	$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+		if(pinData.id === $(pin.markerContent_).find(".marker").data("id"))
+		{
+			iconIndex = p;
+		}
+	});
+	
+	return {
+			marker: plenty_admin.MAPS.equipment_pins[iconIndex],
+			iconIndex: iconIndex
+		};
+}
 
-plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pinData, fieldData, ev){
+plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pinData, fieldData, marker){
+	console.log("update_fixed_equipment_position_and_change_field - pinData: ", pinData);
 	if(plenty_admin.MAPS.infoWindow){
 		plenty_admin.MAPS.infoWindow.close();
 	}
@@ -3692,18 +4664,13 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 			plenty_admin.MAPS.infoWindowContent
 			.find("button.save")
 			.click(function(){
-				var iconIndex = null;
-				$.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					//console.log("GREP: ", pin, p);
-					if(pinData.id === pin.id)
-					{
-						iconIndex = p;
-					}
-				});
+				var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
 				
-				var equipmentDto = pinData.equipmentWithTypesDto.equipmentDto;
-				equipmentDto.latitude = ev.latLng.A;
-				equipmentDto.longitude = ev.latLng.F;
+				var equipmentDto = pinData;
+				equipmentDto.latitude = marker.position.A;
+				equipmentDto.longitude = marker.position.F;
+				delete equipmentDto.latlng;
+				console.log("equipmentDto", equipmentDto);
 				
 				plenty_admin.DATA.eventCollector = window.eventcollector(2, 10000);
 				
@@ -3719,15 +4686,6 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 				//update field equipment
 				var feDto = pinData.fieldEquipmentDto;
 				feDto.fieldId = fieldData.id;
-				/*
-				var feDto = {
-					fieldId : fieldData.id,
-					equipmentId: pinData.equipmentWithTypesDto.equipmentDto.id,
-					id: pinData.fieldEquipmentDto.id,
-					created: pinData.fieldEquipmentDto.created,
-					lastModified: pinData.fieldEquipmentDto.lastModified
-				};
-				*/
 				
 				plenty_admin.REST.updateFieldEquipment
 				.post(feDto)
@@ -3739,9 +4697,9 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 					
 				plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 					//remove the pin from the map
-					plenty_admin.MAPS.equipment_pins[iconIndex].setMap(null);
+					markerObj.marker.setMap(null);
 					//remove the pin from the array
-					plenty_admin.MAPS.equipment_pins.splice(iconIndex, 1);
+					plenty_admin.MAPS.equipment_pins.splice(markerObj.iconIndex, 1);
 					//update the pin
 					plenty_admin.UI.map.add_equipment_to_map();
 					
@@ -3767,10 +4725,10 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 			})
 			.end()
 			.find(".lat")
-			.text(ev.latLng.A)
+			.text(marker.position.A)
 			.end()
 			.find(".lng")
-			.text(ev.latLng.F)
+			.text(marker.position.F)
 			.end()
 			.find(".equipment_name")
 			.text(pinData.name)
@@ -3779,7 +4737,7 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 			.text(fieldData.name)
 		});
 		
-		plenty_admin.MAPS.openInfoWindow(ev.latLng, plenty_admin.MAPS.mainMap);
+		plenty_admin.MAPS.openInfoWindow(marker.position, plenty_admin.MAPS.mainMap);
 	});
 }
 
@@ -3992,16 +4950,6 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map) {
 				.find(".btn.cancel")
 				.click(function(){
 					plenty_admin.MAPS.infoWindow.close();
-	
-					if(plenty_admin.state === "map"){
-						plenty_admin.MAPS.selected_clu_polygon = null;
-						plenty_admin.MAPS.add_field_state = 1;
-						plenty_admin.MAPS.hide_clu_polygons();
-						//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
-					}else{
-						plenty_admin.MAPS.show_clu_polygons();
-					}
-					
 					return false;
 				})
 				.end()
@@ -4196,6 +5144,16 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 				if(plenty_admin.state === "map"){
 					plenty_admin.MAPS.add_field_state = 1;
 					plenty_admin.MAPS.hide_clu_polygons();
+					
+					plenty_admin.MAPS.addFieldUI
+					.style.backgroundColor = '#fff';
+					
+					plenty_admin.MAPS.addFieldText
+					.style.color = '#0094de';
+					
+					plenty_admin.UI.map.DOM
+					.find(".addFieldMapCtrl div")
+					.data("state", "off");
 					//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
 				}else{
 					plenty_admin.MAPS.show_clu_polygons();
@@ -4237,9 +5195,9 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 				};
 				
 				//copy the selected polygon to our map
-				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events);
+				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events, map);
 				
-				plenty_admin.MAPS.zoomToPolygon(polygon);
+				plenty_admin.MAPS.zoomToPolygon(polygon, map);
 				//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
 				plenty_admin.MAPS.hide_clu_polygons();
 				MAPS.selectedPolygon.acreage = plenty_admin.MAPS.get_polygon_area(polygon);	
@@ -4271,6 +5229,16 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 				if(plenty_admin.state === "map"){
 					plenty_admin.MAPS.add_field_state = 1;
 					plenty_admin.MAPS.hide_clu_polygons();
+					
+					plenty_admin.MAPS.addFieldUI
+					.style.backgroundColor = '#fff';
+					
+					plenty_admin.MAPS.addFieldText
+					.style.color = '#0094de';
+					
+					plenty_admin.UI.map.DOM
+					.find(".addFieldMapCtrl div")
+					.data("state", "off");
 					//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
 				}else{
 					plenty_admin.MAPS.show_clu_polygons();
@@ -4295,17 +5263,6 @@ plenty_admin.MAPS.hide_clu_polygons = function(except){
 		}
 	}
 }
-
-/*
-plenty_admin.MAPS.remove_all_polygons = function(polygons){
-	//loop through the field boundaries on the map and set their map to null
-	for(var b=0; b<polygons.length; b++){
-		var boundary = polygons[b];
-		//console.log("boundary", boundary);
-		boundary.removePolygon();
-	}
-}
-*/
 
 plenty_admin.MAPS.show_clu_polygons = function(except){
 	//loop through the CLU boundaries on the map and set their map to null
@@ -4376,6 +5333,18 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 							case "map":
 								plenty_admin.MAPS.selectedPolygon.polygon.setMap(null);
 								plenty_admin.MAPS.selectedPolygon.polygon = null;
+								plenty_admin.MAPS.add_field_state = 1;
+								plenty_admin.MAPS.hide_clu_polygons();
+								
+								plenty_admin.MAPS.addFieldUI
+								.style.backgroundColor = '#fff';
+								
+								plenty_admin.MAPS.addFieldText
+								.style.color = '#0094de';
+								
+								plenty_admin.UI.map.DOM
+								.find(".addFieldMapCtrl div")
+								.data("state", "off");
 							break;
 							
 							case "settings":
@@ -4473,7 +5442,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 									plenty_admin.DATA.update_filters(function(returned_filters){
 										//console.log("filters updated: ", returned_filters, returned_filters.body());
 										plenty_admin.DATA.userFilters = returned_filters.body();
-									});
+									}, null, false);
 								}
 							}
 						}
@@ -4506,6 +5475,25 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 									});
 				});
 				plenty_admin.MAPS.selected_clu_polygon = null;
+				
+				if(plenty_admin.state === "map"){
+					plenty_admin.MAPS.add_field_state = 1;
+					plenty_admin.MAPS.hide_clu_polygons();
+					
+					plenty_admin.MAPS.addFieldUI
+					.style.backgroundColor = '#fff';
+					
+					plenty_admin.MAPS.addFieldText
+					.style.color = '#0094de';
+					
+					plenty_admin.UI.map.DOM
+					.find(".addFieldMapCtrl div")
+					.data("state", "off");
+					//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
+				}else{
+					plenty_admin.MAPS.show_clu_polygons();
+				}
+
 				return false;
 			})
 			.end()
@@ -4598,6 +5586,20 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 				$elList.append(optionsHTML);
 			}
 			
+			if(plenty_admin.DATA.growthMethods){
+				var optionsHTML = "";
+				//for(var o=0; o<plenty_admin.DATA[data_types[d]+"Types"].length; o++){
+				for(id in plenty_admin.DATA.growthMethods){
+					if(plenty_admin.DATA.growthMethods.hasOwnProperty(id)){
+						var el = plenty_admin.DATA.growthMethods[id];
+						optionsHTML += "<option value='"+id+"'>"+el.name+"</option>";
+					}
+				}
+			}
+			
+			var $elList = plenty_admin.MAPS.infoWindowContent.find("#add_field_growthMethod");
+			$elList.append(optionsHTML);
+		
 			if(plenty_admin.state === "map" && $orgList.find("option").length > 1){
 				$orgList
 				.closest(".form-group").show();
@@ -4609,6 +5611,15 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 		 
 		plenty_admin.MAPS.openInfoWindow(MAPS.selectedPolygon.centerPoint, map);
 	});
+}
+
+plenty_admin.MAPS.remove_all_polygons = function(polygons){
+	//loop through the field boundaries on the map and set their map to null
+	for(var b=0; b<polygons.length; b++){
+		var boundary = polygons[b];
+		//console.log("boundary", boundary);
+		boundary.removePolygon();
+	}
 }
 
 plenty_admin.MAPS.location_search = function(map, target) {
@@ -5076,15 +6087,13 @@ Chart.defaults.Line.pointHitDetectionRadius = 1;
 /* Set the start / End date ranges temporaraly until we get some real activity dates */
 var d = new Date();
 plenty_admin.UI.field.dates = {
-	start:	null /*(d.getFullYear()-1)+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours()+1)+":"+d.getMinutes()*/,
-	end:		null /*d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+(d.getHours()+1)+":"+d.getMinutes()*/
+	start:	null,
+	end:		null
 };
 
 //method to initiate the field page
 plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
 	console.log("plenty_admin.UI.field.init", fieldObj, polyPath);
-	
-	plenty_admin.UI.field.clear();
 	
 	switch(context){
 		case "settings":
@@ -5133,7 +6142,11 @@ plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
 					disableDoubleClickZoom: true
 				  }, function(map, fieldObj, polygon){
 					plenty_admin.UI.field.polygon = polygon;
-				});
+					//ensure if the window changes size the field is centered
+					$(window).on("resize",function(){
+						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+					});
+				}, false, polyPath, "map");
 				
 				plenty_admin.UI.currentScreen.fadeIn("normal");
 			});
@@ -5157,7 +6170,11 @@ plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
 					disableDoubleClickZoom: true
 				  }, function(map, fieldObj, polygon){
 					plenty_admin.UI.field.polygon = polygon;
-				}, false, polyPath);
+					//ensure if the window changes size the field is centered
+					$(window).on("resize",function(){
+						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+					});
+				}, false, polyPath, "map");
 				
 				plenty_admin.UI.currentScreen
 				.addClass("fill-area-content flexbox-item-grow")
@@ -5228,7 +6245,7 @@ plenty_admin.REST.get_activities_by_field_crop_order_by_desc = function(fieldCro
 
 //get activities for organization by date range
 plenty_admin.REST.get_activity_finances_for_date_range = function(fieldCropId, fromDate, toDate, callback){
-	plenty_admin.REST.getActivityFinancesForDateRange = plenty_admin.api.one("activities/getActivityFinancesForDateRange", /*fieldCropId*/1+"/"+fromDate+"/"+toDate);
+	plenty_admin.REST.getActivityFinancesForDateRange = plenty_admin.api.one("activities/getActivityFinancesForDateRange", fieldCropId+"/"+fromDate+"/"+toDate);
 	plenty_admin.REST.getActivityFinancesForDateRange.get().then(function(response){
 		console.log("activities/getActivityFinancesForDateRange", response.body());
 		if(Array.isArray(response.body())){
@@ -5243,8 +6260,8 @@ plenty_admin.REST.get_activity_finances_for_date_range = function(fieldCropId, f
 }
 
 //get activities for organization by date range
-plenty_admin.REST.get_weather_days_with_dateRange = function(fieldId, fromDate, toDate, callback){
-	plenty_admin.REST.getWatherDaysByFieldAndByDateRange = plenty_admin.api.one("fields/getWatherDaysByFieldAndByDateRange", fieldId+"/"+fromDate+"/"+toDate);
+plenty_admin.REST.get_weather_days_with_dateRange = function(fieldCropId, fromDate, toDate, callback){
+	plenty_admin.REST.getWatherDaysByFieldAndByDateRange = plenty_admin.api.one("fields/getWatherDaysByFieldAndByDateRange", fieldCropId+"/"+fromDate+"/"+toDate);
 	plenty_admin.REST.getWatherDaysByFieldAndByDateRange.get().then(function(response){
 		if(Array.isArray(response.body())){
 			var returnData = plenty_admin.REST.get_array_from_data(response.body());
@@ -5258,8 +6275,8 @@ plenty_admin.REST.get_weather_days_with_dateRange = function(fieldId, fromDate, 
 }
 
 //get equipment for a field
-plenty_admin.REST.get_field_equipments_with_fieldId = function(fieldCropId, callback){
-	plenty_admin.REST.getFieldEquipmentsWithFieldId = plenty_admin.api.one("fieldEquipment/getFieldEquipmentsWithFieldId", fieldCropId);
+plenty_admin.REST.get_field_equipments_with_fieldId = function(fieldId, callback){
+	plenty_admin.REST.getFieldEquipmentsWithFieldId = plenty_admin.api.one("equipment/getByField", fieldId);
 	plenty_admin.REST.getFieldEquipmentsWithFieldId.get().then(function(response){
 		if(Array.isArray(response.body())){
 			var returnData = plenty_admin.REST.get_array_from_data(response.body());
@@ -5280,11 +6297,13 @@ plenty_admin.UI.field.clear = function(){
 	}
 	
 	//clear weatherEvents
-	if(plenty_admin.UI.field.weatherEventsContainer){
-		plenty_admin.UI.field.weatherEventsContainer
+	plenty_admin.UI.field.DOM
+	.find(".weatherEvents")
+	.each(function(){
+		$(this)
 		.find(".event")
 		.remove();
-	}
+	});
 	
 	//clear activities
 	if(plenty_admin.UI.field.activityTimelineContainer){
@@ -5300,6 +6319,13 @@ plenty_admin.UI.field.clear = function(){
 		.remove();
 	}
 	
+	//clear equipment
+	if(plenty_admin.UI.field.equipmentListContainer){
+		plenty_admin.UI.field.equipmentListContainer
+		.find(".equipment")
+		.remove();
+	}
+	
 	//clear crop surveys
 	if(plenty_admin.UI.field.cropSurveysContainer){
 		plenty_admin.UI.field.cropSurveysContainer
@@ -5308,7 +6334,7 @@ plenty_admin.UI.field.clear = function(){
 	}
 	
 	//destroy the year slider
-	if(plenty_admin.UI.field.field_year_slider){
+	if(plenty_admin.UI.field.field_year_slider && typeof plenty_admin.UI.field.field_year_slider.slider === "function"){
 		plenty_admin.UI.field.field_year_slider
 		.slider("destroy");
 	}
@@ -5362,7 +6388,7 @@ plenty_admin.UI.field.populate = function(fieldObj){
 			//console.log("cropYear:", cropYear);
 			//console.log("cropName:", cropName);
 			
-			plenty_admin.UI.field.update_field_year(cropYear);
+			plenty_admin.UI.field.update_field_year(fieldObj.id, cropYear);
 			
 			plenty_admin.UI.field.DOM
 			.find(".current_year_crop")
@@ -5383,7 +6409,7 @@ plenty_admin.UI.field.populate = function(fieldObj){
 				if(plenty_admin.UI.field.financesGraph){
 					plenty_admin.UI.field.financesGraph.destroy();
 				}
-				plenty_admin.UI.field.renderFinancesGraph();
+				plenty_admin.UI.field.renderActivityFinancesGraph();
 			}
 		});
 		
@@ -5397,7 +6423,7 @@ plenty_admin.UI.field.populate = function(fieldObj){
 			plenty_admin.UI.field.updateWeatherGraph(hash);
 		});
 		
-		plenty_admin.UI.field.update_field_year(fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))]);
+		plenty_admin.UI.field.update_field_year(fieldObj.id, fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))]);
 		
 		plenty_admin.UI.field.DOM
 		.find(".current_year_crop")
@@ -5461,33 +6487,53 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 	
 	plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
 	
-	plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
+	//plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
 }
 
-plenty_admin.UI.field.update_field_year = function (cropYear){
-	console.log("update_field_year", cropYear);
+plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
+	console.log("update_field_year", fieldId, cropYear);
 	plenty_admin.HELPER.showLoadingOverlay();
-	plenty_admin.REST.get_field_equipments_with_fieldId(cropYear.id, function(fieldEquipment){
+	plenty_admin.REST.get_field_equipments_with_fieldId(fieldId, function(fieldEquipment){
 		console.log("get_field_equipments_with_fieldId", fieldEquipment);
+		plenty_admin.UI.field.renderEquipment(fieldEquipment);
 	});
 	
 	//pull in activities once weatherDays have loaded	
-	plenty_admin.REST.get_activities_by_field_crop_order_by_desc(cropYear.cropTypeId, function(activitiesForCropType){
+	plenty_admin.REST.get_activities_by_field_crop_order_by_desc(cropYear.id, function(activitiesForCropType){
 		console.log("get_activities_by_field_crop_order_by_desc", activitiesForCropType);
 		
 		plenty_admin.UI.field.activitiesForCropType = activitiesForCropType;
 		
-		var startDate = plenty_admin.HELPER.formateJavaDate(activitiesForCropType[0].startTime);
-		plenty_admin.UI.field.dates.start = (startDate.obj.getFullYear())+"-"+(startDate.obj.getMonth()+1)+"-"+(startDate.obj.getDate() < 10 ? "0"+startDate.obj.getDate() : startDate.obj.getDate())+" "+(startDate.obj.getHours()+1)+":"+startDate.obj.getMinutes();
+		var startDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[0].startTime);
+		plenty_admin.UI.field.dates.start = 	startDate.obj.getUTCFullYear()+
+											"-"+
+											((startDate.obj.getUTCMonth()+1) < 10 ? "0"+(startDate.obj.getUTCMonth()+1) : (startDate.obj.getUTCMonth()+1))+
+											"-"+
+											(startDate.obj.getUTCDate() < 10 ? "0"+startDate.obj.getUTCDate() : startDate.obj.getUTCDate())+
+											" "+
+											((startDate.obj.getUTCHours()) < 10 ? "0"+(startDate.obj.getUTCHours()) : (startDate.obj.getUTCHours()+1))+
+											":"+
+											(startDate.obj.getUTCMinutes() < 10 ? "0"+startDate.obj.getUTCMinutes() : startDate.obj.getUTCMinutes());
 		
-		var endDate = plenty_admin.HELPER.formateJavaDate(activitiesForCropType[activitiesForCropType.length -1].endTime);
-		plenty_admin.UI.field.dates.end = (endDate.obj.getFullYear())+"-"+(endDate.obj.getMonth()+1)+"-"+(endDate.obj.getDate() < 10 ? "0"+endDate.obj.getDate() : endDate.obj.getDate())+" "+(endDate.obj.getHours()+1)+":"+endDate.obj.getMinutes();
+		
+		var endDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[activitiesForCropType.length -1].endTime);
+		plenty_admin.UI.field.dates.end = 	endDate.obj.getUTCFullYear()+
+											"-"+
+											((endDate.obj.getUTCMonth()+1) < 10 ? "0" + (endDate.obj.getUTCMonth()+1) : (endDate.obj.getUTCMonth()+1))+
+											"-"+
+											(endDate.obj.getUTCDate() < 10 ? "0"+endDate.obj.getDate() : endDate.obj.getUTCDate())+
+											" "+
+											((endDate.obj.getUTCHours()) < 10 ? "0"+(endDate.obj.getUTCHours()) : (endDate.obj.getUTCHours()+1))+
+											":"+
+											(endDate.obj.getUTCMinutes() < 10 ? "0"+endDate.obj.getUTCMinutes() : endDate.obj.getUTCMinutes());
+		
+		console.log("plenty_admin.UI.field.dates: ", plenty_admin.UI.field.dates);
 		
 		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(2, 10000);
+		plenty_admin.DATA.eventCollector = window.eventcollector(3, 10000);
 		plenty_admin.REST.getActivityTypes();
 		
-		plenty_admin.REST.get_weather_days_with_dateRange(cropYear.fieldId, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(weatherDays){
+		plenty_admin.REST.get_weather_days_with_dateRange(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(weatherDays){
 			console.log("get_weather_days_with_dateRange", weatherDays);
 			
 			plenty_admin.UI.field.weatherDays = {
@@ -5507,7 +6553,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			
 			for(var wO = 0; wO < weatherDays.length; wO++){
 				weatherOb = weatherDays[wO];
-				var obTime = plenty_admin.HELPER.formateJavaDate(weatherOb.date);
+				var obTime = plenty_admin.HELPER.formatJavaDate(weatherOb.date);
 				
 				//create labelling sets for graphs
 				plenty_admin.UI.field.weatherDays.dates.push(obTime.date);
@@ -5578,7 +6624,7 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 							if(!plenty_admin.UI.field.weatherDays[prop]){
 								plenty_admin.UI.field.weatherDays[prop] = {};
 							}
-							console.log("how many depths? :", prop, weatherOb[prop].length);
+							//console.log("how many depths? :", prop, weatherOb[prop].length);
 							for(var w=0; w<weatherOb[prop].length; w++){
 								var moistureDepth = weatherOb[prop][w];
 								//console.log("moisture depth: ", w, moistureDepth);
@@ -5654,6 +6700,12 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 			plenty_admin.DATA.eventCollector.done("event 1");
 		});
 		
+		plenty_admin.REST.get_activity_finances_for_date_range(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(fieldCropActivityFinances){
+			console.log("get_activity_finances_for_date_range", fieldCropActivityFinances());
+			plenty_admin.UI.field.fieldCropActivityFinances = fieldCropActivityFinances();
+			plenty_admin.DATA.eventCollector.done("event 2");
+		});
+		
 		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 			plenty_admin.UI.field.renderActivities(activitiesForCropType);
 			
@@ -5662,15 +6714,12 @@ plenty_admin.UI.field.update_field_year = function (cropYear){
 				plenty_admin.UI.field.renderActivities(activitiesForCropType);
 			});
 			
+			plenty_admin.UI.field.renderActivityFinancesGraph();
+			
+			//plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
+			
 			plenty_admin.HELPER.hideLoadingOverlay();
 		});	
-		
-		plenty_admin.REST.get_activity_finances_for_date_range(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(fieldCropActivityFinances){
-			console.log("get_activity_finances_for_date_range", fieldCropActivityFinances);
-			plenty_admin.UI.field.fieldCropActivityFinances = fieldCropActivityFinances;
-			
-			plenty_admin.UI.field.renderFinancesGraph();
-		});
 	});
 }
 
@@ -5805,8 +6854,13 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 	plenty_admin.UI.field.activityTimelineContainer = plenty_admin.UI.field.DOM.find(".activitiesTimeline .activities");
 	plenty_admin.UI.field.activityListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #activities tbody");
 	
+	plenty_admin.UI.field.activityListContainer
+	.closest("table")
+	.stickyTableHeaders();
+	
 	//clear activity timeline
 	plenty_admin.UI.field.activityTimelineContainer
+	.add(plenty_admin.UI.field.activityListContainer)
 	.find(".activity")
 	.remove();
 	
@@ -5815,9 +6869,8 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		
 		activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
 		
-		
-		activity.startDate = plenty_admin.HELPER.formateJavaDate(activity.startTime);
-		activity.endDate = plenty_admin.HELPER.formateJavaDate(activity.endTime);
+		activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
+		activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
 		activity.duration = Math.round(plenty_admin.HELPER.daydiff(activity.startTime, activity.endTime));
 		activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.dates.start, activity.startTime));
 		
@@ -5845,6 +6898,10 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		.tooltip({
 			html:true,
 			container:"body"
+		})
+		.data("activity", activity)
+		.click(function(){
+			plenty_admin.UI.field.show_activity_modal(activity);
 		});
 		
 		plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
@@ -5869,94 +6926,65 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 							activity.duration,
 						"</td>",
 						"<td class='text-right'>",
-							activity.cost,
+							numeral(activity.cost).format('$0,0.00'),
 						"</td>",
 					"</tr>"
 			].join("");
 			
-			plenty_admin.UI.field.activityListContainer.append(activityItem);
+			var $activityItem = $(activityItem);
+			$activityItem
+			.data("activity", activity)
+			.data("activityFinance", $.grep(plenty_admin.UI.field.fieldCropActivityFinances.activityFinances, function(activityFinance, a){
+				return activityFinance.activityDto.id === activity.id;
+			})[0])
+			.click(function(){
+				plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances);
+			});
+			
+			plenty_admin.UI.field.activityListContainer.append($activityItem);
 		}
 	}
 }
 
 plenty_admin.UI.field.renderEquipment = function(equipment){
-	var equipmentListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #equipment tbody");
+	plenty_admin.UI.field.equipmentListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #equipment tbody");
 	
-	console.log("equipmentListContainer", equipmentListContainer);
+	plenty_admin.UI.field.equipmentListContainer
+	.closest("table")
+	.stickyTableHeaders();
+
+	console.log("equipmentListContainer", plenty_admin.UI.field.equipmentListContainer);
 	for(var a=0; a<equipment.length; a++){
-		var equipmentItem = equipment[a].equipmentDto;
+		var equipmentObject = equipment[a]/*.equipmentDto*/;
 		
-		//set the icons for different equipment types
-		switch(equipmentItem.equipmentTypeId){
-			case 1:
-				equipmentItem.iconClass = "pif pif-atv";
-			break;
-			
-			case 2:
-				equipmentItem.iconClass = "pif pif-tractor";
-			break;
-			
-			case 3:
-				equipmentItem.iconClass = "pif pif-spreader";
-			break;
-			
-			case 4:
-				equipmentItem.iconClass = "pif pif-offset-disk";
-			break;
-			
-			case 5:
-				equipmentItem.iconClass = "pif pif-planter";
-			break;
-			
-			case 6:
-				equipmentItem.iconClass = "pif pif-sprayer";
-			break;
-			
-			case 7:
-				equipmentItem.iconClass = "pif pif-combine";
-			break;
-			
-			case 8:
-				equipmentItem.iconClass = "pif pif-grain-cart";
-			break;
-			
-			case 9:
-				equipmentItem.iconClass = "pif pif-grain-truck";
-			break;
-			
-			case 10:
-				equipmentItem.iconClass = "pif pif-pipe";
-			break;
-			
-			case 11:
-				equipmentItem.iconClass = "pif pif-well";
-			break;
-		}
-		
-		console.log("equipmentItem", equipmentItem);
+		console.log("equipmentObject", equipmentObject);
 		
 		//build the activity list item
 		var equipmentItemHTML = [
-				"<tr>",
+				"<tr class='equipment pointer'>",
 					"<td>",
-						"<i class='"+equipmentItem.iconClass+"'></i>",
+						"<i class='pif pif-"+equipmentObject.equipmentTypeIds[0].name.toLowerCase().replace(/ /g, "-")+"'></i>",
 					"</td>",
 					"<td>",
-						plenty_admin.DATA.equipmentTypes[equipmentItem.equipmentTypeId],
+						equipmentObject.equipmentTypeIds[0].name,
 					"</td>",
 					"<td>",
-						equipmentItem.brand,
+						plenty_admin.DATA.brandTypes[equipmentObject.brandId].name,
 					"</td>",
 					"<td>",
-						equipmentItem.model,
-					"</td>",
-					"<td class='text-right'>",
-						activity.liveData,
+						equipmentObject.name,
 					"</td>",
 				"</tr>"
 		].join("");
 		
-		equipmentListContainer.append(equipmentItemHTML);
+		var $equipmentItemHTML = $(equipmentItemHTML);
+		$equipmentItemHTML
+		.data("equipmentObject", equipmentObject)
+		.on("click", function(){
+			plenty_admin.UI.field.show_equipment_modal($(this).data("equipmentObject"));
+		});
+		
+		plenty_admin.UI.field.equipmentListContainer.append($equipmentItemHTML);
 	}
 }
 
@@ -5968,7 +6996,8 @@ plenty_admin.UI.field.getActivityTooltipTitle = function(activity){
 				activity.startDate.date+
 				"<br/>"+
 				"$"+
-				activity.cost;
+				numeral(activity.cost).format('$0,0.00');
+				
 	console.log("activity tooltip title:", title);
 	return title;
 }
@@ -6002,7 +7031,7 @@ plenty_admin.UI.field.renderTempGraph = function(){
 		
 		
 		var tempGraphOptions = {
-		
+			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.0')%>",
 		};
 		
 		/*
@@ -6094,7 +7123,7 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 		};
 		
 		var moistureGraphOptions = {
-			
+			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>",
 		};
 		
 		plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).Line(moistureGraphData, moistureGraphOptions);
@@ -6122,7 +7151,7 @@ plenty_admin.UI.field.renderPrecipGraph = function(){
 		};
 		
 		var precipGraphOptions = {
-			
+			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>",
 		};
 		
 		plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).Line(precipGraphData, precipGraphOptions);
@@ -6150,7 +7179,7 @@ plenty_admin.UI.field.renderGDDGraph = function(){
 		};
 		
 		var GDDGraphOptions = {
-			
+			tooltipTemplate: "<%= label %>: <%= Math.round(value) %>",
 		};
 		
 		plenty_admin.UI.field.gddGraph = new Chart(plenty_admin.UI.field.gddGraphEl.get(0).getContext("2d")).Line(GDDGraphData, GDDGraphOptions);
@@ -6160,35 +7189,45 @@ plenty_admin.UI.field.renderGDDGraph = function(){
 		return plenty_admin.UI.field.gddGraph;
 }
 
-plenty_admin.UI.field.renderFinancesGraph = function(){
+plenty_admin.UI.field.renderActivityFinancesGraph = function(){
 	var finances = plenty_admin.UI.field.fieldCropActivityFinances;
-	
 	//holder for graph data set
 	var financesData = [];
 	
-	//colour palette for graph segments
-	plenty_admin.UI.brand_palette.setNumberRange(0, finances.length);
+	//show profit / revenue / cost figures
+	plenty_admin.UI.field.DOM
+	.find(".topLine")
+	.find(".profit")
+	.text(numeral(finances.totalProfit).format('$0,0.00'))
+	.end()
+	.find(".cost")
+	.text(numeral(finances.totalCost).format('$0,0.00'))
+	.end()
+	.find(".revenue")
+	.text(numeral(finances.totalRevenue).format('$0,0.00'));
 	
-	for(index in finances){
-		if(finances.hasOwnProperty(index)){
-			var finance = finances[index];
-			console.log("finance", finance);
-			finance.colour = "#"+plenty_admin.UI.brand_palette.colourAt(index);
+	//colour palette for graph segments
+	plenty_admin.UI.brand_palette.setNumberRange(0, (finances.length > 0 ? finances.length : 1));
+	
+	//for(index in finances){
+	for(var a=0; a<finances.activityFinances.length; a++){
+		var finance = finances.activityFinances[a];
+		console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
+		finance.colour = "#"+plenty_admin.UI.brand_palette.colourAt(a);
 
-			var segment = {
-				value:		finance.cost,
-				color:		finance.colour,
-				highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
-				label: 		finance.activityTypeName,
-			};
-			
-			financesData.push(segment);
-		}
+		var segment = {
+			value:		finance.cost,
+			color:		finance.colour,
+			highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
+			label: 		plenty_admin.DATA.activityTypes[finance.activityTypeId].name,
+		};
+		
+		financesData.push(segment);
 	}
 	
 	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"<%=plenty_admin.UI.field.getActivityIconClass(segments[i].label.replace(/ /g, \"\"))%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('($00[.]00)') %></span></li><%}%></ul>",
-		tooltipTemplate: "<%=label%>: <%= numeral(value).format('($00[.]00)') %> | <%= numeral(circumference / 6.283).format('(0[.][00]%)') %>",
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+		tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
 		animateRotate: true
 	};
 	
@@ -6234,7 +7273,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 		helpers.addEvent(legendNode, 'mouseover', function () {
 			var activeSegment = plenty_admin.UI.field.financesGraph.segments[index];
 			
-			var pct = numeral(activeSegment.circumference / 6.283).format('(0[.][00]%)');
+			var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
 			
 			activeSegment.save();
 			activeSegment.fillColor = activeSegment.highlightColor;
@@ -6269,7 +7308,7 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 			
 			var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
 			var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
-			var pct = numeral(activePoints[0].circumference / 6.283).format('(0[.][00]%)');
+			var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
 			
 			resetLegentStyle(legendHolder);
 			
@@ -6296,10 +7335,272 @@ plenty_admin.UI.field.renderFinancesGraph = function(){
 	
 }
 
+plenty_admin.UI.field.renderTasks = function(taskFinances){
+	var taskRows = "";
+	
+	for(var t=0; t<taskFinances.length; t++){
+		var task = taskFinances[t];
+		var taskStartDate = plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime);
+		console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
+		var taskRow = [
+			"<tr>",
+				"<td>",
+					task.taskDto.name,
+				"</td>",
+				"<td>",
+					task.taskDto.state,
+				"</td>",
+				"<td>",
+					plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
+				"</td>",
+				"<td>",
+					task.taskDto.durationInHours,
+				"</td>",
+				"<td class='text-right'>",
+					task.taskDto.cost,
+				"</td>",
+			"</tr>",
+		].join("");
+		
+		taskRows += taskRow;
+	}
+	
+	plenty_admin.UI.map.MODAL_activity
+	.find(".activityTasksList table tbody tr")
+	.remove()
+	.end()
+	.find(".activityTasksList table tbody")
+	.append(taskRows);
+}
+
+plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
+	console.log("renderTaskFinancesGraph", taskFinances);
+	//colour palette for graph segments
+	plenty_admin.UI.brand_palette.setNumberRange(0, 2);
+		
+	//holder for graph data set
+	var taskFinancesData = [
+		//equipment
+		{
+			value:		0,
+			color:		"#"+plenty_admin.UI.brand_palette.colourAt(0),
+			highlight:	plenty_admin.HELPER.colorLuminance("#"+plenty_admin.UI.brand_palette.colourAt(0), .4),
+			label: 		"Equipment",
+		},
+		//skill
+		{
+			value:		0,
+			color:		"#"+plenty_admin.UI.brand_palette.colourAt(1),
+			highlight:	plenty_admin.HELPER.colorLuminance("#"+plenty_admin.UI.brand_palette.colourAt(1), .4),
+			label: 		"Labor",
+		},
+		//skill
+		{
+			value:		0,
+			color:		"#"+plenty_admin.UI.brand_palette.colourAt(2),
+			highlight:	plenty_admin.HELPER.colorLuminance("#"+plenty_admin.UI.brand_palette.colourAt(2), .4),
+			label: 		"Products",
+		},
+	];
+	
+	//for(index in finances){
+	for(var a=0; a<taskFinances.length; a++){
+		//break the costs into equipment / skill / product
+		var taskFinance = taskFinances[a];
+		console.log("taskFinance", taskFinance);
+		taskFinancesData[0].value += taskFinance.equipmentCost.cost;
+		taskFinancesData[1].value += taskFinance.laborCost.cost;
+		taskFinancesData[2].value += taskFinance.productsCost.cost;
+	}
+	
+	var taskFinancesChartOptions = {
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\" class=\"taskHeader\" style=\"border-top:2px solid <%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+		tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
+		animateRotate: true
+	};
+	
+	var helpers = Chart.helpers;
+	
+	console.log("helpers", helpers);
+	
+	plenty_admin.UI.field.taskFinancesGraph = new Chart(plenty_admin.UI.field.taskFinancesGraphEl.get(0).getContext("2d")).Doughnut(taskFinancesData,taskFinancesChartOptions);
+	
+	console.log("render task finances graph: ", plenty_admin.UI.field.taskFinancesGraph, taskFinancesData);
+	
+	//add a legend for this graph
+	var $legendHTML = $(plenty_admin.UI.field.taskFinancesGraph.generateLegend());
+	
+	var legendHolder = 
+	plenty_admin.UI.field.taskFinancesGraphEl
+	.parent()
+	.parent()
+	.find(".legend");
+	
+	legendHolder
+	.html("")
+	.append($legendHTML);
+	
+	var equipmentItems = "";
+	var laborItems = "";
+	var productItems = "";
+	
+	//INJECT THE DIFFERENT TASK COST ELEMENTS INTO THE LEGEND ONCE BUILT
+	//for(index in finances){
+	for(var a=0; a<taskFinances.length; a++){
+		//break the costs into equipment / skill / product
+		var taskFinance = taskFinances[a];
+		console.log("taskFinance", taskFinance);
+		
+		for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
+			var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
+			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(0));
+			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+		}
+		
+		for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
+			var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
+			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(1));
+			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+		}
+		
+		for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
+			var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
+			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(2));
+			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName	+" / "+taskItem.cost+"</li>";
+		}
+	}
+	
+	console.log("equipmentItems", equipmentItems);
+	console.log("laborItems", laborItems);
+	console.log("productItems", productItems);
+	
+	legendHolder
+	.find("li[data-name='equipment']")
+	.after(equipmentItems)
+	.end()
+	.find("li[data-name='labor']")
+	.after(laborItems)
+	.end()
+	.find("li[data-name='products']")
+	.after(productItems);
+	
+	var resetLegentStyle = function(legendHolder){
+		$(legendHolder)
+		.find("li:not(.taskItem)")
+		.css({"background-color": "transparent"})
+		.removeClass("active")
+		.find("span.swatch")
+		.each(function(){
+			$(this)
+			.css({"background-color": $(this).closest("li").data("hovercolour")});
+		})
+		.end()
+		.find("span.pct")
+		.text("");
+	}
+	
+	// Include a html legend template after the module doughnut itself
+	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
+		helpers.addEvent(legendNode, 'mouseover', function () {
+			console.log("hover legendNode: ", this, index, $(this).prop("class"));
+			
+			if($(this).hasClass("taskItem")){
+				if($(this).hasClass("equipmentTaskItem")){
+					index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
+				}else if($(this).hasClass("laborTaskItem")){
+					index = 1; //$(legendHolder).find("li[data-name='labor']").index();
+				}else if($(this).hasClass("productTaskItem")){
+					index = 2; //$(legendHolder).find("li[data-name='products']").index();
+				}
+				//return; //no hover effect on task items just yet
+			}else{
+				index = parseInt($(this).data("segmentid"));
+			}
+			
+			console.log("index: ", index);
+			
+			if(!$(this).hasClass("taskItem")){
+				var activeSegment = plenty_admin.UI.field.taskFinancesGraph.segments[index];
+				
+				var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
+				
+				activeSegment.save();
+				activeSegment.fillColor = activeSegment.highlightColor;
+				activeSegment.innerRadius = 60;
+				plenty_admin.UI.field.taskFinancesGraph.showTooltip([activeSegment]);
+				activeSegment.restore();
+				
+				$(legendNode)
+				.css({"background-color": $(this).data("hovercolour")})
+				.addClass("active")
+				.find("span.swatch")
+				.css({"background-color": activeSegment.highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			}
+		});
+	});
+	
+	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
+		if($(this).hasClass("taskItem")){
+			if($(this).hasClass("equipmentTaskItem")){
+				index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
+			}else if($(this).hasClass("laborTaskItem")){
+				index = 1; //$(legendHolder).find("li[data-name='labor']").index();
+			}else if($(this).hasClass("productTaskItem")){
+				index = 2; //$(legendHolder).find("li[data-name='products']").index();
+			}
+			//return; //no hover effect on task items just yet
+		}
+		plenty_admin.UI.field.taskFinancesGraph.draw();
+		if(!$(this).hasClass("taskItem")){
+			resetLegentStyle(legendHolder);
+		}
+	});
+	
+	//highlight key element when hovering segment
+	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
+		var activePoints = plenty_admin.UI.field.taskFinancesGraph.getSegmentsAtEvent(evt);
+		if(activePoints.length > 0){
+			//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+			legendHolder
+			.find("li")
+			.removeClass("active");
+			
+			var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+			var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+			var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
+			
+			resetLegentStyle(legendHolder);
+			
+			legendItem
+			.addClass("active")
+			.css({"background-color": legendItem.data("hovercolour")})
+			.find("span.swatch")
+			.css({"background-color": activePoints[0].highlightColor})
+			.end()
+			.find("span.pct")
+			.text(pct);
+		}else{
+			resetLegentStyle(legendHolder);
+		}
+		// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+	});
+	
+	//clear segment highlight onMouseOut
+	plenty_admin.UI.field.taskFinancesGraphEl.on("mouseout", function(evt){
+		resetLegentStyle(legendHolder);
+	});
+	
+	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.taskFinancesGraph);
+}
+
 
 //*********************** map.js **************************//
 //create namespace for map layout
 plenty_admin.UI.map = {};
+plenty_admin.UI.map.allCropTypes =  {};
 plenty_admin.UI.map.DOM = plenty_admin.UI.DOM.find("#map-container");
 plenty_admin.UI.map.filterControls = $(".filter_controls");
 plenty_admin.UI.map.toggleFilters = plenty_admin.UI.map.filterControls.find(".toggleFilters a");
@@ -6308,8 +7609,9 @@ plenty_admin.UI.map.orgs_quickfilter = plenty_admin.UI.map.filterControls.find("
 plenty_admin.UI.map.minCLUZoom = 15;
 plenty_admin.UI.map.applicableFilters = ["organizations", "farms", "fields", "cropTypes", "plans"];
 plenty_admin.UI.map.filtered_field_polygons = [];
-plenty_admin.UI.map.MODAL_liveEquipment = plenty_admin.UI.map.DOM.parent().find(".modal#equipment-live");
-plenty_admin.UI.map.MODAL_equipment = plenty_admin.UI.map.DOM.parent().find(".modal#equipment");
+plenty_admin.UI.map.MODAL_equipment = $("body").find(".modal#equipment");
+plenty_admin.UI.map.MODAL_activity = $("body").find(".modal#activity");
+plenty_admin.UI.field.taskFinancesGraphEl = plenty_admin.UI.map.MODAL_activity.find("canvas#taskGraph");
 //method to initiate the field page
 plenty_admin.UI.map.init = function(){
 	console.log("plenty_admin.UI.map.init");
@@ -6345,7 +7647,7 @@ plenty_admin.UI.map.init = function(){
 			}
 		});
 		plenty_admin.MAPS.set_on_click_event(plenty_admin.MAPS.mainMap, function(e){
-			console.log("map clicked");
+			console.log("map clicked", e);
 			plenty_admin.UI.filters.toggleFilters("close");	
 			plenty_admin.UI.map.farms_quickfilter.popover("hide");
 			plenty_admin.UI.map.orgs_quickfilter.popover("hide");
@@ -6355,11 +7657,13 @@ plenty_admin.UI.map.init = function(){
 		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.mainMap);
 		
 		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(4, 10000);
+		plenty_admin.DATA.eventCollector = window.eventcollector(5, 10000);
 		plenty_admin.REST.getCropTypes();
 		plenty_admin.REST.getTillageTypes();
 		plenty_admin.REST.getIrrigationTypes();
-		plenty_admin.REST.getEquipmentTypes();
+		//plenty_admin.REST.getEquipmentTypes();
+		plenty_admin.REST.getBrandTypes();
+		plenty_admin.REST.getGrowthMethods();
 		
 		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 			plenty_admin.HELPER.hideLoadingOverlay();
@@ -6421,146 +7725,109 @@ plenty_admin.UI.map.init = function(){
 	
 }
 
-plenty_admin.UI.map.add_equipment_to_map = function(boundary){
+plenty_admin.UI.map.add_equipment_to_map = function(){
 	var bounds = plenty_admin.MAPS.mainMap.getBounds();
 	var boundary = {};
 	
-	boundary.maxLongitude = bounds.getNorthEast().F;
-	boundary.minLongitude = bounds.getSouthWest().F;
-	boundary.maxLatitude = bounds.getNorthEast().A;
-	boundary.minLatitude = bounds.getSouthWest().A;
+	boundary.maxLongitude = bounds.getNorthEast().lng();
+	boundary.minLongitude = bounds.getSouthWest().lng();
+	boundary.maxLatitude = bounds.getNorthEast().lat();
+	boundary.minLatitude = bounds.getSouthWest().lat();
+	
+	console.log("BOUNDARY: ", bounds, bounds.getNorthEast(), boundary);
 	
 	plenty_admin.REST.fields.getEquipmentLocationForFilter(boundary, function(equipmentData){
 		//get array of equipment elements
 		var equipment = equipmentData;
 		
-		console.log("Equipment", equipment);
+		console.log("Equipments", equipment);
 		
 		var boundaryLatLngs = [];
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
-				if(
-					!Array.isArray(equip.equipmentWithTypesDto.equipmentTypes[0])
-					&& typeof equip.equipmentWithTypesDto.equipmentTypes[0] != "object"
-				){
-					var equipTypeName = equip.equipmentWithTypesDto.equipmentTypes[0];
-					equip.equipmentWithTypesDto.equipmentTypes[0] = {
-						name: equipTypeName,
-						id:1
-					};
-				}
+			var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+				return pin.id === equip.id;
+			});
+			
+			if(iconExists.length === 0){
+				//get a google latlng object for each element
+				var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
 				
-				if(!equip.pic){
-					equip.pic = "jd-r4040i.jpg";
-				}
-				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-					return pin.id === equip.equipmentWithTypesDto.equipmentDto.id;
-				});
+				//extend the map boundary to include all points
+				boundaryLatLngs.push(latlng);
 				
-				if(iconExists.length === 0){
-					//get a google latlng object for each element
-					var latlng = new google.maps.LatLng(equip.equipmentWithTypesDto.equipmentDto.latitude, equip.equipmentWithTypesDto.equipmentDto.longitude);
-					
-					//extend the map boundary to include all points
-					boundaryLatLngs.push(latlng);
-					plenty_admin.UI.map.latlngbounds.extend(latlng);
-					
-					equip.image = {
-							url: "img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg",
-							// This marker is 20 pixels wide by 32 pixels tall.
-							size: new google.maps.Size(50, 50),
-							// The origin for this image is 0,0.
-							origin: new google.maps.Point(0,0),
-							// The anchor for this image is the base of the flagpole at 0,32.
-							anchor: new google.maps.Point(20, 50)
-					};
-					
-					equip.id = equip.equipmentWithTypesDto.equipmentDto.id;
-					
-					equip.latlng = latlng;
-					
-					equip.draggable = true;
-					
-					var pinEvents = {
-						onMouseOver: function(event){ //mouseover event
-							this.setOptions({zIndex:10});
-							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+"-hover.svg");
-						}, 
-						onMouseOut: function(event){ //mouseout event
-							this.setOptions({zIndex:1});
-							this.setIcon("img/map-markers/"+equip.equipmentWithTypesDto.equipmentTypes[0].id+".svg");
-						}, 
-						onClick: function(event){ //click event
-							var modal;
-							if(equip.live){
-								modal = plenty_admin.UI.map.MODAL_liveEquipment;
-							}else{
-								modal = plenty_admin.UI.map.MODAL_equipment;
-							}
-							
-							modal
-							.find(".modal-title")
-							.text(equip.equipmentDto.name)
-							.end()
-							.find(".type")
-							.text(equip.equipmentWithTypesDto.equipmentTypes[0].name)
-							.end()
-							.find(".image img").prop("src", "img/equipment/"+equip.pic)
-							.end()
-							.find(".lat")
-							.text(equip.latlng.A)
-							.end()
-							.find(".lng")
-							.text(equip.latlng.F)
-							.end()
-							.find(".depth span")
-							.text((equip.data ? equip.data.depth : "-"))
-							.end()
-							.find(".angle span")
-							.text((equip.data ? equip.data.angle : "-"))
-							.end()
-							.find(".editable")
-							.editable(plenty_admin.REST.inline_editing_options)
-							.end()
-							.modal("show");
-							
-						}, 
-						onRightClick: function(event){ //right click event
-							console.log("event:", event, equip);
-							plenty_admin.MAPS.show_equipment_pin_context_menu(equip, event);
-						},
-						onDragEnd: function(event){ //drag end event
-							console.log("event:", event, equip);
-							
-							//check if the point has been moved to another polygon or is not in a polygon
-							var matchedPoly = null;
-							for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
-								var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
-								if(google.maps.geometry.poly.containsLocation(event.latLng, polygon)){
-									console.log("Point is inside a polygon: ", polygon);
-									matchedPoly = polygon;
-									break;
-								}
-							}
-							
-							if(matchedPoly){
-								if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
-									console.log("do you want top move this equipment within this field?");
-									plenty_admin.MAPS.update_fixed_equipment_position(equip, event);
-								}else{
-									console.log("Do you what to assosciate this equipment with a different field");
-									plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, event);
-								}
-							}else{
-								console.log("are you sure you want to disassociate this equipment with any fields???");
-								plenty_admin.MAPS.delete_field_equipment(equip, event);
+				plenty_admin.UI.map.latlngbounds.extend(latlng);
+				
+				equip.latlng = latlng;
+				
+				var pinEvents = {
+					onMouseOver: function(event){ //mouseover event
+						//console.log("hover marker: ", this, $(this.markerContent_));
+						$(this.markerContent_)
+						.find(".marker")
+						.addClass("hover");
+						
+						$(this.markerWrapper_)
+						.css({
+							zIndex:10
+						});
+						
+						plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equip.name+"</strong><br /><p>Drag to reposition, right click to delete</p>");
+					}, 
+					onMouseOut: function(event){ //mouseout event
+						$(this.markerContent_)
+						.find(".marker")
+						.removeClass("hover");
+						
+						$(this.markerWrapper_)
+						.css({
+							zIndex:1
+						});
+						
+						plenty_admin.MAPS.polygon_tooltip.hide();
+					}, 
+					onClick: function(event){ //click event
+						//event.stopPropagation();
+						plenty_admin.UI.field.show_equipment_modal(equip);
+					}, 
+					onRightClick: function(event){ //right click event
+						console.log("event:", this, equip);
+						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
+					},
+					onDragEnd: function(){ //drag end event
+						var that = this;
+						console.log("onDragEnd:", equip, that);
+						//check if the point has been moved to another polygon or is not in a polygon
+						var matchedPoly = null;
+						for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
+							var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
+							if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
+								console.log("Point is inside a polygon: ", polygon);
+								matchedPoly = polygon;
+								break;
 							}
 						}
-					};
-					//draw the pin on the map
-					plenty_admin.MAPS.draw_pin(equip, pinEvents);
-				}
+						
+						if(matchedPoly){
+							if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
+								console.log("do you want top move this equipment within this field?");
+								plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+							}else{
+								console.log("Do you what to assosciate this equipment with a different field");
+								plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
+							}
+						}else{
+							console.log("are you sure you want to disassociate this equipment with any fields???");
+							plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+							plenty_admin.MAPS.delete_field_equipment(equip, that);
+						}
+						return false;
+					}
+				};
+				//draw the pin on the map
+				plenty_admin.MAPS.draw_pin(equip, pinEvents);
+			}
 			//}
 		});
 		
@@ -6571,10 +7838,110 @@ plenty_admin.UI.map.add_equipment_to_map = function(boundary){
 	});
 }
 
-plenty_admin.UI.map.populate = function(fieldIDs){
+plenty_admin.UI.field.show_activity_modal = function(activity, taskFinances){
+	console.log("show_activity_modal", activity, taskFinances);
+	plenty_admin.UI.map.MODAL_activity
+	.find(".modal-title")
+	.text(plenty_admin.DATA.activityTypes[activity.activityTypeId].name)
+	.end()
+	.on("shown.bs.modal", function(){
+		plenty_admin.UI.field.renderTaskFinancesGraph(taskFinances);
+		plenty_admin.UI.field.renderTasks(taskFinances);
+	})
+	.modal("show");
+};
+
+plenty_admin.UI.field.show_equipment_modal = function(equip){
+	console.log("show_equipment_modal", equip);
+	
+	plenty_admin.REST.fields.getEquipmentImage(equip.id, function(imageString){
+		console.log("imageString", imageString);
+		plenty_admin.UI.map.MODAL_equipment
+		.find(".image").html("<img src='data:image/jpeg;base64,"+ imageString +"' width='100%'/>");
+	});
+	
+	plenty_admin.UI.map.MODAL_equipment
+	.removeClass("MOVEABLE WELL SOIL_MOISTURE")
+	.addClass(equip.equipmentObservationDto.type)
+	.find(".modal-title")
+	.text(equip.name)
+	.end()
+	.find(".type")
+	.text(equip.equipmentTypeIds[0].name)
+	.end()
+	.find(".lat")
+	.text(equip.latitude)
+	.end()
+	.find(".lng")
+	.text(equip.longitude)
+	
+	switch(equip.equipmentObservationDto.type){
+		case "MOVEABLE":
+			plenty_admin.UI.map.MODAL_equipment
+			.find(".equipmentObservationHeaders.MOVEABLE")
+			.find(".speed b")
+			.text(equip.equipmentObservationDto.speed)
+			.end()
+			.find(".fuel b")
+			.text(equip.equipmentObservationDto.fuelAmount);
+		break;
+		
+		case "WELL":
+			plenty_admin.UI.map.MODAL_equipment
+			.find(".equipmentObservationHeaders.WELL")
+			.find(".time b")
+			.text(plenty_admin.HELPER.formatJavaDate(equip.equipmentObservationDto.observationTime).time)
+			.end()
+			.find(".reading b")
+			.text(equip.equipmentObservationDto.meterReading);
+		break;
+		
+		case "SOIL_MOISTURE":
+			plenty_admin.UI.map.MODAL_equipment
+			.find(".equipmentObservationHeaders.SOIL_MOISTURE")
+			.find(".time b")
+			.text(plenty_admin.HELPER.formatJavaDate(equip.equipmentObservationDto.observationTime).time)
+			.end()
+			.find(".soilDepthUOM")
+			.text(equip.equipmentObservationDto.depthUOM.name)
+			.end()
+			.find(".moistureUOM")
+			.text(equip.equipmentObservationDto.moistureUOM.name);
+			
+			for(var b=0; b<equip.equipmentObservationDto.readings.length; b++){
+				var reading = equip.equipmentObservationDto.readings[b];
+				var readingROW = [
+					"<tr>",
+						"<td>",
+							reading.depth,
+						"</td>",
+						"<td>",
+							reading.moisture,
+						"</td>",
+					"</tr>",
+				].join("");
+				
+				plenty_admin.UI.map.MODAL_equipment
+				.find(".equipmentObservationHeaders.SOIL_MOISTURE tbody")
+				.append(readingROW);
+			}
+			
+			//loop measuremends
+			//create rows to add to the table
+			
+		break;
+	}
+	
+	plenty_admin.UI.map.MODAL_equipment
+	.find(".editable")
+	.editable(plenty_admin.REST.inline_editing_options)
+	.end()
+	.modal("show");
+}
+
+plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 	// loop filtered fields and put them on the map
-	//plenty_admin.MAPS.zoomToPolygon(polygon);
-	console.log("plenty_admin.UI.map.populate", fieldIDs);
+	console.log("plenty_admin.UI.map.populate", fieldIDs, noZoom);
 	plenty_admin.UI.map.latlngbounds = new google.maps.LatLngBounds();
 	
 	//get the boundary points, grouped by field ID for the current filter
@@ -6585,36 +7952,38 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 		//clear the map
 		if(plenty_admin.MAPS.mainMap.clusterer){
 			plenty_admin.MAPS.mainMap.clusterer.clearMarkers();
+		}else{
+			plenty_admin.MAPS.remove_all_polygons(plenty_admin.UI.map.filtered_field_polygons);
 		}
 		
-		var allCropTypes =  {};
+		plenty_admin.UI.map.filtered_field_polygons = [];
 	
 		//console.log("fields", fields);
 		
 		//extract unique crop types from provided field boundaries
 		fieldBoundaries.forEach(function(field, p){
-			var cropTypeExists = $.grep(allCropTypes, function(crop, c){
+			var cropTypeExists = $.grep(plenty_admin.UI.map.allCropTypes, function(crop, c){
 				return crop.label === field.cropTypeName;
 			}).length > 0;
 			
 			
 			if(!cropTypeExists){
-				allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
+				plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
 			}
 		});
 		
 		
-		console.log("allCropTypes", allCropTypes);
+		console.log("plenty_admin.UI.map.allCropTypes", plenty_admin.UI.map.allCropTypes);
 		
 		//add a legend to the map based on the filtered fields
-		plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(allCropTypes).length > 0 ? Object.keys(allCropTypes).length : 100));
+		plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(plenty_admin.UI.map.allCropTypes).length > 0 ? Object.keys(plenty_admin.UI.map.allCropTypes).length : 100));
 		
 		var legendItems = {};
 		var inc = 0;
 		//for(var c=0; c<allCropTypes.length; c++){
-		for(id in allCropTypes){
-			if(allCropTypes.hasOwnProperty(id)){
-				legendItems[id] = {color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), colour: "#"+(allCropTypes[id].toLowerCase() === "none" || allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), label : allCropTypes[id]};
+		for(id in plenty_admin.UI.map.allCropTypes){
+			if(plenty_admin.UI.map.allCropTypes.hasOwnProperty(id)){
+				legendItems[id] = {color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), colour: "#"+(plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "none" || plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), label : plenty_admin.UI.map.allCropTypes[id]};
 				inc += 1;
 			}
 		}
@@ -6625,8 +7994,6 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 			plenty_admin.MAPS.add_map_legend(plenty_admin.MAPS.mainMap, legendItems);
 		}
 		
-		plenty_admin.UI.map.filtered_field_polygons = [];
-		
 		fieldBoundaries.forEach(function(field,i){
 			//console.log("field", field);
 			var boundaryLatLngs = [];
@@ -6636,21 +8003,28 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 				var latlng = new google.maps.LatLng(xy.latitude, xy.longitude, true);
 				latlng.seqNumber = xy.seqNumber;
 				boundaryLatLngs.push(latlng);
-				plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
+				
+				if(!noZoom){
+					plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
+				}
 			});
 			
-			console.log("processed boundary: ", boundaryLatLngs);
+			//console.log("processed boundary: ", boundaryLatLngs);
 			
-			//if the boundary has points, draew them and center the map on them
+			var fieldNameObj = $.grep(fieldIDs, function(_field, f){
+				return field.fieldId === _field.id;
+			});
+			var fieldName = "NO NAME";
+			(fieldNameObj.length > 0 ? fieldName = fieldNameObj[0].name : null);
+			
+			//if the boundary has points, draw them and center the map on them
 			if(boundaryLatLngs.length > 2){
 				var fieldData = {
 					boundaries: boundaryLatLngs,
 					editable: false,
 					fieldId: field.fieldId,
 					id: field.fieldId,
-					fieldName: $.grep(fieldIDs, function(_field, f){
-						return field.fieldId === _field.id;
-					})[0].name,
+					fieldName: fieldName,
 					isCoords: true,
 					//isCluster: false,
 					cropType: field.cropTypeName
@@ -6701,9 +8075,16 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onClick: function(event){ //onClick handler
-						//console.log("polygon clicked: ", this.getPath().getArray());
+						console.log("polygon clicked: ", event, $(event.eb.target), $(event.eb.target).hasClass("marker"));
 						var thisPoly = this;
 						var polyPath = this.getPath().getArray();
+						
+						//only move to field screen
+						//if a polygon has been clicked, not a marker
+						if($(event.eb.target).hasClass("marker")){
+							console.log("marker clicked instead of poly - return!");
+							return;
+						}
 						
 						//get field by ID
 						plenty_admin.REST.fields.getFieldById(this.id, function(fieldObj){
@@ -6720,13 +8101,16 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 									clickHandler:function(){
 										plenty_admin.UI.currentScreen
 										.fadeOut("normal", function(){
+											plenty_admin.UI.field.clear();
 											plenty_admin.UI.currentScreen = plenty_admin.UI.map.DOM;
 											plenty_admin.UI.currentScreen
 											.closest(".fill-area")
 											.fadeIn("normal")
 											.parent()
 											.find(".filter_controls")
-											.fadeIn("fast");
+											.fadeIn("fast", function(){
+												plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+											});
 										});
 										return false;
 									}
@@ -6749,18 +8133,22 @@ plenty_admin.UI.map.populate = function(fieldIDs){
 					}
 				};
 				
-				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events);
+				var polygon = plenty_admin.MAPS.draw_polygon(fieldData, poly_events, plenty_admin.MAPS.mainMap);
 				
 				plenty_admin.UI.map.filtered_field_polygons.push(polygon);
 			}	
 		});
 		
 		
-		
-		if(fieldBoundaries.length > 0){
+		if(fieldBoundaries.length > 0 && !noZoom){
 			//center and zoom the map to the bounds of the polygons
 			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 		}
+		
+		//recenter fields if map size changes
+		$(window).on("resize",function(){
+			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+		});
 		
 		//cluster the polygons and render clusters on the map
 		//plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);
@@ -7197,42 +8585,6 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 			//console.log("filters updated: ", returned_filters, returned_filters.body());
 			plenty_admin.DATA.userFilters = returned_filters.body();
 		});
-	})
-	.on("change", function(){
-		/*
-		if($(this).closest(".popover").length === 0){
-			if($(this).is(":checked")){
-				//set the filter in the filter panel
-				$(this)
-				.closest("ul")
-				.find("li.all")
-				.removeClass("active")
-				.find("input[type='checkbox']")
-				.prop("checked", false);
-				
-				plenty_admin.UI.filters.update_filters();
-			}else{
-				//set the filter in the filter panel
-				plenty_admin.UI.filters.remove_selected_filter($(this).closest("li"));
-				
-				var all_filters_in_set = $(this).closest("ul").find("input[type='checkbox']:checked");
-				if(all_filters_in_set.length === 0){
-					$(this)
-					.closest("ul")
-					.find("li.all")
-					.addClass("active")
-					.find(" input[type='checkbox']")
-					.prop("checked", true);
-					
-					//select all filters in the selected set
-					$(this)
-					.closest(".filter-set")
-					.find(".selected-filters li.filter.all")
-					.show();
-				}
-			}
-		}
-		*/
 	});
 	
 	return $filterHTML;
@@ -7288,11 +8640,11 @@ plenty_admin.UI.filters.populate = function(init, callback){
 				if(possibleEntities.length > 0){
 					for(f=0; f<possibleEntities.length; f++){
 						var entity = possibleEntities[f];
-						//console.log("entity:", entity);
+						//console.log("entity:", entity, filter, filterIDName);
 						
 						// add the filter element to the correct panel
 						plenty_admin.UI.filters.DOM
-						.find(".filter-set."+ filter +" .all-filters")
+						.find(".filter-set."+ filter.toLowerCase() +" .all-filters")
 						.append(plenty_admin.UI.filters.build_filter_entity(entity, filter, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(entity.id) > -1)));
 					}
 				}
@@ -7477,13 +8829,14 @@ plenty_admin.UI.filters.hide_filters = function(){
 plenty_admin.UI.filters.show_filter_selectors = function(el){
 	var $elTarget = $(el.target); 
 	//hide other filter sets
+	/*
 	plenty_admin.UI.filters.DOM
 	.find("ul.all-filters")
 	.hide()
 	.end()
 	.find("ul.selected-filters")
 	.show();
-	
+	*/
 	
 	//show this filter sets filters
 	$(el.target)
@@ -7493,6 +8846,28 @@ plenty_admin.UI.filters.show_filter_selectors = function(el){
 	.end()
 	.find("ul.all-filters")
 	.slideDown("fast");
+}
+
+plenty_admin.UI.filters.hide_filter_selectors = function(el){
+	var $elTarget = $(el.target); 
+	//hide other filter sets
+	/*
+	plenty_admin.UI.filters.DOM
+	.find("ul.all-filters")
+	.hide()
+	.end()
+	.find("ul.selected-filters")
+	.show();
+	*/
+	
+	//show this filter sets filters
+	$(el.target)
+	.closest(".filter-set")
+	.find("ul.selected-filters")
+	.slideDown("fast")
+	.end()
+	.find("ul.all-filters")
+	.hide();
 }
 
 plenty_admin.UI.filters.show_selected_filters = function(){
@@ -7509,14 +8884,12 @@ plenty_admin.UI.filters.build_filter_set = function(filter, filterNormalized){
 	if(filterIDName == "croptypeIds"){
 		filterIDName = "cropTypeIds";
 	}
+	
 	var filterSetHTML = '<div class="filter-set mbs '+filterNormalized+'" data-filter="'+filterIDName+'">'+
-							'<h3 class="pull-left title filter-title mbm"><span class="icon pull-left mrs mls"></span> '+filter+'</h3>'+
+							'<h3 class="title filter-title mbm"><span class="icon pull-left"></span> '+filter+'<a href="" class="show-filters pull-right"><i class="icon glyphicon glyphicon-triangle-right pull-right"></i><i class="icon glyphicon glyphicon-triangle-bottom pull-right" style="display:none;	"></i></a></h3>'+
 							'<ul class="selected-filters clear mbn">'+
 								'<li class="filter all">'+
 									'<span class="pull-left">All</span></a>'+
-								'</li>'+
-								'<li class="show-filters">'+
-									'<a href="" class="icon glyphicon glyphicon-triangle-bottom"></a>'+
 								'</li>'+
 							'</ul>'+
 							'<ul class="all-filters overflowFix clear mbn" style="display:none;">'+
@@ -7526,13 +8899,26 @@ plenty_admin.UI.filters.build_filter_set = function(filter, filterNormalized){
 	
 	//set up the filter toggle list
 	$filterSetHTML
-	.find(".selected-filters li.show-filters a")
+	.data("state", "closed")
+	.find(".show-filters")
 	.click(function(e){
 		e.stopPropagation();
-		plenty_admin.UI.filters.show_filter_selectors(e);
+		if($filterSetHTML.data("state") === "closed"){
+			plenty_admin.UI.filters.show_filter_selectors(e);
+			$filterSetHTML
+			.data("state", "open")
+		}else{
+			plenty_admin.UI.filters.hide_filter_selectors(e);
+			$filterSetHTML
+			.data("state", "closed")
+		}
+		
+		$filterSetHTML
+		.find(".show-filters i")
+		.toggle();
+		
 		return false;
-	})
-	.end()
+	});
 	
 	plenty_admin.UI.filters.DOM
 	.find("#filter-set-wrapper")
@@ -7544,7 +8930,7 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 	if(force === "open"){
 		plenty_admin.UI.filters.state = "open";
 		
-		plenty_admin.UI.filters.show_selected_filters();
+		//plenty_admin.UI.filters.show_selected_filters();
 		
 		plenty_admin.UI.filters.DOM
 		.stop()
@@ -7556,13 +8942,13 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}, function(){
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}/*, function(){
 			plenty_admin.UI.filters.show_selected_filters();
-		});
+		}*/);
 	}else if(plenty_admin.UI.filters.state === "closed"){
 		plenty_admin.UI.filters.state = "open";
 		
-		plenty_admin.UI.filters.show_selected_filters();
+		//plenty_admin.UI.filters.show_selected_filters();
 		
 		plenty_admin.UI.filters.DOM
 		.stop()
@@ -7574,9 +8960,9 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}, function(){
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}/*, function(){
 			plenty_admin.UI.filters.show_selected_filters();
-		});
+		}*/);
 	}
 }
 
@@ -7593,14 +8979,15 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 	);
 }
 
-plenty_admin.DATA.update_filters = function(callback, init){
+plenty_admin.DATA.update_filters = function(callback, init, noZoom){
+	console.log("plenty_admin.DATA.update_filters", noZoom);
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
 			plenty_admin.DATA.userFilters = data.body();
 			
 			plenty_admin.UI.filters.populate(init);
 			
-			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields);
+			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, noZoom);
 			
 			if(callback && typeof callback === "function"){
 				callback(data);

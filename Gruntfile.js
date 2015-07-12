@@ -135,10 +135,13 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'node_modules/bootstrap-slider/dist/bootstrap-slider.min.js',
 				'node_modules/numeral/min/numeral.min.js',
 				'bower_components/Chart.js/Chart.min.js',
+				//'bower_components/timezone-js/src/date.js',
+				'bower_components/StickyTableHeaders/js/jquery.stickytableheaders.min.js',
 				'js/global.js',
 				'js/markerclusterer_compiled.js',
 				'js/attrchange_ext.js',
 				'js/inline-editing.js',
+				'js/richmarker.js',
 				'js/maps.js',
 				'js/settings.js', 
 				'js/field.js', 
@@ -380,6 +383,14 @@ grunt.loadNpmTasks('grunt-include-replace-more');
     	src: ['**'],
         dest: 'dist/fonts'
       },
+	  /*
+	  timezones: {
+        expand: true,
+		cwd: 'js/tz/',
+    	src: ['**'],
+        dest: 'dist/js/tz'
+      },
+	  */
     },
 	
 	includereplacemore: {
@@ -556,10 +567,10 @@ grunt.loadNpmTasks('grunt-include-replace-more');
   grunt.registerTask('dist-css', ['less-compile', 'autoprefixer:core', 'autoprefixer:theme', 'autoprefixer:plenty', 'usebanner', 'csscomb:dist', 'cssmin:minifyCore', 'cssmin:minifyTheme', 'cssmin:minifyPlenty']);
 
   // Full distribution task.
-  grunt.registerTask('dist', ['clean:dist', 'dist-css', 'copy:fonts', 'copy:fontAwesome', 'copy:weatherIcons', 'copy:img', 'copy:ajax', 'dist-js']);
+  grunt.registerTask('dist', ['clean:dist', 'dist-css', 'copy:fonts', 'copy:fontAwesome', 'copy:weatherIcons', /*'copy:timezones',*/ 'copy:img', 'copy:ajax', 'dist-js']);
 
   // Default task.
-  grunt.registerTask('default', ['clean:dist', 'copy:fonts', 'copy:fontAwesome', 'copy:weatherIcons', 'copy:img', 'copy:ajax', 'test']);
+  grunt.registerTask('default', ['clean:dist', 'copy:fonts', 'copy:fontAwesome', 'copy:weatherIcons', /*'copy:timezones',*/ 'copy:img', 'copy:ajax', 'test']);
 
   // Version numbering task.
   // grunt change-version-number --oldver=A.B.C --newver=X.Y.Z
