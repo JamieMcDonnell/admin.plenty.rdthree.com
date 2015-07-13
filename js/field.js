@@ -810,14 +810,15 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		
 		activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
 		activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
-		activity.duration = Math.round(plenty_admin.HELPER.daydiff(activity.startTime, activity.endTime));
+		//activity.duration = Math.round(plenty_admin.HELPER.daydiff(activity.startTime, activity.endTime));
 		activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.dates.start, activity.startTime));
 		
 		console.log("activity", activity);
 		
 		var dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / plenty_admin.UI.field.weatherDays.length;
+		var hourWidth = dayWidth /24;
 		var leftPos = dayWidth*activity.startOffsetDays;
-		var eventWidth = dayWidth*activity.duration;
+		var eventWidth = Math.round(hourWidth*activity.durationInHours);
 		
 		if(eventWidth < 15){
 			eventWidth = 15;
@@ -848,7 +849,7 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		if(!timelineOnly){
 			//build the activity list item
 			var activityItem = [
-					"<tr class='activity'>",
+					"<tr class='activity pointer'>",
 						"<td>",
 							"<i class='"+activity.iconClass+"'></i>",
 						"</td>",
@@ -862,7 +863,7 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 							activity.startDate.date,
 						"</td>",
 						"<td>",
-							activity.duration,
+							plenty_admin.HELPER.daysFromHours(activity.durationInHours),
 						"</td>",
 						"<td class='text-right'>",
 							numeral(activity.cost).format('$0,0.00'),
@@ -970,7 +971,7 @@ plenty_admin.UI.field.renderTempGraph = function(){
 		
 		
 		var tempGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.0')%>",
+			multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.0')%>℉",
 		};
 		
 		/*
@@ -1036,11 +1037,12 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 	//for(var m=0; m<plenty_admin.UI.field.weatherDays.moisture.length; m++){
 	for(depth in plenty_admin.UI.field.weatherDays.moisture){
 		if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
-			console.log("colour: ", index, "#"+plenty_admin.UI.brand_palette.colourAt(index), plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index)));
+			//console.log("colour: ", index, depth);
 			var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
 			var colour = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index));
+			var label = depth.toString();
 			var dataset = {
-				label: moistureDepth.depth,
+				label: label+"mm",
 				fillColor: "rgba("+colour.r+","+colour.g+","+colour.b+",0.2)", //define
 				strokeColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
 				pointColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
@@ -1062,7 +1064,7 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 		};
 		
 		var moistureGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>",
+			multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.00')%>cb",
 		};
 		
 		plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).Line(moistureGraphData, moistureGraphOptions);
@@ -1090,7 +1092,7 @@ plenty_admin.UI.field.renderPrecipGraph = function(){
 		};
 		
 		var precipGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>",
+			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>\"",
 		};
 		
 		plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).Line(precipGraphData, precipGraphOptions);
@@ -1282,7 +1284,7 @@ plenty_admin.UI.field.renderTasks = function(taskFinances){
 		var taskStartDate = plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime);
 		console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
 		var taskRow = [
-			"<tr>",
+			"<tr class='pointer'>",
 				"<td>",
 					task.taskDto.name,
 				"</td>",
@@ -1293,7 +1295,7 @@ plenty_admin.UI.field.renderTasks = function(taskFinances){
 					plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
 				"</td>",
 				"<td>",
-					task.taskDto.durationInHours,
+					plenty_admin.HELPER.daysFromHours(task.taskDto.durationInHours),
 				"</td>",
 				"<td class='text-right'>",
 					task.taskDto.cost,
@@ -1393,19 +1395,19 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 		for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
 			var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
 			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(0));
-			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
 		}
 		
 		for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
 			var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
 			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(1));
-			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
 		}
 		
 		for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
 			var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
 			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(2));
-			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName	+" / "+taskItem.cost+"</li>";
+			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+" / "+taskItem.cost+"</li>";
 		}
 	}
 	
@@ -1421,7 +1423,21 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	.after(laborItems)
 	.end()
 	.find("li[data-name='products']")
-	.after(productItems);
+	.after(productItems)
+	.end()
+	.find(".equipmentTaskItem")
+	.last()
+	.addClass("last")
+	.end()
+	.end()
+	.find(".laborTaskItem")
+	.last()
+	.addClass("last")
+	.end()
+	.end()
+	.find(".productTaskItem")
+	.last()
+	.addClass("last");
 	
 	var resetLegentStyle = function(legendHolder){
 		$(legendHolder)
@@ -1499,7 +1515,7 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	});
 	
 	//highlight key element when hovering segment
-	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
+	plenty_admin.UI.field.taskFinancesGraphEl.on("mousemove", function(evt){
 		var activePoints = plenty_admin.UI.field.taskFinancesGraph.getSegmentsAtEvent(evt);
 		if(activePoints.length > 0){
 			//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());

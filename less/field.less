@@ -220,6 +220,13 @@
 				position:absolute;
 				left:40px;
 				background-color:@white;
+				text-align:center;
+				
+				i{
+					  vertical-align: middle;
+					  font-size: 20px;
+					  line-height: 1.3;
+				}
 			}
 		}
 	}
@@ -245,12 +252,17 @@
 				color:@white;
 			}
 			
+			*{
+				pointer-events: none;
+			}
+			
 			span.swatch{
 				  width: 20px;
 				  height: 20px;
 				  display: inline-block;
 				  vertical-align: middle;
 				  margin-right: 5px;
+				  
 				  
 				  i{
 					color:#fff;
@@ -260,9 +272,6 @@
 				  }
 			}
 			
-			span.pct{
-				pointer-events: none;
-			}
 		}
 	}
  }
@@ -305,9 +314,7 @@ body.map{
 					&.taskItem{
 						margin-bottom:1px;
 						
-						&.equipmentTaskItem:last-child,
-						&.laborTaskItem:last-child,
-						&.productTaskItem:last-child{
+						&.last{
 							margin-bottom:10px;
 						}
 					}

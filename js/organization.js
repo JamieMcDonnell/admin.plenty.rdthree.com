@@ -814,7 +814,7 @@ plenty_admin.UI.create_item = function(item, hash){
 			
 					domHTML += '<td class="pln prn"><div class="btn-group pull-right mbn reveal-on-hover-element" role="group" aria-label="...">'+
 									'<button type="button" class="btn btn-sm btn-primary editItem"><span class="glyphicon glyphicon-edit"></span> <span class="hidden-xs">Edit</span></button>'+
-									(hash !== "farms" ? '<button type="button" class="btn btn-sm btn-danger deleteItem"><span class="glyphicon glyphicon-remove"></span><span class="hidden-xs">Remove</span></button>' : "")+
+									(hash !== "farms" ? '<button type="button" class="btn btn-sm btn-danger deleteItem"><span class="fa fa-trash-o"></span><span class="hidden-xs">Remove</span></button>' : "")+
 							   '</div></td>'+
 					'</tr>';
 	return domHTML;

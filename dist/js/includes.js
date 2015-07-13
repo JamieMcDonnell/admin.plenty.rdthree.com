@@ -1899,9 +1899,11 @@ plenty_admin.REST.getBrandTypes = function(){
 				
 				//populate equipment type lists:
 				var brandTypesHTML = "";
-				for(var e=0; e< plenty_admin.DATA.brandTypes.length; e++){
-					var brand = plenty_admin.DATA.brandTypes[e];
-					brandTypesHTML += "<option value='"+brand.id+"'>"+brand.name+"</option>";
+				for(index in plenty_admin.DATA.brandTypes){
+					if(plenty_admin.DATA.brandTypes.hasOwnProperty(index)){
+						var brand = plenty_admin.DATA.brandTypes[index];
+						brandTypesHTML += "<option value='"+brand.id+"'>"+brand.name+"</option>";
+					}
 				}
 				plenty_admin.UI.DOM
 				.find(".brand_type_list")
@@ -2563,6 +2565,16 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 			obj: a
 		};
 }
+plenty_admin.HELPER.daysFromHours = function(hours){
+	if(hours < 24){
+		return hours+"hrs";
+	}else{
+		var days = Math.floor(hours/24);
+		var leftOver = Math.round((hours/24) - days);
+		return days+"days, "+leftOver+"hrs";
+	}
+}
+
 plenty_admin.HELPER.treatAsUTC = function(date) {
 	if(typeof date === "object"){
 		var result = date;
@@ -2578,9 +2590,11 @@ plenty_admin.HELPER.daydiff = function(startDate, endDate) {
     return (plenty_admin.HELPER.treatAsUTC(endDate) - plenty_admin.HELPER.treatAsUTC(startDate)) / millisecondsPerDay;
 }
 plenty_admin.HELPER.hideLoadingOverlay = function(){
+	$("body").removeClass("loading");
 	plenty_admin.UI.loadingOverlay.fadeOut("fast");
 }
 plenty_admin.HELPER.showLoadingOverlay = function(){
+	$("body").addClass("loading");
 	plenty_admin.UI.loadingOverlay.fadeIn("fast");
 }
 plenty_admin.HELPER.returnInlineEditSelectOptions = function(field){
@@ -2662,58 +2676,6 @@ plenty_admin.HELPER.testAPICall = function(call, id){
 		function(returnData){
 			console.log(call+" GOT", returnData);
 		});
-}
-
-plenty_admin.HELPER.base64ArrayBuffer = function(arrayBuffer) {
-  var base64    = ''
-  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-
-  var bytes         = new Uint8Array(arrayBuffer)
-  var byteLength    = bytes.byteLength
-  var byteRemainder = byteLength % 3
-  var mainLength    = byteLength - byteRemainder
-
-  var a, b, c, d
-  var chunk
-
-  // Main loop deals with bytes in chunks of 3
-  for (var i = 0; i < mainLength; i = i + 3) {
-    // Combine the three bytes into a single integer
-    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
-
-    // Use bitmasks to extract 6-bit segments from the triplet
-    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
-    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
-    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
-    d = chunk & 63               // 63       = 2^6 - 1
-
-    // Convert the raw binary segments to the appropriate ASCII encoding
-    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
-  }
-
-  // Deal with the remaining bytes and padding
-  if (byteRemainder == 1) {
-    chunk = bytes[mainLength]
-
-    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
-
-    // Set the 4 least significant bits to zero
-    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
-
-    base64 += encodings[a] + encodings[b] + '=='
-  } else if (byteRemainder == 2) {
-    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
-
-    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
-    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
-
-    // Set the 2 least significant bits to zero
-    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
-
-    base64 += encodings[a] + encodings[b] + encodings[c] + '='
-  }
-
-  return base64;
 }
 
 //plenty_admin.HELPER.testAPICall("fields/getField", 1);
@@ -4773,6 +4735,27 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			
 			$equipList.append(equipOptionsHTML);
 			
+			//Set the options in the brands list
+			var $brandList = plenty_admin.MAPS.infoWindowContent.find("#add_equipment_brand");
+			
+			$brandList
+			.find("option")
+			.remove();
+			
+			//populate equipment type lists:
+			var brandTypesHTML = "";
+			for(index in plenty_admin.DATA.brandTypes){
+				if(plenty_admin.DATA.brandTypes.hasOwnProperty(index)){
+					var brand = plenty_admin.DATA.brandTypes[index];
+					brandTypesHTML += "<option value='"+brand.id+"'>"+brand.name+"</option>";
+				}
+			}
+			
+			console.log("brands: ", $brandList, brandTypesHTML);
+			
+			$brandList
+			.append(brandTypesHTML);
+			
 			plenty_admin.MAPS.infoWindowContent
 			.find("#add_equipment_latitude")
 			.val(fieldData.rc_lat)
@@ -4791,6 +4774,7 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 				equipmentObj.latitude = fieldData.rc_lat;
 				equipmentObj.longitude = fieldData.rc_lng;
 				equipmentObj.fieldId = fieldData.id;
+				equipmentObj.brandId = $brandList.val();
 				
 				console.log("equipmentObj", equipmentObj);
 				plenty_admin.REST.insertFieldEquipment.post(equipmentObj)
@@ -6871,14 +6855,15 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		
 		activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
 		activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
-		activity.duration = Math.round(plenty_admin.HELPER.daydiff(activity.startTime, activity.endTime));
+		//activity.duration = Math.round(plenty_admin.HELPER.daydiff(activity.startTime, activity.endTime));
 		activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.dates.start, activity.startTime));
 		
 		console.log("activity", activity);
 		
 		var dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / plenty_admin.UI.field.weatherDays.length;
+		var hourWidth = dayWidth /24;
 		var leftPos = dayWidth*activity.startOffsetDays;
-		var eventWidth = dayWidth*activity.duration;
+		var eventWidth = Math.round(hourWidth*activity.durationInHours);
 		
 		if(eventWidth < 15){
 			eventWidth = 15;
@@ -6909,7 +6894,7 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		if(!timelineOnly){
 			//build the activity list item
 			var activityItem = [
-					"<tr class='activity'>",
+					"<tr class='activity pointer'>",
 						"<td>",
 							"<i class='"+activity.iconClass+"'></i>",
 						"</td>",
@@ -6923,7 +6908,7 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 							activity.startDate.date,
 						"</td>",
 						"<td>",
-							activity.duration,
+							plenty_admin.HELPER.daysFromHours(activity.durationInHours),
 						"</td>",
 						"<td class='text-right'>",
 							numeral(activity.cost).format('$0,0.00'),
@@ -7031,7 +7016,7 @@ plenty_admin.UI.field.renderTempGraph = function(){
 		
 		
 		var tempGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.0')%>",
+			multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.0')%>℉",
 		};
 		
 		/*
@@ -7097,11 +7082,12 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 	//for(var m=0; m<plenty_admin.UI.field.weatherDays.moisture.length; m++){
 	for(depth in plenty_admin.UI.field.weatherDays.moisture){
 		if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
-			console.log("colour: ", index, "#"+plenty_admin.UI.brand_palette.colourAt(index), plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index)));
+			//console.log("colour: ", index, depth);
 			var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
 			var colour = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index));
+			var label = depth.toString();
 			var dataset = {
-				label: moistureDepth.depth,
+				label: label+"mm",
 				fillColor: "rgba("+colour.r+","+colour.g+","+colour.b+",0.2)", //define
 				strokeColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
 				pointColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
@@ -7123,7 +7109,7 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 		};
 		
 		var moistureGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>",
+			multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.00')%>cb",
 		};
 		
 		plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).Line(moistureGraphData, moistureGraphOptions);
@@ -7151,7 +7137,7 @@ plenty_admin.UI.field.renderPrecipGraph = function(){
 		};
 		
 		var precipGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>",
+			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>\"",
 		};
 		
 		plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).Line(precipGraphData, precipGraphOptions);
@@ -7343,7 +7329,7 @@ plenty_admin.UI.field.renderTasks = function(taskFinances){
 		var taskStartDate = plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime);
 		console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
 		var taskRow = [
-			"<tr>",
+			"<tr class='pointer'>",
 				"<td>",
 					task.taskDto.name,
 				"</td>",
@@ -7354,7 +7340,7 @@ plenty_admin.UI.field.renderTasks = function(taskFinances){
 					plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
 				"</td>",
 				"<td>",
-					task.taskDto.durationInHours,
+					plenty_admin.HELPER.daysFromHours(task.taskDto.durationInHours),
 				"</td>",
 				"<td class='text-right'>",
 					task.taskDto.cost,
@@ -7454,19 +7440,19 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 		for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
 			var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
 			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(0));
-			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
 		}
 		
 		for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
 			var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
 			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(1));
-			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
 		}
 		
 		for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
 			var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
 			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(2));
-			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .3);'>"+taskItem.resourceTypeName	+" / "+taskItem.cost+"</li>";
+			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+" / "+taskItem.cost+"</li>";
 		}
 	}
 	
@@ -7482,7 +7468,21 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	.after(laborItems)
 	.end()
 	.find("li[data-name='products']")
-	.after(productItems);
+	.after(productItems)
+	.end()
+	.find(".equipmentTaskItem")
+	.last()
+	.addClass("last")
+	.end()
+	.end()
+	.find(".laborTaskItem")
+	.last()
+	.addClass("last")
+	.end()
+	.end()
+	.find(".productTaskItem")
+	.last()
+	.addClass("last");
 	
 	var resetLegentStyle = function(legendHolder){
 		$(legendHolder)
@@ -7560,7 +7560,7 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	});
 	
 	//highlight key element when hovering segment
-	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
+	plenty_admin.UI.field.taskFinancesGraphEl.on("mousemove", function(evt){
 		var activePoints = plenty_admin.UI.field.taskFinancesGraph.getSegmentsAtEvent(evt);
 		if(activePoints.length > 0){
 			//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
@@ -7657,11 +7657,11 @@ plenty_admin.UI.map.init = function(){
 		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.mainMap);
 		
 		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(5, 10000);
+		plenty_admin.DATA.eventCollector = window.eventcollector(6, 10000);
 		plenty_admin.REST.getCropTypes();
 		plenty_admin.REST.getTillageTypes();
 		plenty_admin.REST.getIrrigationTypes();
-		//plenty_admin.REST.getEquipmentTypes();
+		plenty_admin.REST.getEquipmentTypes();
 		plenty_admin.REST.getBrandTypes();
 		plenty_admin.REST.getGrowthMethods();
 		
@@ -7864,10 +7864,10 @@ plenty_admin.UI.field.show_equipment_modal = function(equip){
 	.removeClass("MOVEABLE WELL SOIL_MOISTURE")
 	.addClass(equip.equipmentObservationDto.type)
 	.find(".modal-title")
-	.text(equip.name)
-	.end()
-	.find(".type")
 	.text(equip.equipmentTypeIds[0].name)
+	.end()
+	.find(".name")
+	.text(equip.name)
 	.end()
 	.find(".lat")
 	.text(equip.latitude)
@@ -7939,9 +7939,9 @@ plenty_admin.UI.field.show_equipment_modal = function(equip){
 	.modal("show");
 }
 
-plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
+plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 	// loop filtered fields and put them on the map
-	console.log("plenty_admin.UI.map.populate", fieldIDs, noZoom);
+	console.log("plenty_admin.UI.map.populate", fieldIDs, zoomFields);
 	plenty_admin.UI.map.latlngbounds = new google.maps.LatLngBounds();
 	
 	//get the boundary points, grouped by field ID for the current filter
@@ -8004,7 +8004,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 				latlng.seqNumber = xy.seqNumber;
 				boundaryLatLngs.push(latlng);
 				
-				if(!noZoom){
+				if(zoomFields === undefined || zoomFields === null || zoomFields === false){
 					plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
 				}
 			});
@@ -8062,9 +8062,11 @@ plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 					onRightClick: function(event){
 						var lat = event.latLng.lat();
 						var lng = event.latLng.lng();
+						$("body").addClass("loading");
 						// populate yor box/field with lat, lng
 						//alert("Show Add Equipment Option - Lat=" + lat + "; Lng=" + lng);
 						plenty_admin.REST.fields.getFieldById(this.id, function(fieldObj){
+							$("body").removeClass("loading");
 							var fullFieldObject = $.extend(fieldData, fieldObj);
 							fullFieldObject.rc_lat = event.latLng.lat();
 							fullFieldObject.rc_lng = event.latLng.lng();
@@ -8140,9 +8142,16 @@ plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 		});
 		
 		
-		if(fieldBoundaries.length > 0 && !noZoom){
-			//center and zoom the map to the bounds of the polygons
-			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+		if(
+			fieldBoundaries.length > 0){
+				if(
+					zoomFields === true
+					|| zoomFields === undefined
+					|| zoomFields === null
+				){
+					//center and zoom the map to the bounds of the polygons
+					plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+				}
 		}
 		
 		//recenter fields if map size changes
@@ -8979,15 +8988,15 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 	);
 }
 
-plenty_admin.DATA.update_filters = function(callback, init, noZoom){
-	console.log("plenty_admin.DATA.update_filters", noZoom);
+plenty_admin.DATA.update_filters = function(callback, init, zoomFields){
+	console.log("plenty_admin.DATA.update_filters", zoomFields);
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
 			plenty_admin.DATA.userFilters = data.body();
 			
 			plenty_admin.UI.filters.populate(init);
 			
-			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, noZoom);
+			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
 			
 			if(callback && typeof callback === "function"){
 				callback(data);
@@ -9813,7 +9822,7 @@ plenty_admin.UI.create_item = function(item, hash){
 			
 					domHTML += '<td class="pln prn"><div class="btn-group pull-right mbn reveal-on-hover-element" role="group" aria-label="...">'+
 									'<button type="button" class="btn btn-sm btn-primary editItem"><span class="glyphicon glyphicon-edit"></span> <span class="hidden-xs">Edit</span></button>'+
-									(hash !== "farms" ? '<button type="button" class="btn btn-sm btn-danger deleteItem"><span class="glyphicon glyphicon-remove"></span><span class="hidden-xs">Remove</span></button>' : "")+
+									(hash !== "farms" ? '<button type="button" class="btn btn-sm btn-danger deleteItem"><span class="fa fa-trash-o"></span><span class="hidden-xs">Remove</span></button>' : "")+
 							   '</div></td>'+
 					'</tr>';
 	return domHTML;

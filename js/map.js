@@ -58,11 +58,11 @@ plenty_admin.UI.map.init = function(){
 		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.mainMap);
 		
 		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(5, 10000);
+		plenty_admin.DATA.eventCollector = window.eventcollector(6, 10000);
 		plenty_admin.REST.getCropTypes();
 		plenty_admin.REST.getTillageTypes();
 		plenty_admin.REST.getIrrigationTypes();
-		//plenty_admin.REST.getEquipmentTypes();
+		plenty_admin.REST.getEquipmentTypes();
 		plenty_admin.REST.getBrandTypes();
 		plenty_admin.REST.getGrowthMethods();
 		
@@ -265,10 +265,10 @@ plenty_admin.UI.field.show_equipment_modal = function(equip){
 	.removeClass("MOVEABLE WELL SOIL_MOISTURE")
 	.addClass(equip.equipmentObservationDto.type)
 	.find(".modal-title")
-	.text(equip.name)
-	.end()
-	.find(".type")
 	.text(equip.equipmentTypeIds[0].name)
+	.end()
+	.find(".name")
+	.text(equip.name)
 	.end()
 	.find(".lat")
 	.text(equip.latitude)
@@ -340,9 +340,9 @@ plenty_admin.UI.field.show_equipment_modal = function(equip){
 	.modal("show");
 }
 
-plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
+plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 	// loop filtered fields and put them on the map
-	console.log("plenty_admin.UI.map.populate", fieldIDs, noZoom);
+	console.log("plenty_admin.UI.map.populate", fieldIDs, zoomFields);
 	plenty_admin.UI.map.latlngbounds = new google.maps.LatLngBounds();
 	
 	//get the boundary points, grouped by field ID for the current filter
@@ -405,7 +405,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 				latlng.seqNumber = xy.seqNumber;
 				boundaryLatLngs.push(latlng);
 				
-				if(!noZoom){
+				if(zoomFields === undefined || zoomFields === null || zoomFields === false){
 					plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
 				}
 			});
@@ -463,9 +463,11 @@ plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 					onRightClick: function(event){
 						var lat = event.latLng.lat();
 						var lng = event.latLng.lng();
+						$("body").addClass("loading");
 						// populate yor box/field with lat, lng
 						//alert("Show Add Equipment Option - Lat=" + lat + "; Lng=" + lng);
 						plenty_admin.REST.fields.getFieldById(this.id, function(fieldObj){
+							$("body").removeClass("loading");
 							var fullFieldObject = $.extend(fieldData, fieldObj);
 							fullFieldObject.rc_lat = event.latLng.lat();
 							fullFieldObject.rc_lng = event.latLng.lng();
@@ -541,9 +543,16 @@ plenty_admin.UI.map.populate = function(fieldIDs, noZoom){
 		});
 		
 		
-		if(fieldBoundaries.length > 0 && !noZoom){
-			//center and zoom the map to the bounds of the polygons
-			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+		if(
+			fieldBoundaries.length > 0){
+				if(
+					zoomFields === true
+					|| zoomFields === undefined
+					|| zoomFields === null
+				){
+					//center and zoom the map to the bounds of the polygons
+					plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+				}
 		}
 		
 		//recenter fields if map size changes

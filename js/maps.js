@@ -1027,6 +1027,27 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			
 			$equipList.append(equipOptionsHTML);
 			
+			//Set the options in the brands list
+			var $brandList = plenty_admin.MAPS.infoWindowContent.find("#add_equipment_brand");
+			
+			$brandList
+			.find("option")
+			.remove();
+			
+			//populate equipment type lists:
+			var brandTypesHTML = "";
+			for(index in plenty_admin.DATA.brandTypes){
+				if(plenty_admin.DATA.brandTypes.hasOwnProperty(index)){
+					var brand = plenty_admin.DATA.brandTypes[index];
+					brandTypesHTML += "<option value='"+brand.id+"'>"+brand.name+"</option>";
+				}
+			}
+			
+			console.log("brands: ", $brandList, brandTypesHTML);
+			
+			$brandList
+			.append(brandTypesHTML);
+			
 			plenty_admin.MAPS.infoWindowContent
 			.find("#add_equipment_latitude")
 			.val(fieldData.rc_lat)
@@ -1045,6 +1066,7 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 				equipmentObj.latitude = fieldData.rc_lat;
 				equipmentObj.longitude = fieldData.rc_lng;
 				equipmentObj.fieldId = fieldData.id;
+				equipmentObj.brandId = $brandList.val();
 				
 				console.log("equipmentObj", equipmentObj);
 				plenty_admin.REST.insertFieldEquipment.post(equipmentObj)

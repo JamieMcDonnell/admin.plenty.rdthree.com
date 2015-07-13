@@ -71,7 +71,8 @@
   background-color: #e0e0e0;
   background-image: none;
 }
-.btn-default span.glyphicon {
+.btn-default span.glyphicon,
+.btn-default span.fa {
   position: absolute;
   top: 0;
   left: 0;
@@ -107,7 +108,8 @@
   background-color: #006ba1;
   background-image: none;
 }
-.btn-primary span.glyphicon {
+.btn-primary span.glyphicon,
+.btn-primary span.fa {
   position: absolute;
   top: 0;
   left: 0;
@@ -143,7 +145,8 @@
   background-color: #697f18;
   background-image: none;
 }
-.btn-success span.glyphicon {
+.btn-success span.glyphicon,
+.btn-success span.fa {
   position: absolute;
   top: 0;
   left: 0;
@@ -179,7 +182,8 @@
   background-color: #6ac3da;
   background-image: none;
 }
-.btn-info span.glyphicon {
+.btn-info span.glyphicon,
+.btn-info span.fa {
   position: absolute;
   top: 0;
   left: 0;
@@ -215,7 +219,8 @@
   background-color: #b49119;
   background-image: none;
 }
-.btn-warning span.glyphicon {
+.btn-warning span.glyphicon,
+.btn-warning span.fa {
   position: absolute;
   top: 0;
   left: 0;
@@ -251,7 +256,8 @@
   background-color: #9e2828;
   background-image: none;
 }
-.btn-danger span.glyphicon {
+.btn-danger span.glyphicon,
+.btn-danger span.fa {
   position: absolute;
   top: 0;
   left: 0;

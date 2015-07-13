@@ -645,6 +645,40 @@
 	  </div>
 	  <div class="modal-body overflowFix">
 		<div class="col-xs-12 pln prn"> <!-- required for floating -->
+			<div class="image col-xs-3">
+				<i class="" style="loadingImage fa fa-refresh fa-spin fa-3x fa-fw"></i>
+			</div>
+			<div class="col-xs-9 pln prn">
+				<h3 class="name mtn"><b></b></h3>
+				<p>Latitude: <b class="lat"></b></p>
+				<p>Longitude: <b class="lng"></b></p>
+				
+				<!-- <h3 class="mtn">Equipment Data</h3> -->
+				<div class="equipmentObservationHeaders MOVEABLE">
+					<p class="speed">Speed: <b></b></p>
+					<p class="fuel">Fuel: <b></b></p>
+				</div>
+				<div class="equipmentObservationHeaders SOIL_MOISTURE">
+					<p class="time">Time: <b></b></p>
+					<table class="measurements table fitTable table-striped table-hover table-condensed pointer">
+						<thead>
+							<tr>
+								<th>Soil Depth (<span class="soilDepthUOM"></span>)</th>
+								<th>Moisture (<span class="moistureUOM"></span>)</th>
+							</tr>
+						</thead>
+						<tbody>
+						
+						</tbody>
+					</table>
+				</div>
+				<div class="equipmentObservationHeaders WELL">
+					<p class="time">Time: <b></b></p>
+					<p class="reading">Reading: <b></b></p>
+				</div>
+			</div>
+			
+			<!--
 			<h3 class="type mtn"><b></b></h3>
 			<table class="table fitTable">
 				<thead>
@@ -685,10 +719,11 @@
 				<p class="time">Time: <b></b></p>
 				<p class="reading">Reading: <b></b></p>
 			</div>
+			-->
 		</div>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
 	  </div>
 	</div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -730,7 +765,8 @@
 		</div>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+		<button type="button" class="btn btn-danger pull-right mrs" data-dismiss="modal"><span class="fa fa-trash-o"></span> Delete</button>
 	  </div>
 	</div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

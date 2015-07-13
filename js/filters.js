@@ -675,15 +675,15 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 	);
 }
 
-plenty_admin.DATA.update_filters = function(callback, init, noZoom){
-	console.log("plenty_admin.DATA.update_filters", noZoom);
+plenty_admin.DATA.update_filters = function(callback, init, zoomFields){
+	console.log("plenty_admin.DATA.update_filters", zoomFields);
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
 			plenty_admin.DATA.userFilters = data.body();
 			
 			plenty_admin.UI.filters.populate(init);
 			
-			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, noZoom);
+			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
 			
 			if(callback && typeof callback === "function"){
 				callback(data);

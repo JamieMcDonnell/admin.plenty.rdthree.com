@@ -197,13 +197,17 @@ footer .links li:last-of-type {
   margin-top: 10px;
   margin-right: 15px;
 }
+body.loading {
+  cursor: wait;
+}
 @media (max-width: 1440px) {
   table tr .btn-group button.btn-sm {
     min-height: 30px;
     padding: 0 .5em;
     text-align: center;
   }
-  table tr .btn-group button.btn-sm span.glyphicon {
+  table tr .btn-group button.btn-sm span.glyphicon,
+  table tr .btn-group button.btn-sm span.fa {
     position: relative;
     min-height: 28px;
     background: inherit;
@@ -3140,7 +3144,13 @@ body {
   left: 40px;
   width: 30px;
   height: 28px;
+  text-align: center;
   background-color: #fff;
+}
+#field-container .activitiesTimeline .activities .activity i {
+  font-size: 20px;
+  line-height: 1.3;
+  vertical-align: middle;
 }
 #field-container .yearSlider .current_year_crop {
   text-transform: capitalize;
@@ -3159,6 +3169,9 @@ body {
 .legend ul li.active {
   color: #fff;
 }
+.legend ul li * {
+  pointer-events: none;
+}
 .legend ul li span.swatch {
   display: inline-block;
   width: 20px;
@@ -3171,9 +3184,6 @@ body {
   line-height: 1.5;
   color: #fff;
   text-align: center;
-}
-.legend ul li span.pct {
-  pointer-events: none;
 }
 body.map #field-container {
   z-index: 100;
@@ -3208,9 +3218,7 @@ body.map #field-container {
 .modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem {
   margin-bottom: 1px;
 }
-.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.equipmentTaskItem:last-child,
-.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.laborTaskItem:last-child,
-.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.productTaskItem:last-child {
+.modal#activity .modal-body .taskGraphRow .col-xs-6.legend li.taskItem.last {
   margin-bottom: 10px;
 }
 .modal#activity .modal-body .taskGraphRow .col-xs-6.graph {
@@ -3662,6 +3670,8 @@ body.map *:after {
 .pif-planting:before {
   content: "\e60d";
 }
+.pif-fertilizer:before,
+.pif-starter-fertilizer:before,
 .pif-fertilizer:before {
   content: "\e60e";
 }
