@@ -3848,6 +3848,13 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   float: left;
   margin-bottom: -1px;
 }
+.nav-tabs > li.picture-tab {
+  font-size: 12px;
+  text-align: center;
+}
+.nav-tabs > li.picture-tab > a {
+  padding: 5px 15px;
+}
 .nav-tabs > li > a {
   margin-right: 2px;
   line-height: 1.42857143;
@@ -5366,6 +5373,27 @@ button.close {
     width: 900px;
   }
 }
+.bootbox.modal {
+  z-index: 10001;
+}
+.bootbox.modal.danger .modal-dialog .modal-content {
+  border: 1px solid #cc3737;
+}
+.bootbox.modal.danger .modal-dialog .modal-content .bootbox-body {
+  color: #cc3737;
+}
+.bootbox.modal.warning .modal-dialog .modal-content {
+  border: 1px solid #e1b829;
+}
+.bootbox.modal.warning .modal-dialog .modal-content .bootbox-body {
+  color: #e1b829;
+}
+.bootbox.modal.info .modal-dialog .modal-content {
+  border: 1px solid #0094de;
+}
+.bootbox.modal.info .modal-dialog .modal-content .bootbox-body {
+  color: #0094de;
+}
 .tooltip {
   position: absolute;
   z-index: 1070;
@@ -6384,5 +6412,57 @@ button.close {
       -ms-transform: rotate(-90deg);
        -o-transform: rotate(-90deg);
           transform: rotate(-90deg);
+}
+[class^="icon-"],
+[class*=" icon-"] {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  line-height: 14px;
+  vertical-align: text-top;
+  background-image: url("../img/glyphicons-halflings.png");
+  background-repeat: no-repeat;
+  background-position: 14px 14px;
+}
+.icon-th {
+  background-position: -240px 0;
+}
+.input-append .add-on,
+.input-prepend .add-on,
+.input-append .btn,
+.input-prepend .btn,
+.input-append .btn-group > .dropdown-toggle,
+.input-prepend .btn-group > .dropdown-toggle {
+  vertical-align: top;
+  border-radius: 0;
+}
+.input-append .add-on,
+.input-prepend .add-on {
+  display: inline-block;
+  width: auto;
+  min-width: 16px;
+  height: 31px;
+  padding: 4px 5px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 20px;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff;
+  background-color: #eee;
+  border: 1px solid #ccc;
+}
+.input-append,
+.input-prepend {
+  white-space: nowrap;
+}
+.editable-inline input.input-small {
+  height: 31px;
+}
+.editable-inline .add-on .icon-th {
+  margin-top: 2px;
+}
+.datepicker.datepicker-dropdown.dropdown-menu {
+  z-index: 1050 !important;
 }
 /*# sourceMappingURL=Plenty.RDThree.com.css.map */

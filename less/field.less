@@ -171,6 +171,36 @@
 	table.table.tab-pane.active{
 		display:block;
 	}
+	.futureDaysWrapper{
+		position:absolute;
+		bottom:70px;
+		left:0;
+		width: 100%;
+  		padding: 0 15px;
+		z-index:3;
+		pointer-events: none;
+		
+		.keyOffset{
+			height:163px;
+			
+			.todayLabel{
+				position:absolute;
+				top:5px;
+				right:-50px;
+				color:#404040;
+			}
+		}
+		
+		.futureDays{
+			height:163px;
+			overflow:auto;
+			background-color:transparent;
+			position:relative;
+			border-left:2px solid #404040;
+			background-color:rgba(0,0,0,.1);
+			bottom:0;
+		}
+	}
 	.cropSurveysWrapper{
 		position:absolute;
 		bottom:70px;
@@ -190,7 +220,7 @@
 			position:relative;
 			
 			.cropSurvey{
-				width:33px;
+				width:26px;
 				height:35px;
 				top:0px;
 				position:absolute;
@@ -307,6 +337,8 @@ body.map{
 				font-size:13px;
 				
 				li{
+					position:relative;
+					
 					&.taskHeader{
 						margin-bottom:0;
 					}
@@ -317,6 +349,16 @@ body.map{
 						&.last{
 							margin-bottom:10px;
 						}
+					}
+					
+					&.taskResourceItem{
+						padding:0 70px 0 20px;
+					}
+					
+					.cost{
+						position:absolute;
+						top:0;
+						right:0;
 					}
 				}
 			}

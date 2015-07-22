@@ -1,5 +1,5 @@
 <body class="{{ page }}">
-	<nav class="navbar navbar-fixed-top navbar-default">
+	<nav class="navbar navbar-fixed-top navbar-default page-container blur">
 	  <div class="container-fluid">
 		<div class="navbar-header">
 		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -17,6 +17,7 @@
 			<li class="{{ if dashboard }}active{{ endif }}"><a href="dashboard.html">Dashboard</a></li>
 			<li  class="{{ if settings }}active{{ endif }}"><a href="settings.html">Settings</a></li>
 			<li  class="{{ if map }}active{{ endif }}"><a href="map.html">Map</a></li>
+			<li  class="{{ if plans }}active{{ endif }}"><a href="plans.html">Plans</a></li>
 		  </ul>
 		  <ul class="nav navbar-nav navbar-right">
 			<li><p style="display:none;">Welcome <span class="userFName"></span> <span class="userLName"></span></p></li>

@@ -1,0 +1,218 @@
+<div class="modal fade crop-survey" id="crop-survey">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title">Crop Survey</h4>
+	  </div>
+	  <div class="modal-body overflowFix row">
+		 <!-- Nav tabs -->
+		<ul class="nav nav-tabs mainTabs" role="tablist">
+			<li role="presentation" class="active"><a href="#route" aria-controls="route" role="tab" data-toggle="tab">Route</a></li>
+			<li role="presentation"><a href="#sample" aria-controls="sample" role="tab" data-toggle="tab">Sample Collection</a></li>
+			<li role="presentation"><a href="#conditions" aria-controls="conditions" role="tab" data-toggle="tab">Field Conditions</a></li>
+			<li role="presentation"><a href="#growthstate" aria-controls="growthstate" role="tab" data-toggle="tab">Growth State</a></li>
+			<li role="presentation"><a href="#recommendations" aria-controls="recommendations" role="tab" data-toggle="tab">Recommendations</a></li>
+		</ul>
+		
+		<!-- Tab panes -->
+		<div class="tab-content pln prn ptn pbn mainTabs">
+			<div role="tabpanel" class="tab-pane active" id="route">
+				<ul class="pull-left map-route-nav mts">
+					<li><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+					<li><span class="glyphicon glyphicon-map-marker"></span> <span class="marker-number">1</span> 
+					<li><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+				</ul>
+				<div class="route-map clear map" id="route_routemap">
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="sample">
+				<div class="col-md-3 pull-left pln prn mts">
+					<ul class="pull-left map-route-nav mts">
+						<li><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+						<li><span class="glyphicon glyphicon-map-marker"></span> <span class="marker-number">1</span> 
+						<li><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+					</ul>
+					<div class="map small-route-map mbs clear" id="sample_routemap">
+					</div>
+					<div class="photo-notes">
+					</div>
+				</div>
+				<div class="col-md-9 pull-right pln prn mts">
+					<ul class="nav nav-tabs" role="tablist" data-tabs="sampleTabs">
+						<li role="presentation" class="active picture-tab">
+							<a href="#photos" aria-controls="photos" role="tab" data-toggle="tab">
+								<i class="fa fa-camera"></i>
+								<br>
+								Photos
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#soilmoisture" aria-controls="soilmoisture" role="tab" data-toggle="tab">
+								<i class="wi wi-sprinkles"></i>
+								<br>
+								Soil Moisture
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#insects" aria-controls="insects" role="tab" data-toggle="tab">
+								<i class="pif pif-pest-control"></i>
+								<br>
+								Insects
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#disease" aria-controls="disease" role="tab" data-toggle="tab">
+								<i class="fa fa-medkit"></i>
+								<br>
+								Disease
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#weeds" aria-controls="weeds" role="tab" data-toggle="tab">
+								<i class="fpif pif-weed"></i>
+								<br>
+								Weeds
+							</a>
+						</li>
+					</ul>
+					<div class="tab-content pln prn ptn pbn sampleTabs">
+						<div role="tabpanel" class="tab-pane active" id="photos">
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="soilmoisture">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="20%">
+											Depth
+										</th>
+										<th width="40%" class="text-right">
+											Sampling
+										</th>
+										<th width="40%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="insects">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="60%">
+											Species
+										</th>
+										<th width="20%" class="text-right">
+											Sampling
+										</th>
+										<th width="20%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="disease">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="60%">
+											Disease
+										</th>
+										<th width="20%" class="text-right">
+											Sampling
+										</th>
+										<th width="20%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="weeds">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="60%">
+											Strain
+										</th>
+										<th width="20%" class="text-right">
+											Sampling
+										</th>
+										<th width="20%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="conditions">
+				<div class="col-xs-3 prn pln mts"> <!-- required for floating -->
+				  <!-- Nav tabs -->
+				  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+					<li class="active"><a href="#weather_damage" data-toggle="tab">Weather Damage</a></li>
+					<li><a href="#standing_water" data-toggle="tab">Standing Water</a></li>
+					<li><a href="#dry_spots" data-toggle="tab">Dry Spots</a></li>
+				  </ul>
+				</div>
+				<div class="col-xs-9 pln prn mts">
+					<div class="tab-content ptn pbn">
+						<div class="tab-pane survey_conditions_map active map" id="weather_damage">
+						</div>
+						<div class="tab-pane survey_conditions_map map" id="standing_water">
+						</div>
+						<div class="tab-pane survey_conditions_map map" id="dry_spots">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="growthstate">
+				<div class="col-md-3 pull-left pln prn mts">
+					<ul class="pull-left map-route-nav mts">
+						<li><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+						<li><span class="glyphicon glyphicon-map-marker"></span> <span class="marker-number">1</span> 
+						<li><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+					</ul>
+					<div class="map small-route-map mbs clear" id="growthstate_routemap">
+					</div>
+				</div>
+				<div class="col-md-9 pull-right pln prn mts">
+					<img src="img/scales/zadoks.gif-01.svg" class="growthstate_chart"/>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="recommendations">
+			
+			</div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default pull-right cancel mrs" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+	<div class="alert alert-danger fade in confirmDelete" role="alert" style="display:none;">
+		<h4>Are you sure you want to delete this activity?</h4>
+		<p>
+		<button type="button" class="btn btn-danger delete pull-right"><span class="fa fa-trash-o"></span> Delete</button>
+		<button type="button" class="btn btn-default cancel pull-right mrs"><span class="glyphicon glyphicon-remove"></span> Cancal</button>
+		</p>
+	</div>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

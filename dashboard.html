@@ -4,8 +4,8 @@
 
 {{ include('snippets/meta.html', {"title": "Plenty Admin Dashboard", "description": "This is the dashboard of the admin UI", "author": "Jamie McDonnell"}) }}
 </head>
-{{ include('snippets/header.html', {"page": "dashboard", "dashboard" : true, "settings" : false, "map" : false, "contact" : false, "organization" : false}) }}
-<div class="container-fluid">
+{{ include('snippets/header.html', {"page": "dashboard", "dashboard" : true, "settings" : false, "map" : false, "contact" : false, "organization" : false, "plans" : false}) }}
+<div class="container-fluid page-container">
 	<div class="row"> 
 		{{ include('snippets/sidebar-nav.html') }}
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">

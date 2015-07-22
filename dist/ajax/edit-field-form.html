@@ -54,6 +54,7 @@
 						</div>
 					</div>
 					<div class="btn-group pull-right" role="group" aria-label="add field controls">
+						<button class="btn btn-sm btn-default edit-boundary mrs"><span class="glyphicon glyphicon-edit"></span> Edit Boundary</button>
 						<button class="btn btn-sm btn-primary update-field"><span class="glyphicon glyphicon-save"></span> Save</button>
 					</div>
 				</form>
@@ -102,25 +103,15 @@
 				<div class="overflowFix">
 					<div class="form-group col-xs-6 prn pull-right">
 						<button class="btn btn-block btn-primary addCropYear">Add</button>
-						<button class="btn btn-success saveCropYear pull-right" style="display:none;">Save</button>
-						<button class="btn btn-default cancelCropYear pull-right" style="display:none;">Cancel</button>
+						<button class="btn btn-success saveCropYear pull-right" style="display:none;"><span class="glyphicon glyphicon-save">Save</button>
+						<button class="btn btn-default cancelCropYear pull-right" style="display:none;"><span class="glyphicon glyphicon-remove">Cancel</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<div class="edit_field_success_wrapper bs-callout bs-callout-success" style="display:none;">
-	<h4>Field Added</h4>
-	<div class="btn-group" role="group" aria-label="add field controls">
-		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
-		<button class='newField btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Field</button>
-	</div>
-</div>
-<div class="edit_field_error_wrapper bs-callout bs-callout-danger" style="display:none;">
-	<h4>Adding a Field Failed</h4>
-	<div class="btn-group" role="group" aria-label="add field controls">
-		<button class='btn btn-sm btn-default finish'>Finish</button>
-		<button class='newField btn btn-sm btn-primary'>Add Another Field</button>
-	</div>
+<div class="editing_boundary" style="display:none;">
+	<button class="btn btn-block btn-primary save-edited-boundary"><span class="glyphicon glyphicon-save"></span>Save</button>
+	<button class="btn btn-block btn-default cancel-editing-boundary"><span class="glyphicon glyphicon-remove"></span>Cancel</button>
 </div>

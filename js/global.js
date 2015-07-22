@@ -3,7 +3,32 @@
 var plenty_admin = {};
 plenty_admin.UI = {};
 plenty_admin.UI.DOM = $("body");
-plenty_admin.UI.loadingOverlay = plenty_admin.UI.DOM.find("#loadingOverlay");								
+plenty_admin.UI.loadingOverlay = plenty_admin.UI.DOM.find("#loadingOverlay");			
+
+//an array of font icon class names to check against;
+plenty_admin.UI.fontIconClasses = [
+	"moisture-sensor",
+	"pest-control",
+	"harvest",
+	"soil-test",
+	"planting",
+	"fertilizer",
+	"tilling",
+	"late-nitrogen",
+	"early-nitrogen",
+	"spreader",
+	"sprayer",
+	"grain-cart",
+	"combine",
+	"offset-disk",
+	"atv",
+	"pipe",
+	"spray-plane",
+	"tractor",
+	"well",
+	"planter",
+	"grain-truck"
+];		
 
 //build the brand palette object
 plenty_admin.UI.brand_palette = new Rainbow();
@@ -24,7 +49,7 @@ timezoneJS.timezone.init({ callback: function(ev){
 */
 
 plenty_admin.init = function(context){
-	plenty_admin.state = context;
+	plenty_admin.context = context;
 	//setup the logout link
 	plenty_admin.UI.DOM
 	.find(".navbar li.logout a")
@@ -34,10 +59,26 @@ plenty_admin.init = function(context){
 		location.href = "/";
 		return false;
 	});
+	
+	//set up a global event handler for modal popups
+	$('body')
+	.on('shown.bs.modal', '.modal', function () {
+		console.log('we have shown a modal');
+		$('body')
+		.find(".page-container")
+		.addClass("blur");
+	})
+	.on('hidden.bs.modal', '.modal', function () {
+		console.log('we have hidden a modal');
+		$('body')
+		.find(".page-container")
+		.removeClass("blur");
+	});
+
 	//get the logged in user's details
 	plenty_admin.REST.get_user_with_username(store.get("plenty_username"), function(response){
 		plenty_admin.DATA.userDetails = response;
-		console.log("userDetails: ", plenty_admin.DATA.userDetails); // user logged in successfully
+		console.log("userDetails: ", plenty_admin.DATA.userDetails, context); // user logged in successfully
 		
 		//insert user detils into head of page
 		plenty_admin.UI.DOM
@@ -79,7 +120,7 @@ plenty_admin.init = function(context){
 					plenty_admin.DATA.organizations = {};
 					var _orgsBody = orgsForUser.body();
 					
-					//loop organizations and add them to the dashboard
+					//loop organizations and add them to the map page
 					for(var o = 0; o < _orgsBody.length; o++){
 						var org_data = _orgsBody[o].data();
 						plenty_admin.DATA.organizations[org_data.id] = org_data;
@@ -94,6 +135,10 @@ plenty_admin.init = function(context){
 			case "dashboard":
 				plenty_admin.HELPER.hideLoadingOverlay();
 				$( document ).trigger( "dashboard_data_ready", [ plenty_admin.DATA.organizations ] );
+			break;
+			
+			case "plans":
+				$( document ).trigger( "plans_data_ready");
 			break;
 		}
 	});
@@ -707,6 +752,27 @@ plenty_admin.REST.fields.getEquipmentLocationForFilter = function(boundary, call
 			});
 }
 
+plenty_admin.REST.fields.getPlatformServicesForFilter = function(callback){
+	//get fields related to this farm
+	plenty_admin.REST.fields.platformServicesForFilter = plenty_admin.api.one("filters/getPlatformServicesFiltered", plenty_admin.DATA.userFilters.filterDto.id);
+	
+	plenty_admin.REST.fields.platformServicesForFilter
+	.get()
+		.then(
+			function(ps){
+				var psBody = ps.body();
+				var psSet = [];
+				for(var e in psBody){
+					var psBodyData = psBody[e]();
+					psSet.push(psBodyData);
+				}
+				
+				if(callback && typeof callback === "function"){
+					callback(psSet);
+				}
+			});
+}
+
 plenty_admin.REST.fields.getAllFieldsByOrganization = function(farmId, callback){
 	//get fields related to this farm
 	plenty_admin.REST.fields.allFieldsByOrganization = plenty_admin.api.one("fields/getFieldsByOrganization", farmId);
@@ -743,7 +809,7 @@ plenty_admin.REST.fields.getEquipmentImage = function(equipmentId, callback){
 	plenty_admin.REST.equipmentImage.get(equipmentId)
 	.then(
 		function(equipmentImageString){
-			console.log(" equipmentImageString: ", equipmentImageString().data);
+			//console.log(" equipmentImageString: ", equipmentImageString().data);
 			if(callback && typeof callback == "function"){
 				callback(equipmentImageString().data);
 			}
@@ -766,6 +832,20 @@ plenty_admin.REST.fields.getAllFarmServicesByFarm = function(farmId, callback){
 				plenty_admin.DATA.organizations[plenty_admin.DATA.current_organization.id].farms[plenty_admin.DATA.current_farm.id].services = servicesSet;
 				if(callback && typeof callback === "function"){
 					callback(servicesSet);
+				}
+			});
+}
+
+plenty_admin.REST.fields.getGrowthStageById = function(gsId, callback){
+	//get fields related to this farm
+	plenty_admin.REST.growthStageById = plenty_admin.api.all("cropStage/getGrowthStage");
+	plenty_admin.REST.growthStageById.get(gsId)
+		.then(
+			function(gs){
+				//var gsData = gs.data();
+				console.log("gs", gs, gs.body()());
+				if(callback && typeof callback === "function"){
+					callback(gs.body()());
 				}
 			});
 }
@@ -1031,6 +1111,7 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 	var min = (a.getUTCMinutes() < 10 ? "0"+a.getUTCMinutes() : a.getUTCMinutes());
 	var sec = (a.getUTCSeconds() < 10 ? "0"+a.getUTCSeconds() : a.getUTCSeconds());
 	var _date = (month ? month.slice(0,4) : month) + ' ' + date;
+	var fullDate = _date + ", " + year;
 	
 	var time = hour + ':' + min + ':' + sec;
 	var date_time = _date + ' ' +  time;
@@ -1039,7 +1120,9 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 			date: _date,
 			time: time,
 			month: month,
-			obj: a
+			obj: a,
+			fullDate: fullDate,
+			year:year
 		};
 }
 plenty_admin.HELPER.daysFromHours = function(hours){
@@ -1062,16 +1145,28 @@ plenty_admin.HELPER.treatAsUTC = function(date) {
     result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
     return result;
 }
+plenty_admin.HELPER.capitalizeFirstLetter = function(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 plenty_admin.HELPER.daydiff = function(startDate, endDate) {
     var millisecondsPerDay = 24 * 60 * 60 * 1000;
-    return (plenty_admin.HELPER.treatAsUTC(endDate) - plenty_admin.HELPER.treatAsUTC(startDate)) / millisecondsPerDay;
+	var daydiff = (endDate - startDate) / millisecondsPerDay;
+    return daydiff;
 }
 plenty_admin.HELPER.hideLoadingOverlay = function(){
-	$("body").removeClass("loading");
+	$("body")
+	.removeClass("loading")
+	.find(".page-container")
+	.removeClass("blur");
+	
 	plenty_admin.UI.loadingOverlay.fadeOut("fast");
 }
 plenty_admin.HELPER.showLoadingOverlay = function(){
-	$("body").addClass("loading");
+	$("body")
+	.addClass("loading")
+	.find(".page-container")
+	.addClass("blur");
+	
 	plenty_admin.UI.loadingOverlay.fadeIn("fast");
 }
 plenty_admin.HELPER.returnInlineEditSelectOptions = function(field){

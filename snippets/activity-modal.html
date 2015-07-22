@@ -30,14 +30,20 @@
 					
 					</tbody>
 				</table>
-				<button class="btn btn-primary edit pull-right"><span class="fa fa-edit"></span> Edit</button>
 			</div>
 		</div>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
-		<button type="button" class="btn btn-danger pull-right mrs" data-dismiss="modal"><span class="fa fa-trash-o"></span> Delete</button>
+	  	<button type="button" class="btn btn-danger pull-right delete"><span class="fa fa-trash-o"></span> Delete</button>
+		<button type="button" class="btn btn-default pull-right cancel mrs" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
 	  </div>
 	</div><!-- /.modal-content -->
+	<div class="alert alert-danger fade in confirmDelete" role="alert" style="display:none;">
+		<h4>Are you sure you want to delete this activity?</h4>
+		<p>
+		<button type="button" class="btn btn-danger delete pull-right"><span class="fa fa-trash-o"></span> Delete</button>
+		<button type="button" class="btn btn-default cancel pull-right mrs"><span class="glyphicon glyphicon-remove"></span> Cancal</button>
+		</p>
+	</div>
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

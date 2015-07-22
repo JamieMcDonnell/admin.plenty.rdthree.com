@@ -15,60 +15,69 @@ body.map{
 		box-sizing: border-box;
 	}
 }
+.filter_controls{
+	.filter_loader{
+		width:21px;
+		height:24px;
+		margin:10px 0;
+		color:@brand-secondary;
+		font-size:24px;
+	}
+}
 	
-	#map-wrapper{
-		position:relative;
-		
-		h1.filters_toggle{
-			position:absolute;
-			top:10px;
-			right:10px;
-			background-color:#fff;
-		}
-		
-		#map-container{
-			height:100%;
-			position:absolute !important;
-			top:0;
-			bottom:0;
-			left:0;
-			right:0;
-			z-index:2;
-		}
+#map-wrapper{
+	position:relative;
+	
+	h1.filters_toggle{
+		position:absolute;
+		top:10px;
+		right:10px;
+		background-color:#fff;
 	}
 	
-	.flexbox-parent
-	{
-		width: 100%;
-		height: 100%;
+	#map-container{
+		height:100%;
+		position:absolute !important;
+		top:0;
+		bottom:0;
+		left:0;
+		right:0;
+		z-index:2;
+	}
+}
+
+.flexbox-parent
+{
+	width: 100%;
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
 	
-		display: flex;
-		flex-direction: column;
-		
-		justify-content: flex-start; /* align items in Main Axis */
-		align-items: stretch; /* align items in Cross Axis */
-		align-content: stretch; /* Extra space in Cross Axis */
-	}
-	.flexbox-item-grow
-	{
-		flex: 1; /* same as flex: 1 1 auto; */
-	}
+	justify-content: flex-start; /* align items in Main Axis */
+	align-items: stretch; /* align items in Cross Axis */
+	align-content: stretch; /* Extra space in Cross Axis */
+}
+.flexbox-item-grow
+{
+	flex: 1; /* same as flex: 1 1 auto; */
+}
+
+.fill-area
+{
+	display: flex;
+	flex-direction: row;
 	
-	.fill-area
-	{
-		display: flex;
-		flex-direction: row;
-		
-		justify-content: flex-start; /* align items in Main Axis */
-		align-items: stretch; /* align items in Cross Axis */
-		align-content: stretch; /* Extra space in Cross Axis */
-		
-	}
-	.fill-area-content
-	{
-		/* Needed for when the area gets squished too far and there is content that can't be displayed */
-		overflow: hidden; 
-	}
+	justify-content: flex-start; /* align items in Main Axis */
+	align-items: stretch; /* align items in Cross Axis */
+	align-content: stretch; /* Extra space in Cross Axis */
+	
+}
+.fill-area-content
+{
+	/* Needed for when the area gets squished too far and there is content that can't be displayed */
+	overflow: hidden; 
+}
 
 
 #map_legend{
@@ -79,6 +88,10 @@ body.map{
 		margin-bottom:5px;
 		list-style:none;
 		text-transform:capitalize;
+		
+		&:last-of-type{
+			margin-bottom:0;
+		}
 		
 		.legend_swatch{
 			width: 20px;

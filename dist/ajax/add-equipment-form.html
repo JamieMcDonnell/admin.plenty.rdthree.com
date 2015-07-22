@@ -3,8 +3,20 @@
 		<label for="add_equipment_name">Name</label>
 		<input type="text" class="form-control" id="add_equipment_name" placeholder="e.g. WetWillie" required data-propname="name">
 	</div>
-
+	
+	
 	<div class="form-group col-xs-6 pln">
+		<label for="add_equipment_orgs">Organization</label>
+		<select class="form-control equipment_orgs_list" id="add_equipment_orgs" required placeholder="Choose an organization for this equipment" data-propname="organizationId">
+			
+		</select>
+	</div>
+	<div class="form-group col-xs-6 prn platformServices">
+		<label>Platform Service</label>
+	</div>
+
+
+	<div class="form-group col-xs-6 pln clear">
 		<label for="add_equipment_type">Type</label>
 		<select multiple class="form-control equipment_type_list" id="add_equipment_type" required placeholder="Choose an equipment type" data-propname="equipmentTypeId">
 			
@@ -18,11 +30,11 @@
 	</div>
 	<div class="form-group col-xs-6 pln clear">
 		<label for="add_equipment_latitude">Latitude</label>
-		<input type="text" class="form-control" id="add_equipment_latitude" placeholder="e.g. 51.665544" required data-propname="latitude">
+		<input readonly type="text" class="form-control" id="add_equipment_latitude" placeholder="e.g. 51.665544" required data-propname="latitude">
 	</div>
 	<div class="form-group col-xs-6 prn">
 		<label for="add_equipment_longitude">Longitude</label>
-		<input type="text" class="form-control" id="add_equipment_longitude" placeholder="e.g. 51.665544" required data-propname="longitude">
+		<input readonly type="text" class="form-control" id="add_equipment_longitude" placeholder="e.g. 51.665544" required data-propname="longitude">
 	</div>
 	<div class="form-group clear">
 		<button class="btn btn-sm btn-default cancel pull-right"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
@@ -33,6 +45,6 @@
 	<h4>Equipment Added</h4>
 	<div class="btn-group" role="group" aria-label="add field controls">
 		<button class='btn btn-sm btn-success finish'><span class="glyphicon glyphicon-ok"></span> Done</button>
-		<button class='newEquipment btn btn-sm btn-primary'><span class="glyphicon glyphicon-plus"></span> Add Another Equipment</button>
+		<button class='newEquipment btn btn-sm btn-primary' data-loading-text="loading..."><span class="glyphicon glyphicon-plus"></span> Add Another Equipment</button>
 	</div>
 </div>

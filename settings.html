@@ -4,8 +4,8 @@
 
 {{ include('snippets/meta.html', {"title": "Plenty Admin Dashboard", "description": "This is the dashboard of the admin UI", "author": "Jamie McDonnell"}) }}
 </head>
-{{ include('snippets/header.html', {"page": "settings", "dashboard" : false, "settings" : true, "contact" : false, "organization" : false, "map" : false}) }}
-<div class="container-fluid">
+{{ include('snippets/header.html', {"page": "settings", "dashboard" : false, "settings" : true, "contact" : false, "organization" : false, "map" : false, "plans" : false}) }}
+<div class="container-fluid page-container blur">
 	<div class="row"> 
 		{{ include('snippets/sidebar-nav.html') }}
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">
@@ -94,8 +94,13 @@
 			{{ include('snippets/field.html', {"breadcrumbs": true}) }} </div>
 	</div>
 </div>
+{{ include('snippets/add_to_organization.html') }}
+{{ include('snippets/edit_in_organization.html') }}
+{{ include('snippets/add_field.html') }}
+{{ include('snippets/edit_field.html') }}
+{{ include('snippets/confirm-delete.html') }}
 {{ include('snippets/loadingOverlay.html') }}
-	{{ include('snippets/set-id-and-password.html') }} 
+{{ include('snippets/set-id-and-password.html') }} 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script> 
 {{ include('snippets/footer.html') }} 
 <script type="text/javascript">

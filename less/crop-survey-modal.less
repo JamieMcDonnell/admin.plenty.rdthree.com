@@ -1,0 +1,90 @@
+@import "variables.less";
+#crop-survey{
+	.modal-body{
+		.tab-content{
+			.col-md-3{
+				width:25%;
+			}
+			.col-md-9{
+				width:75%;
+			}
+			.small-route-map,
+			.photo-notes{
+				height:140px;
+				background-color:#ebebeb;
+			}
+			// main content tabs
+			ul.map-route-nav{
+				list-style:none;
+				width:100%;
+				padding-left:40px;
+				font-size: 21px;
+				
+				li{
+					float:left;
+				}
+			}
+			#route{
+				.route-map{
+					height:300px;
+					padding:none;
+					background-color:#ebebeb;
+					
+					li{
+						float:left;
+					}
+				}
+			}
+			
+			#sample{
+				.col-md-9{
+					.tab-pane{
+						height:300px;
+						overflow-y:auto;
+						padding:10px 10px 0 10px;
+						
+						.crop_survey_photo{
+							width:97px;
+							height:75px;
+							float:left;
+							margin:0 10px 10px 0;
+							position: relative;
+							
+							&:last-of-type{
+								margin-right:0;
+							}
+							
+							&.loading{
+								&:before{
+									position: absolute;
+									top:10px;
+									left:30px;
+									font-family: 'FontAwesome';
+									content: "\f021";
+									font-size: 38px;
+									animation: fa-spin 2s infinite linear;
+									color:@brand-secondary;
+									transform-origin: center;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#conditions{
+				.survey_conditions_map{
+					height:300px;
+					background-color:#ebebeb;
+				}
+			}
+			
+			#growthstate{
+				.growthstate_chart{
+					width:100%;
+					height:300px;
+				}
+			}
+		}
+	}
+}

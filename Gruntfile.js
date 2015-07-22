@@ -135,6 +135,7 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'node_modules/bootstrap-slider/dist/bootstrap-slider.min.js',
 				'node_modules/numeral/min/numeral.min.js',
 				'bower_components/Chart.js/Chart.min.js',
+				'bower_components/bootbox/bootbox.js',
 				//'bower_components/timezone-js/src/date.js',
 				'bower_components/StickyTableHeaders/js/jquery.stickytableheaders.min.js',
 				'js/global.js',
@@ -147,9 +148,11 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'js/field.js', 
 				'js/map.js', 
 				'js/dashboard.js', 
+				'js/plans.js', 
 				'js/sidebar.js',
 				'js/filters.js',
 				'js/organization.js',
+				'js/crop-survey-modal.js'
 				//'js/report-problem.js'
 		  ],
 		  dest: 'dist/js/includes.js'
@@ -170,11 +173,15 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 
     uglify: {
       options: {
-        preserveComments: 'some'
+        preserveComments: 'false'
       },
       core: {
         src: '<%= concat.bootstrap.dest %>',
         dest: 'dist/js/<%= pkg.name %>.min.js'
+      },
+	  includes: {
+        src: 'dist/js/includes.js',
+        dest: 'dist/js/includes.min.js'
       },
       customize: {
         src: configBridge.paths.customizerJs,
@@ -560,7 +567,7 @@ grunt.loadNpmTasks('grunt-include-replace-more');
   grunt.registerTask('test-js', ['jshint:core', 'jshint:test', 'jshint:grunt', 'jscs:core', 'jscs:test', 'jscs:grunt', 'qunit']);
 
   // JS distribution task.
-  grunt.registerTask('dist-js', ['concat', 'uglify:core', 'commonjs', 'includereplacemore']);
+  grunt.registerTask('dist-js', ['concat', 'uglify:core', 'uglify:includes', 'commonjs', 'includereplacemore']);
 
   // CSS distribution task.
   grunt.registerTask('less-compile', ['less:compileCore', 'less:compileTheme', 'less:compilePlenty']);

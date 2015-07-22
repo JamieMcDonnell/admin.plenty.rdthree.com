@@ -148,3 +148,31 @@
 @media (min-width: @screen-md-min) {
   .modal-lg { width: @modal-lg; }
 }
+
+.bootbox.modal{
+	z-index:10001;
+	
+	&.danger .modal-dialog .modal-content{
+		border:1px solid @brand-danger;
+		
+		.bootbox-body{
+			color:@brand-danger;
+		}
+	}
+	
+	&.warning .modal-dialog .modal-content{
+		border:1px solid @brand-warning;
+		
+		.bootbox-body{
+			color:@brand-warning;
+		}
+	}
+	
+	&.info .modal-dialog .modal-content{
+		border:1px solid @brand-primary;
+		
+		.bootbox-body{
+			color:@brand-primary;
+		}
+	}
+}

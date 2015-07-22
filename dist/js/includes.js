@@ -1520,13 +1520,1018 @@ function hasOwnProperty(obj, prop) {
  */
 (function(){"use strict";var t=this,i=t.Chart,e=function(t){this.canvas=t.canvas,this.ctx=t;var i=function(t,i){return t["offset"+i]?t["offset"+i]:document.defaultView.getComputedStyle(t).getPropertyValue(i)},e=this.width=i(t.canvas,"Width"),n=this.height=i(t.canvas,"Height");t.canvas.width=e,t.canvas.height=n;var e=this.width=t.canvas.width,n=this.height=t.canvas.height;return this.aspectRatio=this.width/this.height,s.retinaScale(this),this};e.defaults={global:{animation:!0,animationSteps:60,animationEasing:"easeOutQuart",showScale:!0,scaleOverride:!1,scaleSteps:null,scaleStepWidth:null,scaleStartValue:null,scaleLineColor:"rgba(0,0,0,.1)",scaleLineWidth:1,scaleShowLabels:!0,scaleLabel:"<%=value%>",scaleIntegersOnly:!0,scaleBeginAtZero:!1,scaleFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",scaleFontSize:12,scaleFontStyle:"normal",scaleFontColor:"#666",responsive:!1,maintainAspectRatio:!0,showTooltips:!0,customTooltips:!1,tooltipEvents:["mousemove","touchstart","touchmove","mouseout"],tooltipFillColor:"rgba(0,0,0,0.8)",tooltipFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",tooltipFontSize:14,tooltipFontStyle:"normal",tooltipFontColor:"#fff",tooltipTitleFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",tooltipTitleFontSize:14,tooltipTitleFontStyle:"bold",tooltipTitleFontColor:"#fff",tooltipYPadding:6,tooltipXPadding:6,tooltipCaretSize:8,tooltipCornerRadius:6,tooltipXOffset:10,tooltipTemplate:"<%if (label){%><%=label%>: <%}%><%= value %>",multiTooltipTemplate:"<%= value %>",multiTooltipKeyBackground:"#fff",onAnimationProgress:function(){},onAnimationComplete:function(){}}},e.types={};var s=e.helpers={},n=s.each=function(t,i,e){var s=Array.prototype.slice.call(arguments,3);if(t)if(t.length===+t.length){var n;for(n=0;n<t.length;n++)i.apply(e,[t[n],n].concat(s))}else for(var o in t)i.apply(e,[t[o],o].concat(s))},o=s.clone=function(t){var i={};return n(t,function(e,s){t.hasOwnProperty(s)&&(i[s]=e)}),i},a=s.extend=function(t){return n(Array.prototype.slice.call(arguments,1),function(i){n(i,function(e,s){i.hasOwnProperty(s)&&(t[s]=e)})}),t},h=s.merge=function(){var t=Array.prototype.slice.call(arguments,0);return t.unshift({}),a.apply(null,t)},l=s.indexOf=function(t,i){if(Array.prototype.indexOf)return t.indexOf(i);for(var e=0;e<t.length;e++)if(t[e]===i)return e;return-1},r=(s.where=function(t,i){var e=[];return s.each(t,function(t){i(t)&&e.push(t)}),e},s.findNextWhere=function(t,i,e){e||(e=-1);for(var s=e+1;s<t.length;s++){var n=t[s];if(i(n))return n}},s.findPreviousWhere=function(t,i,e){e||(e=t.length);for(var s=e-1;s>=0;s--){var n=t[s];if(i(n))return n}},s.inherits=function(t){var i=this,e=t&&t.hasOwnProperty("constructor")?t.constructor:function(){return i.apply(this,arguments)},s=function(){this.constructor=e};return s.prototype=i.prototype,e.prototype=new s,e.extend=r,t&&a(e.prototype,t),e.__super__=i.prototype,e}),c=s.noop=function(){},u=s.uid=function(){var t=0;return function(){return"chart-"+t++}}(),d=s.warn=function(t){window.console&&"function"==typeof window.console.warn&&console.warn(t)},p=s.amd="function"==typeof define&&define.amd,f=s.isNumber=function(t){return!isNaN(parseFloat(t))&&isFinite(t)},g=s.max=function(t){return Math.max.apply(Math,t)},m=s.min=function(t){return Math.min.apply(Math,t)},v=(s.cap=function(t,i,e){if(f(i)){if(t>i)return i}else if(f(e)&&e>t)return e;return t},s.getDecimalPlaces=function(t){return t%1!==0&&f(t)?t.toString().split(".")[1].length:0}),S=s.radians=function(t){return t*(Math.PI/180)},x=(s.getAngleFromPoint=function(t,i){var e=i.x-t.x,s=i.y-t.y,n=Math.sqrt(e*e+s*s),o=2*Math.PI+Math.atan2(s,e);return 0>e&&0>s&&(o+=2*Math.PI),{angle:o,distance:n}},s.aliasPixel=function(t){return t%2===0?0:.5}),y=(s.splineCurve=function(t,i,e,s){var n=Math.sqrt(Math.pow(i.x-t.x,2)+Math.pow(i.y-t.y,2)),o=Math.sqrt(Math.pow(e.x-i.x,2)+Math.pow(e.y-i.y,2)),a=s*n/(n+o),h=s*o/(n+o);return{inner:{x:i.x-a*(e.x-t.x),y:i.y-a*(e.y-t.y)},outer:{x:i.x+h*(e.x-t.x),y:i.y+h*(e.y-t.y)}}},s.calculateOrderOfMagnitude=function(t){return Math.floor(Math.log(t)/Math.LN10)}),C=(s.calculateScaleRange=function(t,i,e,s,n){var o=2,a=Math.floor(i/(1.5*e)),h=o>=a,l=g(t),r=m(t);l===r&&(l+=.5,r>=.5&&!s?r-=.5:l+=.5);for(var c=Math.abs(l-r),u=y(c),d=Math.ceil(l/(1*Math.pow(10,u)))*Math.pow(10,u),p=s?0:Math.floor(r/(1*Math.pow(10,u)))*Math.pow(10,u),f=d-p,v=Math.pow(10,u),S=Math.round(f/v);(S>a||a>2*S)&&!h;)if(S>a)v*=2,S=Math.round(f/v),S%1!==0&&(h=!0);else if(n&&u>=0){if(v/2%1!==0)break;v/=2,S=Math.round(f/v)}else v/=2,S=Math.round(f/v);return h&&(S=o,v=f/S),{steps:S,stepValue:v,min:p,max:p+S*v}},s.template=function(t,i){function e(t,i){var e=/\W/.test(t)?new Function("obj","var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('"+t.replace(/[\r\t\n]/g," ").split("<%").join("	").replace(/((^|%>)[^\t]*)'/g,"$1\r").replace(/\t=(.*?)%>/g,"',$1,'").split("	").join("');").split("%>").join("p.push('").split("\r").join("\\'")+"');}return p.join('');"):s[t]=s[t];return i?e(i):e}if(t instanceof Function)return t(i);var s={};return e(t,i)}),w=(s.generateLabels=function(t,i,e,s){var o=new Array(i);return labelTemplateString&&n(o,function(i,n){o[n]=C(t,{value:e+s*(n+1)})}),o},s.easingEffects={linear:function(t){return t},easeInQuad:function(t){return t*t},easeOutQuad:function(t){return-1*t*(t-2)},easeInOutQuad:function(t){return(t/=.5)<1?.5*t*t:-0.5*(--t*(t-2)-1)},easeInCubic:function(t){return t*t*t},easeOutCubic:function(t){return 1*((t=t/1-1)*t*t+1)},easeInOutCubic:function(t){return(t/=.5)<1?.5*t*t*t:.5*((t-=2)*t*t+2)},easeInQuart:function(t){return t*t*t*t},easeOutQuart:function(t){return-1*((t=t/1-1)*t*t*t-1)},easeInOutQuart:function(t){return(t/=.5)<1?.5*t*t*t*t:-0.5*((t-=2)*t*t*t-2)},easeInQuint:function(t){return 1*(t/=1)*t*t*t*t},easeOutQuint:function(t){return 1*((t=t/1-1)*t*t*t*t+1)},easeInOutQuint:function(t){return(t/=.5)<1?.5*t*t*t*t*t:.5*((t-=2)*t*t*t*t+2)},easeInSine:function(t){return-1*Math.cos(t/1*(Math.PI/2))+1},easeOutSine:function(t){return 1*Math.sin(t/1*(Math.PI/2))},easeInOutSine:function(t){return-0.5*(Math.cos(Math.PI*t/1)-1)},easeInExpo:function(t){return 0===t?1:1*Math.pow(2,10*(t/1-1))},easeOutExpo:function(t){return 1===t?1:1*(-Math.pow(2,-10*t/1)+1)},easeInOutExpo:function(t){return 0===t?0:1===t?1:(t/=.5)<1?.5*Math.pow(2,10*(t-1)):.5*(-Math.pow(2,-10*--t)+2)},easeInCirc:function(t){return t>=1?t:-1*(Math.sqrt(1-(t/=1)*t)-1)},easeOutCirc:function(t){return 1*Math.sqrt(1-(t=t/1-1)*t)},easeInOutCirc:function(t){return(t/=.5)<1?-0.5*(Math.sqrt(1-t*t)-1):.5*(Math.sqrt(1-(t-=2)*t)+1)},easeInElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:1==(t/=1)?1:(e||(e=.3),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),-(s*Math.pow(2,10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e)))},easeOutElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:1==(t/=1)?1:(e||(e=.3),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),s*Math.pow(2,-10*t)*Math.sin(2*(1*t-i)*Math.PI/e)+1)},easeInOutElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:2==(t/=.5)?1:(e||(e=.3*1.5),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),1>t?-.5*s*Math.pow(2,10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e):s*Math.pow(2,-10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e)*.5+1)},easeInBack:function(t){var i=1.70158;return 1*(t/=1)*t*((i+1)*t-i)},easeOutBack:function(t){var i=1.70158;return 1*((t=t/1-1)*t*((i+1)*t+i)+1)},easeInOutBack:function(t){var i=1.70158;return(t/=.5)<1?.5*t*t*(((i*=1.525)+1)*t-i):.5*((t-=2)*t*(((i*=1.525)+1)*t+i)+2)},easeInBounce:function(t){return 1-w.easeOutBounce(1-t)},easeOutBounce:function(t){return(t/=1)<1/2.75?7.5625*t*t:2/2.75>t?1*(7.5625*(t-=1.5/2.75)*t+.75):2.5/2.75>t?1*(7.5625*(t-=2.25/2.75)*t+.9375):1*(7.5625*(t-=2.625/2.75)*t+.984375)},easeInOutBounce:function(t){return.5>t?.5*w.easeInBounce(2*t):.5*w.easeOutBounce(2*t-1)+.5}}),b=s.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(t){return window.setTimeout(t,1e3/60)}}(),P=s.cancelAnimFrame=function(){return window.cancelAnimationFrame||window.webkitCancelAnimationFrame||window.mozCancelAnimationFrame||window.oCancelAnimationFrame||window.msCancelAnimationFrame||function(t){return window.clearTimeout(t,1e3/60)}}(),L=(s.animationLoop=function(t,i,e,s,n,o){var a=0,h=w[e]||w.linear,l=function(){a++;var e=a/i,r=h(e);t.call(o,r,e,a),s.call(o,r,e),i>a?o.animationFrame=b(l):n.apply(o)};b(l)},s.getRelativePosition=function(t){var i,e,s=t.originalEvent||t,n=t.currentTarget||t.srcElement,o=n.getBoundingClientRect();return s.touches?(i=s.touches[0].clientX-o.left,e=s.touches[0].clientY-o.top):(i=s.clientX-o.left,e=s.clientY-o.top),{x:i,y:e}},s.addEvent=function(t,i,e){t.addEventListener?t.addEventListener(i,e):t.attachEvent?t.attachEvent("on"+i,e):t["on"+i]=e}),k=s.removeEvent=function(t,i,e){t.removeEventListener?t.removeEventListener(i,e,!1):t.detachEvent?t.detachEvent("on"+i,e):t["on"+i]=c},F=(s.bindEvents=function(t,i,e){t.events||(t.events={}),n(i,function(i){t.events[i]=function(){e.apply(t,arguments)},L(t.chart.canvas,i,t.events[i])})},s.unbindEvents=function(t,i){n(i,function(i,e){k(t.chart.canvas,e,i)})}),R=s.getMaximumWidth=function(t){var i=t.parentNode;return i.clientWidth},T=s.getMaximumHeight=function(t){var i=t.parentNode;return i.clientHeight},A=(s.getMaximumSize=s.getMaximumWidth,s.retinaScale=function(t){var i=t.ctx,e=t.canvas.width,s=t.canvas.height;window.devicePixelRatio&&(i.canvas.style.width=e+"px",i.canvas.style.height=s+"px",i.canvas.height=s*window.devicePixelRatio,i.canvas.width=e*window.devicePixelRatio,i.scale(window.devicePixelRatio,window.devicePixelRatio))}),M=s.clear=function(t){t.ctx.clearRect(0,0,t.width,t.height)},W=s.fontString=function(t,i,e){return i+" "+t+"px "+e},z=s.longestText=function(t,i,e){t.font=i;var s=0;return n(e,function(i){var e=t.measureText(i).width;s=e>s?e:s}),s},B=s.drawRoundedRectangle=function(t,i,e,s,n,o){t.beginPath(),t.moveTo(i+o,e),t.lineTo(i+s-o,e),t.quadraticCurveTo(i+s,e,i+s,e+o),t.lineTo(i+s,e+n-o),t.quadraticCurveTo(i+s,e+n,i+s-o,e+n),t.lineTo(i+o,e+n),t.quadraticCurveTo(i,e+n,i,e+n-o),t.lineTo(i,e+o),t.quadraticCurveTo(i,e,i+o,e),t.closePath()};e.instances={},e.Type=function(t,i,s){this.options=i,this.chart=s,this.id=u(),e.instances[this.id]=this,i.responsive&&this.resize(),this.initialize.call(this,t)},a(e.Type.prototype,{initialize:function(){return this},clear:function(){return M(this.chart),this},stop:function(){return P(this.animationFrame),this},resize:function(t){this.stop();var i=this.chart.canvas,e=R(this.chart.canvas),s=this.options.maintainAspectRatio?e/this.chart.aspectRatio:T(this.chart.canvas);return i.width=this.chart.width=e,i.height=this.chart.height=s,A(this.chart),"function"==typeof t&&t.apply(this,Array.prototype.slice.call(arguments,1)),this},reflow:c,render:function(t){return t&&this.reflow(),this.options.animation&&!t?s.animationLoop(this.draw,this.options.animationSteps,this.options.animationEasing,this.options.onAnimationProgress,this.options.onAnimationComplete,this):(this.draw(),this.options.onAnimationComplete.call(this)),this},generateLegend:function(){return C(this.options.legendTemplate,this)},destroy:function(){this.clear(),F(this,this.events);var t=this.chart.canvas;t.width=this.chart.width,t.height=this.chart.height,t.style.removeProperty?(t.style.removeProperty("width"),t.style.removeProperty("height")):(t.style.removeAttribute("width"),t.style.removeAttribute("height")),delete e.instances[this.id]},showTooltip:function(t,i){"undefined"==typeof this.activeElements&&(this.activeElements=[]);var o=function(t){var i=!1;return t.length!==this.activeElements.length?i=!0:(n(t,function(t,e){t!==this.activeElements[e]&&(i=!0)},this),i)}.call(this,t);if(o||i){if(this.activeElements=t,this.draw(),this.options.customTooltips&&this.options.customTooltips(!1),t.length>0)if(this.datasets&&this.datasets.length>1){for(var a,h,r=this.datasets.length-1;r>=0&&(a=this.datasets[r].points||this.datasets[r].bars||this.datasets[r].segments,h=l(a,t[0]),-1===h);r--);var c=[],u=[],d=function(){var t,i,e,n,o,a=[],l=[],r=[];return s.each(this.datasets,function(i){t=i.points||i.bars||i.segments,t[h]&&t[h].hasValue()&&a.push(t[h])}),s.each(a,function(t){l.push(t.x),r.push(t.y),c.push(s.template(this.options.multiTooltipTemplate,t)),u.push({fill:t._saved.fillColor||t.fillColor,stroke:t._saved.strokeColor||t.strokeColor})},this),o=m(r),e=g(r),n=m(l),i=g(l),{x:n>this.chart.width/2?n:i,y:(o+e)/2}}.call(this,h);new e.MultiTooltip({x:d.x,y:d.y,xPadding:this.options.tooltipXPadding,yPadding:this.options.tooltipYPadding,xOffset:this.options.tooltipXOffset,fillColor:this.options.tooltipFillColor,textColor:this.options.tooltipFontColor,fontFamily:this.options.tooltipFontFamily,fontStyle:this.options.tooltipFontStyle,fontSize:this.options.tooltipFontSize,titleTextColor:this.options.tooltipTitleFontColor,titleFontFamily:this.options.tooltipTitleFontFamily,titleFontStyle:this.options.tooltipTitleFontStyle,titleFontSize:this.options.tooltipTitleFontSize,cornerRadius:this.options.tooltipCornerRadius,labels:c,legendColors:u,legendColorBackground:this.options.multiTooltipKeyBackground,title:t[0].label,chart:this.chart,ctx:this.chart.ctx,custom:this.options.customTooltips}).draw()}else n(t,function(t){var i=t.tooltipPosition();new e.Tooltip({x:Math.round(i.x),y:Math.round(i.y),xPadding:this.options.tooltipXPadding,yPadding:this.options.tooltipYPadding,fillColor:this.options.tooltipFillColor,textColor:this.options.tooltipFontColor,fontFamily:this.options.tooltipFontFamily,fontStyle:this.options.tooltipFontStyle,fontSize:this.options.tooltipFontSize,caretHeight:this.options.tooltipCaretSize,cornerRadius:this.options.tooltipCornerRadius,text:C(this.options.tooltipTemplate,t),chart:this.chart,custom:this.options.customTooltips}).draw()},this);return this}},toBase64Image:function(){return this.chart.canvas.toDataURL.apply(this.chart.canvas,arguments)}}),e.Type.extend=function(t){var i=this,s=function(){return i.apply(this,arguments)};if(s.prototype=o(i.prototype),a(s.prototype,t),s.extend=e.Type.extend,t.name||i.prototype.name){var n=t.name||i.prototype.name,l=e.defaults[i.prototype.name]?o(e.defaults[i.prototype.name]):{};e.defaults[n]=a(l,t.defaults),e.types[n]=s,e.prototype[n]=function(t,i){var o=h(e.defaults.global,e.defaults[n],i||{});return new s(t,o,this)}}else d("Name not provided for this chart, so it hasn't been registered");return i},e.Element=function(t){a(this,t),this.initialize.apply(this,arguments),this.save()},a(e.Element.prototype,{initialize:function(){},restore:function(t){return t?n(t,function(t){this[t]=this._saved[t]},this):a(this,this._saved),this},save:function(){return this._saved=o(this),delete this._saved._saved,this},update:function(t){return n(t,function(t,i){this._saved[i]=this[i],this[i]=t},this),this},transition:function(t,i){return n(t,function(t,e){this[e]=(t-this._saved[e])*i+this._saved[e]},this),this},tooltipPosition:function(){return{x:this.x,y:this.y}},hasValue:function(){return f(this.value)}}),e.Element.extend=r,e.Point=e.Element.extend({display:!0,inRange:function(t,i){var e=this.hitDetectionRadius+this.radius;return Math.pow(t-this.x,2)+Math.pow(i-this.y,2)<Math.pow(e,2)},draw:function(){if(this.display){var t=this.ctx;t.beginPath(),t.arc(this.x,this.y,this.radius,0,2*Math.PI),t.closePath(),t.strokeStyle=this.strokeColor,t.lineWidth=this.strokeWidth,t.fillStyle=this.fillColor,t.fill(),t.stroke()}}}),e.Arc=e.Element.extend({inRange:function(t,i){var e=s.getAngleFromPoint(this,{x:t,y:i}),n=e.angle>=this.startAngle&&e.angle<=this.endAngle,o=e.distance>=this.innerRadius&&e.distance<=this.outerRadius;return n&&o},tooltipPosition:function(){var t=this.startAngle+(this.endAngle-this.startAngle)/2,i=(this.outerRadius-this.innerRadius)/2+this.innerRadius;return{x:this.x+Math.cos(t)*i,y:this.y+Math.sin(t)*i}},draw:function(t){var i=this.ctx;i.beginPath(),i.arc(this.x,this.y,this.outerRadius,this.startAngle,this.endAngle),i.arc(this.x,this.y,this.innerRadius,this.endAngle,this.startAngle,!0),i.closePath(),i.strokeStyle=this.strokeColor,i.lineWidth=this.strokeWidth,i.fillStyle=this.fillColor,i.fill(),i.lineJoin="bevel",this.showStroke&&i.stroke()}}),e.Rectangle=e.Element.extend({draw:function(){var t=this.ctx,i=this.width/2,e=this.x-i,s=this.x+i,n=this.base-(this.base-this.y),o=this.strokeWidth/2;this.showStroke&&(e+=o,s-=o,n+=o),t.beginPath(),t.fillStyle=this.fillColor,t.strokeStyle=this.strokeColor,t.lineWidth=this.strokeWidth,t.moveTo(e,this.base),t.lineTo(e,n),t.lineTo(s,n),t.lineTo(s,this.base),t.fill(),this.showStroke&&t.stroke()},height:function(){return this.base-this.y},inRange:function(t,i){return t>=this.x-this.width/2&&t<=this.x+this.width/2&&i>=this.y&&i<=this.base}}),e.Tooltip=e.Element.extend({draw:function(){var t=this.chart.ctx;t.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.xAlign="center",this.yAlign="above";var i=this.caretPadding=2,e=t.measureText(this.text).width+2*this.xPadding,s=this.fontSize+2*this.yPadding,n=s+this.caretHeight+i;this.x+e/2>this.chart.width?this.xAlign="left":this.x-e/2<0&&(this.xAlign="right"),this.y-n<0&&(this.yAlign="below");var o=this.x-e/2,a=this.y-n;if(t.fillStyle=this.fillColor,this.custom)this.custom(this);else{switch(this.yAlign){case"above":t.beginPath(),t.moveTo(this.x,this.y-i),t.lineTo(this.x+this.caretHeight,this.y-(i+this.caretHeight)),t.lineTo(this.x-this.caretHeight,this.y-(i+this.caretHeight)),t.closePath(),t.fill();break;case"below":a=this.y+i+this.caretHeight,t.beginPath(),t.moveTo(this.x,this.y+i),t.lineTo(this.x+this.caretHeight,this.y+i+this.caretHeight),t.lineTo(this.x-this.caretHeight,this.y+i+this.caretHeight),t.closePath(),t.fill()}switch(this.xAlign){case"left":o=this.x-e+(this.cornerRadius+this.caretHeight);break;case"right":o=this.x-(this.cornerRadius+this.caretHeight)}B(t,o,a,e,s,this.cornerRadius),t.fill(),t.fillStyle=this.textColor,t.textAlign="center",t.textBaseline="middle",t.fillText(this.text,o+e/2,a+s/2)}}}),e.MultiTooltip=e.Element.extend({initialize:function(){this.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.titleFont=W(this.titleFontSize,this.titleFontStyle,this.titleFontFamily),this.height=this.labels.length*this.fontSize+(this.labels.length-1)*(this.fontSize/2)+2*this.yPadding+1.5*this.titleFontSize,this.ctx.font=this.titleFont;var t=this.ctx.measureText(this.title).width,i=z(this.ctx,this.font,this.labels)+this.fontSize+3,e=g([i,t]);this.width=e+2*this.xPadding;var s=this.height/2;this.y-s<0?this.y=s:this.y+s>this.chart.height&&(this.y=this.chart.height-s),this.x>this.chart.width/2?this.x-=this.xOffset+this.width:this.x+=this.xOffset},getLineHeight:function(t){var i=this.y-this.height/2+this.yPadding,e=t-1;return 0===t?i+this.titleFontSize/2:i+(1.5*this.fontSize*e+this.fontSize/2)+1.5*this.titleFontSize},draw:function(){if(this.custom)this.custom(this);else{B(this.ctx,this.x,this.y-this.height/2,this.width,this.height,this.cornerRadius);var t=this.ctx;t.fillStyle=this.fillColor,t.fill(),t.closePath(),t.textAlign="left",t.textBaseline="middle",t.fillStyle=this.titleTextColor,t.font=this.titleFont,t.fillText(this.title,this.x+this.xPadding,this.getLineHeight(0)),t.font=this.font,s.each(this.labels,function(i,e){t.fillStyle=this.textColor,t.fillText(i,this.x+this.xPadding+this.fontSize+3,this.getLineHeight(e+1)),t.fillStyle=this.legendColorBackground,t.fillRect(this.x+this.xPadding,this.getLineHeight(e+1)-this.fontSize/2,this.fontSize,this.fontSize),t.fillStyle=this.legendColors[e].fill,t.fillRect(this.x+this.xPadding,this.getLineHeight(e+1)-this.fontSize/2,this.fontSize,this.fontSize)},this)}}}),e.Scale=e.Element.extend({initialize:function(){this.fit()},buildYLabels:function(){this.yLabels=[];for(var t=v(this.stepValue),i=0;i<=this.steps;i++)this.yLabels.push(C(this.templateString,{value:(this.min+i*this.stepValue).toFixed(t)}));this.yLabelWidth=this.display&&this.showLabels?z(this.ctx,this.font,this.yLabels):0},addXLabel:function(t){this.xLabels.push(t),this.valuesCount++,this.fit()},removeXLabel:function(){this.xLabels.shift(),this.valuesCount--,this.fit()},fit:function(){this.startPoint=this.display?this.fontSize:0,this.endPoint=this.display?this.height-1.5*this.fontSize-5:this.height,this.startPoint+=this.padding,this.endPoint-=this.padding;var t,i=this.endPoint-this.startPoint;for(this.calculateYRange(i),this.buildYLabels(),this.calculateXLabelRotation();i>this.endPoint-this.startPoint;)i=this.endPoint-this.startPoint,t=this.yLabelWidth,this.calculateYRange(i),this.buildYLabels(),t<this.yLabelWidth&&this.calculateXLabelRotation()},calculateXLabelRotation:function(){this.ctx.font=this.font;var t,i,e=this.ctx.measureText(this.xLabels[0]).width,s=this.ctx.measureText(this.xLabels[this.xLabels.length-1]).width;if(this.xScalePaddingRight=s/2+3,this.xScalePaddingLeft=e/2>this.yLabelWidth+10?e/2:this.yLabelWidth+10,this.xLabelRotation=0,this.display){var n,o=z(this.ctx,this.font,this.xLabels);this.xLabelWidth=o;for(var a=Math.floor(this.calculateX(1)-this.calculateX(0))-6;this.xLabelWidth>a&&0===this.xLabelRotation||this.xLabelWidth>a&&this.xLabelRotation<=90&&this.xLabelRotation>0;)n=Math.cos(S(this.xLabelRotation)),t=n*e,i=n*s,t+this.fontSize/2>this.yLabelWidth+8&&(this.xScalePaddingLeft=t+this.fontSize/2),this.xScalePaddingRight=this.fontSize/2,this.xLabelRotation++,this.xLabelWidth=n*o;this.xLabelRotation>0&&(this.endPoint-=Math.sin(S(this.xLabelRotation))*o+3)}else this.xLabelWidth=0,this.xScalePaddingRight=this.padding,this.xScalePaddingLeft=this.padding},calculateYRange:c,drawingArea:function(){return this.startPoint-this.endPoint},calculateY:function(t){var i=this.drawingArea()/(this.min-this.max);return this.endPoint-i*(t-this.min)},calculateX:function(t){var i=(this.xLabelRotation>0,this.width-(this.xScalePaddingLeft+this.xScalePaddingRight)),e=i/Math.max(this.valuesCount-(this.offsetGridLines?0:1),1),s=e*t+this.xScalePaddingLeft;return this.offsetGridLines&&(s+=e/2),Math.round(s)},update:function(t){s.extend(this,t),this.fit()},draw:function(){var t=this.ctx,i=(this.endPoint-this.startPoint)/this.steps,e=Math.round(this.xScalePaddingLeft);this.display&&(t.fillStyle=this.textColor,t.font=this.font,n(this.yLabels,function(n,o){var a=this.endPoint-i*o,h=Math.round(a),l=this.showHorizontalLines;t.textAlign="right",t.textBaseline="middle",this.showLabels&&t.fillText(n,e-10,a),0!==o||l||(l=!0),l&&t.beginPath(),o>0?(t.lineWidth=this.gridLineWidth,t.strokeStyle=this.gridLineColor):(t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor),h+=s.aliasPixel(t.lineWidth),l&&(t.moveTo(e,h),t.lineTo(this.width,h),t.stroke(),t.closePath()),t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor,t.beginPath(),t.moveTo(e-5,h),t.lineTo(e,h),t.stroke(),t.closePath()},this),n(this.xLabels,function(i,e){var s=this.calculateX(e)+x(this.lineWidth),n=this.calculateX(e-(this.offsetGridLines?.5:0))+x(this.lineWidth),o=this.xLabelRotation>0,a=this.showVerticalLines;0!==e||a||(a=!0),a&&t.beginPath(),e>0?(t.lineWidth=this.gridLineWidth,t.strokeStyle=this.gridLineColor):(t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor),a&&(t.moveTo(n,this.endPoint),t.lineTo(n,this.startPoint-3),t.stroke(),t.closePath()),t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor,t.beginPath(),t.moveTo(n,this.endPoint),t.lineTo(n,this.endPoint+5),t.stroke(),t.closePath(),t.save(),t.translate(s,o?this.endPoint+12:this.endPoint+8),t.rotate(-1*S(this.xLabelRotation)),t.font=this.font,t.textAlign=o?"right":"center",t.textBaseline=o?"middle":"top",t.fillText(i,0,0),t.restore()},this))}}),e.RadialScale=e.Element.extend({initialize:function(){this.size=m([this.height,this.width]),this.drawingArea=this.display?this.size/2-(this.fontSize/2+this.backdropPaddingY):this.size/2},calculateCenterOffset:function(t){var i=this.drawingArea/(this.max-this.min);return(t-this.min)*i},update:function(){this.lineArc?this.drawingArea=this.display?this.size/2-(this.fontSize/2+this.backdropPaddingY):this.size/2:this.setScaleSize(),this.buildYLabels()},buildYLabels:function(){this.yLabels=[];for(var t=v(this.stepValue),i=0;i<=this.steps;i++)this.yLabels.push(C(this.templateString,{value:(this.min+i*this.stepValue).toFixed(t)}))},getCircumference:function(){return 2*Math.PI/this.valuesCount},setScaleSize:function(){var t,i,e,s,n,o,a,h,l,r,c,u,d=m([this.height/2-this.pointLabelFontSize-5,this.width/2]),p=this.width,g=0;for(this.ctx.font=W(this.pointLabelFontSize,this.pointLabelFontStyle,this.pointLabelFontFamily),i=0;i<this.valuesCount;i++)t=this.getPointPosition(i,d),e=this.ctx.measureText(C(this.templateString,{value:this.labels[i]})).width+5,0===i||i===this.valuesCount/2?(s=e/2,t.x+s>p&&(p=t.x+s,n=i),t.x-s<g&&(g=t.x-s,a=i)):i<this.valuesCount/2?t.x+e>p&&(p=t.x+e,n=i):i>this.valuesCount/2&&t.x-e<g&&(g=t.x-e,a=i);l=g,r=Math.ceil(p-this.width),o=this.getIndexAngle(n),h=this.getIndexAngle(a),c=r/Math.sin(o+Math.PI/2),u=l/Math.sin(h+Math.PI/2),c=f(c)?c:0,u=f(u)?u:0,this.drawingArea=d-(u+c)/2,this.setCenterPoint(u,c)},setCenterPoint:function(t,i){var e=this.width-i-this.drawingArea,s=t+this.drawingArea;this.xCenter=(s+e)/2,this.yCenter=this.height/2},getIndexAngle:function(t){var i=2*Math.PI/this.valuesCount;return t*i-Math.PI/2},getPointPosition:function(t,i){var e=this.getIndexAngle(t);return{x:Math.cos(e)*i+this.xCenter,y:Math.sin(e)*i+this.yCenter}},draw:function(){if(this.display){var t=this.ctx;if(n(this.yLabels,function(i,e){if(e>0){var s,n=e*(this.drawingArea/this.steps),o=this.yCenter-n;if(this.lineWidth>0)if(t.strokeStyle=this.lineColor,t.lineWidth=this.lineWidth,this.lineArc)t.beginPath(),t.arc(this.xCenter,this.yCenter,n,0,2*Math.PI),t.closePath(),t.stroke();else{t.beginPath();for(var a=0;a<this.valuesCount;a++)s=this.getPointPosition(a,this.calculateCenterOffset(this.min+e*this.stepValue)),0===a?t.moveTo(s.x,s.y):t.lineTo(s.x,s.y);t.closePath(),t.stroke()}if(this.showLabels){if(t.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.showLabelBackdrop){var h=t.measureText(i).width;t.fillStyle=this.backdropColor,t.fillRect(this.xCenter-h/2-this.backdropPaddingX,o-this.fontSize/2-this.backdropPaddingY,h+2*this.backdropPaddingX,this.fontSize+2*this.backdropPaddingY)}t.textAlign="center",t.textBaseline="middle",t.fillStyle=this.fontColor,t.fillText(i,this.xCenter,o)}}},this),!this.lineArc){t.lineWidth=this.angleLineWidth,t.strokeStyle=this.angleLineColor;for(var i=this.valuesCount-1;i>=0;i--){if(this.angleLineWidth>0){var e=this.getPointPosition(i,this.calculateCenterOffset(this.max));t.beginPath(),t.moveTo(this.xCenter,this.yCenter),t.lineTo(e.x,e.y),t.stroke(),t.closePath()}var s=this.getPointPosition(i,this.calculateCenterOffset(this.max)+5);t.font=W(this.pointLabelFontSize,this.pointLabelFontStyle,this.pointLabelFontFamily),t.fillStyle=this.pointLabelFontColor;var o=this.labels.length,a=this.labels.length/2,h=a/2,l=h>i||i>o-h,r=i===h||i===o-h;t.textAlign=0===i?"center":i===a?"center":a>i?"left":"right",t.textBaseline=r?"middle":l?"bottom":"top",t.fillText(this.labels[i],s.x,s.y)}}}}}),s.addEvent(window,"resize",function(){var t;return function(){clearTimeout(t),t=setTimeout(function(){n(e.instances,function(t){t.options.responsive&&t.resize(t.render,!0)})},50)}}()),p?define(function(){return e}):"object"==typeof module&&module.exports&&(module.exports=e),t.Chart=e,e.noConflict=function(){return t.Chart=i,e}}).call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleBeginAtZero:!0,scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,barShowStroke:!0,barStrokeWidth:2,barValueSpacing:5,barDatasetSpacing:1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Bar",defaults:s,initialize:function(t){var s=this.options;this.ScaleClass=i.Scale.extend({offsetGridLines:!0,calculateBarX:function(t,i,e){var n=this.calculateBaseWidth(),o=this.calculateX(e)-n/2,a=this.calculateBarWidth(t);return o+a*i+i*s.barDatasetSpacing+a/2},calculateBaseWidth:function(){return this.calculateX(1)-this.calculateX(0)-2*s.barValueSpacing},calculateBarWidth:function(t){var i=this.calculateBaseWidth()-(t-1)*s.barDatasetSpacing;return i/t}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getBarsAtEvent(t):[];this.eachBars(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),this.BarClass=i.Rectangle.extend({strokeWidth:this.options.barStrokeWidth,showStroke:this.options.barShowStroke,ctx:this.chart.ctx}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,bars:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.bars.push(new this.BarClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.strokeColor,fillColor:i.fillColor,highlightFill:i.highlightFill||i.fillColor,highlightStroke:i.highlightStroke||i.strokeColor}))},this)},this),this.buildScale(t.labels),this.BarClass.prototype.base=this.scale.endPoint,this.eachBars(function(t,i,s){e.extend(t,{width:this.scale.calculateBarWidth(this.datasets.length),x:this.scale.calculateBarX(this.datasets.length,s,i),y:this.scale.endPoint}),t.save()},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachBars(function(t){t.save()}),this.render()},eachBars:function(t){e.each(this.datasets,function(i,s){e.each(i.bars,t,this,s)},this)},getBarsAtEvent:function(t){for(var i,s=[],n=e.getRelativePosition(t),o=function(t){s.push(t.bars[i])},a=0;a<this.datasets.length;a++)for(i=0;i<this.datasets[a].bars.length;i++)if(this.datasets[a].bars[i].inRange(n.x,n.y))return e.each(this.datasets,o),s;return s},buildScale:function(t){var i=this,s=function(){var t=[];return i.eachBars(function(i){t.push(i.value)}),t},n={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(s(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.barShowStroke?this.options.barStrokeWidth:0,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(n,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new this.ScaleClass(n)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].bars.push(new this.BarClass({value:t,label:i,x:this.scale.calculateBarX(this.datasets.length,e,this.scale.valuesCount+1),y:this.scale.endPoint,width:this.scale.calculateBarWidth(this.datasets.length),base:this.scale.endPoint,strokeColor:this.datasets[e].strokeColor,fillColor:this.datasets[e].fillColor}))
 },this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.bars.shift()},this),this.update()},reflow:function(){e.extend(this.BarClass.prototype,{y:this.scale.endPoint,base:this.scale.endPoint});var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();this.chart.ctx;this.scale.draw(i),e.each(this.datasets,function(t,s){e.each(t.bars,function(t,e){t.hasValue()&&(t.base=this.scale.endPoint,t.transition({x:this.scale.calculateBarX(this.datasets.length,s,e),y:this.scale.calculateY(t.value),width:this.scale.calculateBarWidth(this.datasets.length)},i).draw())},this)},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,percentageInnerCutout:50,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Doughnut",defaults:s,initialize:function(t){this.segments=[],this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,this.SegmentArc=i.Arc.extend({ctx:this.chart.ctx,x:this.chart.width/2,y:this.chart.height/2}),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.calculateTotal(t),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({value:t.value,outerRadius:this.options.animateScale?0:this.outerRadius,innerRadius:this.options.animateScale?0:this.outerRadius/100*this.options.percentageInnerCutout,fillColor:t.color,highlightColor:t.highlight||t.color,showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,startAngle:1.5*Math.PI,circumference:this.options.animateRotate?0:this.calculateCircumference(t.value),label:t.label})),e||(this.reflow(),this.update())},calculateCircumference:function(t){return 2*Math.PI*(Math.abs(t)/this.total)},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=Math.abs(t.value)},this)},update:function(){this.calculateTotal(this.segments),e.each(this.activeElements,function(t){t.restore(["fillColor"])}),e.each(this.segments,function(t){t.save()}),this.render()},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,e.each(this.segments,function(t){t.update({outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout})},this)},draw:function(t){var i=t?t:1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.calculateCircumference(t.value),outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout},i),t.endAngle=t.startAngle+t.circumference,t.draw(),0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle)},this)}}),i.types.Doughnut.extend({name:"Pie",defaults:e.merge(s,{percentageInnerCutout:0})})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,bezierCurve:!0,bezierCurveTension:.4,pointDot:!0,pointDotRadius:4,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Line",defaults:s,initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx,inRange:function(t){return Math.pow(t-this.x,2)<Math.pow(this.radius+this.hitDetectionRadius,2)}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this),this.buildScale(t.labels),this.eachPoints(function(t,i){e.extend(t,{x:this.scale.calculateX(i),y:this.scale.endPoint}),t.save()},this)},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachPoints(function(t){t.save()}),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.datasets,function(t){e.each(t.points,function(t){t.inRange(s.x,s.y)&&i.push(t)})},this),i},buildScale:function(t){var s=this,n=function(){var t=[];return s.eachPoints(function(i){t.push(i.value)}),t},o={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(n(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.pointDotRadius+this.options.pointDotStrokeWidth,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(o,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new i.Scale(o)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:this.scale.calculateX(this.scale.valuesCount+1),y:this.scale.endPoint,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.points.shift()},this),this.update()},reflow:function(){var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();var s=this.chart.ctx,n=function(t){return null!==t.value},o=function(t,i,s){return e.findNextWhere(i,n,s)||t},a=function(t,i,s){return e.findPreviousWhere(i,n,s)||t};this.scale.draw(i),e.each(this.datasets,function(t){var h=e.where(t.points,n);e.each(t.points,function(t,e){t.hasValue()&&t.transition({y:this.scale.calculateY(t.value),x:this.scale.calculateX(e)},i)},this),this.options.bezierCurve&&e.each(h,function(t,i){var s=i>0&&i<h.length-1?this.options.bezierCurveTension:0;t.controlPoints=e.splineCurve(a(t,h,i),t,o(t,h,i),s),t.controlPoints.outer.y>this.scale.endPoint?t.controlPoints.outer.y=this.scale.endPoint:t.controlPoints.outer.y<this.scale.startPoint&&(t.controlPoints.outer.y=this.scale.startPoint),t.controlPoints.inner.y>this.scale.endPoint?t.controlPoints.inner.y=this.scale.endPoint:t.controlPoints.inner.y<this.scale.startPoint&&(t.controlPoints.inner.y=this.scale.startPoint)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(h,function(t,i){if(0===i)s.moveTo(t.x,t.y);else if(this.options.bezierCurve){var e=a(t,h,i);s.bezierCurveTo(e.controlPoints.outer.x,e.controlPoints.outer.y,t.controlPoints.inner.x,t.controlPoints.inner.y,t.x,t.y)}else s.lineTo(t.x,t.y)},this),s.stroke(),this.options.datasetFill&&h.length>0&&(s.lineTo(h[h.length-1].x,this.scale.endPoint),s.lineTo(h[0].x,this.scale.endPoint),s.fillStyle=t.fillColor,s.closePath(),s.fill()),e.each(h,function(t){t.draw()})},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowLabelBackdrop:!0,scaleBackdropColor:"rgba(255,255,255,0.75)",scaleBeginAtZero:!0,scaleBackdropPaddingY:2,scaleBackdropPaddingX:2,scaleShowLine:!0,segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"PolarArea",defaults:s,initialize:function(t){this.segments=[],this.SegmentArc=i.Arc.extend({showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,ctx:this.chart.ctx,innerRadius:0,x:this.chart.width/2,y:this.chart.height/2}),this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,lineArc:!0,width:this.chart.width,height:this.chart.height,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,valuesCount:t.length}),this.updateScaleRange(t),this.scale.update(),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({fillColor:t.color,highlightColor:t.highlight||t.color,label:t.label,value:t.value,outerRadius:this.options.animateScale?0:this.scale.calculateCenterOffset(t.value),circumference:this.options.animateRotate?0:this.scale.getCircumference(),startAngle:1.5*Math.PI})),e||(this.reflow(),this.update())},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=t.value},this),this.scale.valuesCount=this.segments.length},updateScaleRange:function(t){var i=[];e.each(t,function(t){i.push(t.value)});var s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s,{size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2})},update:function(){this.calculateTotal(this.segments),e.each(this.segments,function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.updateScaleRange(this.segments),this.scale.update(),e.extend(this.scale,{xCenter:this.chart.width/2,yCenter:this.chart.height/2}),e.each(this.segments,function(t){t.update({outerRadius:this.scale.calculateCenterOffset(t.value)})},this)},draw:function(t){var i=t||1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.scale.getCircumference(),outerRadius:this.scale.calculateCenterOffset(t.value)},i),t.endAngle=t.startAngle+t.circumference,0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle),t.draw()},this),this.scale.draw()}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers;i.Type.extend({name:"Radar",defaults:{scaleShowLine:!0,angleShowLineOut:!0,scaleShowLabels:!1,scaleBeginAtZero:!0,angleLineColor:"rgba(0,0,0,.1)",angleLineWidth:1,pointLabelFontFamily:"'Arial'",pointLabelFontStyle:"normal",pointLabelFontSize:10,pointLabelFontColor:"#666",pointDot:!0,pointDotRadius:3,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'},initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx}),this.datasets=[],this.buildScale(t),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){var o;this.scale.animation||(o=this.scale.getPointPosition(n,this.scale.calculateCenterOffset(e))),s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,x:this.options.animation?this.scale.xCenter:o.x,y:this.options.animation?this.scale.yCenter:o.y,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this)},this),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=e.getRelativePosition(t),s=e.getAngleFromPoint({x:this.scale.xCenter,y:this.scale.yCenter},i),n=2*Math.PI/this.scale.valuesCount,o=Math.round((s.angle-1.5*Math.PI)/n),a=[];return(o>=this.scale.valuesCount||0>o)&&(o=0),s.distance<=this.scale.drawingArea&&e.each(this.datasets,function(t){a.push(t.points[o])}),a},buildScale:function(t){this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,angleLineColor:this.options.angleLineColor,angleLineWidth:this.options.angleShowLineOut?this.options.angleLineWidth:0,pointLabelFontColor:this.options.pointLabelFontColor,pointLabelFontSize:this.options.pointLabelFontSize,pointLabelFontFamily:this.options.pointLabelFontFamily,pointLabelFontStyle:this.options.pointLabelFontStyle,height:this.chart.height,width:this.chart.width,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,labels:t.labels,valuesCount:t.datasets[0].data.length}),this.scale.setScaleSize(),this.updateScaleRange(t.datasets),this.scale.buildYLabels()},updateScaleRange:function(t){var i=function(){var i=[];return e.each(t,function(t){t.data?i=i.concat(t.data):e.each(t.points,function(t){i.push(t.value)})}),i}(),s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s)},addData:function(t,i){this.scale.valuesCount++,e.each(t,function(t,e){var s=this.scale.getPointPosition(this.scale.valuesCount,this.scale.calculateCenterOffset(t));this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:s.x,y:s.y,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.labels.push(i),this.reflow(),this.update()},removeData:function(){this.scale.valuesCount--,this.scale.labels.shift(),e.each(this.datasets,function(t){t.points.shift()},this),this.reflow(),this.update()},update:function(){this.eachPoints(function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.scale,{width:this.chart.width,height:this.chart.height,size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2}),this.updateScaleRange(this.datasets),this.scale.setScaleSize(),this.scale.buildYLabels()},draw:function(t){var i=t||1,s=this.chart.ctx;this.clear(),this.scale.draw(),e.each(this.datasets,function(t){e.each(t.points,function(t,e){t.hasValue()&&t.transition(this.scale.getPointPosition(e,this.scale.calculateCenterOffset(t.value)),i)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(t.points,function(t,i){0===i?s.moveTo(t.x,t.y):s.lineTo(t.x,t.y)},this),s.closePath(),s.stroke(),s.fillStyle=t.fillColor,s.fill(),e.each(t.points,function(t){t.hasValue()&&t.draw()})},this)}})}.call(this);
+// @see https://github.com/makeusabrew/bootbox/issues/180
+// @see https://github.com/makeusabrew/bootbox/issues/186
+(function (root, factory) {
+
+  "use strict";
+  if (typeof define === "function" && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(["jquery"], factory);
+  } else if (typeof exports === "object") {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory(require("jquery"));
+  } else {
+    // Browser globals (root is window)
+    root.bootbox = factory(root.jQuery);
+  }
+
+}(this, function init($, undefined) {
+
+  "use strict";
+
+  // the base DOM structure needed to create a modal
+  var templates = {
+    dialog:
+      "<div class='bootbox modal' tabindex='-1' role='dialog'>" +
+        "<div class='modal-dialog'>" +
+          "<div class='modal-content'>" +
+            "<div class='modal-body'><div class='bootbox-body'></div></div>" +
+          "</div>" +
+        "</div>" +
+      "</div>",
+    header:
+      "<div class='modal-header'>" +
+        "<h4 class='modal-title'></h4>" +
+      "</div>",
+    footer:
+      "<div class='modal-footer'></div>",
+    closeButton:
+      "<button type='button' class='bootbox-close-button close' data-dismiss='modal' aria-hidden='true'>&times;</button>",
+    form:
+      "<form class='bootbox-form'></form>",
+    inputs: {
+      text:
+        "<input class='bootbox-input bootbox-input-text form-control' autocomplete=off type=text />",
+      textarea:
+        "<textarea class='bootbox-input bootbox-input-textarea form-control'></textarea>",
+      email:
+        "<input class='bootbox-input bootbox-input-email form-control' autocomplete='off' type='email' />",
+      select:
+        "<select class='bootbox-input bootbox-input-select form-control'></select>",
+      checkbox:
+        "<div class='checkbox'><label><input class='bootbox-input bootbox-input-checkbox' type='checkbox' /></label></div>",
+      date:
+        "<input class='bootbox-input bootbox-input-date form-control' autocomplete=off type='date' />",
+      time:
+        "<input class='bootbox-input bootbox-input-time form-control' autocomplete=off type='time' />",
+      number:
+        "<input class='bootbox-input bootbox-input-number form-control' autocomplete=off type='number' />",
+      password:
+        "<input class='bootbox-input bootbox-input-password form-control' autocomplete='off' type='password' />"
+    }
+  };
+
+  var defaults = {
+    // default language
+    locale: "en",
+    // show backdrop or not. Default to static so user has to interact with dialog
+    backdrop: "static",
+    // animate the modal in/out
+    animate: true,
+    // additional class string applied to the top level dialog
+    className: null,
+    // whether or not to include a close button
+    closeButton: true,
+    // show the dialog immediately by default
+    show: true,
+    // dialog container
+    container: "body"
+  };
+
+  // our public object; augmented after our private API
+  var exports = {};
+
+  /**
+   * @private
+   */
+  function _t(key) {
+    var locale = locales[defaults.locale];
+    return locale ? locale[key] : locales.en[key];
+  }
+
+  function processCallback(e, dialog, callback) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    // by default we assume a callback will get rid of the dialog,
+    // although it is given the opportunity to override this
+
+    // so, if the callback can be invoked and it *explicitly returns false*
+    // then we'll set a flag to keep the dialog active...
+    var preserveDialog = $.isFunction(callback) && callback.call(dialog, e) === false;
+
+    // ... otherwise we'll bin it
+    if (!preserveDialog) {
+      dialog.modal("hide");
+    }
+  }
+
+  function getKeyLength(obj) {
+    // @TODO defer to Object.keys(x).length if available?
+    var k, t = 0;
+    for (k in obj) {
+      t ++;
+    }
+    return t;
+  }
+
+  function each(collection, iterator) {
+    var index = 0;
+    $.each(collection, function(key, value) {
+      iterator(key, value, index++);
+    });
+  }
+
+  function sanitize(options) {
+    var buttons;
+    var total;
+
+    if (typeof options !== "object") {
+      throw new Error("Please supply an object of options");
+    }
+
+    if (!options.message) {
+      throw new Error("Please specify a message");
+    }
+
+    // make sure any supplied options take precedence over defaults
+    options = $.extend({}, defaults, options);
+
+    if (!options.buttons) {
+      options.buttons = {};
+    }
+
+    buttons = options.buttons;
+
+    total = getKeyLength(buttons);
+
+    each(buttons, function(key, button, index) {
+
+      if ($.isFunction(button)) {
+        // short form, assume value is our callback. Since button
+        // isn't an object it isn't a reference either so re-assign it
+        button = buttons[key] = {
+          callback: button
+        };
+      }
+
+      // before any further checks make sure by now button is the correct type
+      if ($.type(button) !== "object") {
+        throw new Error("button with key " + key + " must be an object");
+      }
+
+      if (!button.label) {
+        // the lack of an explicit label means we'll assume the key is good enough
+        button.label = key;
+      }
+
+      if (!button.className) {
+        if (total <= 2 && index === total-1) {
+          // always add a primary to the main option in a two-button dialog
+          button.className = "btn-primary";
+        } else {
+          button.className = "btn-default";
+        }
+      }
+    });
+
+    return options;
+  }
+
+  /**
+   * map a flexible set of arguments into a single returned object
+   * if args.length is already one just return it, otherwise
+   * use the properties argument to map the unnamed args to
+   * object properties
+   * so in the latter case:
+   * mapArguments(["foo", $.noop], ["message", "callback"])
+   * -> { message: "foo", callback: $.noop }
+   */
+  function mapArguments(args, properties) {
+    var argn = args.length;
+    var options = {};
+
+    if (argn < 1 || argn > 2) {
+      throw new Error("Invalid argument length");
+    }
+
+    if (argn === 2 || typeof args[0] === "string") {
+      options[properties[0]] = args[0];
+      options[properties[1]] = args[1];
+    } else {
+      options = args[0];
+    }
+
+    return options;
+  }
+
+  /**
+   * merge a set of default dialog options with user supplied arguments
+   */
+  function mergeArguments(defaults, args, properties) {
+    return $.extend(
+      // deep merge
+      true,
+      // ensure the target is an empty, unreferenced object
+      {},
+      // the base options object for this type of dialog (often just buttons)
+      defaults,
+      // args could be an object or array; if it's an array properties will
+      // map it to a proper options object
+      mapArguments(
+        args,
+        properties
+      )
+    );
+  }
+
+  /**
+   * this entry-level method makes heavy use of composition to take a simple
+   * range of inputs and return valid options suitable for passing to bootbox.dialog
+   */
+  function mergeDialogOptions(className, labels, properties, args) {
+    //  build up a base set of dialog properties
+    var baseOptions = {
+      className: "bootbox-" + className,
+      buttons: createLabels.apply(null, labels)
+    };
+
+    // ensure the buttons properties generated, *after* merging
+    // with user args are still valid against the supplied labels
+    return validateButtons(
+      // merge the generated base properties with user supplied arguments
+      mergeArguments(
+        baseOptions,
+        args,
+        // if args.length > 1, properties specify how each arg maps to an object key
+        properties
+      ),
+      labels
+    );
+  }
+
+  /**
+   * from a given list of arguments return a suitable object of button labels
+   * all this does is normalise the given labels and translate them where possible
+   * e.g. "ok", "confirm" -> { ok: "OK, cancel: "Annuleren" }
+   */
+  function createLabels() {
+    var buttons = {};
+
+    for (var i = 0, j = arguments.length; i < j; i++) {
+      var argument = arguments[i];
+      var key = argument.toLowerCase();
+      var value = argument.toUpperCase();
+
+      buttons[key] = {
+        label: _t(value)
+      };
+    }
+
+    return buttons;
+  }
+
+  function validateButtons(options, buttons) {
+    var allowedButtons = {};
+    each(buttons, function(key, value) {
+      allowedButtons[value] = true;
+    });
+
+    each(options.buttons, function(key) {
+      if (allowedButtons[key] === undefined) {
+        throw new Error("button key " + key + " is not allowed (options are " + buttons.join("\n") + ")");
+      }
+    });
+
+    return options;
+  }
+
+  exports.alert = function() {
+    var options;
+
+    options = mergeDialogOptions("alert", ["ok"], ["message", "callback"], arguments);
+
+    if (options.callback && !$.isFunction(options.callback)) {
+      throw new Error("alert requires callback property to be a function when provided");
+    }
+
+    /**
+     * overrides
+     */
+    options.buttons.ok.callback = options.onEscape = function() {
+      if ($.isFunction(options.callback)) {
+        return options.callback.call(this);
+      }
+      return true;
+    };
+
+    return exports.dialog(options);
+  };
+
+  exports.confirm = function() {
+    var options;
+
+    options = mergeDialogOptions("confirm", ["cancel", "confirm"], ["message", "callback"], arguments);
+
+    /**
+     * overrides; undo anything the user tried to set they shouldn't have
+     */
+    options.buttons.cancel.callback = options.onEscape = function() {
+      return options.callback.call(this, false);
+    };
+
+    options.buttons.confirm.callback = function() {
+      return options.callback.call(this, true);
+    };
+
+    // confirm specific validation
+    if (!$.isFunction(options.callback)) {
+      throw new Error("confirm requires a callback");
+    }
+
+    return exports.dialog(options);
+  };
+
+  exports.prompt = function() {
+    var options;
+    var defaults;
+    var dialog;
+    var form;
+    var input;
+    var shouldShow;
+    var inputOptions;
+
+    // we have to create our form first otherwise
+    // its value is undefined when gearing up our options
+    // @TODO this could be solved by allowing message to
+    // be a function instead...
+    form = $(templates.form);
+
+    // prompt defaults are more complex than others in that
+    // users can override more defaults
+    // @TODO I don't like that prompt has to do a lot of heavy
+    // lifting which mergeDialogOptions can *almost* support already
+    // just because of 'value' and 'inputType' - can we refactor?
+    defaults = {
+      className: "bootbox-prompt",
+      buttons: createLabels("cancel", "confirm"),
+      value: "",
+      inputType: "text"
+    };
+
+    options = validateButtons(
+      mergeArguments(defaults, arguments, ["title", "callback"]),
+      ["cancel", "confirm"]
+    );
+
+    // capture the user's show value; we always set this to false before
+    // spawning the dialog to give us a chance to attach some handlers to
+    // it, but we need to make sure we respect a preference not to show it
+    shouldShow = (options.show === undefined) ? true : options.show;
+
+    /**
+     * overrides; undo anything the user tried to set they shouldn't have
+     */
+    options.message = form;
+
+    options.buttons.cancel.callback = options.onEscape = function() {
+      return options.callback.call(this, null);
+    };
+
+    options.buttons.confirm.callback = function() {
+      var value;
+
+      switch (options.inputType) {
+        case "text":
+        case "textarea":
+        case "email":
+        case "select":
+        case "date":
+        case "time":
+        case "number":
+        case "password":
+          value = input.val();
+          break;
+
+        case "checkbox":
+          var checkedItems = input.find("input:checked");
+
+          // we assume that checkboxes are always multiple,
+          // hence we default to an empty array
+          value = [];
+
+          each(checkedItems, function(_, item) {
+            value.push($(item).val());
+          });
+          break;
+      }
+
+      return options.callback.call(this, value);
+    };
+
+    options.show = false;
+
+    // prompt specific validation
+    if (!options.title) {
+      throw new Error("prompt requires a title");
+    }
+
+    if (!$.isFunction(options.callback)) {
+      throw new Error("prompt requires a callback");
+    }
+
+    if (!templates.inputs[options.inputType]) {
+      throw new Error("invalid prompt type");
+    }
+
+    // create the input based on the supplied type
+    input = $(templates.inputs[options.inputType]);
+
+    switch (options.inputType) {
+      case "text":
+      case "textarea":
+      case "email":
+      case "date":
+      case "time":
+      case "number":
+      case "password":
+        input.val(options.value);
+        break;
+
+      case "select":
+        var groups = {};
+        inputOptions = options.inputOptions || [];
+
+        if (!$.isArray(inputOptions)) {
+          throw new Error("Please pass an array of input options");
+        }
+
+        if (!inputOptions.length) {
+          throw new Error("prompt with select requires options");
+        }
+
+        each(inputOptions, function(_, option) {
+
+          // assume the element to attach to is the input...
+          var elem = input;
+
+          if (option.value === undefined || option.text === undefined) {
+            throw new Error("given options in wrong format");
+          }
+
+          // ... but override that element if this option sits in a group
+
+          if (option.group) {
+            // initialise group if necessary
+            if (!groups[option.group]) {
+              groups[option.group] = $("<optgroup/>").attr("label", option.group);
+            }
+
+            elem = groups[option.group];
+          }
+
+          elem.append("<option value='" + option.value + "'>" + option.text + "</option>");
+        });
+
+        each(groups, function(_, group) {
+          input.append(group);
+        });
+
+        // safe to set a select's value as per a normal input
+        input.val(options.value);
+        break;
+
+      case "checkbox":
+        var values   = $.isArray(options.value) ? options.value : [options.value];
+        inputOptions = options.inputOptions || [];
+
+        if (!inputOptions.length) {
+          throw new Error("prompt with checkbox requires options");
+        }
+
+        if (!inputOptions[0].value || !inputOptions[0].text) {
+          throw new Error("given options in wrong format");
+        }
+
+        // checkboxes have to nest within a containing element, so
+        // they break the rules a bit and we end up re-assigning
+        // our 'input' element to this container instead
+        input = $("<div/>");
+
+        each(inputOptions, function(_, option) {
+          var checkbox = $(templates.inputs[options.inputType]);
+
+          checkbox.find("input").attr("value", option.value);
+          checkbox.find("label").append(option.text);
+
+          // we've ensured values is an array so we can always iterate over it
+          each(values, function(_, value) {
+            if (value === option.value) {
+              checkbox.find("input").prop("checked", true);
+            }
+          });
+
+          input.append(checkbox);
+        });
+        break;
+    }
+
+    // @TODO provide an attributes option instead
+    // and simply map that as keys: vals
+    if (options.placeholder) {
+      input.attr("placeholder", options.placeholder);
+    }
+
+    if (options.pattern) {
+      input.attr("pattern", options.pattern);
+    }
+
+    if (options.maxlength) {
+      input.attr("maxlength", options.maxlength);
+    }
+
+    // now place it in our form
+    form.append(input);
+
+    form.on("submit", function(e) {
+      e.preventDefault();
+      // Fix for SammyJS (or similar JS routing library) hijacking the form post.
+      e.stopPropagation();
+      // @TODO can we actually click *the* button object instead?
+      // e.g. buttons.confirm.click() or similar
+      dialog.find(".btn-primary").click();
+    });
+
+    dialog = exports.dialog(options);
+
+    // clear the existing handler focusing the submit button...
+    dialog.off("shown.bs.modal");
+
+    // ...and replace it with one focusing our input, if possible
+    dialog.on("shown.bs.modal", function() {
+      // need the closure here since input isn't
+      // an object otherwise
+      input.focus();
+    });
+
+    if (shouldShow === true) {
+      dialog.modal("show");
+    }
+
+    return dialog;
+  };
+
+  exports.dialog = function(options) {
+    options = sanitize(options);
+
+    var dialog = $(templates.dialog);
+    var innerDialog = dialog.find(".modal-dialog");
+    var body = dialog.find(".modal-body");
+    var buttons = options.buttons;
+    var buttonStr = "";
+    var callbacks = {
+      onEscape: options.onEscape
+    };
+
+    if ($.fn.modal === undefined) {
+      throw new Error(
+        "$.fn.modal is not defined; please double check you have included " +
+        "the Bootstrap JavaScript library. See http://getbootstrap.com/javascript/ " +
+        "for more details."
+      );
+    }
+
+    each(buttons, function(key, button) {
+
+      // @TODO I don't like this string appending to itself; bit dirty. Needs reworking
+      // can we just build up button elements instead? slower but neater. Then button
+      // can just become a template too
+      buttonStr += "<button data-bb-handler='" + key + "' type='button' class='btn " + button.className + "'>" + button.label + "</button>";
+      callbacks[key] = button.callback;
+    });
+
+    body.find(".bootbox-body").html(options.message);
+
+    if (options.animate === true) {
+      dialog.addClass("fade");
+    }
+
+    if (options.className) {
+      dialog.addClass(options.className);
+    }
+
+    if (options.size === "large") {
+      innerDialog.addClass("modal-lg");
+    } else if (options.size === "small") {
+      innerDialog.addClass("modal-sm");
+    }
+
+    if (options.title) {
+      body.before(templates.header);
+    }
+
+    if (options.closeButton) {
+      var closeButton = $(templates.closeButton);
+
+      if (options.title) {
+        dialog.find(".modal-header").prepend(closeButton);
+      } else {
+        closeButton.css("margin-top", "-10px").prependTo(body);
+      }
+    }
+
+    if (options.title) {
+      dialog.find(".modal-title").html(options.title);
+    }
+
+    if (buttonStr.length) {
+      body.after(templates.footer);
+      dialog.find(".modal-footer").html(buttonStr);
+    }
+
+
+    /**
+     * Bootstrap event listeners; used handle extra
+     * setup & teardown required after the underlying
+     * modal has performed certain actions
+     */
+
+    dialog.on("hidden.bs.modal", function(e) {
+      // ensure we don't accidentally intercept hidden events triggered
+      // by children of the current dialog. We shouldn't anymore now BS
+      // namespaces its events; but still worth doing
+      if (e.target === this) {
+        dialog.remove();
+      }
+    });
+
+    /*
+    dialog.on("show.bs.modal", function() {
+      // sadly this doesn't work; show is called *just* before
+      // the backdrop is added so we'd need a setTimeout hack or
+      // otherwise... leaving in as would be nice
+      if (options.backdrop) {
+        dialog.next(".modal-backdrop").addClass("bootbox-backdrop");
+      }
+    });
+    */
+
+    dialog.on("shown.bs.modal", function() {
+      dialog.find(".btn-primary:first").focus();
+    });
+
+    /**
+     * Bootbox event listeners; experimental and may not last
+     * just an attempt to decouple some behaviours from their
+     * respective triggers
+     */
+
+    if (options.backdrop !== "static") {
+      // A boolean true/false according to the Bootstrap docs
+      // should show a dialog the user can dismiss by clicking on
+      // the background.
+      // We always only ever pass static/false to the actual
+      // $.modal function because with `true` we can't trap
+      // this event (the .modal-backdrop swallows it)
+      // However, we still want to sort of respect true
+      // and invoke the escape mechanism instead
+      dialog.on("click.dismiss.bs.modal", function(e) {
+        // @NOTE: the target varies in >= 3.3.x releases since the modal backdrop
+        // moved *inside* the outer dialog rather than *alongside* it
+        if (dialog.children(".modal-backdrop").length) {
+          e.currentTarget = dialog.children(".modal-backdrop").get(0);
+        }
+
+        if (e.target !== e.currentTarget) {
+          return;
+        }
+
+        dialog.trigger("escape.close.bb");
+      });
+    }
+
+    dialog.on("escape.close.bb", function(e) {
+      if (callbacks.onEscape) {
+        processCallback(e, dialog, callbacks.onEscape);
+      }
+    });
+
+    /**
+     * Standard jQuery event listeners; used to handle user
+     * interaction with our dialog
+     */
+
+    dialog.on("click", ".modal-footer button", function(e) {
+      var callbackKey = $(this).data("bb-handler");
+
+      processCallback(e, dialog, callbacks[callbackKey]);
+    });
+
+    dialog.on("click", ".bootbox-close-button", function(e) {
+      // onEscape might be falsy but that's fine; the fact is
+      // if the user has managed to click the close button we
+      // have to close the dialog, callback or not
+      processCallback(e, dialog, callbacks.onEscape);
+    });
+
+    dialog.on("keyup", function(e) {
+      if (e.which === 27) {
+        dialog.trigger("escape.close.bb");
+      }
+    });
+
+    // the remainder of this method simply deals with adding our
+    // dialogent to the DOM, augmenting it with Bootstrap's modal
+    // functionality and then giving the resulting object back
+    // to our caller
+
+    $(options.container).append(dialog);
+
+    dialog.modal({
+      backdrop: options.backdrop ? "static": false,
+      keyboard: false,
+      show: false
+    });
+
+    if (options.show) {
+      dialog.modal("show");
+    }
+
+    // @TODO should we return the raw element here or should
+    // we wrap it in an object on which we can expose some neater
+    // methods, e.g. var d = bootbox.alert(); d.hide(); instead
+    // of d.modal("hide");
+
+   /*
+    function BBDialog(elem) {
+      this.elem = elem;
+    }
+
+    BBDialog.prototype = {
+      hide: function() {
+        return this.elem.modal("hide");
+      },
+      show: function() {
+        return this.elem.modal("show");
+      }
+    };
+    */
+
+    return dialog;
+
+  };
+
+  exports.setDefaults = function() {
+    var values = {};
+
+    if (arguments.length === 2) {
+      // allow passing of single key/value...
+      values[arguments[0]] = arguments[1];
+    } else {
+      // ... and as an object too
+      values = arguments[0];
+    }
+
+    $.extend(defaults, values);
+  };
+
+  exports.hideAll = function() {
+    $(".bootbox").modal("hide");
+
+    return exports;
+  };
+
+
+  /**
+   * standard locales. Please add more according to ISO 639-1 standard. Multiple language variants are
+   * unlikely to be required. If this gets too large it can be split out into separate JS files.
+   */
+  var locales = {
+    bg_BG : {
+      OK      : "Ок",
+      CANCEL  : "Отказ",
+      CONFIRM : "Потвърждавам"
+    },
+    br : {
+      OK      : "OK",
+      CANCEL  : "Cancelar",
+      CONFIRM : "Sim"
+    },
+    cs : {
+      OK      : "OK",
+      CANCEL  : "Zrušit",
+      CONFIRM : "Potvrdit"
+    },
+    da : {
+      OK      : "OK",
+      CANCEL  : "Annuller",
+      CONFIRM : "Accepter"
+    },
+    de : {
+      OK      : "OK",
+      CANCEL  : "Abbrechen",
+      CONFIRM : "Akzeptieren"
+    },
+    el : {
+      OK      : "Εντάξει",
+      CANCEL  : "Ακύρωση",
+      CONFIRM : "Επιβεβαίωση"
+    },
+    en : {
+      OK      : "OK",
+      CANCEL  : "Cancel",
+      CONFIRM : "OK"
+    },
+    es : {
+      OK      : "OK",
+      CANCEL  : "Cancelar",
+      CONFIRM : "Aceptar"
+    },
+    et : {
+      OK      : "OK",
+      CANCEL  : "Katkesta",
+      CONFIRM : "OK"
+    },
+    fa : {
+      OK      : "قبول",
+      CANCEL  : "لغو",
+      CONFIRM : "تایید"
+    },
+    fi : {
+      OK      : "OK",
+      CANCEL  : "Peruuta",
+      CONFIRM : "OK"
+    },
+    fr : {
+      OK      : "OK",
+      CANCEL  : "Annuler",
+      CONFIRM : "D'accord"
+    },
+    he : {
+      OK      : "אישור",
+      CANCEL  : "ביטול",
+      CONFIRM : "אישור"
+    },
+    hu : {
+      OK      : "OK",
+      CANCEL  : "Mégsem",
+      CONFIRM : "Megerősít"
+    },
+    hr : {
+      OK      : "OK",
+      CANCEL  : "Odustani",
+      CONFIRM : "Potvrdi"
+    },
+    id : {
+      OK      : "OK",
+      CANCEL  : "Batal",
+      CONFIRM : "OK"
+    },
+    it : {
+      OK      : "OK",
+      CANCEL  : "Annulla",
+      CONFIRM : "Conferma"
+    },
+    ja : {
+      OK      : "OK",
+      CANCEL  : "キャンセル",
+      CONFIRM : "確認"
+    },
+    lt : {
+      OK      : "Gerai",
+      CANCEL  : "Atšaukti",
+      CONFIRM : "Patvirtinti"
+    },
+    lv : {
+      OK      : "Labi",
+      CANCEL  : "Atcelt",
+      CONFIRM : "Apstiprināt"
+    },
+    nl : {
+      OK      : "OK",
+      CANCEL  : "Annuleren",
+      CONFIRM : "Accepteren"
+    },
+    no : {
+      OK      : "OK",
+      CANCEL  : "Avbryt",
+      CONFIRM : "OK"
+    },
+    pl : {
+      OK      : "OK",
+      CANCEL  : "Anuluj",
+      CONFIRM : "Potwierdź"
+    },
+    pt : {
+      OK      : "OK",
+      CANCEL  : "Cancelar",
+      CONFIRM : "Confirmar"
+    },
+    ru : {
+      OK      : "OK",
+      CANCEL  : "Отмена",
+      CONFIRM : "Применить"
+    },
+    sq : {
+      OK : "OK",
+      CANCEL : "Anulo",
+      CONFIRM : "Prano"
+    },
+    sv : {
+      OK      : "OK",
+      CANCEL  : "Avbryt",
+      CONFIRM : "OK"
+    },
+    th : {
+      OK      : "ตกลง",
+      CANCEL  : "ยกเลิก",
+      CONFIRM : "ยืนยัน"
+    },
+    tr : {
+      OK      : "Tamam",
+      CANCEL  : "İptal",
+      CONFIRM : "Onayla"
+    },
+    zh_CN : {
+      OK      : "OK",
+      CANCEL  : "取消",
+      CONFIRM : "确认"
+    },
+    zh_TW : {
+      OK      : "OK",
+      CANCEL  : "取消",
+      CONFIRM : "確認"
+    }
+  };
+
+  exports.addLocale = function(name, values) {
+    $.each(["OK", "CANCEL", "CONFIRM"], function(_, v) {
+      if (!values[v]) {
+        throw new Error("Please supply a translation for '" + v + "'");
+      }
+    });
+
+    locales[name] = {
+      OK: values.OK,
+      CANCEL: values.CANCEL,
+      CONFIRM: values.CONFIRM
+    };
+
+    return exports;
+  };
+
+  exports.removeLocale = function(name) {
+    delete locales[name];
+
+    return exports;
+  };
+
+  exports.setLocale = function(name) {
+    return exports.setDefaults("locale", name);
+  };
+
+  exports.init = function(_$) {
+    return init(_$ || $);
+  };
+
+  return exports;
+}));
+
 !function(a,b){"use strict";function c(c,g){var h=this;h.$el=a(c),h.el=c,h.id=e++,h.$window=a(b),h.$document=a(document),h.$el.bind("destroyed",a.proxy(h.teardown,h)),h.$clonedHeader=null,h.$originalHeader=null,h.isSticky=!1,h.hasBeenSticky=!1,h.leftOffset=null,h.topOffset=null,h.init=function(){h.$el.each(function(){var b=a(this);b.css("padding",0),h.$originalHeader=a("thead:first",this),h.$clonedHeader=h.$originalHeader.clone(),b.trigger("clonedHeader."+d,[h.$clonedHeader]),h.$clonedHeader.addClass("tableFloatingHeader"),h.$clonedHeader.css("display","none"),h.$originalHeader.addClass("tableFloatingHeaderOriginal"),h.$originalHeader.after(h.$clonedHeader),h.$printStyle=a('<style type="text/css" media="print">.tableFloatingHeader{display:none !important;}.tableFloatingHeaderOriginal{position:static !important;}</style>'),a("head").append(h.$printStyle)}),h.setOptions(g),h.updateWidth(),h.toggleHeaders(),h.bind()},h.destroy=function(){h.$el.unbind("destroyed",h.teardown),h.teardown()},h.teardown=function(){h.isSticky&&h.$originalHeader.css("position","static"),a.removeData(h.el,"plugin_"+d),h.unbind(),h.$clonedHeader.remove(),h.$originalHeader.removeClass("tableFloatingHeaderOriginal"),h.$originalHeader.css("visibility","visible"),h.$printStyle.remove(),h.el=null,h.$el=null},h.bind=function(){h.$scrollableArea.on("scroll."+d,h.toggleHeaders),h.isWindowScrolling||(h.$window.on("scroll."+d+h.id,h.setPositionValues),h.$window.on("resize."+d+h.id,h.toggleHeaders)),h.$scrollableArea.on("resize."+d,h.toggleHeaders),h.$scrollableArea.on("resize."+d,h.updateWidth)},h.unbind=function(){h.$scrollableArea.off("."+d,h.toggleHeaders),h.isWindowScrolling||(h.$window.off("."+d+h.id,h.setPositionValues),h.$window.off("."+d+h.id,h.toggleHeaders)),h.$scrollableArea.off("."+d,h.updateWidth)},h.toggleHeaders=function(){h.$el&&h.$el.each(function(){var b,c=a(this),e=h.isWindowScrolling?isNaN(h.options.fixedOffset)?h.options.fixedOffset.outerHeight():h.options.fixedOffset:h.$scrollableArea.offset().top+(isNaN(h.options.fixedOffset)?0:h.options.fixedOffset),f=c.offset(),g=h.$scrollableArea.scrollTop()+e,i=h.$scrollableArea.scrollLeft(),j=h.isWindowScrolling?g>f.top:e>f.top,k=(h.isWindowScrolling?g:0)<f.top+c.height()-h.$clonedHeader.height()-(h.isWindowScrolling?0:e);j&&k?(b=f.left-i+h.options.leftOffset,h.$originalHeader.css({position:"fixed","margin-top":h.options.marginTop,left:b,"z-index":3}),h.leftOffset=b,h.topOffset=e,h.$clonedHeader.css("display",""),h.isSticky||(h.isSticky=!0,h.updateWidth(),c.trigger("enabledStickiness."+d)),h.setPositionValues()):h.isSticky&&(h.$originalHeader.css("position","static"),h.$clonedHeader.css("display","none"),h.isSticky=!1,h.resetWidth(a("td,th",h.$clonedHeader),a("td,th",h.$originalHeader)),c.trigger("disabledStickiness."+d))})},h.setPositionValues=function(){var a=h.$window.scrollTop(),b=h.$window.scrollLeft();!h.isSticky||0>a||a+h.$window.height()>h.$document.height()||0>b||b+h.$window.width()>h.$document.width()||h.$originalHeader.css({top:h.topOffset-(h.isWindowScrolling?0:a),left:h.leftOffset-(h.isWindowScrolling?0:b)})},h.updateWidth=function(){if(h.isSticky){h.$originalHeaderCells||(h.$originalHeaderCells=a("th,td",h.$originalHeader)),h.$clonedHeaderCells||(h.$clonedHeaderCells=a("th,td",h.$clonedHeader));var b=h.getWidth(h.$clonedHeaderCells);h.setWidth(b,h.$clonedHeaderCells,h.$originalHeaderCells),h.$originalHeader.css("width",h.$clonedHeader.width())}},h.getWidth=function(c){var d=[];return c.each(function(c){var e,f=a(this);if("border-box"===f.css("box-sizing")){var g=f[0].getBoundingClientRect();e=g.width?g.width:g.right-g.left}else{var i=a("th",h.$originalHeader);if("collapse"===i.css("border-collapse"))if(b.getComputedStyle)e=parseFloat(b.getComputedStyle(this,null).width);else{var j=parseFloat(f.css("padding-left")),k=parseFloat(f.css("padding-right")),l=parseFloat(f.css("border-width"));e=f.outerWidth()-j-k-l}else e=f.width()}d[c]=e}),d},h.setWidth=function(a,b,c){b.each(function(b){var d=a[b];c.eq(b).css({"min-width":d,"max-width":d})})},h.resetWidth=function(b,c){b.each(function(b){var d=a(this);c.eq(b).css({"min-width":d.css("min-width"),"max-width":d.css("max-width")})})},h.setOptions=function(c){h.options=a.extend({},f,c),h.$scrollableArea=a(h.options.scrollableArea),h.isWindowScrolling=h.$scrollableArea[0]===b},h.updateOptions=function(a){h.setOptions(a),h.unbind(),h.bind(),h.updateWidth(),h.toggleHeaders()},h.init()}var d="stickyTableHeaders",e=0,f={fixedOffset:0,leftOffset:0,marginTop:0,scrollableArea:b};a.fn[d]=function(b){return this.each(function(){var e=a.data(this,"plugin_"+d);e?"string"==typeof b?e[b].apply(e):e.updateOptions(b):"destroy"!==b&&a.data(this,"plugin_"+d,new c(this,b))})}}(jQuery,window);
 'use strict';
 //define namespaces for global functionality sets
 var plenty_admin = {};
 plenty_admin.UI = {};
 plenty_admin.UI.DOM = $("body");
-plenty_admin.UI.loadingOverlay = plenty_admin.UI.DOM.find("#loadingOverlay");								
+plenty_admin.UI.loadingOverlay = plenty_admin.UI.DOM.find("#loadingOverlay");			
+
+//an array of font icon class names to check against;
+plenty_admin.UI.fontIconClasses = [
+	"moisture-sensor",
+	"pest-control",
+	"harvest",
+	"soil-test",
+	"planting",
+	"fertilizer",
+	"tilling",
+	"late-nitrogen",
+	"early-nitrogen",
+	"spreader",
+	"sprayer",
+	"grain-cart",
+	"combine",
+	"offset-disk",
+	"atv",
+	"pipe",
+	"spray-plane",
+	"tractor",
+	"well",
+	"planter",
+	"grain-truck"
+];		
 
 //build the brand palette object
 plenty_admin.UI.brand_palette = new Rainbow();
@@ -1547,7 +2552,7 @@ timezoneJS.timezone.init({ callback: function(ev){
 */
 
 plenty_admin.init = function(context){
-	plenty_admin.state = context;
+	plenty_admin.context = context;
 	//setup the logout link
 	plenty_admin.UI.DOM
 	.find(".navbar li.logout a")
@@ -1557,10 +2562,26 @@ plenty_admin.init = function(context){
 		location.href = "/";
 		return false;
 	});
+	
+	//set up a global event handler for modal popups
+	$('body')
+	.on('shown.bs.modal', '.modal', function () {
+		console.log('we have shown a modal');
+		$('body')
+		.find(".page-container")
+		.addClass("blur");
+	})
+	.on('hidden.bs.modal', '.modal', function () {
+		console.log('we have hidden a modal');
+		$('body')
+		.find(".page-container")
+		.removeClass("blur");
+	});
+
 	//get the logged in user's details
 	plenty_admin.REST.get_user_with_username(store.get("plenty_username"), function(response){
 		plenty_admin.DATA.userDetails = response;
-		console.log("userDetails: ", plenty_admin.DATA.userDetails); // user logged in successfully
+		console.log("userDetails: ", plenty_admin.DATA.userDetails, context); // user logged in successfully
 		
 		//insert user detils into head of page
 		plenty_admin.UI.DOM
@@ -1602,7 +2623,7 @@ plenty_admin.init = function(context){
 					plenty_admin.DATA.organizations = {};
 					var _orgsBody = orgsForUser.body();
 					
-					//loop organizations and add them to the dashboard
+					//loop organizations and add them to the map page
 					for(var o = 0; o < _orgsBody.length; o++){
 						var org_data = _orgsBody[o].data();
 						plenty_admin.DATA.organizations[org_data.id] = org_data;
@@ -1617,6 +2638,10 @@ plenty_admin.init = function(context){
 			case "dashboard":
 				plenty_admin.HELPER.hideLoadingOverlay();
 				$( document ).trigger( "dashboard_data_ready", [ plenty_admin.DATA.organizations ] );
+			break;
+			
+			case "plans":
+				$( document ).trigger( "plans_data_ready");
 			break;
 		}
 	});
@@ -2230,6 +3255,27 @@ plenty_admin.REST.fields.getEquipmentLocationForFilter = function(boundary, call
 			});
 }
 
+plenty_admin.REST.fields.getPlatformServicesForFilter = function(callback){
+	//get fields related to this farm
+	plenty_admin.REST.fields.platformServicesForFilter = plenty_admin.api.one("filters/getPlatformServicesFiltered", plenty_admin.DATA.userFilters.filterDto.id);
+	
+	plenty_admin.REST.fields.platformServicesForFilter
+	.get()
+		.then(
+			function(ps){
+				var psBody = ps.body();
+				var psSet = [];
+				for(var e in psBody){
+					var psBodyData = psBody[e]();
+					psSet.push(psBodyData);
+				}
+				
+				if(callback && typeof callback === "function"){
+					callback(psSet);
+				}
+			});
+}
+
 plenty_admin.REST.fields.getAllFieldsByOrganization = function(farmId, callback){
 	//get fields related to this farm
 	plenty_admin.REST.fields.allFieldsByOrganization = plenty_admin.api.one("fields/getFieldsByOrganization", farmId);
@@ -2266,7 +3312,7 @@ plenty_admin.REST.fields.getEquipmentImage = function(equipmentId, callback){
 	plenty_admin.REST.equipmentImage.get(equipmentId)
 	.then(
 		function(equipmentImageString){
-			console.log(" equipmentImageString: ", equipmentImageString().data);
+			//console.log(" equipmentImageString: ", equipmentImageString().data);
 			if(callback && typeof callback == "function"){
 				callback(equipmentImageString().data);
 			}
@@ -2289,6 +3335,20 @@ plenty_admin.REST.fields.getAllFarmServicesByFarm = function(farmId, callback){
 				plenty_admin.DATA.organizations[plenty_admin.DATA.current_organization.id].farms[plenty_admin.DATA.current_farm.id].services = servicesSet;
 				if(callback && typeof callback === "function"){
 					callback(servicesSet);
+				}
+			});
+}
+
+plenty_admin.REST.fields.getGrowthStageById = function(gsId, callback){
+	//get fields related to this farm
+	plenty_admin.REST.growthStageById = plenty_admin.api.all("cropStage/getGrowthStage");
+	plenty_admin.REST.growthStageById.get(gsId)
+		.then(
+			function(gs){
+				//var gsData = gs.data();
+				console.log("gs", gs, gs.body()());
+				if(callback && typeof callback === "function"){
+					callback(gs.body()());
 				}
 			});
 }
@@ -2554,6 +3614,7 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 	var min = (a.getUTCMinutes() < 10 ? "0"+a.getUTCMinutes() : a.getUTCMinutes());
 	var sec = (a.getUTCSeconds() < 10 ? "0"+a.getUTCSeconds() : a.getUTCSeconds());
 	var _date = (month ? month.slice(0,4) : month) + ' ' + date;
+	var fullDate = _date + ", " + year;
 	
 	var time = hour + ':' + min + ':' + sec;
 	var date_time = _date + ' ' +  time;
@@ -2562,7 +3623,9 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 			date: _date,
 			time: time,
 			month: month,
-			obj: a
+			obj: a,
+			fullDate: fullDate,
+			year:year
 		};
 }
 plenty_admin.HELPER.daysFromHours = function(hours){
@@ -2585,16 +3648,28 @@ plenty_admin.HELPER.treatAsUTC = function(date) {
     result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
     return result;
 }
+plenty_admin.HELPER.capitalizeFirstLetter = function(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 plenty_admin.HELPER.daydiff = function(startDate, endDate) {
     var millisecondsPerDay = 24 * 60 * 60 * 1000;
-    return (plenty_admin.HELPER.treatAsUTC(endDate) - plenty_admin.HELPER.treatAsUTC(startDate)) / millisecondsPerDay;
+	var daydiff = (endDate - startDate) / millisecondsPerDay;
+    return daydiff;
 }
 plenty_admin.HELPER.hideLoadingOverlay = function(){
-	$("body").removeClass("loading");
+	$("body")
+	.removeClass("loading")
+	.find(".page-container")
+	.removeClass("blur");
+	
 	plenty_admin.UI.loadingOverlay.fadeOut("fast");
 }
 plenty_admin.HELPER.showLoadingOverlay = function(){
-	$("body").addClass("loading");
+	$("body")
+	.addClass("loading")
+	.find(".page-container")
+	.addClass("blur");
+	
 	plenty_admin.UI.loadingOverlay.fadeIn("fast");
 }
 plenty_admin.HELPER.returnInlineEditSelectOptions = function(field){
@@ -3764,19 +4839,19 @@ plenty_admin.MAPS.edit_field = function(fieldData) {
 					//center: itemLatLng,
 					mapTypeId: google.maps.MapTypeId.HYBRID,
 					zoom:  12,
-					disableDefaultUI: true,
-					draggable: false, 
-					zoomControl: false, 
-					scrollwheel: false, 
-					disableDoubleClickZoom: true
+					//disableDefaultUI: true,
+					//draggable: false, 
+					//zoomControl: false, 
+					//scrollwheel: false, 
+					//disableDoubleClickZoom: true
 				  }, function(map, fieldObj, polygon){
 		//open infoWindow with the fields data for editing
 		var paths = polygon.getPath();
 		$.extend(fieldData, fieldObj);
 		fieldData.boundaries = paths;
 		console.log("fieldData", fieldData);
-		plenty_admin.MAPS.showEditFieldForm(fieldData, map);
-	}, false, null, "map");
+		plenty_admin.MAPS.showEditFieldForm(fieldData, map, polygon);
+	}, false, "map");
 }
 
 // create the map at a given location and return it
@@ -3963,7 +5038,7 @@ plenty_admin.MAPS.update_map_legend = function(legendItems){
 
 
 plenty_admin.MAPS.get_polygon_area = function(shape){
-	var area = google.maps.geometry.spherical.computeArea(shape.getPath());
+	var area = google.maps.geometry.spherical.computeArea(shape.getPath()) * 0.00024711;
 	console.log("area", area);
 	return (area).toFixed(2);
 }
@@ -4147,15 +5222,17 @@ plenty_admin.MAPS.draw_CLU_polygon = function(points, editable, polygonId, map){
 	return CLU_polygon;
 }
 
-plenty_admin.MAPS.draw_pin = function(pinData, pinEvents){
+plenty_admin.MAPS.draw_pin = function(pinData, pinEvents, map){
 	//console.log("draw_pin:", pinData);
+	var nameToClass = pinData.equipmentTypeIds[0].name.toLowerCase().replace(/ /g, "-");
+	var markerIcon = plenty_admin.UI.fontIconClasses.indexOf(nameToClass) > -1 ? nameToClass : "unknown";
 	var richMarker = new RichMarker({
           position: pinData.latlng,
-          map: plenty_admin.MAPS.mainMap,
+          map: map,
 		  anchor: RichMarkerPosition.BOTTOM,
 		  flat: true,
           draggable: true,
-          content: '<div class="marker" data-id="'+pinData.id+'" style="background:transparent url(img/map-markers/bg.svg) no-repeat 0 0"><i class="pif pif-'+pinData.equipmentTypeIds[0].name.toLowerCase().replace(/ /g, "-")+'"></i><div>'
+          content: '<div class="marker" data-id="'+pinData.id+'" style="background:transparent url(img/map-markers/bg.svg) no-repeat 0 0"><i class="pif pif-'+markerIcon+'"></i><div>'
           });
 		  
 	if(pinEvents.onMouseOver){
@@ -4195,7 +5272,7 @@ plenty_admin.MAPS.draw_pin = function(pinData, pinEvents){
 	return richMarker;
 }
 
-plenty_admin.MAPS.draw_polygon = function(fieldData, events, map){	
+plenty_admin.MAPS.draw_polygon = function(fieldData, events, map, pushPoly){	
 	//console.log("draw polygon: ", fieldData, events, map);
 	// Define the LatLng coordinates for the polygon's path.
 	//console.log("draw_polygon:", points, Object.prototype.toString.call(points[0]));
@@ -4246,6 +5323,7 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events, map){
 	google.maps.event.addListener(field_polygon, "mouseout", ( events.onMouseOut ? events.onMouseOut : function(){/*empty*/} )); 
 	google.maps.event.addListener(field_polygon, "click", ( events.onClick ? events.onClick : function(){/*empty*/} )); 
 	google.maps.event.addListener(field_polygon, "rightclick", ( events.onRightClick ? events.onRightClick : function(){/*empty*/} )); 
+	google.maps.event.addListener(field_polygon, "dblclick", ( events.onDoubleClick ? events.onDoubleClick : function(){/*empty*/} )); 
 	
 	field_polygon.removePolygon = function(){
 		this.setMap(null);
@@ -4272,8 +5350,9 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events, map){
 		field_polygon.setMap(map);
 	}
 	
-	plenty_admin.UI.map.filtered_field_polygons.push(field_polygon);
-	
+	if(pushPoly === null || pushPoly){
+		plenty_admin.UI.map.filtered_field_polygons.push(field_polygon);
+	}
 	return field_polygon;
 }
 
@@ -4322,19 +5401,17 @@ plenty_admin.MAPS.get_static_maps_url = function(mapDetails){
 	return mapUrl;
 }
 
-plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable, polyPath, mapID){
-	console.log("draw_field_on_map: ", fieldObj, mapOptions, polyPath);
+plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions, callback, editable, mapID){
+	console.log("draw_field_on_map: ", fieldObj, mapOptions);
 	
 	var itemLatLng = new google.maps.LatLng(fieldObj.latitude, fieldObj.longitude);
 	//console.log("itemLatLng: ", itemLatLng);
 	
-	if(polyPath){
+	if(fieldObj.boundaries){
 		//load map
 		plenty_admin.MAPS[mapID] = plenty_admin.MAPS.create_map(map_DOM_id, mapOptions);
 		
-		fieldObj.boundaries = polyPath;
 		fieldObj.editable = editable;
-		fieldObj.isCoords = true;
 		
 		var poly_events = {
 			onEdit: function(){
@@ -4346,9 +5423,11 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 			}
 		};
 		
-		var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events, plenty_admin.MAPS[mapID]);
+		var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events, plenty_admin.MAPS[mapID], mapOptions.pushPoly);
 		
 		plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS[mapID]);
+		
+		google.maps.event.trigger(plenty_admin.MAPS[mapID], 'resize');
 		
 		if(callback && typeof callback === "function"){
 			callback(plenty_admin.MAPS[mapID], fieldObj, polygon);  
@@ -4374,7 +5453,7 @@ plenty_admin.MAPS.draw_field_on_map = function(fieldObj, map_DOM_id, mapOptions,
 				}
 			};
 			
-			var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events, plenty_admin.MAPS[mapID]);
+			var polygon = plenty_admin.MAPS.draw_polygon(fieldObj, poly_events, plenty_admin.MAPS[mapID], mapOptions.pushPoly);
 			
 			plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS[mapID]);
 			
@@ -4435,7 +5514,7 @@ plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, marker){
 	});
 }
 
-plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name){
+plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name, polygon){
 	if(plenty_admin.MAPS.infoWindow)
 	{
 		plenty_admin.MAPS.infoWindow.close();
@@ -4461,14 +5540,80 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 							plenty_admin.MAPS.infoWindow.close();
 						}
 						
-						plenty_admin.MAPS.showEditFieldForm(fieldData, plenty_admin.MAPS.mainMap);
+						//zoom to field
+						plenty_admin.MAPS.zoomToPolygon(polygon, map);
+						
+						plenty_admin.MAPS.showEditFieldForm(fieldData, map, polygon);
 						return false;
 					})
 					.end()
 					.find(".insert_equipment a")
 					.click(function(){
 						//alert("insert equipment");
-						plenty_admin.MAPS.add_fixed_equipment(fieldData, plenty_admin.MAPS.mainMap);
+						plenty_admin.MAPS.add_fixed_equipment(fieldData, map);
+						return false;
+					})
+					.end()
+					.find(".view_field a")
+					.click(function(){
+						//alert("insert equipment");
+						plenty_admin.HELPER.showLoadingOverlay();
+						var polyPath = [];
+						polygon.getPath().getArray().forEach(function(point, p){
+							var latlng = {
+								latitude: point.lat(),
+								longitude: point.lng(),
+								seqNumber: p
+							}
+							polyPath.push(latlng);
+						});
+						
+						//get field by ID
+						plenty_admin.REST.fields.getFieldById(polygon.id, function(fieldObj){
+							//console.log("polyPath", polyPath);
+							fieldObj.fillColor = polygon.fillColor;
+							fieldObj.strokeColor = polygon.strokeColor;
+							fieldObj.boundaries = polyPath;
+							fieldObj.isCoords = false;
+						
+							//build the breadcrumb trail object
+							var field_breadcrumb = [
+								{
+									class:"back",
+									name:"Map",
+									clickHandler:function(){
+										plenty_admin.UI.currentScreen
+										.fadeOut("normal", function(){
+											plenty_admin.UI.field.clear();
+											plenty_admin.UI.currentScreen = plenty_admin.UI.map.DOM;
+											plenty_admin.UI.currentScreen
+											.closest(".fill-area")
+											.fadeIn("normal")
+											.parent()
+											.find(".filter_controls")
+											.fadeIn("fast", function(){
+												google.maps.event.trigger(plenty_admin.MAPS.mainMap, 'resize'); 
+												plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+											});
+										});
+										return false;
+									}
+								},
+								{
+									class:"active",
+									name:fieldObj.name,
+									clickHandler:null
+								}
+							];
+							
+							plenty_admin.UI.field.DOM
+							.find(".breadcrumb-trail")
+							.remove()
+							.end()
+							.prepend(plenty_admin.UI.build_breadcrumb_trail(field_breadcrumb));
+							
+							plenty_admin.UI.field.init(fieldObj, "map");
+						});
 						return false;
 					});
 				break;
@@ -4502,7 +5647,17 @@ plenty_admin.MAPS.delete_field_equipment = function(pinData, marker){
 						function(deletedFieldEquipment){
 							console.log("field equipment deleted: ", deletedFieldEquipment);
 						}, function(){
-							alert("disassociating a field failed due to a server error");
+							bootbox.dialog({
+											message: "disassociating a field failed due to a server error",
+											className: "danger",
+											buttons: {
+												danger: {
+												  label: "OK",
+												  className: "btn-danger",
+												  callback: plenty_admin.HELPER.hideLoadingOverlay
+												}
+											}
+										});
 							var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
 							markerObj.marker.setPosition(pinData.latlng);
 						}
@@ -4538,6 +5693,11 @@ plenty_admin.MAPS.update_fixed_equipment_position = function(pinData, marker){
 	
 	$.get("ajax/update-equipment-position.html", function(contentString){
 		plenty_admin.MAPS.infoWindowContent = contentString;
+		
+		google.maps.event.addListener(plenty_admin.MAPS.infoWindow,'closeclick',function(){
+			var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
+			markerObj.marker.setPosition(pinData.latlng);
+		});
 		
 		google.maps.event.addListener(plenty_admin.MAPS.infoWindow, 'domready', function(content){ 
 			plenty_admin.MAPS.infoWindowContent = $(".updateEquipment");
@@ -4617,6 +5777,11 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 	
 	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
 	
+	google.maps.event.addListener(plenty_admin.MAPS.infoWindow,'closeclick',function(){
+		var markerObj = plenty_admin.MAPS.get_pin_from_array(pinData);
+		markerObj.marker.setPosition(pinData.latlng);
+	});
+	
 	$.get("ajax/change-equipment-position-and-field.html", function(contentString){
 		plenty_admin.MAPS.infoWindowContent = contentString;
 		
@@ -4659,7 +5824,8 @@ plenty_admin.MAPS.update_fixed_equipment_position_and_change_field = function(pi
 					
 				plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 					//remove the pin from the map
-					markerObj.marker.setMap(null);
+					//markerObj.marker.setMap(null);
+					$(markerObj.marker.markerWrapper_).remove();
 					//remove the pin from the array
 					plenty_admin.MAPS.equipment_pins.splice(markerObj.iconIndex, 1);
 					//update the pin
@@ -4751,10 +5917,87 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 				}
 			}
 			
-			console.log("brands: ", $brandList, brandTypesHTML);
 			
 			$brandList
 			.append(brandTypesHTML);
+			
+			//render organization dropdown
+			//Set the options in the brands list
+			var $orgsList = plenty_admin.MAPS.infoWindowContent.find("#add_equipment_orgs");
+			
+			$orgsList
+			.find("option")
+			.remove();
+			
+			//populate equipment type lists:
+			var orgsHTML = "";
+			//for(index in plenty_admin.DATA.brandTypes){
+			for(var o=0; o<plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.organizations.length; o++){
+				var org = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.organizations[o];
+				orgsHTML += "<option value='"+org.id+"'>"+org.name+"</option>";
+			}
+			
+			$orgsList
+			.append(orgsHTML)
+			.on("change", function(){
+				console.log("changed org: ", $(this).val());
+				plenty_admin.MAPS.infoWindowContent
+				.find(".platformServices")
+				.find(".ps_org")
+				.hide()
+				.end()
+				.find(".ps_org_"+$(this).val())
+				.show();
+			});
+			
+			var psById = {};
+			
+			plenty_admin.REST.fields.getPlatformServicesForFilter(function(platformServices){
+				//console.log("platformServices", platformServices);
+				//render platform service dropdowns
+				for(var s=0; s<platformServices.length; s++){
+					var ps = platformServices[s];
+					if(!psById[ps.organizationId]){
+						psById[ps.organizationId] = [ps];
+					}else{
+						psById[ps.organizationId].push(ps);
+					}
+				}
+				
+				//console.log("psById", psById);
+				
+				var psListsHTML = "";
+				var psIndex = 0;
+				
+				for(id in psById){
+					if(psById.hasOwnProperty(id)){
+						var _ps = psById[id];
+						console.log("_ps", _ps);
+						if(_ps.length == 1){
+							//show as a label
+							psListsHTML += "<input type='text' readonly class='form-control ps_org ps_org_"+_ps[0].organizationId+"'"+(psIndex === 0 ? "" : " style='display:none;'")+" data-id='"+id+"'";
+							psListsHTML += " value='"+_ps[0].name+"'";
+							psListsHTML += ">";
+						}else{
+							//show as a dropdown
+							psListsHTML += "<select class='form-control equipment_platform_service ps_org ps_org_"+id+"'"+(psIndex === 0 ? "" : " style='display:none;'")+" required placeholder='Choose a platform service'>";
+								for(var __ps = 0; __ps < _ps.length; __ps++){
+									var ___ps = _ps[__ps];
+									psListsHTML += "<option value='"+___ps.id+"'>"+___ps.name+"</option>";
+								}
+							psListsHTML += "</select>";
+						}
+						psIndex += 1;
+					}
+				}
+				
+				//console.log("psListsHTML", psListsHTML);
+				
+				plenty_admin.MAPS.infoWindowContent
+				.find(".platformServices")
+				.append(psListsHTML);
+				
+			});
 			
 			plenty_admin.MAPS.infoWindowContent
 			.find("#add_equipment_latitude")
@@ -4765,6 +6008,8 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 			.end()
 			.find("button.add-equipment")
 			.click(function(e){
+				var $this = $(this);
+				$this.button("loading");
 				var equipmentObj = {};
 				equipmentObj.equipmentName = plenty_admin.MAPS.infoWindowContent.find("input#add_equipment_name").val();
 				equipmentObj.equipmentTypeIds = [];
@@ -4773,8 +6018,10 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 				});
 				equipmentObj.latitude = fieldData.rc_lat;
 				equipmentObj.longitude = fieldData.rc_lng;
-				equipmentObj.fieldId = fieldData.id;
-				equipmentObj.brandId = $brandList.val();
+				equipmentObj.fieldId = parseInt(fieldData.id);
+				equipmentObj.brandId = parseInt($brandList.val());
+				equipmentObj.organizationId = parseInt($orgsList.val());
+				equipmentObj.platformServiceId = parseInt(plenty_admin.MAPS.infoWindowContent.find(".platformServices option:selected").val());
 				
 				console.log("equipmentObj", equipmentObj);
 				plenty_admin.REST.insertFieldEquipment.post(equipmentObj)
@@ -4791,6 +6038,10 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 							
 							plenty_admin.UI.map.add_equipment_to_map();
 						});
+					},
+					function(){
+						$this
+						.button("reset");
 					}
 				)
 				return false;
@@ -4827,13 +6078,59 @@ plenty_admin.MAPS.add_fixed_equipment = function(fieldData, map){
 	});
 }
 
-plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map) {
+plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 	// Since this polygon has only one path, we can call getPath()
 	// to return the MVCArray of LatLngs.
 	console.log("showEditFieldForm", fieldObj, map);
 	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
 	var that = this;
 	var MAPS = plenty_admin.MAPS;
+	var originalPolyPath = [];
+	function editFieldBoundary(){
+		polygon
+		.setOptions({
+			editable: true
+		});
+		
+		//hide edit form
+		plenty_admin.MAPS.infoWindowContent
+		.hide()
+		.parent()
+		.find(".editing_boundary")
+		.show();
+		
+		//hide other polygons
+		plenty_admin.MAPS.hide_polygons(plenty_admin.UI.map.filtered_field_polygons, polygon.id);
+		
+		//hide equipment
+		plenty_admin.MAPS.hide_equipment(plenty_admin.MAPS.equipment_pins);
+		
+		return false;
+	}
+	function endEditFieldBoundary(){
+		plenty_admin.MAPS.infoWindowContent
+		.show()
+		.parent()
+		.find(".editing_boundary")
+		.hide();
+		
+		//switch off editable
+		polygon
+		.setOptions({
+			editable: false
+		});
+		
+		//show polygons
+		plenty_admin.MAPS.show_polygons(plenty_admin.UI.map.filtered_field_polygons, map);
+		
+		//show equipment
+		plenty_admin.MAPS.show_equipment(plenty_admin.MAPS.equipment_pins, map);
+	}
+	
+	polygon.getPath().getArray().forEach(function(point, p){
+		originalPolyPath.push(new google.maps.LatLng(point.lat(), point.lng()));
+	});
+	
 	$.get("ajax/edit-field-form.html", function(contentString){
 		//store the returned html
 		plenty_admin.MAPS.infoWindowContent = contentString;
@@ -4902,7 +6199,7 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map) {
 								plenty_admin.UI.organization.MODAL_edit_field.modal("hide");
 							});
 							
-							if(plenty_admin.state === "settings"){
+							if(plenty_admin.context === "settings"){
 								//add field to the data set locally
 								plenty_admin.DATA.data_source.farms.push(farm_body);
 								plenty_admin.UI.updateBadges("farms", plenty_admin.DATA.data_source.farms.length);
@@ -4936,6 +6233,80 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map) {
 					plenty_admin.MAPS.infoWindow.close();
 					return false;
 				})
+				.end()
+				.find(".btn.edit-boundary")
+				.click(function(){
+					//make polygon editable
+					editFieldBoundary();
+					
+					// hide other polygons
+					
+					// hide equipment pins
+					
+					//center the polygon
+					plenty_admin.MAPS.zoomToPolygon(polygon, map);
+				})
+				.end()
+				.parent()
+				.find(".btn.save-edited-boundary")
+				.click(function(){
+					var polygonBounds = polygon.getPath();
+					var boundaryPointsArray = [];
+					
+					// Iterate over the polygonBounds vertices.
+					polygonBounds.forEach(function(xy, i) {
+						var boundaryPointObj = {};
+						boundaryPointObj.seqNumber = i;
+						boundaryPointObj.latitude = xy.lat();
+						boundaryPointObj.longitude = xy.lng();
+						boundaryPointsArray.push(boundaryPointObj);
+					});
+					
+					var boundaryPointsDto = {
+						fieldId: polygon.id,
+						latLongPairs: boundaryPointsArray
+					};
+					
+					console.log("boundaryPointsDto", boundaryPointsDto);
+	
+					plenty_admin.REST.updateBoundaryPointsArray.post(boundaryPointsDto).then(
+						function(updatedBoundary){
+							console.log("updatedBoundary: ", updatedBoundary);
+							//show edit form
+							endEditFieldBoundary();
+						},
+						function(err){
+							bootbox.dialog({
+								message: "Polygon Edits were not saved! - "+err.status+" - "+err.statusText,
+								className: "danger",
+								buttons: {
+									danger: {
+									  label: "OK",
+									  className: "btn-danger",
+									  callback: function(){
+										 	plenty_admin.HELPER.hideLoadingOverlay();
+											//show edit form
+											endEditFieldBoundary();
+										}
+									}
+								}
+							});
+						}
+					);
+					
+					return false;
+				})
+				.end()
+				.find(".btn.cancel-editing-boundary")
+				.click(function(){
+					polygon.setPaths(originalPolyPath);
+					
+					//show edit form
+					endEditFieldBoundary();
+					
+					return false;
+				})
+				.end()
 				.end()
 				.find(".showNewFarm")
 				.click(function(){
@@ -5125,7 +6496,7 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 									});
 				});
 				
-				if(plenty_admin.state === "map"){
+				if(plenty_admin.context === "map"){
 					plenty_admin.MAPS.add_field_state = 1;
 					plenty_admin.MAPS.hide_clu_polygons();
 					
@@ -5210,7 +6581,7 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 									});
 				});
 				
-				if(plenty_admin.state === "map"){
+				if(plenty_admin.context === "map"){
 					plenty_admin.MAPS.add_field_state = 1;
 					plenty_admin.MAPS.hide_clu_polygons();
 					
@@ -5247,6 +6618,47 @@ plenty_admin.MAPS.hide_clu_polygons = function(except){
 		}
 	}
 }
+
+plenty_admin.MAPS.hide_polygons = function(polygons, except){
+	//loop through the CLU boundaries on the map and set their map to null
+	for(var b=0; b<polygons.length; b++){
+		var poly = polygons[b];
+		if(!except){
+			poly.setMap(null);
+		}else if(poly.id !== except){
+			poly.setMap(null);
+		}
+	}
+}
+
+plenty_admin.MAPS.show_polygons = function(polygons, map){
+	//loop through the CLU boundaries on the map and set their map to null
+	for(var b=0; b<polygons.length; b++){
+		var poly = polygons[b];
+			poly.setMap(map);
+	}
+}
+
+plenty_admin.MAPS.hide_equipment = function(equipment, except){
+	//loop through the CLU boundaries on the map and set their map to null
+	for(var b=0; b<equipment.length; b++){
+		var equip = equipment[b];
+		if(!except){
+			equip.setMap(null);
+		}else if(equip.id !== except){
+			equip.setMap(null);
+		}
+	}
+}
+
+plenty_admin.MAPS.show_equipment = function(equipment, map){
+	//loop through the CLU boundaries on the map and set their map to null
+	for(var b=0; b<equipment.length; b++){
+		var equip = equipment[b];
+			equip.setMap(map);
+	}
+}
+
 
 plenty_admin.MAPS.show_clu_polygons = function(except){
 	//loop through the CLU boundaries on the map and set their map to null
@@ -5313,7 +6725,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 					.find(".btn.finish")
 					.click(function(){
 						plenty_admin.MAPS.infoWindow.close();
-						switch(plenty_admin.state){
+						switch(plenty_admin.context){
 							case "map":
 								plenty_admin.MAPS.selectedPolygon.polygon.setMap(null);
 								plenty_admin.MAPS.selectedPolygon.polygon = null;
@@ -5406,7 +6818,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 							//add field to the data set locally
 							plenty_admin.DATA.data_source.farms.push(farm_body);
 							
-							if(plenty_admin.state === "settings"){
+							if(plenty_admin.context === "settings"){
 								plenty_admin.UI.updateBadges("farms", plenty_admin.DATA.data_source.farms.length);
 								
 									// add the new field to the table and to the data model
@@ -5422,7 +6834,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 								plenty_admin.UI.organization.addItemFunctionality($farmTML);
 							}else{
 								//update the map
-								if(plenty_admin.state === "map"){
+								if(plenty_admin.context === "map"){
 									plenty_admin.DATA.update_filters(function(returned_filters){
 										//console.log("filters updated: ", returned_filters, returned_filters.body());
 										plenty_admin.DATA.userFilters = returned_filters.body();
@@ -5460,7 +6872,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 				});
 				plenty_admin.MAPS.selected_clu_polygon = null;
 				
-				if(plenty_admin.state === "map"){
+				if(plenty_admin.context === "map"){
 					plenty_admin.MAPS.add_field_state = 1;
 					plenty_admin.MAPS.hide_clu_polygons();
 					
@@ -5584,7 +6996,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 			var $elList = plenty_admin.MAPS.infoWindowContent.find("#add_field_growthMethod");
 			$elList.append(optionsHTML);
 		
-			if(plenty_admin.state === "map" && $orgList.find("option").length > 1){
+			if(plenty_admin.context === "map" && $orgList.find("option").length > 1){
 				$orgList
 				.closest(".form-group").show();
 			}else{
@@ -5631,7 +7043,17 @@ plenty_admin.MAPS.location_search = function(map, target) {
 		//marker.setVisible(false);
 		var place = autocomplete.getPlace();
 		if (!place.geometry) {
-			window.alert("Autocomplete's returned place contains no geometry");
+			bootbox.dialog({
+							message: "Autocomplete's returned place contains no geometry",
+							className: "warning",
+							buttons: {
+								danger: {
+								  label: "OK",
+								  className: "btn-warning",
+								  callback: plenty_admin.HELPER.hideLoadingOverlay
+								}
+							}
+						});
 			return;
 		}
 		
@@ -6076,9 +7498,10 @@ plenty_admin.UI.field.dates = {
 };
 
 //method to initiate the field page
-plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
-	console.log("plenty_admin.UI.field.init", fieldObj, polyPath);
-	
+plenty_admin.UI.field.init = function(fieldObj, context){
+	console.log("plenty_admin.UI.field.init", fieldObj);
+	plenty_admin.UI.field.fieldObj = fieldObj;
+	//fieldObj.boundaries = polyPath;
 	switch(context){
 		case "settings":
 			plenty_admin.HELPER.showLoadingOverlay();
@@ -6130,7 +7553,7 @@ plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
 					$(window).on("resize",function(){
 						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
 					});
-				}, false, polyPath, "map");
+				}, false, "map");
 				
 				plenty_admin.UI.currentScreen.fadeIn("normal");
 			});
@@ -6144,25 +7567,28 @@ plenty_admin.UI.field.init = function(fieldObj, context, polyPath){
 				plenty_admin.UI.field.populate(fieldObj);
 				plenty_admin.UI.field.polygon = null;
 				
-				plenty_admin.MAPS.draw_field_on_map(fieldObj, "field_map", {
-					mapTypeId: google.maps.MapTypeId.HYBRID,
-					zoom:  12,
-					disableDefaultUI: true,
-					draggable: false, 
-					zoomControl: false, 
-					scrollwheel: false, 
-					disableDoubleClickZoom: true
-				  }, function(map, fieldObj, polygon){
-					plenty_admin.UI.field.polygon = polygon;
-					//ensure if the window changes size the field is centered
-					$(window).on("resize",function(){
-						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
-					});
-				}, false, polyPath, "map");
-				
 				plenty_admin.UI.currentScreen
 				.addClass("fill-area-content flexbox-item-grow")
-				plenty_admin.UI.currentScreen.fadeIn("normal");
+				plenty_admin.UI.currentScreen.fadeIn("normal", function(){
+					plenty_admin.MAPS.draw_field_on_map(fieldObj, "field_map", {
+						mapTypeId: google.maps.MapTypeId.HYBRID,
+						zoom:  12,
+						disableDefaultUI: true,
+						draggable: false, 
+						zoomControl: false, 
+						scrollwheel: false, 
+						disableDoubleClickZoom: true
+					  }, function(map, fieldObj, polygon){
+						plenty_admin.UI.field.polygon = polygon;
+						//ensure if the window changes size the field is centered
+						$(window).on("resize", function(){
+							plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+						});
+						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+						//google.maps.event.trigger(plenty_admin.MAPS.map, 'resize');
+						
+					}, false, "map");
+				});
 			})
 			.parent()
 			.find(".filter_controls")
@@ -6246,16 +7672,32 @@ plenty_admin.REST.get_activity_finances_for_date_range = function(fieldCropId, f
 //get activities for organization by date range
 plenty_admin.REST.get_weather_days_with_dateRange = function(fieldCropId, fromDate, toDate, callback){
 	plenty_admin.REST.getWatherDaysByFieldAndByDateRange = plenty_admin.api.one("fields/getWatherDaysByFieldAndByDateRange", fieldCropId+"/"+fromDate+"/"+toDate);
-	plenty_admin.REST.getWatherDaysByFieldAndByDateRange.get().then(function(response){
-		if(Array.isArray(response.body())){
-			var returnData = plenty_admin.REST.get_array_from_data(response.body());
-		}else{
-			var returnData = response.body(); //"NO DATA";
+	plenty_admin.REST.getWatherDaysByFieldAndByDateRange.get().then(
+		function(response){
+			if(Array.isArray(response.body())){
+				var returnData = plenty_admin.REST.get_array_from_data(response.body());
+			}else{
+				var returnData = response.body(); //"NO DATA";
+			}
+			if(callback && typeof callback === "function"){
+				callback(returnData);
+			}
+		},
+		function(err){
+			console.error("plenty_admin.REST.get_weather_days_with_dateRange failed: ", err);
+			bootbox.dialog({
+							message: "plenty_admin.REST.get_weather_days_with_dateRange failed.", 
+							className: "danger",
+							buttons: {
+								danger: {
+								  label: "OK",
+								  className: "btn-danger",
+								  callback: plenty_admin.HELPER.hideLoadingOverlay
+								}
+							}
+						});
 		}
-		if(callback && typeof callback === "function"){
-			callback(returnData);
-		}
-	});
+	);
 }
 
 //get equipment for a field
@@ -6461,17 +7903,28 @@ plenty_admin.UI.field.updateWeatherGraph = function(hash){
 	
 	//set width of dom element that offsets the weather events and activities
 	var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
-	keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+	
+	try{
+		keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+	}catch(err){
+		bootbox.dialog({
+							message: "Not enough activities (minimum of 2) to create weather graphs. Their start and end dates are calculated from the begining of the first, and the end of the last event.", 
+							className: "danger",
+							buttons: {
+								danger: {
+								  label: "OK",
+								  className: "btn-danger",
+								  callback: plenty_admin.HELPER.hideLoadingOverlay,
+								}
+							}
+						});
+	}
 	
 	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
 	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
 	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
 
-	plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
-	
 	plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
-	
-	//plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
 }
 
 plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
@@ -6484,9 +7937,24 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 	
 	//pull in activities once weatherDays have loaded	
 	plenty_admin.REST.get_activities_by_field_crop_order_by_desc(cropYear.id, function(activitiesForCropType){
-		console.log("get_activities_by_field_crop_order_by_desc", activitiesForCropType);
+		console.log("get_activities_by_field_crop_order_by_desc", activitiesForCropType, activitiesForCropType.length);
 		
 		plenty_admin.UI.field.activitiesForCropType = activitiesForCropType;
+		
+		if(activitiesForCropType.length <= 0){
+			bootbox.dialog({
+							message: "No activities for this field - can not render weather graphs without at least 2 activities.", 
+							className: "danger",
+							buttons: {
+								danger: {
+								  label: "OK",
+								  className: "btn-danger",
+								  callback: plenty_admin.HELPER.hideLoadingOverlay
+								}
+							}
+						});
+			return;
+		}
 		
 		var startDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[0].startTime);
 		plenty_admin.UI.field.dates.start = 	startDate.obj.getUTCFullYear()+
@@ -6518,6 +7986,7 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 		plenty_admin.REST.getActivityTypes();
 		
 		plenty_admin.REST.get_weather_days_with_dateRange(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(weatherDays){
+			plenty_admin.UI.field.__weatherDays = weatherDays;
 			console.log("get_weather_days_with_dateRange", weatherDays);
 			
 			plenty_admin.UI.field.weatherDays = {
@@ -6532,22 +8001,34 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 					}
 			}
 			
+			var millisecondsPerDay = 24 * 60 * 60 * 1000;
+			var lastWeatherDayDate = weatherDays[weatherDays.length-1].date;
+			var lastActivityDate = activitiesForCropType[activitiesForCropType.length -1].endTime;
+			var weatherActivityDateDiffInDays = Math.round(plenty_admin.HELPER.daydiff(lastWeatherDayDate, lastActivityDate));
+			console.log("weatherActivityDateDiffInDays", weatherActivityDateDiffInDays);
+			
+			//set the day label increment
+			var totalDays = weatherDays.length + weatherActivityDateDiffInDays;
+			var label_step = 1;
+			if(totalDays > 31 && totalDays < 125){
+				label_step = 3
+			}else if(totalDays > 125 && totalDays < 500){
+				label_step = 7
+			}else if(totalDays > 500 && totalDays < 1000){
+				label_step = 14
+			}else if(totalDays > 1000){
+				label_step = 20
+			}
+				
+			
 			var label_inc = 0;
-			var label_step = 3;
 			
 			for(var wO = 0; wO < weatherDays.length; wO++){
 				weatherOb = weatherDays[wO];
 				var obTime = plenty_admin.HELPER.formatJavaDate(weatherOb.date);
 				
 				//create labelling sets for graphs
-				plenty_admin.UI.field.weatherDays.dates.push(obTime.date);
-				
-				if(plenty_admin.UI.field.weatherDays.months.indexOf(obTime.month) == -1){
-					plenty_admin.UI.field.weatherDays.months.push(obTime.month);
-				}else{
-					plenty_admin.UI.field.weatherDays.dates.push("");
-				}
-				
+				//plenty_admin.UI.field.weatherDays.labels.push(obTime.date);
 				
 				// !!! HACK to skip every other X axis label
 				// Provides bad labels on chart
@@ -6566,6 +8047,7 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 				}
 				
 				
+				//process existing weather days
 				for(prop in weatherOb){
 					if(weatherOb.hasOwnProperty(prop)){
 						//console.log("prop:", prop);
@@ -6618,6 +8100,13 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 								
 								plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth].push(moistureDepth.moisture /* !!! HACK !!!*/ + (Math.random() * (10 - 100) + 10));
 							}
+						}else if(prop === "cropSurvey"){
+							if(!plenty_admin.UI.field.weatherDays["cropSurvey"]){
+								plenty_admin.UI.field.weatherDays["cropSurvey"] = [];
+							}
+							if(weatherOb["cropSurvey"]){
+								plenty_admin.UI.field.weatherDays["cropSurvey"].push(weatherOb["cropSurvey"]);
+							}
 						}else{
 							if(!plenty_admin.UI.field.weatherDays[prop]){
 								plenty_admin.UI.field.weatherDays[prop] = [];
@@ -6628,6 +8117,52 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 					
 					plenty_admin.UI.field.weatherDays.length = weatherDays.length;
 				}
+			}
+			
+			//add empty weather days till the end of activities
+			if(weatherActivityDateDiffInDays > 0){
+				label_inc = 0;
+				//add future weather days to the weather graph
+				for(var fWd = 0; fWd < weatherActivityDateDiffInDays; fWd++){
+					for(prop in plenty_admin.UI.field.weatherDays){
+						if(plenty_admin.UI.field.weatherDays.hasOwnProperty(prop)){
+							var wd = plenty_admin.UI.field.weatherDays[prop];
+							switch(prop){
+								//push in a 0 value
+								case "maxTemp":
+								case "minTemp":
+								case "percipToday":
+								case "gddToday":
+								case "gddTotalToToday":
+								case "percipTotalToToday":
+								wd.push(0);
+								break;
+								
+								//add future date labels
+								case "labels":
+								if(label_inc == 0){
+									var futureDateInSeconds = lastWeatherDayDate + (fWd * millisecondsPerDay) + millisecondsPerDay;
+									var futureDate = plenty_admin.HELPER.formatJavaDate(futureDateInSeconds).date;
+									
+									wd.push(futureDate);
+									label_inc += 1;
+									if(label_inc === label_step){
+										label_inc = 0;
+									}
+								}else{
+									wd.push("");
+									label_inc += 1;
+									if(label_inc === label_step){
+										label_inc = 0;
+									}
+								}
+								break;
+							}
+						}
+					}
+				}
+				
+				plenty_admin.UI.field.weatherDays.length += weatherActivityDateDiffInDays;
 			}
 			
 			console.log("plenty_admin.UI.field.weatherDays:", plenty_admin.UI.field.weatherDays);
@@ -6660,7 +8195,22 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 			
 			//set width of dom element that offsets the weather events and activities
 			var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
-			keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+			
+			try{
+				keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+			}catch(err){
+				bootbox.dialog({
+							message: "Not enough activities (minimum of 2) to create weather graphs. Their start and end dates are calculated from the begining of the first, and the end of the last event.", 
+							className: "danger",
+							buttons: {
+								danger: {
+								  label: "OK",
+								  className: "btn-danger",
+								  callback: plenty_admin.HELPER.hideLoadingOverlay
+								}
+							}
+						});
+			}
 			
 			plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
 			
@@ -6668,15 +8218,11 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
 			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
 			
-			plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
-			
 			//ensure if the window changes size the weather events are refitted
 			$(window).on("resize",function(){
 				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
 				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
 				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
-				
-				plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
 				
 				plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
 			});
@@ -6692,15 +8238,16 @@ plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
 		
 		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 			plenty_admin.UI.field.renderActivities(activitiesForCropType);
+			console.log("all data gathered: ", plenty_admin.UI.field.dayWidth);
+			plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
 			
 			//ensure if the window changes size the activities are refitted
 			$(window).on("resize",function(){
 				plenty_admin.UI.field.renderActivities(activitiesForCropType);
+				plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
 			});
 			
 			plenty_admin.UI.field.renderActivityFinancesGraph();
-			
-			//plenty_admin.UI.field.renderActivities(plenty_admin.UI.field.activitiesForCropType, true);
 			
 			plenty_admin.HELPER.hideLoadingOverlay();
 		});	
@@ -6748,25 +8295,24 @@ plenty_admin.UI.field.renderWeatherEvents = function(events, hash){
 
 plenty_admin.UI.field.renderCropSurveys = function(cropSurveys){
 	plenty_admin.UI.field.cropSurveysContainer = plenty_admin.UI.field.DOM.find(".tab-content .cropSurveys");
-	var _cropSurveys = [];
 	
-	for (var i = 0; i < cropSurveys.length; i++) {
-		if (cropSurveys[i]) {         
-		  _cropSurveys.push(cropSurveys[i]);
-		}
-	  }
-	console.log("_cropSurveys", _cropSurveys);
 	//remove any existing events
 	plenty_admin.UI.field.cropSurveysContainer
 	.find(".cropSurvey")
 	.remove();
 	
-	for(var e=0; e<_cropSurveys.length; e++){
-		var cS = _cropSurveys[e];
-		var leftPos = ((parseInt(plenty_admin.UI.field.cropSurveysContainer.width()) / plenty_admin.UI.field.weatherDays.length)*cS.count)-17;
+	for(var e=0; e<cropSurveys.length; e++){
+		var cS = cropSurveys[e];
+		cS.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.activitiesForCropType[0].startTime, cS.observationTime));
+		
+		var leftPos = plenty_admin.UI.field.dayWidth*cS.startOffsetDays -17; //days from the beginning - half the width of a crop survey icon
 		
 		if(leftPos < 0){
 			leftPos = 0;
+		}
+		
+		if(leftPos > plenty_admin.UI.field.cropSurveysContainer.width()){
+			leftPos = plenty_admin.UI.field.cropSurveysContainer.width() - 34;
 		}
 		
 		var uom = "UOMId-"+cS.countUOMId;
@@ -6778,9 +8324,14 @@ plenty_admin.UI.field.renderCropSurveys = function(cropSurveys){
 						"growthStageId: "+cS.growthStageId,
 					].join("");
 		
-		var cropSurveyHTML = $("<div class='cropSurvey alert alert-warning' data-toggle='tooltip' data-placement='top' title='"+tooltip+"' style='left:"+leftPos+"px'><i class='fa fa-file-text-o'></i></div>");
+		var cropSurveyHTML = $("<div class='cropSurvey alert alert-warning' data-toggle='tooltip' data-placement='top' title='"+tooltip+"' style='left:"+leftPos+"px'><i class='fa fa-file-text'></i></div>");
 		
 		cropSurveyHTML
+		.off("click")
+		.on("click", function(){
+			plenty_admin.UI.crop_survey.show(cS, plenty_admin.UI.field.fieldObj);
+			return false;
+		})
 		.tooltip({
 					container:"body",
 					html:true
@@ -6808,6 +8359,11 @@ plenty_admin.UI.field.getActivityIconClass = function(activityTypeId){
 			case 3:
 			case "Tilling":
 				iconClass = "pif pif-tilling";
+			break;
+			
+			case 4:
+			case "Planting":
+				iconClass = "pif pif-planting";
 			break;
 			
 			case 5:
@@ -6848,6 +8404,29 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 	.find(".activity")
 	.remove();
 	
+	var activityDays = Math.round(plenty_admin.HELPER.daydiff(activities[0].startTime, activities[activities.length-1].endTime));
+	plenty_admin.UI.field.dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / activityDays;
+	var hourWidth = plenty_admin.UI.field.dayWidth /24;
+	
+	console.log("activityDays", plenty_admin.UI.field.dayWidth, hourWidth);
+	
+	if(activities.length === 0){
+		console.warn("could not calculate weatherDay width as weatherDays is empty");
+		bootbox.dialog({
+				message: "Could not calculate weatherDay witdh - there are no weatherDays being returned.", 
+				className: "danger",
+				buttons: {
+					danger: {
+					  label: "OK",
+					  className: "btn-danger",
+					  callback: plenty_admin.HELPER.hideLoadingOverlay,
+					}
+				}
+			});
+			
+		return;
+	}
+	
 	for(var a=0; a<activities.length; a++){
 		var activity = activities[a];
 		
@@ -6855,18 +8434,17 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		
 		activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
 		activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
-		//activity.duration = Math.round(plenty_admin.HELPER.daydiff(activity.startTime, activity.endTime));
-		activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.dates.start, activity.startTime));
+		activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(activities[0].startTime, activity.startTime));
 		
-		console.log("activity", activity);
-		
-		var dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / plenty_admin.UI.field.weatherDays.length;
-		var hourWidth = dayWidth /24;
-		var leftPos = dayWidth*activity.startOffsetDays;
+		//console.log("activity", activity);
+
+		var leftPos = plenty_admin.UI.field.dayWidth*activity.startOffsetDays;
 		var eventWidth = Math.round(hourWidth*activity.durationInHours);
 		
-		if(eventWidth < 15){
-			eventWidth = 15;
+		//console.log("eventWidth: ", eventWidth);
+		
+		if(eventWidth < 26){
+			eventWidth = 26;
 		}
 		
 		if(leftPos < 0){
@@ -6879,14 +8457,19 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 		
 		var activityHTML = $("<div class='activity' data-toggle='tooltip' data-placement='top' title='"+plenty_admin.UI.field.getActivityTooltipTitle(activity)+"' style='left:"+leftPos+"px; width:"+eventWidth+"px'><i class='"+plenty_admin.DATA.activityTypes[activity.activityTypeId].name.toLowerCase().replace(/ /g, "")+" "+activity.iconClass+"'></i></div>");
 		
+		var activityFinances = $.grep(plenty_admin.UI.field.fieldCropActivityFinances.activityFinances, function(activityFinance, a){
+			return activityFinance.activityDto.id === activity.id;
+		});
+			
 		activityHTML
 		.tooltip({
 			html:true,
 			container:"body"
 		})
 		.data("activity", activity)
+		.data("activityFinance", activityFinances[0])
 		.click(function(){
-			plenty_admin.UI.field.show_activity_modal(activity);
+			plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
 		});
 		
 		plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
@@ -6917,18 +8500,39 @@ plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
 			].join("");
 			
 			var $activityItem = $(activityItem);
+
 			$activityItem
 			.data("activity", activity)
-			.data("activityFinance", $.grep(plenty_admin.UI.field.fieldCropActivityFinances.activityFinances, function(activityFinance, a){
-				return activityFinance.activityDto.id === activity.id;
-			})[0])
+			.data("activityFinance", activityFinances[0])
 			.click(function(){
-				plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances);
+				plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
 			});
 			
 			plenty_admin.UI.field.activityListContainer.append($activityItem);
 		}
 	}
+	
+	var $futureDays = plenty_admin.UI.field.DOM.find(".futureDays");
+	var $todayLabel = plenty_admin.UI.field.DOM.find(".todayLabel");
+	
+	console.log("MAKE PASTDAYS: ", plenty_admin.UI.field.dayWidth, plenty_admin.UI.field.__weatherDays.length);
+	
+	var pastDaysWidth = plenty_admin.UI.field.dayWidth * plenty_admin.UI.field.__weatherDays.length;
+	console.log("pastDaysWidth", pastDaysWidth);
+	
+	var keyOffsetElements = plenty_admin.UI.field.DOM.find(".keyOffset");
+	
+	keyOffsetElements.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+	
+	var fdKeyOffset = $futureDays.parent().find(".keyOffset");
+	var todayDaysWidth = fdKeyOffset.width() + pastDaysWidth -1;
+	fdKeyOffset
+	.width(todayDaysWidth);
+	
+	$todayLabel
+	.css({
+		right: - ($todayLabel.width()/2)
+	})
 }
 
 plenty_admin.UI.field.renderEquipment = function(equipment){
@@ -6970,15 +8574,88 @@ plenty_admin.UI.field.renderEquipment = function(equipment){
 		});
 		
 		plenty_admin.UI.field.equipmentListContainer.append($equipmentItemHTML);
+		
+		//add equipment pins to field map
+		//get a google latlng object for each element
+		var latlng = new google.maps.LatLng(equipmentObject.latitude, equipmentObject.longitude);
+		
+		equipmentObject.latlng = latlng;
+		
+		var pinEvents = {
+			onMouseOver: function(event){ //mouseover event
+				//console.log("hover marker: ", this, $(this.markerContent_));
+				$(this.markerContent_)
+				.find(".marker")
+				.addClass("hover");
+				
+				$(this.markerWrapper_)
+				.css({
+					zIndex:10
+				});
+				
+				plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equipmentObject.name+"</strong>");
+			}, 
+			onMouseOut: function(event){ //mouseout event
+				$(this.markerContent_)
+				.find(".marker")
+				.removeClass("hover");
+				
+				$(this.markerWrapper_)
+				.css({
+					zIndex:1
+				});
+				
+				plenty_admin.MAPS.polygon_tooltip.hide();
+			}, 
+			onClick: function(event){ //click event
+				//event.stopPropagation();
+				plenty_admin.UI.field.show_equipment_modal(equipmentObject);
+			}, 
+			/*
+			onRightClick: function(event){ //right click event
+				console.log("event:", this, equip);
+				plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
+			},
+			onDragEnd: function(){ //drag end event
+				var that = this;
+				console.log("onDragEnd:", equip, that);
+				//check if the point has been moved to another polygon or is not in a polygon
+				var matchedPoly = null;
+				for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
+					var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
+					if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
+						console.log("Point is inside a polygon: ", polygon);
+						matchedPoly = polygon;
+						break;
+					}
+				}
+				
+				if(matchedPoly){
+					if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
+						console.log("do you want top move this equipment within this field?");
+						plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+					}else{
+						console.log("Do you what to assosciate this equipment with a different field");
+						plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
+					}
+				}else{
+					console.log("are you sure you want to disassociate this equipment with any fields???");
+					plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+					plenty_admin.MAPS.delete_field_equipment(equip, that);
+				}
+				return false;
+			}
+			*/
+		}
+		//draw the pin on the map
+		plenty_admin.MAPS.draw_pin(equipmentObject, pinEvents, plenty_admin.MAPS.map);
 	}
 }
 
 plenty_admin.UI.field.getActivityTooltipTitle = function(activity){
-	var title = //'<i class=\''+activity.iconClass+'\' style=\'width:40px; height:40px; margin:0 auto;\'/>'+
-				//"<br/>"+
-				plenty_admin.DATA.activityTypes[activity.activityTypeId].name+
+	var title = plenty_admin.DATA.activityTypes[activity.activityTypeId].name+
 				"<br/>"+
-				activity.startDate.date+
+				activity.startDate.fullDate+
 				"<br/>"+
 				"$"+
 				numeral(activity.cost).format('$0,0.00');
@@ -7077,14 +8754,16 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 	//create dynamic moisture datasets
 	var datasets = [];
 	var index = 0;
-	plenty_admin.UI.brand_palette.setNumberRange(0, Object.keys(plenty_admin.UI.field.weatherDays.moisture).length);
+	var palette = new Rainbow();
+	palette.setSpectrum("#0076b2", "#93b222", "#788912");
+	palette.setNumberRange(0, Object.keys(plenty_admin.UI.field.weatherDays.moisture).length);
 	
 	//for(var m=0; m<plenty_admin.UI.field.weatherDays.moisture.length; m++){
 	for(depth in plenty_admin.UI.field.weatherDays.moisture){
 		if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
 			//console.log("colour: ", index, depth);
 			var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
-			var colour = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index));
+			var colour = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index));
 			var label = depth.toString();
 			var dataset = {
 				label: label+"mm",
@@ -7093,7 +8772,7 @@ plenty_admin.UI.field.renderMoistureGraph = function(){
 				pointColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba("+plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(index))+",1)",
+				pointHighlightStroke: "rgba("+plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index))+",1)",
 				data: moistureDepth
 			};
 			datasets.push(dataset);
@@ -7193,13 +8872,15 @@ plenty_admin.UI.field.renderActivityFinancesGraph = function(){
 	.text(numeral(finances.totalRevenue).format('$0,0.00'));
 	
 	//colour palette for graph segments
-	plenty_admin.UI.brand_palette.setNumberRange(0, (finances.length > 0 ? finances.length : 1));
+	var palette = new Rainbow();
+	palette.setSpectrum("#0076b2", "#93b222", "#788912");
+	palette.setNumberRange(0, (finances.activityFinances.length > 0 ? finances.activityFinances.length : 1));
 	
 	//for(index in finances){
 	for(var a=0; a<finances.activityFinances.length; a++){
 		var finance = finances.activityFinances[a];
-		console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
-		finance.colour = "#"+plenty_admin.UI.brand_palette.colourAt(a);
+		//console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
+		finance.colour = "#"+palette.colourAt(a);
 
 		var segment = {
 			value:		finance.cost,
@@ -7330,15 +9011,15 @@ plenty_admin.UI.field.renderTasks = function(taskFinances){
 		console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
 		var taskRow = [
 			"<tr class='pointer'>",
-				"<td>",
+				"<td><span class='editable' data-type='text' data-pk='1' data-url='/post' data-title='Choose the task name'>",
 					task.taskDto.name,
-				"</td>",
+				"</span></td>",
 				"<td>",
 					task.taskDto.state,
 				"</td>",
-				"<td>",
+				"<td><span class='editable' data-type='date' data-pk='1' data-url='/post' data-title='Choose the start date'>",
 					plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
-				"</td>",
+				"</span></td>",
 				"<td>",
 					plenty_admin.HELPER.daysFromHours(task.taskDto.durationInHours),
 				"</td>",
@@ -7351,40 +9032,46 @@ plenty_admin.UI.field.renderTasks = function(taskFinances){
 		taskRows += taskRow;
 	}
 	
+	$.fn.editable.defaults.mode = 'inline';
+	
 	plenty_admin.UI.map.MODAL_activity
 	.find(".activityTasksList table tbody tr")
 	.remove()
 	.end()
 	.find(".activityTasksList table tbody")
-	.append(taskRows);
+	.append(taskRows)
+	.find(".editable")
+	.editable(plenty_admin.REST.inline_editing_options);
 }
 
 plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	console.log("renderTaskFinancesGraph", taskFinances);
 	//colour palette for graph segments
-	plenty_admin.UI.brand_palette.setNumberRange(0, 2);
+	var palette = new Rainbow();
+	palette.setSpectrum("#0076b2", "#93b222", "#788912");
+	palette.setNumberRange(0, 2);
 		
 	//holder for graph data set
 	var taskFinancesData = [
 		//equipment
 		{
 			value:		0,
-			color:		"#"+plenty_admin.UI.brand_palette.colourAt(0),
-			highlight:	plenty_admin.HELPER.colorLuminance("#"+plenty_admin.UI.brand_palette.colourAt(0), .4),
+			color:		"#"+palette.colourAt(0),
+			highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(0), .4),
 			label: 		"Equipment",
 		},
 		//skill
 		{
 			value:		0,
-			color:		"#"+plenty_admin.UI.brand_palette.colourAt(1),
-			highlight:	plenty_admin.HELPER.colorLuminance("#"+plenty_admin.UI.brand_palette.colourAt(1), .4),
+			color:		"#"+palette.colourAt(1),
+			highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(1), .4),
 			label: 		"Labor",
 		},
 		//skill
 		{
 			value:		0,
-			color:		"#"+plenty_admin.UI.brand_palette.colourAt(2),
-			highlight:	plenty_admin.HELPER.colorLuminance("#"+plenty_admin.UI.brand_palette.colourAt(2), .4),
+			color:		"#"+palette.colourAt(2),
+			highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(2), .4),
 			label: 		"Products",
 		},
 	];
@@ -7439,20 +9126,38 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 		
 		for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
 			var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
-			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(0));
-			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+			var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(0));
+			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+			
+			//add task resource costs breakdown to task resource type costs (indented)
+			for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+				var resource = taskItem.taskResourceCosts[tr];
+				equipmentItems += "<li class='taskResourceItem equipmentTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+			}
 		}
 		
 		for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
 			var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
-			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(1));
-			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+" / "+taskItem.cost+"</li>";
+			var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(1));
+			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+			
+			//add task resource costs breakdown to task resource type costs (indented)
+			for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+				var resource = taskItem.taskResourceCosts[tr];
+				laborItems += "<li class='taskResourceItem laborTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+			}
 		}
 		
 		for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
 			var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
-			var bgColor = plenty_admin.HELPER.hexToRgb("#"+plenty_admin.UI.brand_palette.colourAt(2));
-			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+" / "+taskItem.cost+"</li>";
+			var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(2));
+			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+			
+			//add task resource costs breakdown to task resource type costs (indented)
+			for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+				var resource = taskItem.taskResourceCosts[tr];
+				productItems += "<li class='taskResourceItem productTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+			}
 		}
 	}
 	
@@ -7470,23 +9175,23 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	.find("li[data-name='products']")
 	.after(productItems)
 	.end()
-	.find(".equipmentTaskItem")
+	.find(".equipmentTaskResourceItem")
 	.last()
 	.addClass("last")
 	.end()
 	.end()
-	.find(".laborTaskItem")
+	.find(".laborTaskResourceItem")
 	.last()
 	.addClass("last")
 	.end()
 	.end()
-	.find(".productTaskItem")
+	.find(".productTaskResourceItem")
 	.last()
 	.addClass("last");
 	
 	var resetLegentStyle = function(legendHolder){
 		$(legendHolder)
-		.find("li:not(.taskItem)")
+		.find("li:not(.taskItem):not(.taskResourceItem)")
 		.css({"background-color": "transparent"})
 		.removeClass("active")
 		.find("span.swatch")
@@ -7504,22 +9209,21 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 		helpers.addEvent(legendNode, 'mouseover', function () {
 			console.log("hover legendNode: ", this, index, $(this).prop("class"));
 			
-			if($(this).hasClass("taskItem")){
-				if($(this).hasClass("equipmentTaskItem")){
+			if($(this).hasClass("taskItem") || $(this).hasClass("taskResourceItem")){
+				if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
 					index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
-				}else if($(this).hasClass("laborTaskItem")){
+				}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
 					index = 1; //$(legendHolder).find("li[data-name='labor']").index();
-				}else if($(this).hasClass("productTaskItem")){
+				}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
 					index = 2; //$(legendHolder).find("li[data-name='products']").index();
 				}
-				//return; //no hover effect on task items just yet
 			}else{
 				index = parseInt($(this).data("segmentid"));
 			}
 			
 			console.log("index: ", index);
 			
-			if(!$(this).hasClass("taskItem")){
+			if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
 				var activeSegment = plenty_admin.UI.field.taskFinancesGraph.segments[index];
 				
 				var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
@@ -7544,17 +9248,17 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	
 	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
 		if($(this).hasClass("taskItem")){
-			if($(this).hasClass("equipmentTaskItem")){
+			if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
 				index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
-			}else if($(this).hasClass("laborTaskItem")){
+			}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
 				index = 1; //$(legendHolder).find("li[data-name='labor']").index();
-			}else if($(this).hasClass("productTaskItem")){
+			}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
 				index = 2; //$(legendHolder).find("li[data-name='products']").index();
 			}
 			//return; //no hover effect on task items just yet
 		}
 		plenty_admin.UI.field.taskFinancesGraph.draw();
-		if(!$(this).hasClass("taskItem")){
+		if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
 			resetLegentStyle(legendHolder);
 		}
 	});
@@ -7596,6 +9300,17 @@ plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
 	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.taskFinancesGraph);
 }
 
+plenty_admin.DATA.load_field_observation = function(observationId, callback){
+	plenty_admin.REST.getObservationById = plenty_admin.api.one("observations/getObservation", observationId);
+	plenty_admin.REST.getObservationById.get().then(function(observation){
+			console.log("observation: ", observation);
+			if(callback && typeof callback === "function"){
+				callback(observation);
+			}
+		}
+	);
+}
+
 
 //*********************** map.js **************************//
 //create namespace for map layout
@@ -7607,7 +9322,7 @@ plenty_admin.UI.map.toggleFilters = plenty_admin.UI.map.filterControls.find(".to
 plenty_admin.UI.map.farms_quickfilter = plenty_admin.UI.map.filterControls.find(".quickFilter_farms");
 plenty_admin.UI.map.orgs_quickfilter = plenty_admin.UI.map.filterControls.find(".quickFilter_organizations");
 plenty_admin.UI.map.minCLUZoom = 15;
-plenty_admin.UI.map.applicableFilters = ["organizations", "farms", "fields", "cropTypes", "plans"];
+plenty_admin.UI.map.applicableFilters = ["organizations", "farms", "fields", "croptypes", "plans"];
 plenty_admin.UI.map.filtered_field_polygons = [];
 plenty_admin.UI.map.MODAL_equipment = $("body").find(".modal#equipment");
 plenty_admin.UI.map.MODAL_activity = $("body").find(".modal#activity");
@@ -7726,6 +9441,13 @@ plenty_admin.UI.map.init = function(){
 }
 
 plenty_admin.UI.map.add_equipment_to_map = function(){
+	//only run one request at a time
+	if(plenty_admin.UI.map.adding_map_equipment){
+		return;
+	}
+	
+	plenty_admin.UI.map.adding_map_equipment = true;
+	
 	var bounds = plenty_admin.MAPS.mainMap.getBounds();
 	var boundary = {};
 	
@@ -7736,13 +9458,39 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 	
 	console.log("BOUNDARY: ", bounds, bounds.getNorthEast(), boundary);
 	
-	plenty_admin.REST.fields.getEquipmentLocationForFilter(boundary, function(equipmentData){
-		//get array of equipment elements
-		var equipment = equipmentData;
+	plenty_admin.REST.fields.getEquipmentLocationForFilter(boundary, function(equipment){
+		
+		plenty_admin.UI.map.adding_map_equipment = false;
 		
 		console.log("Equipments", equipment);
 		
 		var boundaryLatLngs = [];
+		
+		//remove markers that are not in the returned set
+		if(equipment.length < plenty_admin.MAPS.equipment_pins.length){ //the number of pins has reduced
+			var markersToRemove = [];
+			for(var eq=0; eq<plenty_admin.MAPS.equipment_pins.length; eq++){ //loop the existing pins
+				var existingEq = plenty_admin.MAPS.equipment_pins[eq];
+				
+				var equipToRemove = $.grep(equipment, function(newEquip, nE){
+					return existingEq.id === newEquip.id; // check this existing pin against those returned
+				});
+				
+				if(equipToRemove.length == 0){ // if a pin exists already that is not in the returned set
+					existingEq._index = eq;
+					markersToRemove.push(existingEq); // add it to the pins to be removed
+				}
+			}
+			
+			//console.log("markersToRemove", markersToRemove);
+			if(markersToRemove.length > 0){ // if there are poins to remove
+				for(var f=markersToRemove.length-1; f>=0; f--){
+					//console.log("remove marker: ", f, markersToRemove[f]);
+					$(markersToRemove[f].markerWrapper_).remove(); // remove them from the DOM
+					plenty_admin.MAPS.equipment_pins.splice(markersToRemove[f]._index, 1); // remove them from our pins array
+				}
+			}
+		}
 		
 		//loop the equipment
 		equipment.forEach(function(equip, e){
@@ -7824,9 +9572,9 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						}
 						return false;
 					}
-				};
+				}
 				//draw the pin on the map
-				plenty_admin.MAPS.draw_pin(equip, pinEvents);
+				plenty_admin.MAPS.draw_pin(equip, pinEvents, plenty_admin.MAPS.mainMap);
 			}
 			//}
 		});
@@ -7838,11 +9586,48 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 	});
 }
 
-plenty_admin.UI.field.show_activity_modal = function(activity, taskFinances){
+plenty_admin.UI.field.show_activity_modal = function(activity, taskFinances, el){
 	console.log("show_activity_modal", activity, taskFinances);
 	plenty_admin.UI.map.MODAL_activity
 	.find(".modal-title")
 	.text(plenty_admin.DATA.activityTypes[activity.activityTypeId].name)
+	.end()
+	.find("button.delete")
+	.off("click")
+	.on("click", function(){
+			plenty_admin.UI.map.MODAL_activity
+			.find(".modal-content")
+			.addClass("blur")
+			.end()
+			.find(".confirmDelete")
+			.show();
+	})
+	.end()
+	.find("button.cancel")
+	.off("click")
+	.on("click", function(){
+			plenty_admin.UI.map.MODAL_activity
+			.find(".modal-content")
+			.removeClass("blur")
+			.end()
+			.find(".confirmDelete")
+			.hide();
+	})
+	.end()
+	.find(".confirmDelete button.delete")
+	.off("click")
+	.on("click", function(){
+		plenty_admin.REST.deleteActivity
+		.delete(activity.id)
+		.then(function(data){
+			console.log("Activity Deleted:", data);
+			plenty_admin.UI.map.MODAL_activity
+			.modal("hide");
+			
+			el
+			.remove();
+		})
+	})
 	.end()
 	.on("shown.bs.modal", function(){
 		plenty_admin.UI.field.renderTaskFinancesGraph(taskFinances);
@@ -7855,14 +9640,15 @@ plenty_admin.UI.field.show_equipment_modal = function(equip){
 	console.log("show_equipment_modal", equip);
 	
 	plenty_admin.REST.fields.getEquipmentImage(equip.id, function(imageString){
-		console.log("imageString", imageString);
+		//console.log("imageString", imageString);
 		plenty_admin.UI.map.MODAL_equipment
 		.find(".image").html("<img src='data:image/jpeg;base64,"+ imageString +"' width='100%'/>");
 	});
 	
+	var equipType = equip.equipmentObservationDto ? equip.equipmentObservationDto.type : "null";
 	plenty_admin.UI.map.MODAL_equipment
-	.removeClass("MOVEABLE WELL SOIL_MOISTURE")
-	.addClass(equip.equipmentObservationDto.type)
+	.removeClass("MOVEABLE WELL SOIL_MOISTURE null")
+	.addClass(equipType)
 	.find(".modal-title")
 	.text(equip.equipmentTypeIds[0].name)
 	.end()
@@ -7875,7 +9661,12 @@ plenty_admin.UI.field.show_equipment_modal = function(equip){
 	.find(".lng")
 	.text(equip.longitude)
 	
-	switch(equip.equipmentObservationDto.type){
+	
+	switch(equipType){
+		case null:
+			
+		break;
+		
 		case "MOVEABLE":
 			plenty_admin.UI.map.MODAL_equipment
 			.find(".equipmentObservationHeaders.MOVEABLE")
@@ -8036,12 +9827,34 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 					}, 
 					onMouseOver: function(event){ //onMouseOver handler
 						//console.log("poly mouseover: ", this, event);
+						var that = this;
 						this.setOptions({
 							strokeOpacity: 1,
 							fillOpacity: .65
 						});
 						
-						plenty_admin.MAPS.polygon_tooltip.show("<strong>"+fieldData.fieldName+"</strong><br /><p>Right click for options</p>");
+						plenty_admin.MAPS.polygon_tooltip.show([
+																"<div class='polyToolTip polyToolTip_"+fieldData.id+"'>",
+																"<p>Name:<br><strong>",
+																	fieldData.fieldName,
+																"</strong></p>",
+																"<p>",
+																	"Crop:<br><strong>"+plenty_admin.HELPER.capitalizeFirstLetter(fieldData.cropType)+"</strong>",
+																"</p>",
+																"<p>Acreage:<br><strong>",
+																	fieldData.acreage ? fieldData.acreage : plenty_admin.MAPS.get_polygon_area(that),
+																"</strong></p>",
+																"<p class='growthStage'>Growth Stage:<br><strong>",
+																	(that.growthStage ? that.growthStage.name : plenty_admin.REST.fields
+																			.getGrowthStageById(fieldData.growthStageId ? fieldData.growthStageId : 1, 								
+																			function(growthStage){
+																				that.growthStage = growthStage;
+																				$("#tt .polyToolTip_"+fieldData.id+" .growthStage strong")
+																				.text(growthStage.name);
+																			})),
+																"</strong></p>",
+																"<p class='mbn'>Click for options</p>"
+															].join(""));
 					}, 
 					onMouseOut: function(event){ //onMouseOut handler
 						//console.log("poly mouseout: ", this, event);
@@ -8059,33 +9872,57 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 							fillOpacity: .35
 						});
 					}, 
-					onRightClick: function(event){
-						var lat = event.latLng.lat();
-						var lng = event.latLng.lng();
-						$("body").addClass("loading");
-						// populate yor box/field with lat, lng
-						//alert("Show Add Equipment Option - Lat=" + lat + "; Lng=" + lng);
-						plenty_admin.REST.fields.getFieldById(this.id, function(fieldObj){
-							$("body").removeClass("loading");
-							var fullFieldObject = $.extend(fieldData, fieldObj);
-							fullFieldObject.rc_lat = event.latLng.lat();
-							fullFieldObject.rc_lng = event.latLng.lng();
-							
-							//console.log("fullFieldObject", fullFieldObject);
-							plenty_admin.MAPS.show_polygon_context_menu(fullFieldObject, plenty_admin.MAPS.mainMap, "map_context_menu");
-						});
-						plenty_admin.MAPS.polygon_tooltip.hide();
+					onClick: function(event){
+						console.log("polygon clicked");
+						var _this = this;
+						var checkDouble = setTimeout(function(){
+							if(!_this.isDblClick){
+								var lat = event.latLng.lat();
+								var lng = event.latLng.lng();
+								$("body").addClass("loading");
+								// populate yor box/field with lat, lng
+								plenty_admin.REST.fields.getFieldById(_this.id, function(fieldObj){
+									$("body").removeClass("loading");
+									var fullFieldObject = $.extend(fieldData, fieldObj);
+									fullFieldObject.rc_lat = event.latLng.lat();
+									fullFieldObject.rc_lng = event.latLng.lng();
+									
+									//console.log("fullFieldObject", fullFieldObject);
+									plenty_admin.MAPS.show_polygon_context_menu(fullFieldObject, plenty_admin.MAPS.mainMap, "map_context_menu", _this);
+								});
+								plenty_admin.MAPS.polygon_tooltip.hide();
+							}else{
+								_this.isDblClick = false;
+							}
+						}, 400);
 					},
-					onClick: function(event){ //onClick handler
-						console.log("polygon clicked: ", event, $(event.eb.target), $(event.eb.target).hasClass("marker"));
+					onDoubleClick: function(event){ //onClick handler
+						event.stop();
+						this.isDblClick = true;
+						console.log("polygon double clicked: ", event);
+						plenty_admin.HELPER.showLoadingOverlay();
 						var thisPoly = this;
-						var polyPath = this.getPath().getArray();
+						//var polyPath = this.getPath().getArray();
+						
+						
+						var polyPath = [];
+						thisPoly.getPath().getArray().forEach(function(point, p){
+							var latlng = {
+								latitude: point.lat(),
+								longitude: point.lng(),
+								seqNumber: p
+							}
+							polyPath.push(latlng);
+						});
+						
 						
 						//only move to field screen
 						//if a polygon has been clicked, not a marker
-						if($(event.eb.target).hasClass("marker")){
+						if($(event.fb.target).hasClass("marker")){
 							console.log("marker clicked instead of poly - return!");
 							return;
+						}else{
+							plenty_admin.HELPER.showLoadingOverlay();
 						}
 						
 						//get field by ID
@@ -8094,6 +9931,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 							fieldObj.fillColor = thisPoly.fillColor;
 							fieldObj.strokeColor = thisPoly.strokeColor;
 							fieldObj.boundaries = polyPath;
+							fieldObj.isCoords = false;
 						
 							//build the breadcrumb trail object
 							var field_breadcrumb = [
@@ -8111,6 +9949,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 											.parent()
 											.find(".filter_controls")
 											.fadeIn("fast", function(){
+												google.maps.event.trigger(plenty_admin.MAPS.mainMap, 'resize'); 
 												plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 											});
 										});
@@ -8130,7 +9969,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 							.end()
 							.prepend(plenty_admin.UI.build_breadcrumb_trail(field_breadcrumb));
 							
-							plenty_admin.UI.field.init(fieldObj, "map"/*, polyPath */);
+							plenty_admin.UI.field.init(fieldObj, "map");
 						});
 					}
 				};
@@ -8175,6 +10014,12 @@ $( document ).on( "map_data_ready", function( event, orgs ) {
 		plenty_admin.DATA.update_filters(function(){
 			console.log("init filters");
 			plenty_admin.UI.map.add_equipment_to_map();
+			plenty_admin.UI.map.toggleFilters
+			.parent()
+			.fadeIn("fast")
+			.parent()
+			.find(".filter_loader")
+			.fadeOut("fast");
 		}, true);
 	});
 });
@@ -8196,6 +10041,151 @@ plenty_admin.UI.dashboard.populate = function(){
 
 $( document ).on( "dashboard_data_ready", function( event, orgs ) {
     plenty_admin.UI.dashboard.init();
+});
+//*********************** plans.js **************************//
+//create namespace for plans layout
+plenty_admin.UI.plans = {};
+plenty_admin.UI.plans.DOM = plenty_admin.UI.DOM.find("#plans-container");
+plenty_admin.UI.plans.filterControls = $(".filter_controls");
+plenty_admin.UI.plans.toggleFilters = plenty_admin.UI.plans.filterControls.find(".toggleFilters a");
+//plenty_admin.UI.plans.farms_quickfilter = plenty_admin.UI.plans.filterControls.find(".quickFilter_farms");
+plenty_admin.UI.plans.orgs_quickfilter = plenty_admin.UI.plans.filterControls.find(".quickFilter_organizations");
+plenty_admin.UI.plans.plansTable = plenty_admin.UI.plans.DOM.find("#plans-container tbody");
+plenty_admin.UI.plans.applicableFilters = ["organizations"/*, "farms", "fields", "croptypes", "plans"*/];
+
+//method to initiate the field page
+plenty_admin.UI.plans.init = function(){
+	console.log("plenty_admin.UI.plans.init");
+	plenty_admin.UI.currentScreen = plenty_admin.UI.plans.DOM;
+	
+	//set up the map filter controls
+	plenty_admin.UI.plans.toggleFilters
+	.click(function(){
+		plenty_admin.UI.filters.toggleFilters();	
+		return false;
+	});
+	
+	/*
+	plenty_admin.UI.plans.farms_quickfilter
+	.popover({
+		content:function(){
+			var $popover_content = plenty_admin.UI.filters.DOM.find(".filter-set.farms .all-filters").clone(true, true).addClass("farms_quickfilter_popover").show();
+			
+			return $popover_content;
+		},
+		title: '<button type="button" id="close" class="close" onclick="plenty_admin.UI.plans.farms_quickfilter.popover(&quot;hide&quot;);">&times;</button>',
+		html:true,
+		id:"",
+		placement:"bottom"
+	})
+	.parent().delegate('a, input[type="checkbox"]', 'click', function(e) {
+		return false;
+	})
+	.end()
+	.on('show.bs.popover', function (e) {
+		plenty_admin.UI.plans.orgs_quickfilter
+		.popover("hide");
+	});
+	*/
+	
+	plenty_admin.UI.plans.orgs_quickfilter
+	.popover({
+		content:function(){
+			var $popover_content = plenty_admin.UI.filters.DOM.find(".filter-set.organizations .all-filters").clone(true, true).addClass("orgs_quickfilter_popover").show();
+			
+			return $popover_content;
+		},
+		html:true,
+		title: '<button type="button" id="close" class="close" onclick="plenty_admin.UI.plans.orgs_quickfilter.popover(&quot;hide&quot;);">&times;</button>',
+		placement:"bottom"
+	})
+	.parent().delegate('a, input[type="checkbox"]', 'click', function(e) {
+		return false;
+	})
+	.end()
+	.on('show.bs.popover', function (e) {
+		//plenty_admin.UI.plans.farms_quickfilter
+		//.popover("hide");
+	});
+	
+	plenty_admin.UI.plans.plansTable
+	.off("click")
+	.on("click", function(e){
+		console.log("plans container clicked");
+		plenty_admin.UI.filters.toggleFilters("close");	
+		//plenty_admin.UI.plans.farms_quickfilter.popover("hide");
+		plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
+	});
+}
+
+plenty_admin.UI.plans.populate = function(){
+	plenty_admin.UI.plans.DOM
+	.find("tbody tr")
+	.remove();
+	
+	for(var p=0; p<plenty_admin.DATA.plans.length; p++){
+		var plan = plenty_admin.DATA.plans[p];
+		var $planHTML = $([
+			"<tr data-id='"+plan.id+"' class='plan'>",
+				"<td width='6%'><i class='active "+(plan.active ? "glyphicon glyphicon-ok" : "")+"'></i></th>",
+				"<td width='10.66%'>"+plan.name+"</th>",
+				"<td width='16.66%'>"+plan.description+"</th>",
+				"<td width='16.66%'>$27,754.00</th>",
+				"<td width='16.66%'>$27,754.00</th>",
+				"<td width='16.66%'>$27,754.00</th>",
+				"<td width='16.66%' class='text-right'>$25.56</th>",
+			"</tr>"
+		].join(""));
+		
+		$planHTML
+		.data("plan", plan);
+		
+		console.log("$planHTML", $planHTML);
+		
+		plenty_admin.UI.plans.DOM
+		.find("tbody")
+		.append($planHTML);
+	}
+	
+	plenty_admin.HELPER.hideLoadingOverlay();
+}
+
+// get all activity types and store them
+
+plenty_admin.REST.getPlansFiltered = function(filterId){
+	plenty_admin.REST.plansFiltered = plenty_admin.api.one("filters/getPlansFiltered", filterId);
+	plenty_admin.REST.plansFiltered.get()
+		.then(
+			function(plans){
+				console.log("got plans filtered: ", plans().data);
+				plenty_admin.DATA.plans = plans().data;
+				plenty_admin.UI.plans.populate();
+			},
+			function(err){
+				console.error("getting filtered plans: ", err);
+			});
+}
+
+$( document ).on( "plans_data_ready", function( event ) {
+	console.log("plans_data_ready");
+    plenty_admin.UI.plans.init();
+	
+	//populate filter panel options based on current user filters
+	plenty_admin.DATA.load_user_filters(function(filters){	
+		console.log("filters", filters);
+		plenty_admin.DATA.userFilters = filters().data;
+		plenty_admin.DATA.data_source = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList;
+		plenty_admin.DATA.update_filters(function(){
+			console.log("init filters");
+			//plenty_admin.UI.plans.add_equipment_to_map();
+			plenty_admin.UI.plans.toggleFilters
+			.parent()
+			.fadeIn("fast")
+			.parent()
+			.find(".filter_loader")
+			.fadeOut("fast");
+		}, true);
+	});
 });
 //define an empty var for the sidebar HTML
 plenty_admin.UI.sideBar = {};
@@ -8360,98 +10350,51 @@ plenty_admin.UI.filters.add_selected_filter = function(filterData){
 		
 		var filterSet = $(this).closest(".filter-set");
 		
-		filterSet
-		.find(".all-filters li.filter[data-filterid='"+thisFilter.data("filterid")+"']")
-		.removeClass("active")
-		.find("input[type='checkbox']")
-		.prop("checked", false);
+		for(var f=0; f<plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")].length; f++){
+			var filter = plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")][f];
+			if(filter === parseInt(thisFilter.data("id"))){
+				plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")].splice(f, 1);
+			}
+		}
 		
 		var current_filters = filterSet.find("ul.selected-filters li.filter:not(.all)");
 		//if all filters have been removed, show All filter
 		//console.log("current_filters", current_filters, current_filters.length);
-		if(current_filters.length == 0){
+		if(
+			current_filters.length == 0
+			|| current_filters.length === plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterSet.data("filter").replace("Ids", "s")].length
+		){
 			plenty_admin.UI.filters.select_all_filters(filterSet, true);
 		}
 		
-		plenty_admin.UI.filters.update_filters();
+		thisFilter
+		.remove();
+		
+		plenty_admin.DATA.update_filters();
 		
 		return false;
 	});
 	
-	var filterSet = plenty_admin.UI.filters.DOM.find(".filter-set."+filterData.filter)
+	var filterSet = plenty_admin.UI.filters.DOM.find(".filter-set."+filterData.filter.toLowerCase())
 	
-	var $showFilters = filterSet.find(".selected-filters li.show-filters");
 	var $allFilters = filterSet.find(".selected-filters li.all");
 	
 	$allFilters
 	.hide();
 	
-	$filter
-	.insertBefore($showFilters);
-}
-
-plenty_admin.UI.filters.remove_selected_filter = function(filter){
-	plenty_admin.UI.filters.DOM
-	.find(".selected-filters li[data-filterid='"+filter.data("filterid")+"']")
-	.remove();
-	
-	plenty_admin.UI.filters.update_filters();
+	filterSet
+	.find(".selected-filters")
+	.append($filter);
 }
 
 plenty_admin.UI.filters.select_all_filters = function(filter, updateFilters){
-	filter
-	.find(".all-filters li.filter")
-	.not(".all")
-	.removeClass("active")
-	.find("input[type='checkbox']")
-	.prop("checked", false);
+	var filterId = filter.data("filter");
 	
-	filter
-	.find(".all-filters li.filter.all")
-	.addClass("active")
-	.find("input[type='checkbox']")
-	.prop("checked", true);
-	
-	filter
-	.find(".selected-filters li.filter")
-	.filter(":not(.all)")
-	.remove()
-	.end()
-	.filter(".all")
-	.show();
+	plenty_admin.DATA.userFilters.filterDto[filterId] = [];
 	
 	if(updateFilters){
-		plenty_admin.UI.filters.update_filters();
+		plenty_admin.DATA.update_filters();
 	}
-}
-
-plenty_admin.UI.filters.update_filters = function(){
-	plenty_admin.UI.filters.DOM
-	.find(".filter-set")
-	.each(function(){
-		var filterIds = {};
-		var filterSet = $(this);
-		plenty_admin.DATA.userFilters.filterDto[$(this).data("filter")] = [];
-		
-		var selectedFilters = $(this).find(".all-filters .filter:not(.all) input[type='checkbox']:checked");
-		
-		//console.log("selectedFilters", selectedFilters);
-		
-		selectedFilters
-		.each(function(){
-			var filterLI = $(this).closest("li.filter");
-			//console.log("filterLI: ", filterLI);
-			plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")].push(filterLI.data("id"));
-			//console.log("filterIds", filterIds, $(this));
-		});
-	});
-	
-	//console.log("updated local filters: ", plenty_admin.DATA.userFilters);
-	
-	plenty_admin.DATA.update_filters(function(returned_filters){
-		console.log("filters updated: ", returned_filters, returned_filters.body());
-		plenty_admin.DATA.userFilters = returned_filters.body();
-	});
 }
 
 plenty_admin.UI.filters.build_all_filters_entry = function(filterNormalized, active){
@@ -8475,7 +10418,6 @@ plenty_admin.UI.filters.build_all_filters_entry = function(filterNormalized, act
 	.find("input[type='checkbox']")
 	.click(function(e){
 		e.stopPropagation();
-
 	})
 	.on("change", function(e){
 		plenty_admin.UI.filters.select_all_filters($(e.target).closest(".filter-set"), true);
@@ -8484,70 +10426,80 @@ plenty_admin.UI.filters.build_all_filters_entry = function(filterNormalized, act
 	return $allFiltersDOM;
 }
 
-plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, active){
-	var filterHTML = '<li class="filter'+(active ? " active" : "")+'" data-filterid="'+filter+entityData.id+'" data-id="'+entityData.id+'" data-name="'+entityData.name+'">'+
-						'<a href="">'+entityData.name+' <input type="checkbox"'+(active ? " checked" : "")+' class="pull-right"></a>'+
-					'</li>';
-	
-	var $filterHTML = $(filterHTML);
+plenty_admin.UI.filters.build_clear_filters_entry = function(){
+	var $clearFilters = $('<li class="clear-filters">'+
+							'<a href="">Clear</a>'+
+						'</li>');
+						
+	//deselect other checkboxes
+	$clearFilters
+	.find("a")
+	.click(function(e){
+		e.stopPropagation();
+		$(this)
+		.closest(".selected-filters")
+		.find(".filter")
+		.remove();
 		
+		var filterSet = $(this).closest(".filter-set");
+		
+		plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")] = [];
+		
+		plenty_admin.DATA.update_filters();
+		
+		$(this)
+		.parent()
+		.remove();
+		
+		return false;
+	});
+	
+	return $clearFilters;
+}
+
+plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, active){
+	var $filterHTML = $([
+						'<li class="filter' + (active ? " active" : ""),
+							'" data-filterid="' + filter.toLowerCase(), + entityData.id,
+							'" data-id="' + entityData.id,
+							'" data-name="' + entityData.name + '">',
+							'<a href="">',
+								entityData.name,
+								' <input type="checkbox"',
+								(active ? " checked" : ""),
+								' class="pull-right">',
+							'</a>',
+						'</li>'].join(""));
+	
 	$filterHTML		
 	.find("a")
 	.click(function(e){
 		e.stopPropagation();
-		var filterToggle = $(e.target).find("input[type='checkbox']");
-		if($(e.target).prop("type") !== "checkbox"){
-			filterToggle
-			.prop("checked", !(filterToggle.prop("checked")))
-			.closest("li")
-			.toggleClass("active");
-			
-			$(e.target)
-			.closest("ul")
-			.find("li.all")
-			.removeClass("active")
-			.find("input[type='checkbox']")
-			.prop("checked", false);
-			
-			//set the filter in the filter panel
-			var closestLI = $(this).closest("li");
-			
-			if($(this).closest(".popover").length >0){
-				var hash = "";
-				
-				if($(this).closest(".all-filters").hasClass("farms_quickfilter_popover")){
-					hash = "farm";
-				}else if($(this).closest(".all-filters").hasClass("orgs_quickfilter_popover")){
-					hash = "organization";
-				}
-				if(closestLI.find("input[type='checkbox']").is(":checked")){
-					if(closestLI.hasClass("all")){
-						plenty_admin.DATA.userFilters.filterDto[hash+"Ids"] = [];
-					}else{
-						plenty_admin.DATA.userFilters.filterDto[hash+"Ids"].push(parseInt(closestLI.data("id")));
-					}
-				}else{
-					var index = plenty_admin.DATA.userFilters.filterDto[hash+"Ids"].indexOf(parseInt(closestLI.data("id")));
-					if (index > -1) {
-						plenty_admin.DATA.userFilters.filterDto[hash+"Ids"].splice(index, 1);
-					}
-				}
-				plenty_admin.DATA.update_filters(function(returned_filters){
-					//console.log("filters updated: ", returned_filters, returned_filters.body());
-					plenty_admin.DATA.userFilters = returned_filters.body();
-				});
-			}else{
-				//plenty_admin.UI.filters.add_selected_filter($(e.target).closest("li"));
-				plenty_admin.UI.filters.update_filters();
-			}
+		
+		console.log("clicked a filter, is it a checkbox? ", e);
+		
+		if($(e.target).prop("type") === "checkbox"){
+			return;
 		}
+		
+		var filterToggle = $(e.target).find("input[type='checkbox']");
+		
+		filterToggle
+		.prop("checked", !filterToggle.prop("checked"))
+		.trigger("change");
+		
 		return false;
 	})
 	.find("input[type='checkbox']")
-	.click(function(e){
+	.on("change", function(e){
 		e.stopPropagation();
 		
 		var closestLI = $(this).closest("li");
+		
+		if(closestLI.hasClass("all") && $(this).is(":checked")){
+			$(this).prop("checked", true);
+			return;
+		}
 		
 		closestLI
 		.toggleClass("active");
@@ -8568,7 +10520,9 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 		
 		if($(this).is(":checked")){
 			console.log("CHECKED");
-			if(closestLI.hasClass("all")){
+			if(
+				closestLI.hasClass("all")
+			){
 				plenty_admin.DATA.userFilters.filterDto[hash] = [];
 			}else{
 				plenty_admin.DATA.userFilters.filterDto[hash] = [];
@@ -8578,6 +10532,12 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 				.each(function(){
 					plenty_admin.DATA.userFilters.filterDto[hash].push(parseInt($(this).closest("li").data("id")));
 				});
+				
+				if(
+					plenty_admin.DATA.userFilters.filterDto[hash] === plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[hash.replace("Ids", "s")]
+				){
+					plenty_admin.DATA.userFilters.filterDto[hash] = [];
+				}
 			}
 		}else{
 			console.log("UN-CHECKED");
@@ -8590,10 +10550,7 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 			}
 		}
 		//console.log("AFTER: plenty_admin.DATA.userFilters:", plenty_admin.DATA.userFilters);
-		plenty_admin.DATA.update_filters(function(returned_filters){
-			//console.log("filters updated: ", returned_filters, returned_filters.body());
-			plenty_admin.DATA.userFilters = returned_filters.body();
-		});
+		plenty_admin.DATA.update_filters();
 	});
 	
 	return $filterHTML;
@@ -8604,7 +10561,7 @@ plenty_admin.UI.filters.populate = function(init, callback){
 	for(filter in plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList){
 		if(
 			plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.hasOwnProperty(filter)
-			&& plenty_admin.UI.map.applicableFilters.indexOf(filter) > -1
+			&& plenty_admin.UI[plenty_admin.context].applicableFilters.indexOf(filter.toLowerCase()) > -1
 		){
 			var filterName = filter.split(/(?=[A-Z])/).join(" ");
 			var filterNormalized = filter.toLowerCase();
@@ -8616,46 +10573,24 @@ plenty_admin.UI.filters.populate = function(init, callback){
 			
 			
 			//check if all possible options are applied
-			var allApplied = null;
+			var allApplied = possibleEntities.length === plenty_admin.DATA.userFilters.filterDto[filterIDName].length || plenty_admin.DATA.userFilters.filterDto[filterIDName].length == 0;
 			
-			if(filter === "organizations"){	
-				allApplied = Object.keys(plenty_admin.DATA.organizations).length === plenty_admin.DATA.userFilters.filterDto["organizationIds"].length || plenty_admin.DATA.userFilters.filterDto[filterIDName].length == 0;
-				console.log("ORGANIZATIONS - ARE ALL APPLIED? ", allApplied);
-			}else{
-				allApplied = possibleEntities.length === plenty_admin.DATA.userFilters.filterDto[filterIDName].length || plenty_admin.DATA.userFilters.filterDto[filterIDName].length == 0;
-				console.log(filter+" - ARE ALL APPLIED? ", allApplied);
-			}
+			//console.log(filter+" - ARE ALL APPLIED? ", allApplied);
 			
 			plenty_admin.UI.filters.DOM
 			.find(".filter-set."+filterNormalized +" .all-filters")
 			.html("")
 			.append(plenty_admin.UI.filters.build_all_filters_entry(filterNormalized, allApplied ));
 			
-			//we only want organizations for the current user in filters
-			if(filter === "organizations"){
-				for(id in plenty_admin.DATA.organizations){
-					if(plenty_admin.DATA.organizations.hasOwnProperty(id)){
-						var org = plenty_admin.DATA.organizations[id];
-						//console.log("Got Organization: ", org, typeof org);
-						
-						if(typeof org === "object"){
-							plenty_admin.UI.filters.DOM
-							.find(".filter-set."+filterNormalized +" .all-filters")
-							.append(plenty_admin.UI.filters.build_filter_entity(org, filterNormalized, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(org.id) > -1) ));
-						}
-					}
-				}
-			}else{
-				if(possibleEntities.length > 0){
-					for(f=0; f<possibleEntities.length; f++){
-						var entity = possibleEntities[f];
-						//console.log("entity:", entity, filter, filterIDName);
-						
-						// add the filter element to the correct panel
-						plenty_admin.UI.filters.DOM
-						.find(".filter-set."+ filter.toLowerCase() +" .all-filters")
-						.append(plenty_admin.UI.filters.build_filter_entity(entity, filter, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(entity.id) > -1)));
-					}
+			if(possibleEntities.length > 0){
+				for(f=0; f<possibleEntities.length; f++){
+					var entity = possibleEntities[f];
+					//console.log("entity:", entity, filter, filterIDName);
+					
+					// add the filter element to the correct panel
+					plenty_admin.UI.filters.DOM
+					.find(".filter-set."+ filter.toLowerCase() +" .all-filters")
+					.append(plenty_admin.UI.filters.build_filter_entity(entity, filter, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(entity.id) > -1)));
 				}
 			}
 		}
@@ -8667,23 +10602,15 @@ plenty_admin.UI.filters.populate = function(init, callback){
 	for(filterId in plenty_admin.DATA.userFilters.filterDto){
 		if(
 			plenty_admin.DATA.userFilters.filterDto.hasOwnProperty(filterId)
-			&& plenty_admin.UI.map.applicableFilters.indexOf(filterId.replace("Ids", "s")) > -1
+			&& plenty_admin.UI[plenty_admin.context].applicableFilters.indexOf(filterId.replace("Ids", "s").toLowerCase()) > -1
 		){
 			//empty the selected filters container for this filter set
 			plenty_admin.UI.filters.DOM
-			.find(".filter-set[data-filter='"+filterId+"'] .selected-filters li.filter:not(.all):not(.show-filters)")
+			.find(".filter-set[data-filter='"+filterId+"'] .selected-filters li.filter, .filter-set[data-filter='"+filterId+"'] .selected-filters li.clear-filters")
 			.remove();
 			
-			var compareLength = 0;
-			switch(filterId){
-					case "organizationIds":
-					compareLength = Object.keys(plenty_admin.DATA.organizations).length;
-					break;
-					
-					default:
-					compareLength = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")].length;
-			}
-			//console.log("userFilters: ", plenty_admin.DATA.userFilters.filterDto[filterId].length, applied_filter_count, filterId);
+			var compareLength = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")].length;
+			//console.log("userFilters: ", plenty_admin.DATA.userFilters.filterDto[filterId].length, compareLength);
 			if(
 				plenty_admin.DATA.userFilters.filterDto[filterId].length > 0
 				&& compareLength != plenty_admin.DATA.userFilters.filterDto[filterId].length
@@ -8691,6 +10618,9 @@ plenty_admin.UI.filters.populate = function(init, callback){
 				//need to render these applied filters
 				var appliedFilter = plenty_admin.DATA.userFilters.filterDto[filterId];
 				applied_filter_count += plenty_admin.DATA.userFilters.filterDto[filterId].length;
+				
+				console.log("appliedFilter", appliedFilter);
+				console.log("applied_filter_count", applied_filter_count);
 				
 				var allApplied = false;
 				var quickFilterText = "";
@@ -8719,11 +10649,17 @@ plenty_admin.UI.filters.populate = function(init, callback){
 					break;
 					
 					default:
-						if(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList["farms"].length === plenty_admin.DATA.userFilters.filterDto[filterId].length || plenty_admin.DATA.userFilters.filterDto[filterId].length == 0){
+						console.log("CHECK!!", filterId, plenty_admin.DATA.userFilters.filterDto[filterId].length, plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length);
+						if(
+							plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length === plenty_admin.DATA.userFilters.filterDto[filterId].length 
+							|| plenty_admin.DATA.userFilters.filterDto[filterId].length == 0
+							|| plenty_admin.DATA.userFilters.filterDto[filterId].length > plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length
+						){
 							allApplied = true;
 						}
 				}
 				
+				var addClear = false;
 					
 				for(var d=0; d<appliedFilter.length; d++){
 					var entityData = {};
@@ -8735,14 +10671,22 @@ plenty_admin.UI.filters.populate = function(init, callback){
 					
 					//console.log("matchIt", matchIt);
 					
-					if(matchIt.length >0){
+					if(matchIt.length >0 && !allApplied){
 						entityData.name = matchIt[0].name;
+						entityData.filter = filterId.replace("Ids", "s");
+						plenty_admin.UI.filters.add_selected_filter(entityData);
+						addClear = true;
 					}
-					
-					entityData.filter = filterId.replace("Ids", "s");
-					
-					plenty_admin.UI.filters.add_selected_filter(entityData);
 				}
+				
+				if(addClear){
+					var filterSet = plenty_admin.UI.filters.DOM.find(".filter-set."+filterId.replace("Ids", "s").toLowerCase());
+		
+					filterSet
+					.find(".selected-filters")
+					.append(plenty_admin.UI.filters.build_clear_filters_entry());
+				}
+				
 				
 				//set the quickFilter to the selected farm / organization
 				switch(filterId){
@@ -8836,55 +10780,33 @@ plenty_admin.UI.filters.hide_filters = function(){
 }
 
 plenty_admin.UI.filters.show_filter_selectors = function(el){
-	var $elTarget = $(el.target); 
-	//hide other filter sets
-	/*
-	plenty_admin.UI.filters.DOM
-	.find("ul.all-filters")
-	.hide()
-	.end()
-	.find("ul.selected-filters")
-	.show();
-	*/
-	
 	//show this filter sets filters
 	$(el.target)
 	.closest(".filter-set")
 	.find("ul.selected-filters")
-	.hide()
+	.slideUp("fast")
 	.end()
 	.find("ul.all-filters")
 	.slideDown("fast");
 }
 
 plenty_admin.UI.filters.hide_filter_selectors = function(el){
-	var $elTarget = $(el.target); 
-	//hide other filter sets
-	/*
-	plenty_admin.UI.filters.DOM
-	.find("ul.all-filters")
-	.hide()
-	.end()
-	.find("ul.selected-filters")
-	.show();
-	*/
-	
 	//show this filter sets filters
 	$(el.target)
 	.closest(".filter-set")
-	.find("ul.selected-filters")
+	.find("ul.selected-filters:not(:empty)")
 	.slideDown("fast")
 	.end()
 	.find("ul.all-filters")
-	.hide();
+	.slideUp("fast");
 }
 
 plenty_admin.UI.filters.show_selected_filters = function(){
 	plenty_admin.UI.filters.DOM
 	.find("ul.all-filters")
-	.hide()
+	.slideUp("fast")
 	.end()
-	.find("ul.selected-filters")
+	.find("ul.selected-filters:not(:empty)")
 	.slideDown("fast");
 }
 
@@ -8894,37 +10816,40 @@ plenty_admin.UI.filters.build_filter_set = function(filter, filterNormalized){
 		filterIDName = "cropTypeIds";
 	}
 	
-	var filterSetHTML = '<div class="filter-set mbs '+filterNormalized+'" data-filter="'+filterIDName+'">'+
-							'<h3 class="title filter-title mbm"><span class="icon pull-left"></span> '+filter+'<a href="" class="show-filters pull-right"><i class="icon glyphicon glyphicon-triangle-right pull-right"></i><i class="icon glyphicon glyphicon-triangle-bottom pull-right" style="display:none;	"></i></a></h3>'+
-							'<ul class="selected-filters clear mbn">'+
-								'<li class="filter all">'+
-									'<span class="pull-left">All</span></a>'+
-								'</li>'+
-							'</ul>'+
-							'<ul class="all-filters overflowFix clear mbn" style="display:none;">'+
-							'</ul>'+
-						'</div>';
-	var $filterSetHTML = $(filterSetHTML);
+	var $filterSetHTML = $(['<div class="filter-set mbs '+filterNormalized+'" data-filter="'+filterIDName+'">',
+							'<h3 class="title filter-title mbm">',
+								'<a href="" class="show-filters pull-right">',
+									'<span class="icon pull-left"></span> ',
+									filter,
+									'<i class="icon glyphicon glyphicon-triangle-right pull-right"></i>',
+								'</a>',
+							'</h3>'+
+							'<ul class="selected-filters clear mbn overflowFix">',
+								'<li class="filter all">',
+									'<span class="pull-left">All</span>',
+								'</li>',
+							'</ul>',
+							'<ul class="all-filters overflowFix clear mbn" style="display:none;">',
+							'</ul>',
+						'</div>'].join(""));
 	
 	//set up the filter toggle list
 	$filterSetHTML
 	.data("state", "closed")
-	.find(".show-filters")
+	.find(".filter-title a")
 	.click(function(e){
 		e.stopPropagation();
 		if($filterSetHTML.data("state") === "closed"){
 			plenty_admin.UI.filters.show_filter_selectors(e);
 			$filterSetHTML
 			.data("state", "open")
+			.addClass("open");
 		}else{
 			plenty_admin.UI.filters.hide_filter_selectors(e);
 			$filterSetHTML
 			.data("state", "closed")
+			.removeClass("open");
 		}
-		
-		$filterSetHTML
-		.find(".show-filters i")
-		.toggle();
 		
 		return false;
 	});
@@ -8951,13 +10876,9 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}/*, function(){
-			plenty_admin.UI.filters.show_selected_filters();
-		}*/);
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
 	}else if(plenty_admin.UI.filters.state === "closed"){
 		plenty_admin.UI.filters.state = "open";
-		
-		//plenty_admin.UI.filters.show_selected_filters();
 		
 		plenty_admin.UI.filters.DOM
 		.stop()
@@ -8969,9 +10890,7 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}/*, function(){
-			plenty_admin.UI.filters.show_selected_filters();
-		}*/);
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
 	}
 }
 
@@ -8988,15 +10907,27 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 	);
 }
 
-plenty_admin.DATA.update_filters = function(callback, init, zoomFields){
+plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context){
 	console.log("plenty_admin.DATA.update_filters", zoomFields);
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
-			plenty_admin.DATA.userFilters = data.body();
+			
+			//update the local possible filter entities only
+			//manage the filterDTO selected locally only as it differs from what is returned by the server
+			plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList = data.body().possibleFilteringEntitiesDtoList;
 			
 			plenty_admin.UI.filters.populate(init);
 			
-			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
+			switch(plenty_admin.context){
+				case "map":
+				plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
+				plenty_admin.UI.map.add_equipment_to_map();
+				break;
+				
+				case "plans":
+					plenty_admin.REST.getPlansFiltered(plenty_admin.DATA.userFilters.filterDto.id);
+				break;
+			}
 			
 			if(callback && typeof callback === "function"){
 				callback(data);
@@ -9013,12 +10944,11 @@ plenty_admin.UI.organization.DOM = plenty_admin.UI.main.DOM.find("#organization-
 plenty_admin.UI.organization.tabs = {};
 plenty_admin.UI.organization.tabs.DOM = plenty_admin.UI.organization.DOM.find('#orgAssets');
 
-plenty_admin.UI.organization.MODAL_add_to_organization = plenty_admin.UI.organization.DOM.find('#add_to_organization');
-plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.organization.DOM.find('#edit_in_organization');
-plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.organization.DOM.find('#confirm_delete');
-
-plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.organization.DOM.find('#edit_field');
-plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.organization.DOM.find('#add_field');
+plenty_admin.UI.organization.MODAL_add_to_organization = plenty_admin.UI.DOM.find('#add_to_organization');
+plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.DOM.find('#edit_in_organization');
+plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.DOM.find('#confirm_delete');
+plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.DOM.find('#edit_field');
+plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_field');
 
 plenty_admin.UI.organization.BUTTON_delete_multiple = plenty_admin.UI.organization.DOM.find(".delete_multiple");
 
@@ -9036,6 +10966,7 @@ for(var e=0; e < entities.length; e++){
 
 plenty_admin.REST.insertBoundary = plenty_admin.api.all("boundaries/insertBoundary");
 plenty_admin.REST.insertBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/insertBoundaryPointsArray");
+plenty_admin.REST.updateBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/updateBoundaryPointList");
 
 plenty_admin.REST.insertField = plenty_admin.api.all("fields/createFieledWithBoundaryInterestAndCropType");
 
@@ -9046,6 +10977,10 @@ plenty_admin.REST.deleteFieldCrop = plenty_admin.api.all("fieldCrops/deleteField
 plenty_admin.REST.insertFieldEquipment = plenty_admin.api.all("fieldEquipment/insertWithNewEquipment");
 plenty_admin.REST.updateFieldEquipment = plenty_admin.api.all("fieldEquipment/updateFieldEquipment");
 plenty_admin.REST.deleteFieldEquipment = plenty_admin.api.all("fieldEquipment/deleteFieldEquipment");
+
+plenty_admin.REST.insertActivity = plenty_admin.api.all("activities/insertActivity");
+plenty_admin.REST.updateActivity = plenty_admin.api.all("activities/updateActivity");
+plenty_admin.REST.deleteActivity = plenty_admin.api.all("activities/deleteActivity");
 
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){
@@ -9111,10 +11046,16 @@ plenty_admin.UI.organization.init = function(org, hash){
 	.on("click", function(e){
 		var selected_items = plenty_admin.UI.organization.tabs.DOM.find(".tab-pane.active tr td input[type='checkbox']:checked");
 		console.log("selected_items:", selected_items);
-		selected_items.each(function(){
-			var itemId = $(this).closest("tr").data("id");
-			plenty_admin.UI.organization.deleteX(itemId, plenty_admin.HELPER.get_singular_selected_hash());
-		});
+		bootbox.confirm({
+				message: "Are you sure you want to delete multiple fields?", 
+				className: "danger",	
+				callback: function(){
+					selected_items.each(function(){
+						var itemId = $(this).closest("tr").data("id");
+						plenty_admin.UI.organization.deleteX(itemId, plenty_admin.HELPER.get_singular_selected_hash());
+					});
+				}
+			});
 	})
 	.end()
 	.find("select.filter-by-farm")
@@ -9960,3 +11901,68 @@ plenty_admin.UI.organization.populate_form_from_item = function(form, itemId, ha
 plenty_admin.UI.organization.switchTab = function(hash){
 	plenty_admin.UI.organization.tabs.DOM.find(".nav-tabs a[role='tab'][href='"+hash+"']").tab('show');
 }
+// Field Survey popup
+plenty_admin.UI.crop_survey = {};
+plenty_admin.UI.crop_survey.modal = $("body").find(".modal#crop-survey");
+
+// wrapper to populate the crop survey and show it
+plenty_admin.UI.crop_survey.show = function(crop_survey, fieldObj){
+	console.log("plenty_admin.UI.crop_survey.show", crop_survey);
+	if(typeof crop_survey === "object"){
+		plenty_admin.UI.crop_survey.populate(crop_survey, fieldObj);
+	}else if(typeof crop_survey === "number"){
+		plenty_admin.DATA.load_field_observation(crop_survey, function(crop_survey_){
+			plenty_admin.UI.crop_survey.populate(crop_survey_, fieldObj);
+		});
+	}
+}
+plenty_admin.UI.crop_survey.populate = function(crop_survey, fieldObj){
+	plenty_admin.UI.crop_survey.modal
+	.find(".mainTabs a[data-toggle='tab']")
+	.on('shown.bs.tab', function (e) {
+	  console.log("e.target", e.target); // newly activated tab
+		var activeMap = plenty_admin.UI.crop_survey.modal
+		.find(".tab-content.mainTabs .tab-pane.active:visible .map:visible:last");
+		
+		plenty_admin.UI.crop_survey.showMap(activeMap, fieldObj);
+	})
+	.end()
+	.on("shown.bs.modal", function(){
+		var activeMap = plenty_admin.UI.crop_survey.modal
+		.find(".tab-content.mainTabs .tab-pane.active:visible .map:visible:last");
+		
+		plenty_admin.UI.crop_survey.showMap(activeMap, fieldObj);
+	})
+	.modal("show");
+}
+
+plenty_admin.UI.crop_survey.showMap = function(activeMap, fieldObj){
+		var mapId = activeMap.prop("id");
+		console.log("mapId", mapId);
+		
+		plenty_admin.MAPS.draw_field_on_map(fieldObj, mapId, {
+			mapTypeId: google.maps.MapTypeId.HYBRID,
+			zoom:  12,
+			disableDefaultUI: true,
+			draggable: false, 
+			zoomControl: false, 
+			scrollwheel: false, 
+			disableDoubleClickZoom: true,
+			pushPoly: false
+		  }, function(map, fieldObj, polygon){
+			//plenty_admin.UI.field.polygon = polygon;
+			//ensure if the window changes size the field is centered
+			console.log("Polygon: ", polygon);
+			console.log("Map element: ", $("#"+mapId));
+			
+			$("#"+mapId)
+			.data("polygon", polygon)
+			.data("mapId", mapId);
+			
+			//plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS[mapId]);
+			$(window).on("resize",function(){
+				plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS[mapId]);
+			});
+		}, false, null, mapId);
+}
+

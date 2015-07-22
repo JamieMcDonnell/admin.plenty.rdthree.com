@@ -47,98 +47,51 @@ plenty_admin.UI.filters.add_selected_filter = function(filterData){
 		
 		var filterSet = $(this).closest(".filter-set");
 		
-		filterSet
-		.find(".all-filters li.filter[data-filterid='"+thisFilter.data("filterid")+"']")
-		.removeClass("active")
-		.find("input[type='checkbox']")
-		.prop("checked", false);
+		for(var f=0; f<plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")].length; f++){
+			var filter = plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")][f];
+			if(filter === parseInt(thisFilter.data("id"))){
+				plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")].splice(f, 1);
+			}
+		}
 		
 		var current_filters = filterSet.find("ul.selected-filters li.filter:not(.all)");
 		//if all filters have been removed, show All filter
 		//console.log("current_filters", current_filters, current_filters.length);
-		if(current_filters.length == 0){
+		if(
+			current_filters.length == 0
+			|| current_filters.length === plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterSet.data("filter").replace("Ids", "s")].length
+		){
 			plenty_admin.UI.filters.select_all_filters(filterSet, true);
 		}
 		
-		plenty_admin.UI.filters.update_filters();
+		thisFilter
+		.remove();
+		
+		plenty_admin.DATA.update_filters();
 		
 		return false;
 	});
 	
-	var filterSet = plenty_admin.UI.filters.DOM.find(".filter-set."+filterData.filter)
+	var filterSet = plenty_admin.UI.filters.DOM.find(".filter-set."+filterData.filter.toLowerCase())
 	
-	var $showFilters = filterSet.find(".selected-filters li.show-filters");
 	var $allFilters = filterSet.find(".selected-filters li.all");
 	
 	$allFilters
 	.hide();
 	
-	$filter
-	.insertBefore($showFilters);
-}
-
-plenty_admin.UI.filters.remove_selected_filter = function(filter){
-	plenty_admin.UI.filters.DOM
-	.find(".selected-filters li[data-filterid='"+filter.data("filterid")+"']")
-	.remove();
-	
-	plenty_admin.UI.filters.update_filters();
+	filterSet
+	.find(".selected-filters")
+	.append($filter);
 }
 
 plenty_admin.UI.filters.select_all_filters = function(filter, updateFilters){
-	filter
-	.find(".all-filters li.filter")
-	.not(".all")
-	.removeClass("active")
-	.find("input[type='checkbox']")
-	.prop("checked", false);
+	var filterId = filter.data("filter");
 	
-	filter
-	.find(".all-filters li.filter.all")
-	.addClass("active")
-	.find("input[type='checkbox']")
-	.prop("checked", true);
-	
-	filter
-	.find(".selected-filters li.filter")
-	.filter(":not(.all)")
-	.remove()
-	.end()
-	.filter(".all")
-	.show();
+	plenty_admin.DATA.userFilters.filterDto[filterId] = [];
 	
 	if(updateFilters){
-		plenty_admin.UI.filters.update_filters();
+		plenty_admin.DATA.update_filters();
 	}
-}
-
-plenty_admin.UI.filters.update_filters = function(){
-	plenty_admin.UI.filters.DOM
-	.find(".filter-set")
-	.each(function(){
-		var filterIds = {};
-		var filterSet = $(this);
-		plenty_admin.DATA.userFilters.filterDto[$(this).data("filter")] = [];
-		
-		var selectedFilters = $(this).find(".all-filters .filter:not(.all) input[type='checkbox']:checked");
-		
-		//console.log("selectedFilters", selectedFilters);
-		
-		selectedFilters
-		.each(function(){
-			var filterLI = $(this).closest("li.filter");
-			//console.log("filterLI: ", filterLI);
-			plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")].push(filterLI.data("id"));
-			//console.log("filterIds", filterIds, $(this));
-		});
-	});
-	
-	//console.log("updated local filters: ", plenty_admin.DATA.userFilters);
-	
-	plenty_admin.DATA.update_filters(function(returned_filters){
-		console.log("filters updated: ", returned_filters, returned_filters.body());
-		plenty_admin.DATA.userFilters = returned_filters.body();
-	});
 }
 
 plenty_admin.UI.filters.build_all_filters_entry = function(filterNormalized, active){
@@ -162,7 +115,6 @@ plenty_admin.UI.filters.build_all_filters_entry = function(filterNormalized, act
 	.find("input[type='checkbox']")
 	.click(function(e){
 		e.stopPropagation();
-
 	})
 	.on("change", function(e){
 		plenty_admin.UI.filters.select_all_filters($(e.target).closest(".filter-set"), true);
@@ -171,70 +123,80 @@ plenty_admin.UI.filters.build_all_filters_entry = function(filterNormalized, act
 	return $allFiltersDOM;
 }
 
-plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, active){
-	var filterHTML = '<li class="filter'+(active ? " active" : "")+'" data-filterid="'+filter+entityData.id+'" data-id="'+entityData.id+'" data-name="'+entityData.name+'">'+
-						'<a href="">'+entityData.name+' <input type="checkbox"'+(active ? " checked" : "")+' class="pull-right"></a>'+
-					'</li>';
-	
-	var $filterHTML = $(filterHTML);
+plenty_admin.UI.filters.build_clear_filters_entry = function(){
+	var $clearFilters = $('<li class="clear-filters">'+
+							'<a href="">Clear</a>'+
+						'</li>');
+						
+	//deselect other checkboxes
+	$clearFilters
+	.find("a")
+	.click(function(e){
+		e.stopPropagation();
+		$(this)
+		.closest(".selected-filters")
+		.find(".filter")
+		.remove();
 		
+		var filterSet = $(this).closest(".filter-set");
+		
+		plenty_admin.DATA.userFilters.filterDto[filterSet.data("filter")] = [];
+		
+		plenty_admin.DATA.update_filters();
+		
+		$(this)
+		.parent()
+		.remove();
+		
+		return false;
+	});
+	
+	return $clearFilters;
+}
+
+plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, active){
+	var $filterHTML = $([
+						'<li class="filter' + (active ? " active" : ""),
+							'" data-filterid="' + filter.toLowerCase(), + entityData.id,
+							'" data-id="' + entityData.id,
+							'" data-name="' + entityData.name + '">',
+							'<a href="">',
+								entityData.name,
+								' <input type="checkbox"',
+								(active ? " checked" : ""),
+								' class="pull-right">',
+							'</a>',
+						'</li>'].join(""));
+	
 	$filterHTML		
 	.find("a")
 	.click(function(e){
 		e.stopPropagation();
-		var filterToggle = $(e.target).find("input[type='checkbox']");
-		if($(e.target).prop("type") !== "checkbox"){
-			filterToggle
-			.prop("checked", !(filterToggle.prop("checked")))
-			.closest("li")
-			.toggleClass("active");
-			
-			$(e.target)
-			.closest("ul")
-			.find("li.all")
-			.removeClass("active")
-			.find("input[type='checkbox']")
-			.prop("checked", false);
-			
-			//set the filter in the filter panel
-			var closestLI = $(this).closest("li");
-			
-			if($(this).closest(".popover").length >0){
-				var hash = "";
-				
-				if($(this).closest(".all-filters").hasClass("farms_quickfilter_popover")){
-					hash = "farm";
-				}else if($(this).closest(".all-filters").hasClass("orgs_quickfilter_popover")){
-					hash = "organization";
-				}
-				if(closestLI.find("input[type='checkbox']").is(":checked")){
-					if(closestLI.hasClass("all")){
-						plenty_admin.DATA.userFilters.filterDto[hash+"Ids"] = [];
-					}else{
-						plenty_admin.DATA.userFilters.filterDto[hash+"Ids"].push(parseInt(closestLI.data("id")));
-					}
-				}else{
-					var index = plenty_admin.DATA.userFilters.filterDto[hash+"Ids"].indexOf(parseInt(closestLI.data("id")));
-					if (index > -1) {
-						plenty_admin.DATA.userFilters.filterDto[hash+"Ids"].splice(index, 1);
-					}
-				}
-				plenty_admin.DATA.update_filters(function(returned_filters){
-					//console.log("filters updated: ", returned_filters, returned_filters.body());
-					plenty_admin.DATA.userFilters = returned_filters.body();
-				});
-			}else{
-				//plenty_admin.UI.filters.add_selected_filter($(e.target).closest("li"));
-				plenty_admin.UI.filters.update_filters();
-			}
+		
+		console.log("clicked a filter, is it a checkbox? ", e);
+		
+		if($(e.target).prop("type") === "checkbox"){
+			return;
 		}
+		
+		var filterToggle = $(e.target).find("input[type='checkbox']");
+		
+		filterToggle
+		.prop("checked", !filterToggle.prop("checked"))
+		.trigger("change");
+		
 		return false;
 	})
 	.find("input[type='checkbox']")
-	.click(function(e){
+	.on("change", function(e){
 		e.stopPropagation();
 		
 		var closestLI = $(this).closest("li");
+		
+		if(closestLI.hasClass("all") && $(this).is(":checked")){
+			$(this).prop("checked", true);
+			return;
+		}
 		
 		closestLI
 		.toggleClass("active");
@@ -255,7 +217,9 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 		
 		if($(this).is(":checked")){
 			console.log("CHECKED");
-			if(closestLI.hasClass("all")){
+			if(
+				closestLI.hasClass("all")
+			){
 				plenty_admin.DATA.userFilters.filterDto[hash] = [];
 			}else{
 				plenty_admin.DATA.userFilters.filterDto[hash] = [];
@@ -265,6 +229,12 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 				.each(function(){
 					plenty_admin.DATA.userFilters.filterDto[hash].push(parseInt($(this).closest("li").data("id")));
 				});
+				
+				if(
+					plenty_admin.DATA.userFilters.filterDto[hash] === plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[hash.replace("Ids", "s")]
+				){
+					plenty_admin.DATA.userFilters.filterDto[hash] = [];
+				}
 			}
 		}else{
 			console.log("UN-CHECKED");
@@ -277,10 +247,7 @@ plenty_admin.UI.filters.build_filter_entity = function(entityData, filter, activ
 			}
 		}
 		//console.log("AFTER: plenty_admin.DATA.userFilters:", plenty_admin.DATA.userFilters);
-		plenty_admin.DATA.update_filters(function(returned_filters){
-			//console.log("filters updated: ", returned_filters, returned_filters.body());
-			plenty_admin.DATA.userFilters = returned_filters.body();
-		});
+		plenty_admin.DATA.update_filters();
 	});
 	
 	return $filterHTML;
@@ -291,7 +258,7 @@ plenty_admin.UI.filters.populate = function(init, callback){
 	for(filter in plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList){
 		if(
 			plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.hasOwnProperty(filter)
-			&& plenty_admin.UI.map.applicableFilters.indexOf(filter) > -1
+			&& plenty_admin.UI[plenty_admin.context].applicableFilters.indexOf(filter.toLowerCase()) > -1
 		){
 			var filterName = filter.split(/(?=[A-Z])/).join(" ");
 			var filterNormalized = filter.toLowerCase();
@@ -303,46 +270,24 @@ plenty_admin.UI.filters.populate = function(init, callback){
 			
 			
 			//check if all possible options are applied
-			var allApplied = null;
+			var allApplied = possibleEntities.length === plenty_admin.DATA.userFilters.filterDto[filterIDName].length || plenty_admin.DATA.userFilters.filterDto[filterIDName].length == 0;
 			
-			if(filter === "organizations"){	
-				allApplied = Object.keys(plenty_admin.DATA.organizations).length === plenty_admin.DATA.userFilters.filterDto["organizationIds"].length || plenty_admin.DATA.userFilters.filterDto[filterIDName].length == 0;
-				console.log("ORGANIZATIONS - ARE ALL APPLIED? ", allApplied);
-			}else{
-				allApplied = possibleEntities.length === plenty_admin.DATA.userFilters.filterDto[filterIDName].length || plenty_admin.DATA.userFilters.filterDto[filterIDName].length == 0;
-				console.log(filter+" - ARE ALL APPLIED? ", allApplied);
-			}
+			//console.log(filter+" - ARE ALL APPLIED? ", allApplied);
 			
 			plenty_admin.UI.filters.DOM
 			.find(".filter-set."+filterNormalized +" .all-filters")
 			.html("")
 			.append(plenty_admin.UI.filters.build_all_filters_entry(filterNormalized, allApplied ));
 			
-			//we only want organizations for the current user in filters
-			if(filter === "organizations"){
-				for(id in plenty_admin.DATA.organizations){
-					if(plenty_admin.DATA.organizations.hasOwnProperty(id)){
-						var org = plenty_admin.DATA.organizations[id];
-						//console.log("Got Organization: ", org, typeof org);
-						
-						if(typeof org === "object"){
-							plenty_admin.UI.filters.DOM
-							.find(".filter-set."+filterNormalized +" .all-filters")
-							.append(plenty_admin.UI.filters.build_filter_entity(org, filterNormalized, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(org.id) > -1) ));
-						}
-					}
-				}
-			}else{
-				if(possibleEntities.length > 0){
-					for(f=0; f<possibleEntities.length; f++){
-						var entity = possibleEntities[f];
-						//console.log("entity:", entity, filter, filterIDName);
-						
-						// add the filter element to the correct panel
-						plenty_admin.UI.filters.DOM
-						.find(".filter-set."+ filter.toLowerCase() +" .all-filters")
-						.append(plenty_admin.UI.filters.build_filter_entity(entity, filter, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(entity.id) > -1)));
-					}
+			if(possibleEntities.length > 0){
+				for(f=0; f<possibleEntities.length; f++){
+					var entity = possibleEntities[f];
+					//console.log("entity:", entity, filter, filterIDName);
+					
+					// add the filter element to the correct panel
+					plenty_admin.UI.filters.DOM
+					.find(".filter-set."+ filter.toLowerCase() +" .all-filters")
+					.append(plenty_admin.UI.filters.build_filter_entity(entity, filter, (allApplied ? false : plenty_admin.DATA.userFilters.filterDto[filterIDName].indexOf(entity.id) > -1)));
 				}
 			}
 		}
@@ -354,23 +299,15 @@ plenty_admin.UI.filters.populate = function(init, callback){
 	for(filterId in plenty_admin.DATA.userFilters.filterDto){
 		if(
 			plenty_admin.DATA.userFilters.filterDto.hasOwnProperty(filterId)
-			&& plenty_admin.UI.map.applicableFilters.indexOf(filterId.replace("Ids", "s")) > -1
+			&& plenty_admin.UI[plenty_admin.context].applicableFilters.indexOf(filterId.replace("Ids", "s").toLowerCase()) > -1
 		){
 			//empty the selected filters container for this filter set
 			plenty_admin.UI.filters.DOM
-			.find(".filter-set[data-filter='"+filterId+"'] .selected-filters li.filter:not(.all):not(.show-filters)")
+			.find(".filter-set[data-filter='"+filterId+"'] .selected-filters li.filter, .filter-set[data-filter='"+filterId+"'] .selected-filters li.clear-filters")
 			.remove();
 			
-			var compareLength = 0;
-			switch(filterId){
-					case "organizationIds":
-					compareLength = Object.keys(plenty_admin.DATA.organizations).length;
-					break;
-					
-					default:
-					compareLength = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")].length;
-			}
-			//console.log("userFilters: ", plenty_admin.DATA.userFilters.filterDto[filterId].length, applied_filter_count, filterId);
+			var compareLength = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")].length;
+			//console.log("userFilters: ", plenty_admin.DATA.userFilters.filterDto[filterId].length, compareLength);
 			if(
 				plenty_admin.DATA.userFilters.filterDto[filterId].length > 0
 				&& compareLength != plenty_admin.DATA.userFilters.filterDto[filterId].length
@@ -378,6 +315,9 @@ plenty_admin.UI.filters.populate = function(init, callback){
 				//need to render these applied filters
 				var appliedFilter = plenty_admin.DATA.userFilters.filterDto[filterId];
 				applied_filter_count += plenty_admin.DATA.userFilters.filterDto[filterId].length;
+				
+				console.log("appliedFilter", appliedFilter);
+				console.log("applied_filter_count", applied_filter_count);
 				
 				var allApplied = false;
 				var quickFilterText = "";
@@ -406,11 +346,17 @@ plenty_admin.UI.filters.populate = function(init, callback){
 					break;
 					
 					default:
-						if(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList["farms"].length === plenty_admin.DATA.userFilters.filterDto[filterId].length || plenty_admin.DATA.userFilters.filterDto[filterId].length == 0){
+						console.log("CHECK!!", filterId, plenty_admin.DATA.userFilters.filterDto[filterId].length, plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length);
+						if(
+							plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length === plenty_admin.DATA.userFilters.filterDto[filterId].length 
+							|| plenty_admin.DATA.userFilters.filterDto[filterId].length == 0
+							|| plenty_admin.DATA.userFilters.filterDto[filterId].length > plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length
+						){
 							allApplied = true;
 						}
 				}
 				
+				var addClear = false;
 					
 				for(var d=0; d<appliedFilter.length; d++){
 					var entityData = {};
@@ -422,14 +368,22 @@ plenty_admin.UI.filters.populate = function(init, callback){
 					
 					//console.log("matchIt", matchIt);
 					
-					if(matchIt.length >0){
+					if(matchIt.length >0 && !allApplied){
 						entityData.name = matchIt[0].name;
+						entityData.filter = filterId.replace("Ids", "s");
+						plenty_admin.UI.filters.add_selected_filter(entityData);
+						addClear = true;
 					}
-					
-					entityData.filter = filterId.replace("Ids", "s");
-					
-					plenty_admin.UI.filters.add_selected_filter(entityData);
 				}
+				
+				if(addClear){
+					var filterSet = plenty_admin.UI.filters.DOM.find(".filter-set."+filterId.replace("Ids", "s").toLowerCase());
+		
+					filterSet
+					.find(".selected-filters")
+					.append(plenty_admin.UI.filters.build_clear_filters_entry());
+				}
+				
 				
 				//set the quickFilter to the selected farm / organization
 				switch(filterId){
@@ -523,55 +477,33 @@ plenty_admin.UI.filters.hide_filters = function(){
 }
 
 plenty_admin.UI.filters.show_filter_selectors = function(el){
-	var $elTarget = $(el.target); 
-	//hide other filter sets
-	/*
-	plenty_admin.UI.filters.DOM
-	.find("ul.all-filters")
-	.hide()
-	.end()
-	.find("ul.selected-filters")
-	.show();
-	*/
-	
 	//show this filter sets filters
 	$(el.target)
 	.closest(".filter-set")
 	.find("ul.selected-filters")
-	.hide()
+	.slideUp("fast")
 	.end()
 	.find("ul.all-filters")
 	.slideDown("fast");
 }
 
 plenty_admin.UI.filters.hide_filter_selectors = function(el){
-	var $elTarget = $(el.target); 
-	//hide other filter sets
-	/*
-	plenty_admin.UI.filters.DOM
-	.find("ul.all-filters")
-	.hide()
-	.end()
-	.find("ul.selected-filters")
-	.show();
-	*/
-	
 	//show this filter sets filters
 	$(el.target)
 	.closest(".filter-set")
-	.find("ul.selected-filters")
+	.find("ul.selected-filters:not(:empty)")
 	.slideDown("fast")
 	.end()
 	.find("ul.all-filters")
-	.hide();
+	.slideUp("fast");
 }
 
 plenty_admin.UI.filters.show_selected_filters = function(){
 	plenty_admin.UI.filters.DOM
 	.find("ul.all-filters")
-	.hide()
+	.slideUp("fast")
 	.end()
-	.find("ul.selected-filters")
+	.find("ul.selected-filters:not(:empty)")
 	.slideDown("fast");
 }
 
@@ -581,37 +513,40 @@ plenty_admin.UI.filters.build_filter_set = function(filter, filterNormalized){
 		filterIDName = "cropTypeIds";
 	}
 	
-	var filterSetHTML = '<div class="filter-set mbs '+filterNormalized+'" data-filter="'+filterIDName+'">'+
-							'<h3 class="title filter-title mbm"><span class="icon pull-left"></span> '+filter+'<a href="" class="show-filters pull-right"><i class="icon glyphicon glyphicon-triangle-right pull-right"></i><i class="icon glyphicon glyphicon-triangle-bottom pull-right" style="display:none;	"></i></a></h3>'+
-							'<ul class="selected-filters clear mbn">'+
-								'<li class="filter all">'+
-									'<span class="pull-left">All</span></a>'+
-								'</li>'+
-							'</ul>'+
-							'<ul class="all-filters overflowFix clear mbn" style="display:none;">'+
-							'</ul>'+
-						'</div>';
-	var $filterSetHTML = $(filterSetHTML);
+	var $filterSetHTML = $(['<div class="filter-set mbs '+filterNormalized+'" data-filter="'+filterIDName+'">',
+							'<h3 class="title filter-title mbm">',
+								'<a href="" class="show-filters pull-right">',
+									'<span class="icon pull-left"></span> ',
+									filter,
+									'<i class="icon glyphicon glyphicon-triangle-right pull-right"></i>',
+								'</a>',
+							'</h3>'+
+							'<ul class="selected-filters clear mbn overflowFix">',
+								'<li class="filter all">',
+									'<span class="pull-left">All</span>',
+								'</li>',
+							'</ul>',
+							'<ul class="all-filters overflowFix clear mbn" style="display:none;">',
+							'</ul>',
+						'</div>'].join(""));
 	
 	//set up the filter toggle list
 	$filterSetHTML
 	.data("state", "closed")
-	.find(".show-filters")
+	.find(".filter-title a")
 	.click(function(e){
 		e.stopPropagation();
 		if($filterSetHTML.data("state") === "closed"){
 			plenty_admin.UI.filters.show_filter_selectors(e);
 			$filterSetHTML
 			.data("state", "open")
+			.addClass("open");
 		}else{
 			plenty_admin.UI.filters.hide_filter_selectors(e);
 			$filterSetHTML
 			.data("state", "closed")
+			.removeClass("open");
 		}
-		
-		$filterSetHTML
-		.find(".show-filters i")
-		.toggle();
 		
 		return false;
 	});
@@ -638,13 +573,9 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}/*, function(){
-			plenty_admin.UI.filters.show_selected_filters();
-		}*/);
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
 	}else if(plenty_admin.UI.filters.state === "closed"){
 		plenty_admin.UI.filters.state = "open";
-		
-		//plenty_admin.UI.filters.show_selected_filters();
 		
 		plenty_admin.UI.filters.DOM
 		.stop()
@@ -656,9 +587,7 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())}/*, function(){
-			plenty_admin.UI.filters.show_selected_filters();
-		}*/);
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
 	}
 }
 
@@ -675,15 +604,27 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 	);
 }
 
-plenty_admin.DATA.update_filters = function(callback, init, zoomFields){
+plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context){
 	console.log("plenty_admin.DATA.update_filters", zoomFields);
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
-			plenty_admin.DATA.userFilters = data.body();
+			
+			//update the local possible filter entities only
+			//manage the filterDTO selected locally only as it differs from what is returned by the server
+			plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList = data.body().possibleFilteringEntitiesDtoList;
 			
 			plenty_admin.UI.filters.populate(init);
 			
-			plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
+			switch(plenty_admin.context){
+				case "map":
+				plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
+				plenty_admin.UI.map.add_equipment_to_map();
+				break;
+				
+				case "plans":
+					plenty_admin.REST.getPlansFiltered(plenty_admin.DATA.userFilters.filterDto.id);
+				break;
+			}
 			
 			if(callback && typeof callback === "function"){
 				callback(data);

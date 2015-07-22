@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="plans">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<meta name="description" content="This is the plan view of the admin UI">
+<meta name="author" content="Jamie McDonnell">
+<!--<link rel="icon" href="favicon.ico">-->
+
+<title>Plenty Admin | Plans View</title>
+
+<!-- Bootstrap core CSS -->
+<link href="css/Plenty.RDThree.com.min.css" rel="stylesheet">
+
+ <!-- Bootstrap theme CSS -->
+<link href="css/Plenty.RDThree.com-theme.min.css" rel="stylesheet">
+
+<!-- Custom styles for this template -->
+<link href="css/plenty.min.css" rel="stylesheet">
+
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]--> 
+</head>
+<body class="map">
+	<div class="flexbox-parent page-container blur">
+	<nav class="navbar navbar-default flexbox-item mbn">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a href="index.html" class="pull-left brand">
+		  	<img src="img/plenty-logo.png">
+		</a>
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+		  <ul class="nav navbar-nav">
+			<li class=""><a href="dashboard.html">Dashboard</a></li>
+			<li  class=""><a href="settings.html">Settings</a></li>
+			<li  class=""><a href="map.html">Map</a></li>
+			<li  class="active"><a href="plans.html">Plans</a></li>
+		  </ul>
+		  <ul class="nav navbar-nav navbar-right">
+			<li><p style="display:none;">Welcome <span class="userFName"></span> <span class="userLName"></span></p></li>
+			<li class=""><a href="contact.html">Contact</a></li>
+			<li class="logout"><a href="#">Log Out</a></li>
+		  </ul>
+		</div><!-- /.nav-collapse -->
+	  </div><!-- /.container -->
+	</nav><!-- /.navbar -->
+	<div class="flexbox-item filter_controls text-center">
+		<i class="filter_loader fa fa-refresh fa-spin"></i>
+		<h3 class="pull-left mls mts quickFilters" style="display:none;"><a href="" class="quickFilter quickFilter_organizations"></a></h3>
+		<h3 class="pull-right mrs mts toggleFilters" style="display:none;"><a href="">Filters <span></span></a></h3>
+	</div>
+	<div class="flexbox-item">
+		<button class="btn btn-primary add-plan-to-displayed pull-right"><span class="glyphicon glyphicon-plus"></span> Add Plan to All Displayed Fields</button>
+	</div>
+	<table class="table flexbox-item fitTable mbn">
+		<thead>
+			<tr>
+				<th width="6%">Active</th>
+				<th width="10.66%">Plan Name</th>
+				<th width="16.66%">Description</th>
+				<th width="16.66%">Revenue</th>
+				<th width="16.66%">Expense</th>
+				<th width="16.66%">Profit</th>
+				<th width="16.66%" class="text-right">PPA</th>
+			</tr>
+		</thead>
+	</table>
+	<div class="flexbox-item fill-area content flexbox-item-grow">
+		<div class="fill-area-content flexbox-item-grow" id="plans-wrapper">
+			<table class="table table-striped table-hover fitTable col-sm-12 pln prn" id="plans-container">
+				<tbody>
+				</tbody>
+			</table>
+			<div id="filters-container" style="display:none;">
+	<div id="filter-set-wrapper">
+	</div>
+</div>
+        </div>
+    </div>
+	<footer class="footer flexbox-item">
+	<div class="container-fluid">
+		<p class="pull-left">&copy; RoundThree LLC. 2015</p>
+		<ul class="links pull-right">
+			<li class="pull-left"><a href="#report-problem">Report Problem</a></li>
+			<li class="pull-left restStatus">REST Status: <span class="status"></span></li>
+		</ul>
+	</div>
+</footer>
+
+</div>
+	<div id="loadingOverlay">
+	<h1>Loading - Please Wait...</h1>
+	<i class="fa fa-refresh fa-spin"></i>
+</div>
+	<div class="modal fade equipment" id="equipment">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title"></h4>
+	  </div>
+	  <div class="modal-body overflowFix">
+		<div class="col-xs-12 pln prn"> <!-- required for floating -->
+			<div class="image col-xs-3">
+				<i class="" style="loadingImage fa fa-refresh fa-spin fa-3x fa-fw"></i>
+			</div>
+			<div class="col-xs-9 pln prn">
+				<h3 class="name mtn"><b></b></h3>
+				<p>Latitude: <b class="lat"></b></p>
+				<p>Longitude: <b class="lng"></b></p>
+				
+				<!-- <h3 class="mtn">Equipment Data</h3> -->
+				<div class="equipmentObservationHeaders MOVEABLE">
+					<p class="speed">Speed: <b></b></p>
+					<p class="fuel">Fuel: <b></b></p>
+				</div>
+				<div class="equipmentObservationHeaders SOIL_MOISTURE">
+					<p class="time">Time: <b></b></p>
+					<table class="measurements table fitTable table-striped table-hover table-condensed pointer">
+						<thead>
+							<tr>
+								<th>Soil Depth (<span class="soilDepthUOM"></span>)</th>
+								<th>Moisture (<span class="moistureUOM"></span>)</th>
+							</tr>
+						</thead>
+						<tbody>
+						
+						</tbody>
+					</table>
+				</div>
+				<div class="equipmentObservationHeaders WELL">
+					<p class="time">Time: <b></b></p>
+					<p class="reading">Reading: <b></b></p>
+				</div>
+				<div class="equipmentObservationHeaders null">
+					<p><b>This equipment does not yet have any observations.</b></p>
+				</div>
+			</div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<div class="modal fade activity" id="activity">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title"></h4>
+	  </div>
+	  <div class="modal-body overflowFix">
+		<div class="col-xs-12 taskGraphRow pln prn"> <!-- required for floating -->
+			<div class="col-xs-6 legend" id="taskGraphLegendWrapper">
+
+			</div>
+			<div class="col-xs-6 graph">
+				<canvas id="taskGraph"></canvas>
+			</div>
+		</div>
+		<div class="col-xs-12 pln prn">
+			<div class="activityTasksList">
+				<table class="tasks table fitTable table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>Task Title</th>
+							<th>Status</th>
+							<th>Start Date</th>
+							<th>Duration</th>
+							<th class="text-right">Cost ($)</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+					</tbody>
+				</table>
+			</div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+	  	<button type="button" class="btn btn-danger pull-right delete"><span class="fa fa-trash-o"></span> Delete</button>
+		<button type="button" class="btn btn-default pull-right cancel mrs" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+	<div class="alert alert-danger fade in confirmDelete" role="alert" style="display:none;">
+		<h4>Are you sure you want to delete this activity?</h4>
+		<p>
+		<button type="button" class="btn btn-danger delete pull-right"><span class="fa fa-trash-o"></span> Delete</button>
+		<button type="button" class="btn btn-default cancel pull-right mrs"><span class="glyphicon glyphicon-remove"></span> Cancal</button>
+		</p>
+	</div>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<div class="modal fade crop-survey" id="crop-survey">
+  <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title">Crop Survey</h4>
+	  </div>
+	  <div class="modal-body overflowFix row">
+		 <!-- Nav tabs -->
+		<ul class="nav nav-tabs mainTabs" role="tablist">
+			<li role="presentation" class="active"><a href="#route" aria-controls="route" role="tab" data-toggle="tab">Route</a></li>
+			<li role="presentation"><a href="#sample" aria-controls="sample" role="tab" data-toggle="tab">Sample Collection</a></li>
+			<li role="presentation"><a href="#conditions" aria-controls="conditions" role="tab" data-toggle="tab">Field Conditions</a></li>
+			<li role="presentation"><a href="#growthstate" aria-controls="growthstate" role="tab" data-toggle="tab">Growth State</a></li>
+			<li role="presentation"><a href="#recommendations" aria-controls="recommendations" role="tab" data-toggle="tab">Recommendations</a></li>
+		</ul>
+		
+		<!-- Tab panes -->
+		<div class="tab-content pln prn ptn pbn mainTabs">
+			<div role="tabpanel" class="tab-pane active" id="route">
+				<ul class="pull-left map-route-nav mts">
+					<li><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+					<li><span class="glyphicon glyphicon-map-marker"></span> <span class="marker-number">1</span> 
+					<li><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+				</ul>
+				<div class="route-map clear map" id="route_routemap">
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="sample">
+				<div class="col-md-3 pull-left pln prn mts">
+					<ul class="pull-left map-route-nav mts">
+						<li><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+						<li><span class="glyphicon glyphicon-map-marker"></span> <span class="marker-number">1</span> 
+						<li><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+					</ul>
+					<div class="map small-route-map mbs clear" id="sample_routemap">
+					</div>
+					<div class="photo-notes">
+					</div>
+				</div>
+				<div class="col-md-9 pull-right pln prn mts">
+					<ul class="nav nav-tabs" role="tablist" data-tabs="sampleTabs">
+						<li role="presentation" class="active picture-tab">
+							<a href="#photos" aria-controls="photos" role="tab" data-toggle="tab">
+								<i class="fa fa-camera"></i>
+								<br>
+								Photos
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#soilmoisture" aria-controls="soilmoisture" role="tab" data-toggle="tab">
+								<i class="wi wi-sprinkles"></i>
+								<br>
+								Soil Moisture
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#insects" aria-controls="insects" role="tab" data-toggle="tab">
+								<i class="pif pif-pest-control"></i>
+								<br>
+								Insects
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#disease" aria-controls="disease" role="tab" data-toggle="tab">
+								<i class="fa fa-medkit"></i>
+								<br>
+								Disease
+							</a>
+						</li>
+						<li role="presentation" class="picture-tab">
+							<a href="#weeds" aria-controls="weeds" role="tab" data-toggle="tab">
+								<i class="fpif pif-weed"></i>
+								<br>
+								Weeds
+							</a>
+						</li>
+					</ul>
+					<div class="tab-content pln prn ptn pbn sampleTabs">
+						<div role="tabpanel" class="tab-pane active" id="photos">
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+							<img class="crop_survey_photo loading" src=""/>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="soilmoisture">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="20%">
+											Depth
+										</th>
+										<th width="40%" class="text-right">
+											Sampling
+										</th>
+										<th width="40%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="insects">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="60%">
+											Species
+										</th>
+										<th width="20%" class="text-right">
+											Sampling
+										</th>
+										<th width="20%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="disease">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="60%">
+											Disease
+										</th>
+										<th width="20%" class="text-right">
+											Sampling
+										</th>
+										<th width="20%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="weeds">
+							<table class="tab-pane table table-striped mbn fitTable">
+								<thead>
+									<tr>
+										<th width="60%">
+											Strain
+										</th>
+										<th width="20%" class="text-right">
+											Sampling
+										</th>
+										<th width="20%">
+											UOM
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="conditions">
+				<div class="col-xs-3 prn pln mts"> <!-- required for floating -->
+				  <!-- Nav tabs -->
+				  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+					<li class="active"><a href="#weather_damage" data-toggle="tab">Weather Damage</a></li>
+					<li><a href="#standing_water" data-toggle="tab">Standing Water</a></li>
+					<li><a href="#dry_spots" data-toggle="tab">Dry Spots</a></li>
+				  </ul>
+				</div>
+				<div class="col-xs-9 pln prn mts">
+					<div class="tab-content ptn pbn">
+						<div class="tab-pane survey_conditions_map active map" id="weather_damage">
+						</div>
+						<div class="tab-pane survey_conditions_map map" id="standing_water">
+						</div>
+						<div class="tab-pane survey_conditions_map map" id="dry_spots">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="growthstate">
+				<div class="col-md-3 pull-left pln prn mts">
+					<ul class="pull-left map-route-nav mts">
+						<li><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+						<li><span class="glyphicon glyphicon-map-marker"></span> <span class="marker-number">1</span> 
+						<li><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+					</ul>
+					<div class="map small-route-map mbs clear" id="growthstate_routemap">
+					</div>
+				</div>
+				<div class="col-md-9 pull-right pln prn mts">
+					<img src="img/scales/zadoks.gif-01.svg" class="growthstate_chart"/>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="recommendations">
+			
+			</div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default pull-right cancel mrs" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+	  </div>
+	</div><!-- /.modal-content -->
+	<div class="alert alert-danger fade in confirmDelete" role="alert" style="display:none;">
+		<h4>Are you sure you want to delete this activity?</h4>
+		<p>
+		<button type="button" class="btn btn-danger delete pull-right"><span class="fa fa-trash-o"></span> Delete</button>
+		<button type="button" class="btn btn-default cancel pull-right mrs"><span class="glyphicon glyphicon-remove"></span> Cancal</button>
+		</p>
+	</div>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
+	<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>if (!window.jQuery) { document.write('<script src="js/jquery-2.1.4.min.js"><\/script>'); }
+</script>
+<script src="js/Plenty.RDThree.com.min.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="js/includes.min.js"></script>
+<script src="//use.typekit.net/jmc8hvz.js"></script>
+<script>try{Typekit.load();}catch(e){}</script>
+	<script type="text/javascript">
+		plenty_admin.init("plans");
+	</script>
+</body>
+</html>

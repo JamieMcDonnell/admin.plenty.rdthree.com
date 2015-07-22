@@ -38,6 +38,9 @@
 .btn-danger .badge {
   text-shadow: none;
 }
+.editableform .btn {
+  padding-left: 10px;
+}
 .btn:active,
 .btn.active {
   background-image: none;

@@ -5,12 +5,11 @@ plenty_admin.UI.organization.DOM = plenty_admin.UI.main.DOM.find("#organization-
 plenty_admin.UI.organization.tabs = {};
 plenty_admin.UI.organization.tabs.DOM = plenty_admin.UI.organization.DOM.find('#orgAssets');
 
-plenty_admin.UI.organization.MODAL_add_to_organization = plenty_admin.UI.organization.DOM.find('#add_to_organization');
-plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.organization.DOM.find('#edit_in_organization');
-plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.organization.DOM.find('#confirm_delete');
-
-plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.organization.DOM.find('#edit_field');
-plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.organization.DOM.find('#add_field');
+plenty_admin.UI.organization.MODAL_add_to_organization = plenty_admin.UI.DOM.find('#add_to_organization');
+plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.DOM.find('#edit_in_organization');
+plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.DOM.find('#confirm_delete');
+plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.DOM.find('#edit_field');
+plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_field');
 
 plenty_admin.UI.organization.BUTTON_delete_multiple = plenty_admin.UI.organization.DOM.find(".delete_multiple");
 
@@ -28,6 +27,7 @@ for(var e=0; e < entities.length; e++){
 
 plenty_admin.REST.insertBoundary = plenty_admin.api.all("boundaries/insertBoundary");
 plenty_admin.REST.insertBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/insertBoundaryPointsArray");
+plenty_admin.REST.updateBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/updateBoundaryPointList");
 
 plenty_admin.REST.insertField = plenty_admin.api.all("fields/createFieledWithBoundaryInterestAndCropType");
 
@@ -38,6 +38,10 @@ plenty_admin.REST.deleteFieldCrop = plenty_admin.api.all("fieldCrops/deleteField
 plenty_admin.REST.insertFieldEquipment = plenty_admin.api.all("fieldEquipment/insertWithNewEquipment");
 plenty_admin.REST.updateFieldEquipment = plenty_admin.api.all("fieldEquipment/updateFieldEquipment");
 plenty_admin.REST.deleteFieldEquipment = plenty_admin.api.all("fieldEquipment/deleteFieldEquipment");
+
+plenty_admin.REST.insertActivity = plenty_admin.api.all("activities/insertActivity");
+plenty_admin.REST.updateActivity = plenty_admin.api.all("activities/updateActivity");
+plenty_admin.REST.deleteActivity = plenty_admin.api.all("activities/deleteActivity");
 
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){
@@ -103,10 +107,16 @@ plenty_admin.UI.organization.init = function(org, hash){
 	.on("click", function(e){
 		var selected_items = plenty_admin.UI.organization.tabs.DOM.find(".tab-pane.active tr td input[type='checkbox']:checked");
 		console.log("selected_items:", selected_items);
-		selected_items.each(function(){
-			var itemId = $(this).closest("tr").data("id");
-			plenty_admin.UI.organization.deleteX(itemId, plenty_admin.HELPER.get_singular_selected_hash());
-		});
+		bootbox.confirm({
+				message: "Are you sure you want to delete multiple fields?", 
+				className: "danger",	
+				callback: function(){
+					selected_items.each(function(){
+						var itemId = $(this).closest("tr").data("id");
+						plenty_admin.UI.organization.deleteX(itemId, plenty_admin.HELPER.get_singular_selected_hash());
+					});
+				}
+			});
 	})
 	.end()
 	.find("select.filter-by-farm")

@@ -24,6 +24,9 @@ body {
 .mts{
 	margin-top:@small !important;
 }
+.mtm{
+	margin-top:@medium !important;
+}
 .mls{
 	margin-left:@small !important;
 }
@@ -105,6 +108,23 @@ body.map footer.footer{
 .modal.equipment.MOVEABLE .equipmentObservationHeaders.MOVEABLE,
 .modal.equipment.WELL .equipmentObservationHeaders.WELL,
 .modal.equipment.SOIL_MOISTURE .equipmentObservationHeaders.SOIL_MOISTURE,
+.modal.equipment.null .equipmentObservationHeaders.null
 {
 	display:block;
+}
+
+.modal .alert.confirmDelete{
+	position:absolute;
+	top:20%;
+	width:50%;
+	left:25%;
+}
+.editable-container.editable-inline{
+	position:relative;
+	z-index:1;
+}
+table{
+	.editable-container.editable-inline{
+		background-color:#fff;
+	}
 }
