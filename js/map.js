@@ -221,13 +221,18 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					}, 
-					onClick: function(event){ //click event
-						//event.stopPropagation();
+					/*
+					onDoubleClick: function(event){ //click event
+						event.stop();
+						this.isDblClick = true;
+						console.log("marker double clicked: ", event);
 						plenty_admin.UI.field.show_equipment_modal(equip);
-					}, 
-					onRightClick: function(event){ //right click event
+					},
+					*/ 
+					onClick: function(event){ //right click event
 						console.log("event:", this, equip);
 						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
+						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onDragEnd: function(){ //drag end event
 						var that = this;

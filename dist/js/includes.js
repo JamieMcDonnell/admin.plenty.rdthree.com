@@ -5247,8 +5247,8 @@ plenty_admin.MAPS.draw_pin = function(pinData, pinEvents, map){
 		google.maps.event.addListener(richMarker, "click", pinEvents.onClick); 
 	}
 	
-	if(pinEvents.onRightClick){
-		google.maps.event.addListener(richMarker, "rightclick", pinEvents.onRightClick); 
+	if(pinEvents.onDoubleClick){
+		google.maps.event.addListener(richMarker, "dblclick", pinEvents.onDoubleClick); 
 	}
 	
 	if(pinEvents.onDragEnd){
@@ -5506,6 +5506,13 @@ plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, marker){
 			.click(function(){
 				//alert("insert equipment");
 				plenty_admin.MAPS.delete_fixed_equipment(pinData, ev);
+				return false;
+			})
+			.end()
+			.find(".view_equipment_details a")
+			.click(function(){
+				//alert("insert equipment");
+				plenty_admin.UI.field.show_equipment_modal(pinData);
 				return false;
 			});
 		});
@@ -6271,7 +6278,7 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 	
 					plenty_admin.REST.updateBoundaryPointsArray.post(boundaryPointsDto).then(
 						function(updatedBoundary){
-							console.log("updatedBoundary: ", updatedBoundary);
+							console.log("updatedBoundary: ", updatedBoundary().data);
 							//show edit form
 							endEditFieldBoundary();
 						},
@@ -9535,13 +9542,18 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					}, 
-					onClick: function(event){ //click event
-						//event.stopPropagation();
+					/*
+					onDoubleClick: function(event){ //click event
+						event.stop();
+						this.isDblClick = true;
+						console.log("marker double clicked: ", event);
 						plenty_admin.UI.field.show_equipment_modal(equip);
-					}, 
-					onRightClick: function(event){ //right click event
+					},
+					*/ 
+					onClick: function(event){ //right click event
 						console.log("event:", this, equip);
 						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
+						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onDragEnd: function(){ //drag end event
 						var that = this;

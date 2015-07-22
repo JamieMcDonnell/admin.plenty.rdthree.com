@@ -464,8 +464,8 @@ plenty_admin.MAPS.draw_pin = function(pinData, pinEvents, map){
 		google.maps.event.addListener(richMarker, "click", pinEvents.onClick); 
 	}
 	
-	if(pinEvents.onRightClick){
-		google.maps.event.addListener(richMarker, "rightclick", pinEvents.onRightClick); 
+	if(pinEvents.onDoubleClick){
+		google.maps.event.addListener(richMarker, "dblclick", pinEvents.onDoubleClick); 
 	}
 	
 	if(pinEvents.onDragEnd){
@@ -723,6 +723,13 @@ plenty_admin.MAPS.show_equipment_pin_context_menu = function(pinData, marker){
 			.click(function(){
 				//alert("insert equipment");
 				plenty_admin.MAPS.delete_fixed_equipment(pinData, ev);
+				return false;
+			})
+			.end()
+			.find(".view_equipment_details a")
+			.click(function(){
+				//alert("insert equipment");
+				plenty_admin.UI.field.show_equipment_modal(pinData);
 				return false;
 			});
 		});
