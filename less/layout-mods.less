@@ -51,6 +51,12 @@ body {
 .prn{
 	padding-right:0 !important;
 }
+.pls{
+	padding-left:10px !important;
+}
+.prs{
+	padding-right:10px !important;
+}
 .ptn{
 	padding-top:0 !important;
 }
@@ -74,9 +80,19 @@ body {
   height: auto;
   background-color: #f5f5f5;
   z-index:10001;
+  
+  .container-fluid{
+		padding:5px;
+		
+		p{
+			margin:0;
+		}
+  }
 }
-body.map footer.footer{
+body.map footer.footer,
+body.plans footer.footer{
 	position:relative;
+	bottom:0;
 }
 .fitTable{
 	word-wrap: break-word;

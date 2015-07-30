@@ -149,6 +149,7 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'js/map.js', 
 				'js/dashboard.js', 
 				'js/plans.js', 
+				'js/plan.js', 
 				'js/sidebar.js',
 				'js/filters.js',
 				'js/organization.js',

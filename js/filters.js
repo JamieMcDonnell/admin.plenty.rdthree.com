@@ -35,6 +35,16 @@ plenty_admin.UI.filters.init = function(){
 	//once positioned, make the filters panel visible
 	plenty_admin.UI.filters.DOM
 	.show();
+	
+	plenty_admin.UI.filters.DOM
+	.on("mouseenter", function(){
+		clearTimeout(this.autohide);
+	})
+	.on("mouseleave", function(){
+		this.autohide = setTimeout(function(){
+			plenty_admin.UI.filters.toggleFilters("close");
+		}, 3000);
+	});
 }
 
 plenty_admin.UI.filters.add_selected_filter = function(filterData){
@@ -606,6 +616,8 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 
 plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context){
 	console.log("plenty_admin.DATA.update_filters", zoomFields);
+	plenty_admin.HELPER.showLoadingOverlay();
+	
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
 			
@@ -629,6 +641,8 @@ plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context)
 			if(callback && typeof callback === "function"){
 				callback(data);
 			}
+			
+			//plenty_admin.HELPER.hideLoadingOverlay();
 		}
 	);
 }

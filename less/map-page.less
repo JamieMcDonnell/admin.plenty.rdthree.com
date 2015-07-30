@@ -6,6 +6,8 @@ body.map{
 	margin: 0;
 	padding: 0;
 	
+	overflow-y:hidden;
+	
 	*,
 	*:before, 
 	*:after
@@ -62,7 +64,10 @@ body.map{
 {
 	flex: 1; /* same as flex: 1 1 auto; */
 }
-
+.flexbox-scroll_y{
+	overflow-y:auto;
+	position:relative;
+}
 .fill-area
 {
 	display: flex;

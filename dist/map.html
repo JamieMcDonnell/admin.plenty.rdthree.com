@@ -28,7 +28,7 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--> 
 </head>
-<body class="map">
+<body class="map filters">
 	<div class="flexbox-parent page-container blur">
 	<nav class="navbar navbar-default flexbox-item mbn">
 	  <div class="container-fluid">
@@ -69,7 +69,7 @@
 			<div class="col-xs-3 prn pln"> <!-- required for floating -->
 			  <!-- Nav tabs -->
 			  <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
-			  	<li class="noTab"><h4 class="topLine ptn mtn mlm">Profit: <span class="profit pull-right mrs"></span></h4></li>
+			  	<li class="noTab"><h4 class="topLine ptn mtn mlm"><b>Profit: <span class="profit pull-right mrs"></span></b></h4></li>
 				<li class="noTab"><h4 class="topLine ptn mtn mlm">Cost: <span class="cost pull-right mrs"></span></h4></li>
 				<li class="noTab"><h4 class="topLine ptn mtn mlm">Revenue: <span class="revenue pull-right mrs"></span></h4></li>
 			  	<li class="active"><a href="#finances" data-toggle="tab">Finances</a></li>
@@ -88,48 +88,60 @@
 					</div>
 					<div class="legend flexbox-item-grow"></div>
 				  </div>
-				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="activities">
-				  	<thead>
-						<tr>
-							<th width="5%"></th> <!--ICON-->
-							<th width="25%">
-								Status
-							</th>
-							<th width="25%">
-								Activity Name
-							</th>
-							<th width="20%">
-								Date
-							</th>
-							<th width="20%">
-								Duration
-							</th>
-							<th width="20%" class='text-right'>
-								$
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				  </table>
-				  <table class="tab-pane table table-striped table-hover mbn fitTable" id="equipment">
-				  	<thead>
-						<tr>
-							<th width="5%"></th> <!--ICON-->
-							<th width="25%">
-								Equipment Type
-							</th>
-							<th width="30%">
-								Brand
-							</th>
-							<th width="25%">
-								Name
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				  </table>
+				  <div class="tab-pane" id="activities">
+					  <table class="table mbn fitTable">
+						<thead>
+							<tr>
+								<th width="5%"></th> <!--ICON-->
+								<th width="25%">
+									Status
+								</th>
+								<th width="25%">
+									Activity Name
+								</th>
+								<th width="20%">
+									Date
+								</th>
+								<th width="20%">
+									Duration
+								</th>
+								<th width="20%" class='text-right'>
+									$
+								</th>
+							</tr>
+						</thead>
+					  </table>
+					  <div class="activities-list-wrapper">
+						  <table class="table table-striped table-hover mbn fitTable" id="activities-list">
+							<tbody>
+							</tbody>
+						  </table>
+					  </div>
+				  </div>
+				  <div class="tab-pane" id="equipment">
+					  <table class="table mbn fitTable">
+						<thead>
+							<tr>
+								<th width="5%"></th> <!--ICON-->
+								<th width="25%">
+									Equipment Type
+								</th>
+								<th width="30%">
+									Brand
+								</th>
+								<th width="25%">
+									Name
+								</th>
+							</tr>
+						</thead>
+					  </table>
+					  <div class="equipment-list-wrapper">
+						  <table class="table table-striped table-hover mbn fitTable" id="equipment-list">
+							<tbody>
+							</tbody>
+						  </table>
+					  </div>
+				  </div>
 				</div>
 			</div>
 		</div>
@@ -587,7 +599,7 @@
 					<div class="cropSurveys">
 					</div>
 				</div>
-				<div class="futureDaysWrapper">
+				<div class="futureDaysWrapper" style="display:none;">
 					<div class="keyOffset"></div>
 					<div class="futureDays">
 						<p class="todayLabel">Today</p>
@@ -631,8 +643,8 @@
     </div>
 	<footer class="footer flexbox-item">
 	<div class="container-fluid">
-		<p class="pull-left">&copy; RoundThree LLC. 2015</p>
-		<ul class="links pull-right">
+		<p class="pull-left mbn">&copy; RoundThree LLC. 2015</p>
+		<ul class="links pull-right mbn">
 			<li class="pull-left"><a href="#report-problem">Report Problem</a></li>
 			<li class="pull-left restStatus">REST Status: <span class="status"></span></li>
 		</ul>

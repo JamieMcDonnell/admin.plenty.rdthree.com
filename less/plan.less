@@ -1,0 +1,48 @@
+@import "variables.less";
+body.plans{
+	background:#e8eae0 url(../img/background-pattern.png) no-repeat 0 0;
+	background-size:cover;
+	
+	.col-xs-3,
+	.col-xs-9{
+		position:absolute;
+		height:100%;
+	}
+	
+	.col-xs-9{
+		left:25%;
+		
+		 .doughnut{
+			width:60% !important; 
+			position:absolute;
+			height:100% !important;
+			padding:5px;
+			
+			.doughnutWrapper{	
+				height:100%;
+			}
+		 }
+		 
+		 .legend{
+			width:40%; 
+			top:0;
+			position:absolute;
+			height:100%;
+			left:60%;
+		 }
+	}
+	.plan_detail_graph_wrapper{
+		min-height:250px;
+		position:relative;
+	}
+	#plan-container{
+		.templatePlan{
+			display:none;
+		}
+		&.templatePlan{
+			.templatePlan{
+				display:block;
+			}
+		}
+	}
+}

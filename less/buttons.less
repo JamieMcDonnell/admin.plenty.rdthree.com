@@ -80,6 +80,35 @@
   .button-variant(@btn-danger-color; @btn-danger-bg; @btn-danger-border);
 }
 
+// inverted buttons
+.btn-inverted.btn-default{
+	.button-variant(@gray; @white; darken(@btn-default-border, 10%));
+	background-image:none;
+}
+.btn-inverted.btn-primary{
+	.button-variant(@brand-primary; @white; darken(@brand-primary, 10%));
+	background-image:none;
+}
+.btn-inverted.btn-success{
+	.button-variant(@brand-secondary; @white; darken(@brand-secondary, 10%));
+	background-image:none;
+}
+.btn-inverted.btn-info{
+	.button-variant(@brand-info; @white; darken(@brand-info, 10%));
+	background-image:none;
+}
+.btn-inverted.btn-warning{
+	.button-variant(@brand-warning; @white; darken(@brand-warning, 10%));
+	background-image:none;
+}
+.btn-inverted.btn-danger{
+	.button-variant(@brand-danger; @white; darken(@brand-danger, 10%));
+	background-image:none;
+}
+.btn-inverted span.glyphicon,
+.btn-inverted span.fa{
+	color:@white;
+}
 
 // Link buttons
 // -------------------------

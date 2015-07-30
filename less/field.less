@@ -58,6 +58,16 @@
 				height:100%;
 				left:60%;
 			 }
+			 .activities-list-wrapper,
+			 .equipment-list-wrapper{
+				overflow-y:auto;
+				position:absolute;
+				top:36px;
+				max-height:calc(100% - 36px); 
+				width:calc(100% - 20px);
+				padding:0 0 0 10px;
+				left:0;
+			 }
 		  }
 	}
 	.field_weather_data{
@@ -173,15 +183,17 @@
 	}
 	.futureDaysWrapper{
 		position:absolute;
-		bottom:70px;
+		bottom:66px;
 		left:0;
 		width: 100%;
   		padding: 0 15px;
 		z-index:3;
 		pointer-events: none;
 		
+		height: calc(100% - (120px));
+		
 		.keyOffset{
-			height:163px;
+			height:100%;
 			
 			.todayLabel{
 				position:absolute;
@@ -192,7 +204,7 @@
 		}
 		
 		.futureDays{
-			height:163px;
+			height:100%;
 			overflow:auto;
 			background-color:transparent;
 			position:relative;

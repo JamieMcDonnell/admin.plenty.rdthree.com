@@ -102,6 +102,20 @@ plenty_admin.UI.map.init = function(){
 	.on('show.bs.popover', function (e) {
 		plenty_admin.UI.map.orgs_quickfilter
 		.popover("hide");
+	})
+	.on("mouseenter", function () {
+		var _this = this;
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function () {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function () {
+		var _this = this;
+		setTimeout(function () {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 300);
 	});
 	
 	plenty_admin.UI.map.orgs_quickfilter
@@ -122,6 +136,20 @@ plenty_admin.UI.map.init = function(){
 	.on('show.bs.popover', function (e) {
 		plenty_admin.UI.map.farms_quickfilter
 		.popover("hide");
+	})
+	.on("mouseenter", function () {
+		var _this = this;
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function () {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function () {
+		var _this = this;
+		setTimeout(function () {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 300);
 	});
 	
 }
@@ -221,28 +249,25 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					}, 
-					/*
-					onDoubleClick: function(event){ //click event
-						event.stop();
-						this.isDblClick = true;
-						console.log("marker double clicked: ", event);
-						plenty_admin.UI.field.show_equipment_modal(equip);
-					},
-					*/ 
-					onClick: function(event){ //right click event
-						console.log("event:", this, equip);
+					onClick: function(){ //click event
+						console.log("event:", this, this.args);
+						plenty_admin.UI.map.clickedEquipment = true;
+						var t = setTimeout(function(){
+							plenty_admin.UI.map.clickedEquipment = false;
+						}, 300);
+						//event.stop();
 						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onDragEnd: function(){ //drag end event
 						var that = this;
-						console.log("onDragEnd:", equip, that);
+						//console.log("onDragEnd:", equip, that);
 						//check if the point has been moved to another polygon or is not in a polygon
 						var matchedPoly = null;
 						for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
 							var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
 							if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
-								console.log("Point is inside a polygon: ", polygon);
+								//console.log("Point is inside a polygon: ", polygon);
 								matchedPoly = polygon;
 								break;
 							}
@@ -250,14 +275,14 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						
 						if(matchedPoly){
 							if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
-								console.log("do you want top move this equipment within this field?");
+								//console.log("do you want top move this equipment within this field?");
 								plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
 							}else{
-								console.log("Do you what to assosciate this equipment with a different field");
+								//console.log("Do you what to assosciate this equipment with a different field");
 								plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
 							}
 						}else{
-							console.log("are you sure you want to disassociate this equipment with any fields???");
+							//console.log("are you sure you want to disassociate this equipment with any fields???");
 							plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
 							plenty_admin.MAPS.delete_field_equipment(equip, that);
 						}
@@ -465,7 +490,11 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 		//for(var c=0; c<allCropTypes.length; c++){
 		for(id in plenty_admin.UI.map.allCropTypes){
 			if(plenty_admin.UI.map.allCropTypes.hasOwnProperty(id)){
-				legendItems[id] = {color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), colour: "#"+(plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "none" || plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), label : plenty_admin.UI.map.allCropTypes[id]};
+				legendItems[id] = {
+									color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), 
+									colour: "#"+(plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "none" || plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), 
+									label : plenty_admin.UI.map.allCropTypes[id]
+								};
 				inc += 1;
 			}
 		}
@@ -564,6 +593,12 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 						});
 					}, 
 					onClick: function(event){
+						//if a marker sitting on top of a field has been clicked
+						//do not trigger the polygon click event
+						if(plenty_admin.UI.map.clickedEquipment){
+							plenty_admin.UI.map.clickedEquipment = false;
+							return;
+						}
 						console.log("polygon clicked");
 						var _this = this;
 						var checkDouble = setTimeout(function(){
@@ -591,6 +626,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 						event.stop();
 						this.isDblClick = true;
 						console.log("polygon double clicked: ", event);
+						
 						plenty_admin.HELPER.showLoadingOverlay();
 						var thisPoly = this;
 						//var polyPath = this.getPath().getArray();
@@ -606,10 +642,22 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 							polyPath.push(latlng);
 						});
 						
+						var _MouseEvent = null;
+						
+						for(prop in event){
+							if(event.hasOwnProperty(prop)){
+								//console.log("event properties: ", prop, event[prop] instanceof MouseEvent);
+								if( event[prop] instanceof MouseEvent){
+									_MouseEvent = event[prop];
+									break;
+								}
+							}
+						}
+						
 						
 						//only move to field screen
 						//if a polygon has been clicked, not a marker
-						if($(event.fb.target).hasClass("marker")){
+						if($(_MouseEvent && _MouseEvent.target).hasClass("marker")){
 							console.log("marker clicked instead of poly - return!");
 							return;
 						}else{
@@ -688,6 +736,8 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 		$(window).on("resize",function(){
 			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 		});
+		
+		plenty_admin.HELPER.hideLoadingOverlay();
 		
 		//cluster the polygons and render clusters on the map
 		//plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);

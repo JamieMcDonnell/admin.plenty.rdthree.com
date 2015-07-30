@@ -22,6 +22,9 @@
 	background-color:@white;	
 	padding:15px;
 }
+.capitalize{
+	text-transform:capitalize !important;
+}
 
 /* Show on hover */
 .reveal-on-hover-wrap .reveal-on-hover-element{
@@ -99,4 +102,22 @@ body.loading{
 	transition: 1s filter linear;
 	filter: blur(5px) grayscale(20%);
 	pointer-events: none;
+}
+.header{
+	background-color:@brand-soft-cream;
+}
+.category{
+	color:@white;
+	background-color:@brand-primary !important;
+	margin:0;
+	padding:.5em;
+	box-sizing: content-box !important;
+}
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: @white;
+}
+.breadcrumb-trail .breadcrumb{
+	border-top-left-radius:0;
+	border-top-right-radius:0;
+	background-color:rgba(255,255,255,.8);
 }

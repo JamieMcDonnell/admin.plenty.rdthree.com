@@ -156,6 +156,7 @@ plenty_admin.api = restful(plenty_admin.REST.URL);
 
 //set authorization header on the API object
 plenty_admin.api.header("Authorization", store.get("basicAuth"));
+//plenty_admin.api.header("timeout", 10000);
 
 // method to define exactly which object needs updating when inline editing
 plenty_admin.REST.getDataForEditable = function(updateProperties, propName, propValue){
@@ -689,7 +690,7 @@ plenty_admin.REST.fields.getAllBoundaryPointsByBoundary = function(boundaryId, c
 			});
 }
 
-plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(boundaryId, boundaryTypeId, callback){
+plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(boundaryId, boundaryTypeId, callback, cropTypeId){
 	//get fields related to this farm
 	plenty_admin.REST.fields.allBoundaryPointsByFieldAndBoundaryType = plenty_admin.api.one("boundaryPoints/getBoundaryPointsByFieldAndBoundaryType/"+boundaryId, 1);
 	plenty_admin.REST.fields.allBoundaryPointsByFieldAndBoundaryType
@@ -704,7 +705,7 @@ plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(b
 				}
 				
 				if(callback && typeof callback === "function"){
-					callback(boundaryPointsSet, boundaryId);
+					callback(boundaryPointsSet, boundaryId, cropTypeId);
 				}
 			}
 		);
@@ -974,8 +975,17 @@ plenty_admin.REST.getStatus = function(){
 	  context: document.body
 	}).success(function(health) {
 		plenty_admin.UI.setRESTStatus(health.status);
-	}).error(function(){
+	}).error(function(err){
 		plenty_admin.UI.setRESTStatus("DOWN");
+		if($(".modal.bootbox.healthcheck.in").length == 0){
+			bootbox.dialog({
+				message: "Rest Server is down right now, please try later - "+err.status+" - "+err.statusText,
+				className: "danger healthcheck",
+				buttons: {
+					
+				}
+			});	
+		}
 	});
 };
 
@@ -1250,7 +1260,38 @@ plenty_admin.HELPER.testAPICall = function(call, id){
 		});
 }
 
-//plenty_admin.HELPER.testAPICall("fields/getField", 1);
+
+
+//extend the line chart object to skip labels but keep the tooltip values
+Chart.types.Line.extend({
+	name: "LineAlt",
+	initialize: function (data) {
+		Chart.types.Line.prototype.initialize.apply(this, arguments);
+		console.log("Init LineAlt: ", this);
+		var xLabels = this.scale.xLabels
+		//set the day label increment
+		var label_step = 1;
+		if(xLabels.length > 31 && xLabels.length < 125){
+			label_step = 3
+		}else if(xLabels.length > 125 && xLabels.length < 500){
+			label_step = 7
+		}else if(xLabels.length > 500 && xLabels.length < 1000){
+			label_step = 14
+		}else if(xLabels.length > 1000){
+			label_step = 20
+		}
+		
+		console.log("LineAlt: ", xLabels, label_step);
+		
+		xLabels.forEach(function (label, i) {
+			//console.log("i % 2", i % 2);
+			//console.log("i % 6", i % 6);
+			//console.log("i % 14", i % 14);
+			if (i % label_step > 0)
+				xLabels[i] = '';
+		});
+	}
+});
 
 
 

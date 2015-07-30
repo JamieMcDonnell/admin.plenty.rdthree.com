@@ -612,8 +612,6 @@ plenty_admin.MAPS.get_static_maps_url = function(mapDetails){
 			mapUrl += (param + "=" + mapDetails[param]) + "&";
 		}
 	}
-	console.log("mapUrl", mapUrl);
-	//mapUrl += "&zoom=15";
 	mapUrl += "key="+plenty_admin.MAPS.api_key;
 	return mapUrl;
 }

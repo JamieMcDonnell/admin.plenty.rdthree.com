@@ -1,0 +1,265 @@
+<div id="plan-container" style="display:none;" class="fill-area-content flexbox-parent flexbox-item-grow">
+	<div class="plan_detail_graph_wrapper pln prn flexbox-item flexbox-item-grow">
+		<div class="plan_detail pln prn flexbox-item">
+			<!-- finances details -->
+			<ul class="col-xs-3 prn pln finances">
+				<li class="templatePlan"><h3 class="mtn mls">Projected Figures</h3></li>
+				<li class="noTab"><h4 class="topLine ptn mtn mlm"><b>Profit: <span class="profit pull-right mrs"></span></b></h4></li>
+				<li class="noTab"><h4 class="topLine ptn mtn mlm">Revenue: <span class="revenue pull-right mrs"></span></h4></li>
+				<li class="noTab"><h4 class="topLine ptn mtn mlm">Expense: <span class="expense pull-right mrs"></span></h4></li>
+			</ul>
+			<div class="col-xs-9 pln prn">
+				<div class="graph flexbox-parent" id="plan_graph_wrapper">
+					<div class="doughnut">
+						<div class="doughnutWrapper">
+							<canvas class="flexbox-item-grow"></canvas>
+						</div>
+					</div>
+					<div class="legend flexbox-item-grow"></div>
+				  </div>
+			</div>
+		</div>
+	</div>
+	<h4 class="flexbox-item row-total pls prs category">REVENUE<span class="pull-right">TOTAL: <span class="revenue"></span></span></h4>
+	<table class="tab-pane table table-striped table-hover mbn fitTable flexbox-item flexbox-scroll_y" id="plan_revenue_breakdown">
+		<thead class="header">
+			<tr>
+				<th width="25%">
+					# Acres
+				</th>
+				<th width="25%">
+					Avg. # Bushels / Acre 
+				</th>
+				<th width="25%">
+					Price / Bushel ($)
+				</th>
+				<th width="25%" class='text-right'>
+					Total ($)
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td width="25%" class="plan_field_acres">
+					320
+				</td>
+				<td width="25%" class="plan_field_bushels_per_acre">
+					42 
+				</td>
+				<td width="25%" class="plan_field_price_per_bushel">
+					5.30
+				</td>
+				<td width="25%" class='text-right revenue'></td>
+			</tr>
+			<tr>
+				<td width="25%" colspan="3">
+					Subsidy
+				</td>
+				<td width="25%" class='text-right plan_field_subsidy_total'>
+					0.00
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<h4 class="flexbox-item row-total pls prs category">EXPENSES<span class="pull-right">TOTAL: <span class="expense"></span></span></h4>
+	<table class="table fitTable flexbox-item mbn">
+		<thead class="header">
+			<tr>
+				<th width='5%'></th>
+				<th width="10%">
+					State
+				</th>
+				<th width="60%">
+					Activity Name
+				</th>
+				<th width="10%">
+					Date
+				</th>
+				<th width="10%">
+					Duration
+				</th>
+				<th width="10%" class='text-right'>
+					Total ($)
+				</th>
+			</tr>
+		</thead>
+	</table>
+	<div class="flexbox-item flexbox-scroll_y" id="plan_revenue_breakdown">
+		<table class="table table-striped table-hover mbn fitTable planActivities">
+			<tbody>
+				<!-- GENERATED DYNAMICALLY -->
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+				<tr class="activity">
+					<td width="10%">
+						<i class="glyphicon glyphicon-ok"></i>
+					</td>
+					<td width="60%">
+						Some name goes here
+					</td>
+					<td width="10%">
+						06/31/2015
+					</td>
+					<td width="10%">
+						55min
+					</td>
+					<td width="10%" class='text-right'>
+						544.92
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<h4 class="flexbox-item row-total net pls prs category"><b>NET PROFIT<span class="pull-right">TOTAL: <span class="profit"></span></span></b></h4>
+</div>

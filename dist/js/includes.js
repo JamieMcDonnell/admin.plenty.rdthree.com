@@ -2659,6 +2659,7 @@ plenty_admin.api = restful(plenty_admin.REST.URL);
 
 //set authorization header on the API object
 plenty_admin.api.header("Authorization", store.get("basicAuth"));
+//plenty_admin.api.header("timeout", 10000);
 
 // method to define exactly which object needs updating when inline editing
 plenty_admin.REST.getDataForEditable = function(updateProperties, propName, propValue){
@@ -3192,7 +3193,7 @@ plenty_admin.REST.fields.getAllBoundaryPointsByBoundary = function(boundaryId, c
 			});
 }
 
-plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(boundaryId, boundaryTypeId, callback){
+plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(boundaryId, boundaryTypeId, callback, cropTypeId){
 	//get fields related to this farm
 	plenty_admin.REST.fields.allBoundaryPointsByFieldAndBoundaryType = plenty_admin.api.one("boundaryPoints/getBoundaryPointsByFieldAndBoundaryType/"+boundaryId, 1);
 	plenty_admin.REST.fields.allBoundaryPointsByFieldAndBoundaryType
@@ -3207,7 +3208,7 @@ plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType = function(b
 				}
 				
 				if(callback && typeof callback === "function"){
-					callback(boundaryPointsSet, boundaryId);
+					callback(boundaryPointsSet, boundaryId, cropTypeId);
 				}
 			}
 		);
@@ -3477,8 +3478,17 @@ plenty_admin.REST.getStatus = function(){
 	  context: document.body
 	}).success(function(health) {
 		plenty_admin.UI.setRESTStatus(health.status);
-	}).error(function(){
+	}).error(function(err){
 		plenty_admin.UI.setRESTStatus("DOWN");
+		if($(".modal.bootbox.healthcheck.in").length == 0){
+			bootbox.dialog({
+				message: "Rest Server is down right now, please try later - "+err.status+" - "+err.statusText,
+				className: "danger healthcheck",
+				buttons: {
+					
+				}
+			});	
+		}
 	});
 };
 
@@ -3753,7 +3763,38 @@ plenty_admin.HELPER.testAPICall = function(call, id){
 		});
 }
 
-//plenty_admin.HELPER.testAPICall("fields/getField", 1);
+
+
+//extend the line chart object to skip labels but keep the tooltip values
+Chart.types.Line.extend({
+	name: "LineAlt",
+	initialize: function (data) {
+		Chart.types.Line.prototype.initialize.apply(this, arguments);
+		console.log("Init LineAlt: ", this);
+		var xLabels = this.scale.xLabels
+		//set the day label increment
+		var label_step = 1;
+		if(xLabels.length > 31 && xLabels.length < 125){
+			label_step = 3
+		}else if(xLabels.length > 125 && xLabels.length < 500){
+			label_step = 7
+		}else if(xLabels.length > 500 && xLabels.length < 1000){
+			label_step = 14
+		}else if(xLabels.length > 1000){
+			label_step = 20
+		}
+		
+		console.log("LineAlt: ", xLabels, label_step);
+		
+		xLabels.forEach(function (label, i) {
+			//console.log("i % 2", i % 2);
+			//console.log("i % 6", i % 6);
+			//console.log("i % 14", i % 14);
+			if (i % label_step > 0)
+				xLabels[i] = '';
+		});
+	}
+});
 
 
 
@@ -5395,8 +5436,6 @@ plenty_admin.MAPS.get_static_maps_url = function(mapDetails){
 			mapUrl += (param + "=" + mapDetails[param]) + "&";
 		}
 	}
-	console.log("mapUrl", mapUrl);
-	//mapUrl += "&zoom=15";
 	mapUrl += "key="+plenty_admin.MAPS.api_key;
 	return mapUrl;
 }
@@ -7473,16 +7512,1610 @@ $( document ).on( "organization_data_ready", function( event, orgs ) {
     plenty_admin.UI.settings.init();
 });
 //*********************** field.js **************************//
-//create namespace for organization layout
-plenty_admin.UI.field = {};
-plenty_admin.UI.field.DOM = $("#field-container");
-plenty_admin.UI.field.weatherTabs = {};
-plenty_admin.UI.field.weatherTabs.DOM = plenty_admin.UI.field.DOM.find('.field_weather_data');
-plenty_admin.UI.field.assetTabs = {};
-plenty_admin.UI.field.assetTabs.DOM = plenty_admin.UI.field.DOM.find('.field_asset_data');
-plenty_admin.UI.field.renderedGraphs = [];
+//create namespace for field layout
+plenty_admin.UI.field = {
+	DOM: $("#field-container"),
+	weatherTabs:		{},
+	assetTabs:	{},
+	
+	renderedGraphs: [],
+	
+	/* Set the start / End date ranges temporaraly until we get some real activity dates */
+	dates: {
+		start:	null,
+		end:		null
+	},
+	
+	hasLayout: false,
+	
+	init: function(fieldObj, context){
+		console.log("plenty_admin.UI.field.init", fieldObj);
+		plenty_admin.UI.field.fieldObj = fieldObj;
+		//fieldObj.boundaries = polyPath;
+		switch(context){
+			case "settings":
+				plenty_admin.HELPER.showLoadingOverlay();
+	  
+				  plenty_admin.UI.field.DOM.attrchange({
+					trackValues: true,
+					callback: function (event) { 
+						if(
+							event.newValue.indexOf("opacity") > -1 
+						){
+							var opacity = Math.round(parseFloat(event.newValue.slice(9)));
+							if(opacity > .999 && !plenty_admin.UI.field.hasLayout){
+								//field layout has been shown
+								plenty_admin.UI.field.fitFieldLayout("fit");
+								console.log("attr changed: ", event.attributeName, event.newValue);
+							}
+						}else if(event.newValue.indexOf("display") > -1 && event.newValue.indexOf("none") > -1){
+							//field has been hidden, clear settings on body
+							console.log("attr changed: ", event.attributeName, event.newValue);
+							plenty_admin.UI.field.fitFieldLayout("clear");
+						}
+					}        
+				});
+	
+				plenty_admin.UI.currentScreen
+				.fadeOut("normal", function(){
+					plenty_admin.UI.currentScreen = plenty_admin.UI.field.DOM;
+					plenty_admin.UI.field.populate(fieldObj);
+					plenty_admin.UI.field.polygon = null;
+					plenty_admin.MAPS.draw_field_on_map(fieldObj, "field_map", {
+						mapTypeId: google.maps.MapTypeId.HYBRID,
+						zoom:  12,
+						disableDefaultUI: true,
+						draggable: false, 
+						zoomControl: false, 
+						scrollwheel: false, 
+						disableDoubleClickZoom: true
+					  }, function(map, fieldObj, polygon){
+						plenty_admin.UI.field.polygon = polygon;
+						//ensure if the window changes size the field is centered
+						$(window).on("resize",function(){
+							plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+						});
+					}, false, "map");
+					
+					plenty_admin.UI.currentScreen.fadeIn("normal");
+				});
+			break;
+			
+			case "map":
+				plenty_admin.UI.currentScreen
+				.closest(".fill-area")
+				.fadeOut("normal", function(){
+					plenty_admin.UI.currentScreen = plenty_admin.UI.field.DOM;
+					plenty_admin.UI.field.populate(fieldObj);
+					plenty_admin.UI.field.polygon = null;
+					
+					plenty_admin.UI.currentScreen
+					.addClass("fill-area-content flexbox-item-grow")
+					plenty_admin.UI.currentScreen.fadeIn("normal", function(){
+						plenty_admin.MAPS.draw_field_on_map(fieldObj, "field_map", {
+							mapTypeId: google.maps.MapTypeId.HYBRID,
+							zoom:  12,
+							disableDefaultUI: true,
+							draggable: false, 
+							zoomControl: false, 
+							scrollwheel: false, 
+							disableDoubleClickZoom: true
+						  }, function(map, fieldObj, polygon){
+							plenty_admin.UI.field.polygon = polygon;
+							//ensure if the window changes size the field is centered
+							$(window).on("resize", function(){
+								plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+							});
+							plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
+							
+						}, false, "map");
+					});
+				})
+				.parent()
+				.find(".filter_controls")
+				.fadeOut("fast");
+			break;
+		}
+	},
+	
+	clear: function(){
+		//destroy all graphs
+		for(var g=0; g<plenty_admin.UI.field.renderedGraphs.length; g++){
+			var graph = plenty_admin.UI.field.renderedGraphs[g];
+			graph.destroy();
+		}
+		
+		//clear weatherEvents
+		plenty_admin.UI.field.DOM
+		.find(".weatherEvents")
+		.each(function(){
+			$(this)
+			.find(".event")
+			.remove();
+		});
+		
+		//clear activities
+		if(plenty_admin.UI.field.activityTimelineContainer){
+			plenty_admin.UI.field.activityTimelineContainer
+			.find(".activity")
+			.remove();
+		}
+		
+		//clear activities
+		if(plenty_admin.UI.field.activityListContainer){
+			plenty_admin.UI.field.activityListContainer
+			.find(".activity")
+			.remove();
+		}
+		
+		//clear equipment
+		if(plenty_admin.UI.field.equipmentListContainer){
+			plenty_admin.UI.field.equipmentListContainer
+			.find(".equipment")
+			.remove();
+		}
+		
+		//clear crop surveys
+		if(plenty_admin.UI.field.cropSurveysContainer){
+			plenty_admin.UI.field.cropSurveysContainer
+			.find(".cropSurvey")
+			.remove();
+		}
+		
+		//destroy the year slider
+		if(plenty_admin.UI.field.field_year_slider && typeof plenty_admin.UI.field.field_year_slider.slider === "function"){
+			plenty_admin.UI.field.field_year_slider
+			.slider("destroy");
+		}
+	},
+	
+	fitFieldLayout: function(state){
+		switch (state){
+			case "fit":
+				$("body")
+				.height($(window).height())
+				.css({"overflow":"hidden"});
+				
+				plenty_admin.UI.field.DOM
+				.height($(window).height() - ($(".navbar").height() + $("footer.footer").height()));
+				plenty_admin.UI.field.hasLayout = true;
+			break;
+			
+			case "clear":
+				$("body")
+				.removeAttr("style");
+				
+				plenty_admin.UI.field.DOM
+				.prop("style", "");
+				plenty_admin.UI.field.hasLayout = false;
+			break;
+		}
+	},
+	
+	populate: function(fieldObj){
+		plenty_admin.REST.get_fieldCrops_order_by_year_descending(fieldObj.id, function(fieldData){
+			console.log("get_field_order_by_year_descending: ", fieldData);
+			
+			var fieldCropsByYear = {};
+			
+			for(var f=0; f<fieldData.length; f++){
+				fieldCrop = fieldData[f];
+				fieldCropsByYear[parseInt(fieldCrop.year)] = fieldCrop;
+			}
+			
+			console.log("fieldCropsByYear", fieldCropsByYear);
+			
+			plenty_admin.UI.field.field_year_slider = plenty_admin.UI.field.DOM.find(".field_year_slider");
+			
+			plenty_admin.UI.field.field_year_slider
+			.slider({
+				min: parseInt(fieldData[fieldData.length-1].year),
+				max: parseInt(fieldData[0].year),
+				value: parseInt(fieldData[0].year),
+				//tooltip: "show",
+				formatter: function(value){
+					return value+" - "+plenty_admin.DATA.cropTypes[fieldCropsByYear[parseInt(value)].cropTypeId].name;
+				}
+			}) //set up tooltip to show year and crop for that year
+			.off("slide")
+			.on("slide", function(){
+				//console.log("SLIDER SLIDE");
+			})
+			.off("slideStart")
+			.on("slideStart", function(e){
+				console.log("SLIDER SLIDESTART: ", $(this), e, e.target);
+			})
+			.off("slideStop")
+			.on("slideStop", function(){
+				console.log("SLIDER SLIDESTOP");
+			})
+			.off("change")
+			.on("change", function(e){
+				console.log("SLIDER CHANGE", e.value.newValue);
+				//get initial activities for this crop Id
+				var cropYear = fieldCropsByYear[e.value.newValue];
+				var cropName = plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name;
+				
+				//console.log("cropYear:", cropYear);
+				//console.log("cropName:", cropName);
+				
+				plenty_admin.UI.field.update_field_year(fieldObj.id, cropYear);
+				
+				plenty_admin.UI.field.DOM
+				.find(".current_year_crop")
+				.text(e.value.newValue+" - "+plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name);
+				
+				plenty_admin.UI.field.polygon.setOptions({fillColor: plenty_admin.MAPS.legendItems[cropName].colour, strokeColor: plenty_admin.MAPS.legendItems[cropName].colour});
+			});
+			
+			//set up finance dohnut graph when switching asset tabs
+			plenty_admin.UI.field.assetTabs.DOM
+			.off("shown.bs.tab")
+			.on('shown.bs.tab', function (e) {
+				var url = e.target.href;
+				var hash = url.substring(url.indexOf('#'));
+				console.log("changed: ", hash);
+				
+				if(hash === "#finances"){
+					if(plenty_admin.UI.field.financesGraph){
+						plenty_admin.UI.field.financesGraph.destroy();
+					}
+					plenty_admin.UI.field.renderActivityFinancesGraph();
+				}
+			});
+			
+			//set up graph update when switching weather tab
+			plenty_admin.UI.field.weatherTabs.DOM
+			.off("shown.bs.tab")
+			.on('shown.bs.tab', function (e) {
+				var url = e.target.href;
+				var hash = url.substring(url.indexOf('#'));
+				console.log("changed: ", hash);
+				plenty_admin.UI.field.updateWeatherGraph(hash);
+			});
+			
+			plenty_admin.UI.field.update_field_year(fieldObj.id, fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))]);
+			
+			plenty_admin.UI.field.DOM
+			.find(".current_year_crop")
+			.text(plenty_admin.UI.field.field_year_slider.slider('getValue')+" - "+plenty_admin.DATA.cropTypes[fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))].cropTypeId].name);
+		});
+	},
+	
+	updateWeatherGraph: function(hash){
+		var graph = "";
+		switch(hash){
+			case "#temp":
+				//create the temp graph object if it does not yet exist
+				if(!plenty_admin.UI.field.tempGraph){
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
+				}else{
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.tempGraph;
+				}
+				graph = "tempGraph";
+			break;
+			
+			case "#moisture":
+				//create the moisture graph object if it does not yet exist
+				if(!plenty_admin.UI.field.moistureGraph){
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
+				}else{
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.moistureGraph;
+				}
+				graph = "moistureGraph";
+			break;
+			
+			case "#precip":
+				//create the moisture graph object if it does not yet exist
+				if(!plenty_admin.UI.field.precipGraph){
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
+				}else{
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.precipGraph;
+				}
+				graph = "precipGraph";
+			break;
+			
+			case "#gdd":
+				//create the moisture graph object if it does not yet exist
+				if(!plenty_admin.UI.field.gddGraph){
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
+				}else{
+					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.gddGraph;
+				}
+				graph = "gddGraph";
+			break;
+		}
+		
+		//set width of dom element that offsets the weather events and activities
+		var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
+		
+		try{
+			keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+			plenty_admin.UI.field.positionToday(plenty_admin.UI.field.activitiesForCropType[0].startTime);
+		}catch(err){
+			console.error("something failed: ", err);
+			bootbox.dialog({
+								message: "Not enough activities (minimum of 2) to create weather graphs. Their start and end dates are calculated from the begining of the first, and the end of the last event.", 
+								className: "danger",
+								buttons: {
+									danger: {
+									  label: "OK",
+									  className: "btn-danger",
+									  callback: plenty_admin.HELPER.hideLoadingOverlay,
+									}
+								}
+							});
+		}
+		
+		plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
+		plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
+		plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+	
+		plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
+	},
+	
+	update_field_year: function (fieldId, cropYear){
+		console.log("update_field_year", fieldId, cropYear);
+		plenty_admin.HELPER.showLoadingOverlay();
+		plenty_admin.REST.get_field_equipments_with_fieldId(fieldId, function(fieldEquipment){
+			console.log("get_field_equipments_with_fieldId", fieldEquipment);
+			plenty_admin.UI.field.renderEquipment(fieldEquipment);
+		});
+		
+		//pull in activities once weatherDays have loaded	
+		plenty_admin.REST.get_activities_by_field_crop_order_by_desc(cropYear.id, function(activitiesForCropType){
+			console.log("get_activities_by_field_crop_order_by_desc", activitiesForCropType, activitiesForCropType.length);
+			
+			plenty_admin.UI.field.activitiesForCropType = activitiesForCropType;
+			
+			if(activitiesForCropType.length <= 0){
+				bootbox.dialog({
+								message: "No activities for this field - can not render weather graphs without at least 2 activities.", 
+								className: "danger",
+								buttons: {
+									danger: {
+									  label: "OK",
+									  className: "btn-danger",
+									  callback: plenty_admin.HELPER.hideLoadingOverlay
+									}
+								}
+							});
+				return;
+			}
+			
+			var startDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[0].startTime);
+			plenty_admin.UI.field.dates.start = 	startDate.obj.getUTCFullYear()+
+												"-"+
+												((startDate.obj.getUTCMonth()+1) < 10 ? "0"+(startDate.obj.getUTCMonth()+1) : (startDate.obj.getUTCMonth()+1))+
+												"-"+
+												(startDate.obj.getUTCDate() < 10 ? "0"+startDate.obj.getUTCDate() : startDate.obj.getUTCDate())+
+												" "+
+												((startDate.obj.getUTCHours()) < 10 ? "0"+(startDate.obj.getUTCHours()) : (startDate.obj.getUTCHours()+1))+
+												":"+
+												(startDate.obj.getUTCMinutes() < 10 ? "0"+startDate.obj.getUTCMinutes() : startDate.obj.getUTCMinutes());
+			
+			
+			var endDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[activitiesForCropType.length -1].endTime);
+			plenty_admin.UI.field.dates.end = 	endDate.obj.getUTCFullYear()+
+												"-"+
+												((endDate.obj.getUTCMonth()+1) < 10 ? "0" + (endDate.obj.getUTCMonth()+1) : (endDate.obj.getUTCMonth()+1))+
+												"-"+
+												(endDate.obj.getUTCDate() < 10 ? "0"+endDate.obj.getDate() : endDate.obj.getUTCDate())+
+												" "+
+												((endDate.obj.getUTCHours()) < 10 ? "0"+(endDate.obj.getUTCHours()) : (endDate.obj.getUTCHours()+1))+
+												":"+
+												(endDate.obj.getUTCMinutes() < 10 ? "0"+endDate.obj.getUTCMinutes() : endDate.obj.getUTCMinutes());
+			
+			console.log("plenty_admin.UI.field.dates: ", plenty_admin.UI.field.dates);
+			
+			//prepare all data type lists and wait till they've loaded
+			plenty_admin.DATA.eventCollector = window.eventcollector(3, 10000);
+			plenty_admin.REST.getActivityTypes();
+			
+			plenty_admin.REST.get_weather_days_with_dateRange(fieldId, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(weatherDays){
+				console.log("get_weather_days_with_dateRange", weatherDays);
+				
+				plenty_admin.UI.field.weatherDays = {
+						dates: [],
+						months: [],
+						labels: [],
+						
+						weatherEvents: {
+							precip: [],
+							temp: [],
+							wind: []
+						}
+				}
+				
+				var millisecondsPerDay = 24 * 60 * 60 * 1000;
+				var lastWeatherDayDate = weatherDays[weatherDays.length-1].date;
+				var lastActivityDate = activitiesForCropType[activitiesForCropType.length -1].endTime;
+				
+				//set the day label increment
+				var label_step = 1;
+				if(weatherDays.length > 31 && weatherDays.length < 125){
+					label_step = 3
+				}else if(weatherDays.length > 125 && weatherDays.length < 500){
+					label_step = 7
+				}else if(weatherDays.length > 500 && weatherDays.length < 1000){
+					label_step = 14
+				}else if(weatherDays.length > 1000){
+					label_step = 20
+				}
+					
+				
+				var label_inc = 0;
+				
+				for(var wO = 0; wO < weatherDays.length; wO++){
+					weatherOb = weatherDays[wO];
+					var obTime = plenty_admin.HELPER.formatJavaDate(weatherOb.date);
+					
+					//create labelling sets for graphs
+					plenty_admin.UI.field.weatherDays.labels.push(obTime.date);
+					
+					//process existing weather days
+					for(prop in weatherOb){
+						if(weatherOb.hasOwnProperty(prop)){
+							//console.log("prop:", prop);
+							if(prop === "weatherEvents"){
+								if(!plenty_admin.UI.field.weatherDays[prop]){
+									plenty_admin.UI.field.weatherDays[prop] = [];
+								}
+								for(var w=0; w<weatherOb[prop].length; w++){
+									var wEvent = weatherOb[prop][w];
+									wEvent.weatherDayDate = obTime;
+									wEvent.dayIndex = wO;
+									
+									switch(wEvent.type){
+										case "HIGH_TEMP":
+											wEvent.iconClass = "wi wi-hot";
+											plenty_admin.UI.field.weatherDays[prop].temp.push(wEvent);
+										break;
+										
+										case "FREEZE":
+											wEvent.iconClass = "wi wi-thermometer-exterior";
+											plenty_admin.UI.field.weatherDays[prop].temp.push(wEvent);
+										break;
+										
+										case "SNOW":
+											wEvent.iconClass = "wi wi-snow-wind";
+											plenty_admin.UI.field.weatherDays[prop].precip.push(wEvent);
+										break;
+										case "RAIN":
+											wEvent.iconClass = "wi wi-rain";
+											plenty_admin.UI.field.weatherDays[prop].precip.push(wEvent);
+										break;
+										
+										case "HIGH_WINDS":
+											wEvent.iconClass = "wi wi-strong-wind";
+											plenty_admin.UI.field.weatherDays[prop].wind.push(wEvent);
+										break;
+									}
+								}
+							}else if(prop === "moisture"){
+								if(!plenty_admin.UI.field.weatherDays[prop]){
+									plenty_admin.UI.field.weatherDays[prop] = {};
+								}
+								//console.log("how many depths? :", prop, weatherOb[prop].length);
+								for(var w=0; w<weatherOb[prop].length; w++){
+									var moistureDepth = weatherOb[prop][w];
+									//console.log("moisture depth: ", w, moistureDepth);
+									if(!plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth]){
+										plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth] = [];
+									}
+									
+									plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth].push(moistureDepth.moisture);
+								}
+							}else if(prop === "cropSurvey"){
+								if(!plenty_admin.UI.field.weatherDays["cropSurvey"]){
+									plenty_admin.UI.field.weatherDays["cropSurvey"] = [];
+								}
+								if(weatherOb["cropSurvey"]){
+									plenty_admin.UI.field.weatherDays["cropSurvey"].push(weatherOb["cropSurvey"]);
+								}
+							}else{
+								if(!plenty_admin.UI.field.weatherDays[prop]){
+									plenty_admin.UI.field.weatherDays[prop] = [];
+								}
+								plenty_admin.UI.field.weatherDays[prop].push(weatherOb[prop]);
+							}
+						}
+						
+						plenty_admin.UI.field.weatherDays.length = weatherDays.length;
+					}
+				}
+				
+				console.log("plenty_admin.UI.field.weatherDays:", plenty_admin.UI.field.weatherDays);
+				
+				//update the graph in the currently visible tab
+				var selectedGraph = plenty_admin.UI.field.weatherTabs.DOM.find(".nav-tabs li.active a").prop("href")
+				var hash = selectedGraph.substring(selectedGraph.indexOf('#'));
+				var graph = "";
+				switch(hash){
+					case "#temp":
+						plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
+						graph = "tempGraph";
+					break;
+					
+					case "#moisture":
+						plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
+						graph = "moistureGraph";
+					break;
+					
+					case "#precip":
+						plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
+						graph = "precipGraph";
+					break;
+					
+					case "#gdd":
+						plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
+						graph = "gddGraph";
+					break;
+				}
+				
+				//set width of dom element that offsets the weather events and activities
+				var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
+				
+				try{
+					keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+				}catch(err){
+					bootbox.dialog({
+								message: "Not enough activities (minimum of 2) to create weather graphs. Their start and end dates are calculated from the begining of the first, and the end of the last event.", 
+								className: "danger",
+								buttons: {
+									danger: {
+									  label: "OK",
+									  className: "btn-danger",
+									  callback: plenty_admin.HELPER.hideLoadingOverlay
+									}
+								}
+							});
+				}
+				
+				plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
+				
+				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
+				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
+				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+				
+				//ensure if the window changes size the weather events are refitted
+				$(window).on("resize",function(){
+					plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
+					plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
+					plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
+					
+					plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
+				});
+				
+				plenty_admin.DATA.eventCollector.done("event 1");
+			});
+			
+			plenty_admin.REST.get_activity_finances_for_date_range(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(fieldCropActivityFinances){
+				console.log("get_activity_finances_for_date_range", fieldCropActivityFinances());
+				plenty_admin.UI.field.fieldCropActivityFinances = fieldCropActivityFinances();
+				plenty_admin.DATA.eventCollector.done("event 2");
+			});
+			
+			plenty_admin.DATA.eventCollector.on('alldone', function(total) {
+				plenty_admin.UI.field.renderActivities(activitiesForCropType);
+				console.log("all data gathered: ", plenty_admin.UI.field.dayWidth);
+				plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
+				
+				//ensure if the window changes size the activities are refitted
+				$(window).on("resize",function(){
+					plenty_admin.UI.field.renderActivities(activitiesForCropType);
+					plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
+				});
+				
+				plenty_admin.UI.field.renderActivityFinancesGraph();
+				
+				plenty_admin.HELPER.hideLoadingOverlay();
+			});	
+		});
+	},
+	
+	renderWeatherEvents: function(events, hash){
+		plenty_admin.UI.field.weatherEventsContainer = plenty_admin.UI.field.DOM.find(".tab-content .weatherEvents."+hash);
+		
+		//remove any existing events
+		plenty_admin.UI.field.weatherEventsContainer
+		.find(".event")
+		.remove();
+		
+		for(var e=0; e<events.length; e++){
+			var wE = events[e];
+			var leftPos = ((parseInt(plenty_admin.UI.field.weatherEventsContainer.width()) / plenty_admin.UI.field.weatherDays.length)*wE.dayIndex)-8;
+			
+			if(leftPos < 0){
+				leftPos = 0;
+			}
+			
+			var uom = "";
+			switch(hash){
+				case "temp":
+					uom = "℉";
+				break;
+				
+				case "precip":
+					uom = '"';
+				break;
+				
+				case "wind":
+					uom = "mph";
+				break;
+			}
+			var weatherEventHTML = $("<div class='event' data-toggle='tooltip' data-placement='top' title='"+(wE.detail ? wE.detail : wE.deatil)+": "+wE.amount.toFixed(2)+uom+"' style='left:"+leftPos+"px'><i class='"+wE.type+" "+wE.iconClass+"'></i></div>");
+			
+			weatherEventHTML
+			.tooltip({container:"body"});
+			
+			plenty_admin.UI.field.weatherEventsContainer.append(weatherEventHTML);
+		}
+	},
+	
+	getActivityIconClass: function(activityTypeId){
+		console.log("getActivityIconClass", activityTypeId);
+		var iconClass = null;
+		switch(activityTypeId){
+				case 1:
+				case "SoilTest":
+					iconClass = "pif pif-soil-test";
+				break;
+				
+				case 2:
+				case "StarterFertilizer":
+				case "LateFertilizer":
+					iconClass = "pif pif-fertilizer";
+				break;
+				
+				case 3:
+				case "Tilling":
+					iconClass = "pif pif-tilling";
+				break;
+				
+				case 4:
+				case "Planting":
+					iconClass = "pif pif-planting";
+				break;
+				
+				case 5:
+				case "EarlyNitrogen":
+					iconClass = "pif pif-early-nitrogen";
+				break;
+				
+				case 6:
+				case "LateNitrogen":
+					iconClass = "pif pif-late-nitrogen";
+				break;
+				
+				case 7:
+				case "PestControl":
+					iconClass = "pif pif-pest-control";
+				break;
+				
+				case 8:
+				case "Harvest":
+					iconClass = "pif pif-harvest";
+				break;
+			}
+			
+			return iconClass;
+	},
+	
+	renderCropSurveys: function(cropSurveys){
+		plenty_admin.UI.field.cropSurveysContainer = plenty_admin.UI.field.DOM.find(".tab-content .cropSurveys");
+		
+		//remove any existing events
+		plenty_admin.UI.field.cropSurveysContainer
+		.find(".cropSurvey")
+		.remove();
+		
+		for(var e=0; e<cropSurveys.length; e++){
+			var cS = cropSurveys[e];
+			cS.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.activitiesForCropType[0].startTime, cS.observationTime));
+			
+			var leftPos = plenty_admin.UI.field.dayWidth*cS.startOffsetDays -17; //days from the beginning - half the width of a crop survey icon
+			
+			if(leftPos < 0){
+				leftPos = 0;
+			}
+			
+			if(leftPos > plenty_admin.UI.field.cropSurveysContainer.width()){
+				leftPos = plenty_admin.UI.field.cropSurveysContainer.width() - 34;
+			}
+			
+			var uom = "UOMId-"+cS.countUOMId;
+			
+			var tooltip = [
+							"cropHeight: "+cS.cropHeight+"<br>",
+							"cropTypeId: "+cS.cropTypeId+"<br>",
+							"growthMethodId: "+cS.growthMethodId+"<br>",
+							"growthStageId: "+cS.growthStageId,
+						].join("");
+			
+			var cropSurveyHTML = $("<div class='cropSurvey alert alert-warning' data-toggle='tooltip' data-placement='top' title='"+tooltip+"' style='left:"+leftPos+"px'><i class='fa fa-file-text'></i></div>");
+			
+			cropSurveyHTML
+			.off("click")
+			.on("click", function(){
+				plenty_admin.UI.crop_survey.show(cS, plenty_admin.UI.field.fieldObj);
+				return false;
+			})
+			.tooltip({
+						container:"body",
+						html:true
+					});
+			
+			plenty_admin.UI.field.cropSurveysContainer.append(cropSurveyHTML);
+		}
+	},
+	
+	renderActivities: function(activities, timelineOnly){
+		plenty_admin.UI.field.activityTimelineContainer = plenty_admin.UI.field.DOM.find(".activitiesTimeline .activities");
+		plenty_admin.UI.field.activityListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #activities-list tbody");
+		
+		//clear activity timeline
+		plenty_admin.UI.field.activityTimelineContainer
+		.add(plenty_admin.UI.field.activityListContainer)
+		.find(".activity")
+		.remove();
+		
+		var activityDays = Math.round(plenty_admin.HELPER.daydiff(activities[0].startTime, activities[activities.length-1].endTime));
+		plenty_admin.UI.field.dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / plenty_admin.UI.field.weatherDays.length;
+		var hourWidth = plenty_admin.UI.field.dayWidth /24;
+		
+		
+		console.log("activityDays", plenty_admin.UI.field.dayWidth, hourWidth);
+		
+		if(activities.length === 0){
+			console.warn("could not calculate weatherDay width as weatherDays is empty");
+			bootbox.dialog({
+					message: "Could not calculate weatherDay witdh - there are no weatherDays being returned.", 
+					className: "danger",
+					buttons: {
+						danger: {
+						  label: "OK",
+						  className: "btn-danger",
+						  callback: plenty_admin.HELPER.hideLoadingOverlay,
+						}
+					}
+				});
+				
+			return;
+		}
+		
+		for(var a=0; a<activities.length; a++){
+			var activity = activities[a];
+			
+			activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
+			
+			activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
+			activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
+			activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(activities[0].startTime, activity.startTime));
+			
+			//console.log("activity", activity);
+	
+			var leftPos = plenty_admin.UI.field.dayWidth*activity.startOffsetDays;
+			var eventWidth = Math.round(hourWidth*activity.durationInHours);
+			
+			//console.log("eventWidth: ", eventWidth);
+			
+			if(eventWidth < 26){
+				eventWidth = 26;
+			}
+			
+			if(leftPos < 0){
+				leftPos = 0;
+			}
+			
+			if(leftPos + eventWidth > plenty_admin.UI.field.activityTimelineContainer.width()){
+				leftPos = plenty_admin.UI.field.activityTimelineContainer.width() - eventWidth;
+			}
+			
+			var activityHTML = $("<div class='activity' data-toggle='tooltip' data-placement='top' title='"+plenty_admin.UI.field.getActivityTooltipTitle(activity)+"' style='left:"+leftPos+"px; width:"+eventWidth+"px'><i class='"+plenty_admin.DATA.activityTypes[activity.activityTypeId].name.toLowerCase().replace(/ /g, "")+" "+activity.iconClass+"'></i></div>");
+			
+			var activityFinances = $.grep(plenty_admin.UI.field.fieldCropActivityFinances.activityFinances, function(activityFinance, a){
+				return activityFinance.activityDto.id === activity.id;
+			});
+				
+			activityHTML
+			.tooltip({
+				html:true,
+				container:"body"
+			})
+			.data("activity", activity)
+			.data("activityFinance", activityFinances[0])
+			.click(function(){
+				plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
+			});
+			
+			plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
+			
+			if(!timelineOnly){
+				//build the activity list item
+				var activityItem = [
+						"<tr class='activity pointer'>",
+							"<td width='5%'>",
+								"<i class='"+activity.iconClass+"'></i>",
+							"</td>",
+							"<td width='25%'>",
+								activity.state,
+							"</td>",
+							"<td width='25%'>",
+								plenty_admin.DATA.activityTypes[activity.activityTypeId].name,
+							"</td>",
+							"<td width='20%'>",
+								activity.startDate.date,
+							"</td>",
+							"<td width='20%'>",
+								plenty_admin.HELPER.daysFromHours(activity.durationInHours),
+							"</td>",
+							"<td width='20%' class='text-right'>",
+								numeral(activity.cost).format('$0,0.00'),
+							"</td>",
+						"</tr>"
+				].join("");
+				
+				var $activityItem = $(activityItem);
+	
+				$activityItem
+				.data("activity", activity)
+				.data("activityFinance", activityFinances[0])
+				.click(function(){
+					plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
+				});
+				
+				plenty_admin.UI.field.activityListContainer.append($activityItem);
+			}
+		}
+		
+		var keyOffsetElements = plenty_admin.UI.field.DOM.find(".keyOffset");
+		keyOffsetElements.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
+		
+		plenty_admin.UI.field.positionToday(activities[0].startTime);
+	},
+	
+	positionToday: function(startTime){
+		var $futureDays = plenty_admin.UI.field.DOM.find(".futureDays");
+		var $todayLabel = plenty_admin.UI.field.DOM.find(".todayLabel");
+		
+		var pastDays = Math.round(plenty_admin.HELPER.daydiff(startTime, new Date().getTime()));
+		console.log("pastDays", pastDays);
+		
+		var fdKeyOffset = $futureDays.parent().find(".keyOffset");
+		
+		if(pastDays > 0){
+			//var pastDaysWidth = plenty_admin.UI.field.dayWidth * pastDays;
+			var pastDaysWidth = plenty_admin.UI.field.currentGraph.datasets[0].points[pastDays].x;
+			console.log("pastDaysWidth", pastDaysWidth);
+			
+			fdKeyOffset
+			.animate({width: pastDaysWidth});
+			
+			$todayLabel
+			.css({
+				right: - ($todayLabel.width()/2)
+			});
+			
+			$futureDays
+			.parent()
+			.css({
+				height: Math.round(plenty_admin.UI.field.currentGraph.scale.endPoint),
+				bottom: Math.round(plenty_admin.UI.field.currentGraph.scale.height - plenty_admin.UI.field.currentGraph.scale.endPoint)
+			})
+			.fadeIn("fast");
+		}else{
+			$futureDays
+			.parent()
+			.hide();
+		}
+	},
+	
+	renderEquipment: function(equipment){
+		plenty_admin.UI.field.equipmentListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #equipment tbody");
+		
+		console.log("equipmentListContainer", plenty_admin.UI.field.equipmentListContainer);
+		for(var a=0; a<equipment.length; a++){
+			var equipmentObject = equipment[a]/*.equipmentDto*/;
+			
+			//console.log("equipmentObject", equipmentObject);
+			
+			//build the activity list item
+			var equipmentItemHTML = [
+					"<tr class='equipment pointer'>",
+						"<td width='5%'>",
+							"<i class='pif pif-"+equipmentObject.equipmentTypeIds[0].name.toLowerCase().replace(/ /g, "-")+"'></i>",
+						"</td>",
+						"<td width='25%'>",
+							equipmentObject.equipmentTypeIds[0].name,
+						"</td>",
+						"<td width='30%'>",
+							plenty_admin.DATA.brandTypes[equipmentObject.brandId].name,
+						"</td>",
+						"<td width='25%'>",
+							equipmentObject.name,
+						"</td>",
+					"</tr>"
+			].join("");
+			
+			var $equipmentItemHTML = $(equipmentItemHTML);
+			$equipmentItemHTML
+			.data("equipmentObject", equipmentObject)
+			.on("click", function(){
+				plenty_admin.UI.field.show_equipment_modal($(this).data("equipmentObject"));
+			});
+			
+			plenty_admin.UI.field.equipmentListContainer.append($equipmentItemHTML);
+			
+			//add equipment pins to field map
+			//get a google latlng object for each element
+			var latlng = new google.maps.LatLng(equipmentObject.latitude, equipmentObject.longitude);
+			
+			equipmentObject.latlng = latlng;
+			
+			var pinEvents = {
+				onMouseOver: function(event){ //mouseover event
+					//console.log("hover marker: ", this, $(this.markerContent_));
+					$(this.markerContent_)
+					.find(".marker")
+					.addClass("hover");
+					
+					$(this.markerWrapper_)
+					.css({
+						zIndex:10
+					});
+					
+					plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equipmentObject.name+"</strong>");
+				}, 
+				onMouseOut: function(event){ //mouseout event
+					$(this.markerContent_)
+					.find(".marker")
+					.removeClass("hover");
+					
+					$(this.markerWrapper_)
+					.css({
+						zIndex:1
+					});
+					
+					plenty_admin.MAPS.polygon_tooltip.hide();
+				}, 
+				onClick: function(event){ //click event
+					//event.stopPropagation();
+					plenty_admin.UI.field.show_equipment_modal(equipmentObject);
+				}
+			}
+			//draw the pin on the map
+			plenty_admin.MAPS.draw_pin(equipmentObject, pinEvents, plenty_admin.MAPS.map);
+		}
+	},
 
-/* Define field graph DOM elements */
+	getActivityTooltipTitle: function(activity){
+		var title = plenty_admin.DATA.activityTypes[activity.activityTypeId].name+
+					"<br/>"+
+					activity.startDate.fullDate+
+					"<br/>"+
+					"$"+
+					numeral(activity.cost).format('$0,0.00');
+					
+		console.log("activity tooltip title:", title);
+		return title;
+	},
+
+	renderTempGraph: function(){
+		var tempGraphData = {
+				labels: plenty_admin.UI.field.weatherDays.labels,
+				datasets: [
+					{
+						label: "Min",
+						fillColor: "rgba(142,220,244,0.2)",
+						strokeColor: "rgba(142,220,244,1)",
+						pointColor: "rgba(108,202,224,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(142,220,244,1)",
+						data: plenty_admin.UI.field.weatherDays.minTemp
+					},
+					{
+						label: "Max",
+						fillColor: "rgba(249,216,110,0.2)",
+						strokeColor: "rgba(249,216,110,1)",
+						pointColor: "rgba(239,193,63,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(249,216,110,1)",
+						data: plenty_admin.UI.field.weatherDays.maxTemp
+					}
+				]
+			};
+			
+			
+			var tempGraphOptions = {
+				multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.0')%>℉",
+				pointHitDetectionRadius:1
+			};
+			
+			var helpers = Chart.helpers;
+		
+			plenty_admin.UI.field.tempGraph = new Chart(plenty_admin.UI.field.tempGraphEl.get(0).getContext("2d")).LineAlt(tempGraphData, tempGraphOptions);
+			plenty_admin.UI.field.tempGraph.datasetId = "temp"; 
+			plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.tempGraph);
+			
+			return plenty_admin.UI.field.tempGraph;
+	},
+	
+	scaleScale: function(graphEl){
+		console.log("graphEl", graphEl);
+		var scaleWidth = graphEl.width();
+		var scaleHeight = graphEl.height();
+			
+		graphEl
+		.parent()
+		.find("svg.scale")
+		.prop("viewBox", "0 0 "+scaleWidth+" "+plenty_admin.UI.field.currentGraph.scale.endPoint)
+		.width(scaleWidth - plenty_admin.UI.field.currentGraph.datasets[0].points[0].x)
+		.height(plenty_admin.UI.field.currentGraph.scale.endPoint)
+		.css({"left": plenty_admin.UI.field.currentGraph.datasets[0].points[0].x})
+		.fadeIn("fast");
+	},
+
+	renderMoistureGraph: function(){
+		//create dynamic moisture datasets
+		var datasets = [];
+		var index = 0;
+		var palette = new Rainbow();
+		palette.setSpectrum("#0076b2", "#93b222", "#788912");
+		palette.setNumberRange(0, Object.keys(plenty_admin.UI.field.weatherDays.moisture).length);
+		
+		//for(var m=0; m<plenty_admin.UI.field.weatherDays.moisture.length; m++){
+		for(depth in plenty_admin.UI.field.weatherDays.moisture){
+			if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
+				//console.log("colour: ", index, depth);
+				var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
+				var colour = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index));
+				var label = depth.toString();
+				var dataset = {
+					label: label+"mm",
+					fillColor: "rgba("+colour.r+","+colour.g+","+colour.b+",0.2)", //define
+					strokeColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
+					pointColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
+					pointStrokeColor: "#fff",
+					pointHighlightFill: "#fff",
+					pointHighlightStroke: "rgba("+plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index))+",1)",
+					data: moistureDepth
+				};
+				datasets.push(dataset);
+				index +=1;
+			}
+		}
+		
+		console.log("moisture datasets: ", datasets);
+		
+		var moistureGraphData = {
+				labels: plenty_admin.UI.field.weatherDays.labels,
+				datasets: datasets
+			};
+			
+			var moistureGraphOptions = {
+				multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.00')%>cb",
+				pointHitDetectionRadius: 1
+			};
+			
+			plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).LineAlt(moistureGraphData, moistureGraphOptions);
+			plenty_admin.UI.field.moistureGraph.datasetId = "moisture";
+			plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.moistureGraph);
+			
+			return plenty_admin.UI.field.moistureGraph;
+	},
+
+	renderPrecipGraph: function(){
+		var precipGraphData = {
+				labels: plenty_admin.UI.field.weatherDays.labels,
+				datasets: [
+					{
+						label: "Precipitation",
+						fillColor: "rgba(136,242,201,0.2)",
+						strokeColor: "rgba(136,242,201,1)",
+						pointColor: "rgba(97,226,174,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(136,242,201,1)",
+						data: plenty_admin.UI.field.weatherDays.percipTotalToToday
+					}
+				]
+			};
+			
+			var precipGraphOptions = {
+				tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>\"",
+				pointHitDetectionRadius: 1
+			};
+			
+			plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).LineAlt(precipGraphData, precipGraphOptions);
+			plenty_admin.UI.field.precipGraph.datasetId = "precipAmt";
+			plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.precipGraph);
+			
+			return plenty_admin.UI.field.precipGraph;
+	},
+
+	renderGDDGraph: function(){
+		var GDDGraphData = {
+				labels: plenty_admin.UI.field.weatherDays.labels,
+				datasets: [
+					{
+						label: "GDD",
+						fillColor: "rgba(185,244,146,0.2)",
+						strokeColor: "rgba(185,244,146,1)",
+						pointColor: "rgba(150,234,96,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(185,244,146,1)",
+						data: plenty_admin.UI.field.weatherDays.gddTotalToToday
+					}
+				]
+			};
+			
+			var GDDGraphOptions = {
+				tooltipTemplate: "<%= label %>: <%= Math.round(value) %>",
+				pointHitDetectionRadius: 1
+			};
+			
+			plenty_admin.UI.field.gddGraph = new Chart(plenty_admin.UI.field.gddGraphEl.get(0).getContext("2d")).LineAlt(GDDGraphData, GDDGraphOptions);
+			plenty_admin.UI.field.gddGraph.datasetId = "gddTotalToToday";
+			plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.gddGraph);
+			
+			return plenty_admin.UI.field.gddGraph;
+	},
+
+	renderActivityFinancesGraph: function(){
+		var finances = plenty_admin.UI.field.fieldCropActivityFinances;
+		//holder for graph data set
+		var financesData = [];
+		
+		//show profit / revenue / cost figures
+		plenty_admin.UI.field.DOM
+		.find(".topLine")
+		.find(".profit")
+		.text(numeral(finances.totalProfit).format('$0,0.00'))
+		.end()
+		.find(".cost")
+		.text(numeral(finances.totalCost).format('$0,0.00'))
+		.end()
+		.find(".revenue")
+		.text(numeral(finances.totalRevenue).format('$0,0.00'));
+		
+		//colour palette for graph segments
+		var palette = new Rainbow();
+		palette.setSpectrum("#0076b2", "#93b222", "#788912");
+		palette.setNumberRange(0, (finances.activityFinances.length > 0 ? finances.activityFinances.length : 1));
+		
+		//for(index in finances){
+		for(var a=0; a<finances.activityFinances.length; a++){
+			var finance = finances.activityFinances[a];
+			//console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
+			finance.colour = "#"+palette.colourAt(a);
+	
+			var segment = {
+				value:		finance.cost,
+				color:		finance.colour,
+				highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
+				label: 		plenty_admin.DATA.activityTypes[finance.activityTypeId].name,
+			};
+			
+			financesData.push(segment);
+		}
+		
+		var financeChartOptions = {
+			legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+			tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
+			animateRotate: true
+		};
+		
+		var helpers = Chart.helpers;
+		
+		console.log("helpers", helpers);
+		
+		plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
+		
+		console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
+		
+		//add a legend for this graph
+		var $legendHTML = $(plenty_admin.UI.field.financesGraph.generateLegend());
+		
+		var legendHolder = 
+		plenty_admin.UI.field.financesGraphEl
+		.parent()
+		.parent()
+		.parent()
+		.find(".legend");
+		
+		legendHolder
+		.html("")
+		.append($legendHTML);
+		
+		var resetLegentStyle = function(legendHolder){
+			$(legendHolder)
+			.find("li")
+			.css({"background-color": "transparent"})
+			.removeClass("active")
+			.find("span.swatch")
+			.each(function(){
+				$(this)
+				.css({"background-color": $(this).closest("li").data("hovercolour")});
+			})
+			.end()
+			.find("span.pct")
+			.text("");
+		}
+		
+		// Include a html legend template after the module doughnut itself
+		helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
+			helpers.addEvent(legendNode, 'mouseover', function () {
+				var activeSegment = plenty_admin.UI.field.financesGraph.segments[index];
+				
+				var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
+				
+				activeSegment.save();
+				activeSegment.fillColor = activeSegment.highlightColor;
+				activeSegment.innerRadius = 60;
+				plenty_admin.UI.field.financesGraph.showTooltip([activeSegment]);
+				activeSegment.restore();
+				
+				$(legendNode)
+				.css({"background-color": $(this).data("hovercolour")})
+				.addClass("active")
+				.find("span.swatch")
+				.css({"background-color": activeSegment.highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			});
+		});
+		
+		helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
+			plenty_admin.UI.field.financesGraph.draw();
+			resetLegentStyle(legendHolder);
+		});
+		
+		//highlight key element when hovering segment
+		plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
+			var activePoints = plenty_admin.UI.field.financesGraph.getSegmentsAtEvent(evt);
+			if(activePoints.length > 0){
+				//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+				legendHolder
+				.find("li")
+				.removeClass("active");
+				
+				var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+				var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+				var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
+				
+				resetLegentStyle(legendHolder);
+				
+				legendItem
+				.addClass("active")
+				.css({"background-color": legendItem.data("hovercolour")})
+				.find("span.swatch")
+				.css({"background-color": activePoints[0].highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			}else{
+				resetLegentStyle(legendHolder);
+			}
+			// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+		});
+		
+		//clear segment highlight onMouseOut
+		plenty_admin.UI.field.financesGraphEl.on("mouseout", function(evt){
+			resetLegentStyle(legendHolder);
+		});
+		
+		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);
+		
+	},
+
+	renderTasks: function(taskFinances){
+		var taskRows = "";
+		
+		for(var t=0; t<taskFinances.length; t++){
+			var task = taskFinances[t];
+			var taskStartDate = plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime);
+			console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
+			var taskRow = [
+				"<tr class='pointer'>",
+					"<td><span class='editable' data-type='text' data-pk='1' data-url='/post' data-title='Choose the task name'>",
+						task.taskDto.name,
+					"</span></td>",
+					"<td>",
+						task.taskDto.state,
+					"</td>",
+					"<td><span class='editable' data-type='date' data-pk='1' data-url='/post' data-title='Choose the start date'>",
+						plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
+					"</span></td>",
+					"<td>",
+						plenty_admin.HELPER.daysFromHours(task.taskDto.durationInHours),
+					"</td>",
+					"<td class='text-right'>",
+						task.taskDto.cost,
+					"</td>",
+				"</tr>",
+			].join("");
+			
+			taskRows += taskRow;
+		}
+		
+		$.fn.editable.defaults.mode = 'inline';
+		
+		plenty_admin.UI.map.MODAL_activity
+		.find(".activityTasksList table tbody tr")
+		.remove()
+		.end()
+		.find(".activityTasksList table tbody")
+		.append(taskRows)
+		.find(".editable")
+		.editable(plenty_admin.REST.inline_editing_options);
+	},
+
+	renderTaskFinancesGraph: function(taskFinances){
+		console.log("renderTaskFinancesGraph", taskFinances);
+		//colour palette for graph segments
+		var palette = new Rainbow();
+		palette.setSpectrum("#0076b2", "#93b222", "#788912");
+		palette.setNumberRange(0, 2);
+			
+		//holder for graph data set
+		var taskFinancesData = [
+			//equipment
+			{
+				value:		0,
+				color:		"#"+palette.colourAt(0),
+				highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(0), .4),
+				label: 		"Equipment",
+			},
+			//skill
+			{
+				value:		0,
+				color:		"#"+palette.colourAt(1),
+				highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(1), .4),
+				label: 		"Labor",
+			},
+			//skill
+			{
+				value:		0,
+				color:		"#"+palette.colourAt(2),
+				highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(2), .4),
+				label: 		"Products",
+			},
+		];
+		
+		//for(index in finances){
+		for(var a=0; a<taskFinances.length; a++){
+			//break the costs into equipment / skill / product
+			var taskFinance = taskFinances[a];
+			console.log("taskFinance", taskFinance);
+			taskFinancesData[0].value += taskFinance.equipmentCost.cost;
+			taskFinancesData[1].value += taskFinance.laborCost.cost;
+			taskFinancesData[2].value += taskFinance.productsCost.cost;
+		}
+		
+		var taskFinancesChartOptions = {
+			legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\" class=\"taskHeader\" style=\"border-top:2px solid <%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+			tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
+			animateRotate: true
+		};
+		
+		var helpers = Chart.helpers;
+		
+		console.log("helpers", helpers);
+		
+		plenty_admin.UI.field.taskFinancesGraph = new Chart(plenty_admin.UI.field.taskFinancesGraphEl.get(0).getContext("2d")).Doughnut(taskFinancesData,taskFinancesChartOptions);
+		
+		console.log("render task finances graph: ", plenty_admin.UI.field.taskFinancesGraph, taskFinancesData);
+		
+		//add a legend for this graph
+		var $legendHTML = $(plenty_admin.UI.field.taskFinancesGraph.generateLegend());
+		
+		var legendHolder = 
+		plenty_admin.UI.field.taskFinancesGraphEl
+		.parent()
+		.parent()
+		.find(".legend");
+		
+		legendHolder
+		.html("")
+		.append($legendHTML);
+		
+		var equipmentItems = "";
+		var laborItems = "";
+		var productItems = "";
+		
+		//INJECT THE DIFFERENT TASK COST ELEMENTS INTO THE LEGEND ONCE BUILT
+		//for(index in finances){
+		for(var a=0; a<taskFinances.length; a++){
+			//break the costs into equipment / skill / product
+			var taskFinance = taskFinances[a];
+			console.log("taskFinance", taskFinance);
+			
+			for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
+				var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
+				var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(0));
+				equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+				
+				//add task resource costs breakdown to task resource type costs (indented)
+				for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+					var resource = taskItem.taskResourceCosts[tr];
+					equipmentItems += "<li class='taskResourceItem equipmentTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+				}
+			}
+			
+			for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
+				var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
+				var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(1));
+				laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+				
+				//add task resource costs breakdown to task resource type costs (indented)
+				for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+					var resource = taskItem.taskResourceCosts[tr];
+					laborItems += "<li class='taskResourceItem laborTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+				}
+			}
+			
+			for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
+				var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
+				var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(2));
+				productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+				
+				//add task resource costs breakdown to task resource type costs (indented)
+				for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+					var resource = taskItem.taskResourceCosts[tr];
+					productItems += "<li class='taskResourceItem productTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+				}
+			}
+		}
+		
+		console.log("equipmentItems", equipmentItems);
+		console.log("laborItems", laborItems);
+		console.log("productItems", productItems);
+		
+		legendHolder
+		.find("li[data-name='equipment']")
+		.after(equipmentItems)
+		.end()
+		.find("li[data-name='labor']")
+		.after(laborItems)
+		.end()
+		.find("li[data-name='products']")
+		.after(productItems)
+		.end()
+		.find(".equipmentTaskResourceItem")
+		.last()
+		.addClass("last")
+		.end()
+		.end()
+		.find(".laborTaskResourceItem")
+		.last()
+		.addClass("last")
+		.end()
+		.end()
+		.find(".productTaskResourceItem")
+		.last()
+		.addClass("last");
+		
+		var resetLegentStyle = function(legendHolder){
+			$(legendHolder)
+			.find("li:not(.taskItem):not(.taskResourceItem)")
+			.css({"background-color": "transparent"})
+			.removeClass("active")
+			.find("span.swatch")
+			.each(function(){
+				$(this)
+				.css({"background-color": $(this).closest("li").data("hovercolour")});
+			})
+			.end()
+			.find("span.pct")
+			.text("");
+		}
+		
+		// Include a html legend template after the module doughnut itself
+		helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
+			helpers.addEvent(legendNode, 'mouseover', function () {
+				console.log("hover legendNode: ", this, index, $(this).prop("class"));
+				
+				if($(this).hasClass("taskItem") || $(this).hasClass("taskResourceItem")){
+					if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
+						index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
+					}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
+						index = 1; //$(legendHolder).find("li[data-name='labor']").index();
+					}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
+						index = 2; //$(legendHolder).find("li[data-name='products']").index();
+					}
+				}else{
+					index = parseInt($(this).data("segmentid"));
+				}
+				
+				console.log("index: ", index);
+				
+				if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
+					var activeSegment = plenty_admin.UI.field.taskFinancesGraph.segments[index];
+					
+					var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
+					
+					activeSegment.save();
+					activeSegment.fillColor = activeSegment.highlightColor;
+					activeSegment.innerRadius = 60;
+					plenty_admin.UI.field.taskFinancesGraph.showTooltip([activeSegment]);
+					activeSegment.restore();
+					
+					$(legendNode)
+					.css({"background-color": $(this).data("hovercolour")})
+					.addClass("active")
+					.find("span.swatch")
+					.css({"background-color": activeSegment.highlightColor})
+					.end()
+					.find("span.pct")
+					.text(pct);
+				}
+			});
+		});
+		
+		helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
+			if($(this).hasClass("taskItem")){
+				if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
+					index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
+				}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
+					index = 1; //$(legendHolder).find("li[data-name='labor']").index();
+				}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
+					index = 2; //$(legendHolder).find("li[data-name='products']").index();
+				}
+				//return; //no hover effect on task items just yet
+			}
+			plenty_admin.UI.field.taskFinancesGraph.draw();
+			if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
+				resetLegentStyle(legendHolder);
+			}
+		});
+		
+		//highlight key element when hovering segment
+		plenty_admin.UI.field.taskFinancesGraphEl.on("mousemove", function(evt){
+			var activePoints = plenty_admin.UI.field.taskFinancesGraph.getSegmentsAtEvent(evt);
+			if(activePoints.length > 0){
+				//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+				legendHolder
+				.find("li")
+				.removeClass("active");
+				
+				var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+				var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+				var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
+				
+				resetLegentStyle(legendHolder);
+				
+				legendItem
+				.addClass("active")
+				.css({"background-color": legendItem.data("hovercolour")})
+				.find("span.swatch")
+				.css({"background-color": activePoints[0].highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			}else{
+				resetLegentStyle(legendHolder);
+			}
+			// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+		});
+		
+		//clear segment highlight onMouseOut
+		plenty_admin.UI.field.taskFinancesGraphEl.on("mouseout", function(evt){
+			resetLegentStyle(legendHolder);
+		});
+		
+		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.taskFinancesGraph);
+	}
+};
+
+plenty_admin.UI.field.weatherTabs.DOM = plenty_admin.UI.field.DOM.find('.field_weather_data');
+plenty_admin.UI.field.assetTabs.DOM = plenty_admin.UI.field.DOM.find('.field_asset_data');
+
+/* define the field graph dom elements */
 plenty_admin.UI.field.tempGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#temp canvas");
 plenty_admin.UI.field.moistureGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#moisture canvas");
 plenty_admin.UI.field.precipGraphEl = plenty_admin.UI.field.DOM.find(".tab-content .tab-pane#precip canvas");
@@ -7496,137 +9129,6 @@ Chart.defaults.Line.scaleShowHorizontalLines = true;
 Chart.defaults.Line.scaleShowVerticalLines = true;
 Chart.defaults.Line.scaleShowGridLines = true;
 Chart.defaults.Line.pointHitDetectionRadius = 1;
-
-/* Set the start / End date ranges temporaraly until we get some real activity dates */
-var d = new Date();
-plenty_admin.UI.field.dates = {
-	start:	null,
-	end:		null
-};
-
-//method to initiate the field page
-plenty_admin.UI.field.init = function(fieldObj, context){
-	console.log("plenty_admin.UI.field.init", fieldObj);
-	plenty_admin.UI.field.fieldObj = fieldObj;
-	//fieldObj.boundaries = polyPath;
-	switch(context){
-		case "settings":
-			plenty_admin.HELPER.showLoadingOverlay();
-  
-			  plenty_admin.UI.field.DOM.attrchange({
-				trackValues: true, /* Default to false, if set to true the event object is 
-							updated with old and new value.*/
-				callback: function (event) { 
-					//event               - event object
-					//event.attributeName - Name of the attribute modified
-					//event.oldValue      - Previous value of the modified attribute
-					//event.newValue      - New value of the modified attribute
-					//Triggered when the selected elements attribute is added/updated/removed
-					//ceck for display none and remove position attributes
-					//console.log("attr changed: ", event.attributeName, " --- ", event.newValue, parseFloat(event.newValue.slice(9)));
-					if(
-						event.newValue.indexOf("opacity") > -1 
-					){
-						var opacity = Math.round(parseFloat(event.newValue.slice(9)));
-						if(opacity > .999 && !plenty_admin.UI.field.hasLayout){
-							//field layout has been shown
-							plenty_admin.UI.field.fitFieldLayout("fit");
-							console.log("attr changed: ", event.attributeName, event.newValue);
-						}
-					}else if(event.newValue.indexOf("display") > -1 && event.newValue.indexOf("none") > -1){
-						//field has been hidden, clear settings on body
-						console.log("attr changed: ", event.attributeName, event.newValue);
-						plenty_admin.UI.field.fitFieldLayout("clear");
-					}
-				}        
-			});
-
-			plenty_admin.UI.currentScreen
-			.fadeOut("normal", function(){
-				plenty_admin.UI.currentScreen = plenty_admin.UI.field.DOM;
-				plenty_admin.UI.field.populate(fieldObj);
-				plenty_admin.UI.field.polygon = null;
-				plenty_admin.MAPS.draw_field_on_map(fieldObj, "field_map", {
-					mapTypeId: google.maps.MapTypeId.HYBRID,
-					zoom:  12,
-					disableDefaultUI: true,
-					draggable: false, 
-					zoomControl: false, 
-					scrollwheel: false, 
-					disableDoubleClickZoom: true
-				  }, function(map, fieldObj, polygon){
-					plenty_admin.UI.field.polygon = polygon;
-					//ensure if the window changes size the field is centered
-					$(window).on("resize",function(){
-						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
-					});
-				}, false, "map");
-				
-				plenty_admin.UI.currentScreen.fadeIn("normal");
-			});
-		break;
-		
-		case "map":
-			plenty_admin.UI.currentScreen
-			.closest(".fill-area")
-			.fadeOut("normal", function(){
-				plenty_admin.UI.currentScreen = plenty_admin.UI.field.DOM;
-				plenty_admin.UI.field.populate(fieldObj);
-				plenty_admin.UI.field.polygon = null;
-				
-				plenty_admin.UI.currentScreen
-				.addClass("fill-area-content flexbox-item-grow")
-				plenty_admin.UI.currentScreen.fadeIn("normal", function(){
-					plenty_admin.MAPS.draw_field_on_map(fieldObj, "field_map", {
-						mapTypeId: google.maps.MapTypeId.HYBRID,
-						zoom:  12,
-						disableDefaultUI: true,
-						draggable: false, 
-						zoomControl: false, 
-						scrollwheel: false, 
-						disableDoubleClickZoom: true
-					  }, function(map, fieldObj, polygon){
-						plenty_admin.UI.field.polygon = polygon;
-						//ensure if the window changes size the field is centered
-						$(window).on("resize", function(){
-							plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
-						});
-						plenty_admin.MAPS.zoomToPolygon(polygon, plenty_admin.MAPS.map);
-						//google.maps.event.trigger(plenty_admin.MAPS.map, 'resize');
-						
-					}, false, "map");
-				});
-			})
-			.parent()
-			.find(".filter_controls")
-			.fadeOut("fast");
-		break;
-	}
-}
-
-plenty_admin.UI.field.hasLayout = false;
-plenty_admin.UI.field.fitFieldLayout = function(state){
-	switch (state){
-		case "fit":
-			$("body")
-			.height($(window).height())
-			.css({"overflow":"hidden"});
-			
-			plenty_admin.UI.field.DOM
-			.height($(window).height() - ($(".navbar").height() + $("footer.footer").height()));
-			plenty_admin.UI.field.hasLayout = true;
-		break;
-		
-		case "clear":
-			$("body")
-			.removeAttr("style");
-			
-			plenty_admin.UI.field.DOM
-			.prop("style", "");
-			plenty_admin.UI.field.hasLayout = false;
-		break;
-	}
-}
 
 //get field order by year
 plenty_admin.REST.get_fieldCrops_order_by_year_descending = function(fieldId, callback){
@@ -7720,1591 +9222,6 @@ plenty_admin.REST.get_field_equipments_with_fieldId = function(fieldId, callback
 			callback(returnData);
 		}
 	});
-}
-
-plenty_admin.UI.field.clear = function(){
-	//destroy all graphs
-	for(var g=0; g<plenty_admin.UI.field.renderedGraphs.length; g++){
-		var graph = plenty_admin.UI.field.renderedGraphs[g];
-		graph.destroy();
-	}
-	
-	//clear weatherEvents
-	plenty_admin.UI.field.DOM
-	.find(".weatherEvents")
-	.each(function(){
-		$(this)
-		.find(".event")
-		.remove();
-	});
-	
-	//clear activities
-	if(plenty_admin.UI.field.activityTimelineContainer){
-		plenty_admin.UI.field.activityTimelineContainer
-		.find(".activity")
-		.remove();
-	}
-	
-	//clear activities
-	if(plenty_admin.UI.field.activityListContainer){
-		plenty_admin.UI.field.activityListContainer
-		.find(".activity")
-		.remove();
-	}
-	
-	//clear equipment
-	if(plenty_admin.UI.field.equipmentListContainer){
-		plenty_admin.UI.field.equipmentListContainer
-		.find(".equipment")
-		.remove();
-	}
-	
-	//clear crop surveys
-	if(plenty_admin.UI.field.cropSurveysContainer){
-		plenty_admin.UI.field.cropSurveysContainer
-		.find(".cropSurvey")
-		.remove();
-	}
-	
-	//destroy the year slider
-	if(plenty_admin.UI.field.field_year_slider && typeof plenty_admin.UI.field.field_year_slider.slider === "function"){
-		plenty_admin.UI.field.field_year_slider
-		.slider("destroy");
-	}
-}
-
-plenty_admin.UI.field.populate = function(fieldObj){
-	plenty_admin.REST.get_fieldCrops_order_by_year_descending(fieldObj.id, function(fieldData){
-		console.log("get_field_order_by_year_descending: ", fieldData);
-		
-		var fieldCropsByYear = {};
-		
-		for(var f=0; f<fieldData.length; f++){
-			fieldCrop = fieldData[f];
-			fieldCropsByYear[parseInt(fieldCrop.year)] = fieldCrop;
-		}
-		
-		console.log("fieldCropsByYear", fieldCropsByYear);
-		
-		plenty_admin.UI.field.field_year_slider = plenty_admin.UI.field.DOM.find(".field_year_slider");
-		
-		plenty_admin.UI.field.field_year_slider
-		.slider({
-			min: parseInt(fieldData[fieldData.length-1].year),
-			max: parseInt(fieldData[0].year),
-			value: parseInt(fieldData[0].year),
-			//tooltip: "show",
-			formatter: function(value){
-				return value+" - "+plenty_admin.DATA.cropTypes[fieldCropsByYear[parseInt(value)].cropTypeId].name;
-				//return 'Current value: ' + value;
-			}
-		}) //set up tooltip to show year and crop for that year
-		.off("slide")
-		.on("slide", function(){
-			//console.log("SLIDER SLIDE");
-		})
-		.off("slideStart")
-		.on("slideStart", function(e){
-			console.log("SLIDER SLIDESTART: ", $(this), e, e.target);
-		})
-		.off("slideStop")
-		.on("slideStop", function(){
-			console.log("SLIDER SLIDESTOP");
-		})
-		.off("change")
-		.on("change", function(e){
-			console.log("SLIDER CHANGE", e.value.newValue);
-			//get initial activities for this crop Id
-			var cropYear = fieldCropsByYear[e.value.newValue];
-			var cropName = plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name;
-			
-			//console.log("cropYear:", cropYear);
-			//console.log("cropName:", cropName);
-			
-			plenty_admin.UI.field.update_field_year(fieldObj.id, cropYear);
-			
-			plenty_admin.UI.field.DOM
-			.find(".current_year_crop")
-			.text(e.value.newValue+" - "+plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name);
-			
-			plenty_admin.UI.field.polygon.setOptions({fillColor: plenty_admin.MAPS.legendItems[cropName].colour, strokeColor: plenty_admin.MAPS.legendItems[cropName].colour});
-		});
-		
-		//set up finance dohnut graph when switching asset tabs
-		plenty_admin.UI.field.assetTabs.DOM
-		.off("shown.bs.tab")
-		.on('shown.bs.tab', function (e) {
-			var url = e.target.href;
-			var hash = url.substring(url.indexOf('#'));
-			console.log("changed: ", hash);
-			
-			if(hash === "#finances"){
-				if(plenty_admin.UI.field.financesGraph){
-					plenty_admin.UI.field.financesGraph.destroy();
-				}
-				plenty_admin.UI.field.renderActivityFinancesGraph();
-			}
-		});
-		
-		//set up graph update when switching weather tab
-		plenty_admin.UI.field.weatherTabs.DOM
-		.off("shown.bs.tab")
-		.on('shown.bs.tab', function (e) {
-			var url = e.target.href;
-			var hash = url.substring(url.indexOf('#'));
-			console.log("changed: ", hash);
-			plenty_admin.UI.field.updateWeatherGraph(hash);
-		});
-		
-		plenty_admin.UI.field.update_field_year(fieldObj.id, fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))]);
-		
-		plenty_admin.UI.field.DOM
-		.find(".current_year_crop")
-		.text(plenty_admin.UI.field.field_year_slider.slider('getValue')+" - "+plenty_admin.DATA.cropTypes[fieldCropsByYear[parseInt(plenty_admin.UI.field.field_year_slider.slider('getValue'))].cropTypeId].name);
-	});
-}
-
-plenty_admin.UI.field.updateWeatherGraph = function(hash){
-	var graph = "";
-	switch(hash){
-		case "#temp":
-			//create the temp graph object if it does not yet exist
-			if(!plenty_admin.UI.field.tempGraph){
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
-			}else{
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.tempGraph;
-			}
-			graph = "tempGraph";
-		break;
-		
-		case "#moisture":
-			//create the moisture graph object if it does not yet exist
-			if(!plenty_admin.UI.field.moistureGraph){
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
-			}else{
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.moistureGraph;
-			}
-			graph = "moistureGraph";
-		break;
-		
-		case "#precip":
-			//create the moisture graph object if it does not yet exist
-			if(!plenty_admin.UI.field.precipGraph){
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
-			}else{
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.precipGraph;
-			}
-			graph = "precipGraph";
-		break;
-		
-		case "#gdd":
-			//create the moisture graph object if it does not yet exist
-			if(!plenty_admin.UI.field.gddGraph){
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
-			}else{
-				plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.gddGraph;
-			}
-			graph = "gddGraph";
-		break;
-	}
-	
-	//set width of dom element that offsets the weather events and activities
-	var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
-	
-	try{
-		keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
-	}catch(err){
-		bootbox.dialog({
-							message: "Not enough activities (minimum of 2) to create weather graphs. Their start and end dates are calculated from the begining of the first, and the end of the last event.", 
-							className: "danger",
-							buttons: {
-								danger: {
-								  label: "OK",
-								  className: "btn-danger",
-								  callback: plenty_admin.HELPER.hideLoadingOverlay,
-								}
-							}
-						});
-	}
-	
-	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
-	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
-	plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
-
-	plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
-}
-
-plenty_admin.UI.field.update_field_year = function (fieldId, cropYear){
-	console.log("update_field_year", fieldId, cropYear);
-	plenty_admin.HELPER.showLoadingOverlay();
-	plenty_admin.REST.get_field_equipments_with_fieldId(fieldId, function(fieldEquipment){
-		console.log("get_field_equipments_with_fieldId", fieldEquipment);
-		plenty_admin.UI.field.renderEquipment(fieldEquipment);
-	});
-	
-	//pull in activities once weatherDays have loaded	
-	plenty_admin.REST.get_activities_by_field_crop_order_by_desc(cropYear.id, function(activitiesForCropType){
-		console.log("get_activities_by_field_crop_order_by_desc", activitiesForCropType, activitiesForCropType.length);
-		
-		plenty_admin.UI.field.activitiesForCropType = activitiesForCropType;
-		
-		if(activitiesForCropType.length <= 0){
-			bootbox.dialog({
-							message: "No activities for this field - can not render weather graphs without at least 2 activities.", 
-							className: "danger",
-							buttons: {
-								danger: {
-								  label: "OK",
-								  className: "btn-danger",
-								  callback: plenty_admin.HELPER.hideLoadingOverlay
-								}
-							}
-						});
-			return;
-		}
-		
-		var startDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[0].startTime);
-		plenty_admin.UI.field.dates.start = 	startDate.obj.getUTCFullYear()+
-											"-"+
-											((startDate.obj.getUTCMonth()+1) < 10 ? "0"+(startDate.obj.getUTCMonth()+1) : (startDate.obj.getUTCMonth()+1))+
-											"-"+
-											(startDate.obj.getUTCDate() < 10 ? "0"+startDate.obj.getUTCDate() : startDate.obj.getUTCDate())+
-											" "+
-											((startDate.obj.getUTCHours()) < 10 ? "0"+(startDate.obj.getUTCHours()) : (startDate.obj.getUTCHours()+1))+
-											":"+
-											(startDate.obj.getUTCMinutes() < 10 ? "0"+startDate.obj.getUTCMinutes() : startDate.obj.getUTCMinutes());
-		
-		
-		var endDate = plenty_admin.HELPER.formatJavaDate(activitiesForCropType[activitiesForCropType.length -1].endTime);
-		plenty_admin.UI.field.dates.end = 	endDate.obj.getUTCFullYear()+
-											"-"+
-											((endDate.obj.getUTCMonth()+1) < 10 ? "0" + (endDate.obj.getUTCMonth()+1) : (endDate.obj.getUTCMonth()+1))+
-											"-"+
-											(endDate.obj.getUTCDate() < 10 ? "0"+endDate.obj.getDate() : endDate.obj.getUTCDate())+
-											" "+
-											((endDate.obj.getUTCHours()) < 10 ? "0"+(endDate.obj.getUTCHours()) : (endDate.obj.getUTCHours()+1))+
-											":"+
-											(endDate.obj.getUTCMinutes() < 10 ? "0"+endDate.obj.getUTCMinutes() : endDate.obj.getUTCMinutes());
-		
-		console.log("plenty_admin.UI.field.dates: ", plenty_admin.UI.field.dates);
-		
-		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(3, 10000);
-		plenty_admin.REST.getActivityTypes();
-		
-		plenty_admin.REST.get_weather_days_with_dateRange(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(weatherDays){
-			plenty_admin.UI.field.__weatherDays = weatherDays;
-			console.log("get_weather_days_with_dateRange", weatherDays);
-			
-			plenty_admin.UI.field.weatherDays = {
-					dates: [],
-					months: [],
-					labels: [],
-					
-					weatherEvents: {
-						precip: [],
-						temp: [],
-						wind: []
-					}
-			}
-			
-			var millisecondsPerDay = 24 * 60 * 60 * 1000;
-			var lastWeatherDayDate = weatherDays[weatherDays.length-1].date;
-			var lastActivityDate = activitiesForCropType[activitiesForCropType.length -1].endTime;
-			var weatherActivityDateDiffInDays = Math.round(plenty_admin.HELPER.daydiff(lastWeatherDayDate, lastActivityDate));
-			console.log("weatherActivityDateDiffInDays", weatherActivityDateDiffInDays);
-			
-			//set the day label increment
-			var totalDays = weatherDays.length + weatherActivityDateDiffInDays;
-			var label_step = 1;
-			if(totalDays > 31 && totalDays < 125){
-				label_step = 3
-			}else if(totalDays > 125 && totalDays < 500){
-				label_step = 7
-			}else if(totalDays > 500 && totalDays < 1000){
-				label_step = 14
-			}else if(totalDays > 1000){
-				label_step = 20
-			}
-				
-			
-			var label_inc = 0;
-			
-			for(var wO = 0; wO < weatherDays.length; wO++){
-				weatherOb = weatherDays[wO];
-				var obTime = plenty_admin.HELPER.formatJavaDate(weatherOb.date);
-				
-				//create labelling sets for graphs
-				//plenty_admin.UI.field.weatherDays.labels.push(obTime.date);
-				
-				// !!! HACK to skip every other X axis label
-				// Provides bad labels on chart
-				if(label_inc == 0){
-					plenty_admin.UI.field.weatherDays.labels.push(obTime.date);
-					label_inc += 1;
-					if(label_inc === label_step){
-						label_inc = 0;
-					}
-				}else{
-					plenty_admin.UI.field.weatherDays.labels.push("");
-					label_inc += 1;
-					if(label_inc === label_step){
-						label_inc = 0;
-					}
-				}
-				
-				
-				//process existing weather days
-				for(prop in weatherOb){
-					if(weatherOb.hasOwnProperty(prop)){
-						//console.log("prop:", prop);
-						if(prop === "weatherEvents"){
-							if(!plenty_admin.UI.field.weatherDays[prop]){
-								plenty_admin.UI.field.weatherDays[prop] = [];
-							}
-							for(var w=0; w<weatherOb[prop].length; w++){
-								var wEvent = weatherOb[prop][w];
-								wEvent.weatherDayDate = obTime;
-								wEvent.dayIndex = wO;
-								
-								switch(wEvent.type){
-									case "HIGH_TEMP":
-										wEvent.iconClass = "wi wi-hot";
-										plenty_admin.UI.field.weatherDays[prop].temp.push(wEvent);
-									break;
-									
-									case "FREEZE":
-										wEvent.iconClass = "wi wi-thermometer-exterior";
-										plenty_admin.UI.field.weatherDays[prop].temp.push(wEvent);
-									break;
-									
-									case "SNOW":
-										wEvent.iconClass = "wi wi-snow-wind";
-										plenty_admin.UI.field.weatherDays[prop].precip.push(wEvent);
-									break;
-									case "RAIN":
-										wEvent.iconClass = "wi wi-rain";
-										plenty_admin.UI.field.weatherDays[prop].precip.push(wEvent);
-									break;
-									
-									case "HIGH_WINDS":
-										wEvent.iconClass = "wi wi-strong-wind";
-										plenty_admin.UI.field.weatherDays[prop].wind.push(wEvent);
-									break;
-								}
-							}
-						}else if(prop === "moisture"){
-							if(!plenty_admin.UI.field.weatherDays[prop]){
-								plenty_admin.UI.field.weatherDays[prop] = {};
-							}
-							//console.log("how many depths? :", prop, weatherOb[prop].length);
-							for(var w=0; w<weatherOb[prop].length; w++){
-								var moistureDepth = weatherOb[prop][w];
-								//console.log("moisture depth: ", w, moistureDepth);
-								if(!plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth]){
-									plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth] = [];
-								}
-								
-								plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth].push(moistureDepth.moisture /* !!! HACK !!!*/ + (Math.random() * (10 - 100) + 10));
-							}
-						}else if(prop === "cropSurvey"){
-							if(!plenty_admin.UI.field.weatherDays["cropSurvey"]){
-								plenty_admin.UI.field.weatherDays["cropSurvey"] = [];
-							}
-							if(weatherOb["cropSurvey"]){
-								plenty_admin.UI.field.weatherDays["cropSurvey"].push(weatherOb["cropSurvey"]);
-							}
-						}else{
-							if(!plenty_admin.UI.field.weatherDays[prop]){
-								plenty_admin.UI.field.weatherDays[prop] = [];
-							}
-							plenty_admin.UI.field.weatherDays[prop].push(weatherOb[prop]);
-						}
-					}
-					
-					plenty_admin.UI.field.weatherDays.length = weatherDays.length;
-				}
-			}
-			
-			//add empty weather days till the end of activities
-			if(weatherActivityDateDiffInDays > 0){
-				label_inc = 0;
-				//add future weather days to the weather graph
-				for(var fWd = 0; fWd < weatherActivityDateDiffInDays; fWd++){
-					for(prop in plenty_admin.UI.field.weatherDays){
-						if(plenty_admin.UI.field.weatherDays.hasOwnProperty(prop)){
-							var wd = plenty_admin.UI.field.weatherDays[prop];
-							switch(prop){
-								//push in a 0 value
-								case "maxTemp":
-								case "minTemp":
-								case "percipToday":
-								case "gddToday":
-								case "gddTotalToToday":
-								case "percipTotalToToday":
-								wd.push(0);
-								break;
-								
-								//add future date labels
-								case "labels":
-								if(label_inc == 0){
-									var futureDateInSeconds = lastWeatherDayDate + (fWd * millisecondsPerDay) + millisecondsPerDay;
-									var futureDate = plenty_admin.HELPER.formatJavaDate(futureDateInSeconds).date;
-									
-									wd.push(futureDate);
-									label_inc += 1;
-									if(label_inc === label_step){
-										label_inc = 0;
-									}
-								}else{
-									wd.push("");
-									label_inc += 1;
-									if(label_inc === label_step){
-										label_inc = 0;
-									}
-								}
-								break;
-							}
-						}
-					}
-				}
-				
-				plenty_admin.UI.field.weatherDays.length += weatherActivityDateDiffInDays;
-			}
-			
-			console.log("plenty_admin.UI.field.weatherDays:", plenty_admin.UI.field.weatherDays);
-			
-			//update the graph in the currently visible tab
-			var selectedGraph = plenty_admin.UI.field.weatherTabs.DOM.find(".nav-tabs li.active a").prop("href")
-			var hash = selectedGraph.substring(selectedGraph.indexOf('#'));
-			var graph = "";
-			switch(hash){
-				case "#temp":
-					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderTempGraph();
-					graph = "tempGraph";
-				break;
-				
-				case "#moisture":
-					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderMoistureGraph();
-					graph = "moistureGraph";
-				break;
-				
-				case "#precip":
-					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderPrecipGraph();
-					graph = "precipGraph";
-				break;
-				
-				case "#gdd":
-					plenty_admin.UI.field.currentGraph = plenty_admin.UI.field.renderGDDGraph();
-					graph = "gddGraph";
-				break;
-			}
-			
-			//set width of dom element that offsets the weather events and activities
-			var keyOffsetElement = plenty_admin.UI.field.DOM.find(".keyOffset");
-			
-			try{
-				keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
-			}catch(err){
-				bootbox.dialog({
-							message: "Not enough activities (minimum of 2) to create weather graphs. Their start and end dates are calculated from the begining of the first, and the end of the last event.", 
-							className: "danger",
-							buttons: {
-								danger: {
-								  label: "OK",
-								  className: "btn-danger",
-								  callback: plenty_admin.HELPER.hideLoadingOverlay
-								}
-							}
-						});
-			}
-			
-			plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
-			
-			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
-			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
-			plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
-			
-			//ensure if the window changes size the weather events are refitted
-			$(window).on("resize",function(){
-				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.precip, "precip");
-				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.temp, "temp");
-				plenty_admin.UI.field.renderWeatherEvents(plenty_admin.UI.field.weatherDays.weatherEvents.wind, "wind");
-				
-				plenty_admin.UI.field.scaleScale(plenty_admin.UI.field[graph+"El"]);
-			});
-			
-			plenty_admin.DATA.eventCollector.done("event 1");
-		});
-		
-		plenty_admin.REST.get_activity_finances_for_date_range(cropYear.id, plenty_admin.UI.field.dates.start, plenty_admin.UI.field.dates.end, function(fieldCropActivityFinances){
-			console.log("get_activity_finances_for_date_range", fieldCropActivityFinances());
-			plenty_admin.UI.field.fieldCropActivityFinances = fieldCropActivityFinances();
-			plenty_admin.DATA.eventCollector.done("event 2");
-		});
-		
-		plenty_admin.DATA.eventCollector.on('alldone', function(total) {
-			plenty_admin.UI.field.renderActivities(activitiesForCropType);
-			console.log("all data gathered: ", plenty_admin.UI.field.dayWidth);
-			plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
-			
-			//ensure if the window changes size the activities are refitted
-			$(window).on("resize",function(){
-				plenty_admin.UI.field.renderActivities(activitiesForCropType);
-				plenty_admin.UI.field.renderCropSurveys(plenty_admin.UI.field.weatherDays.cropSurvey);
-			});
-			
-			plenty_admin.UI.field.renderActivityFinancesGraph();
-			
-			plenty_admin.HELPER.hideLoadingOverlay();
-		});	
-	});
-}
-
-plenty_admin.UI.field.renderWeatherEvents = function(events, hash){
-	plenty_admin.UI.field.weatherEventsContainer = plenty_admin.UI.field.DOM.find(".tab-content .weatherEvents."+hash);
-	
-	//remove any existing events
-	plenty_admin.UI.field.weatherEventsContainer
-	.find(".event")
-	.remove();
-	
-	for(var e=0; e<events.length; e++){
-		var wE = events[e];
-		var leftPos = ((parseInt(plenty_admin.UI.field.weatherEventsContainer.width()) / plenty_admin.UI.field.weatherDays.length)*wE.dayIndex)-8;
-		
-		if(leftPos < 0){
-			leftPos = 0;
-		}
-		
-		var uom = "";
-		switch(hash){
-			case "temp":
-				uom = "℉";
-			break;
-			
-			case "precip":
-				uom = '"';
-			break;
-			
-			case "wind":
-				uom = "mph";
-			break;
-		}
-		var weatherEventHTML = $("<div class='event' data-toggle='tooltip' data-placement='top' title='"+(wE.detail ? wE.detail : wE.deatil)+": "+wE.amount.toFixed(2)+uom+"' style='left:"+leftPos+"px'><i class='"+wE.type+" "+wE.iconClass+"'></i></div>");
-		
-		weatherEventHTML
-		.tooltip({container:"body"});
-		
-		plenty_admin.UI.field.weatherEventsContainer.append(weatherEventHTML);
-	}
-}
-
-plenty_admin.UI.field.renderCropSurveys = function(cropSurveys){
-	plenty_admin.UI.field.cropSurveysContainer = plenty_admin.UI.field.DOM.find(".tab-content .cropSurveys");
-	
-	//remove any existing events
-	plenty_admin.UI.field.cropSurveysContainer
-	.find(".cropSurvey")
-	.remove();
-	
-	for(var e=0; e<cropSurveys.length; e++){
-		var cS = cropSurveys[e];
-		cS.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(plenty_admin.UI.field.activitiesForCropType[0].startTime, cS.observationTime));
-		
-		var leftPos = plenty_admin.UI.field.dayWidth*cS.startOffsetDays -17; //days from the beginning - half the width of a crop survey icon
-		
-		if(leftPos < 0){
-			leftPos = 0;
-		}
-		
-		if(leftPos > plenty_admin.UI.field.cropSurveysContainer.width()){
-			leftPos = plenty_admin.UI.field.cropSurveysContainer.width() - 34;
-		}
-		
-		var uom = "UOMId-"+cS.countUOMId;
-		
-		var tooltip = [
-						"cropHeight: "+cS.cropHeight+"<br>",
-						"cropTypeId: "+cS.cropTypeId+"<br>",
-						"growthMethodId: "+cS.growthMethodId+"<br>",
-						"growthStageId: "+cS.growthStageId,
-					].join("");
-		
-		var cropSurveyHTML = $("<div class='cropSurvey alert alert-warning' data-toggle='tooltip' data-placement='top' title='"+tooltip+"' style='left:"+leftPos+"px'><i class='fa fa-file-text'></i></div>");
-		
-		cropSurveyHTML
-		.off("click")
-		.on("click", function(){
-			plenty_admin.UI.crop_survey.show(cS, plenty_admin.UI.field.fieldObj);
-			return false;
-		})
-		.tooltip({
-					container:"body",
-					html:true
-				});
-		
-		plenty_admin.UI.field.cropSurveysContainer.append(cropSurveyHTML);
-	}
-}
-
-plenty_admin.UI.field.getActivityIconClass = function(activityTypeId){
-	console.log("getActivityIconClass", activityTypeId);
-	var iconClass = null;
-	switch(activityTypeId){
-			case 1:
-			case "SoilTest":
-				iconClass = "pif pif-soil-test";
-			break;
-			
-			case 2:
-			case "StarterFertilizer":
-			case "LateFertilizer":
-				iconClass = "pif pif-fertilizer";
-			break;
-			
-			case 3:
-			case "Tilling":
-				iconClass = "pif pif-tilling";
-			break;
-			
-			case 4:
-			case "Planting":
-				iconClass = "pif pif-planting";
-			break;
-			
-			case 5:
-			case "EarlyNitrogen":
-				iconClass = "pif pif-early-nitrogen";
-			break;
-			
-			case 6:
-			case "LateNitrogen":
-				iconClass = "pif pif-late-nitrogen";
-			break;
-			
-			case 7:
-			case "PestControl":
-				iconClass = "pif pif-pest-control";
-			break;
-			
-			case 8:
-			case "Harvest":
-				iconClass = "pif pif-harvest";
-			break;
-		}
-		
-		return iconClass;
-}
-
-plenty_admin.UI.field.renderActivities = function(activities, timelineOnly){
-	plenty_admin.UI.field.activityTimelineContainer = plenty_admin.UI.field.DOM.find(".activitiesTimeline .activities");
-	plenty_admin.UI.field.activityListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #activities tbody");
-	
-	plenty_admin.UI.field.activityListContainer
-	.closest("table")
-	.stickyTableHeaders();
-	
-	//clear activity timeline
-	plenty_admin.UI.field.activityTimelineContainer
-	.add(plenty_admin.UI.field.activityListContainer)
-	.find(".activity")
-	.remove();
-	
-	var activityDays = Math.round(plenty_admin.HELPER.daydiff(activities[0].startTime, activities[activities.length-1].endTime));
-	plenty_admin.UI.field.dayWidth = parseInt(plenty_admin.UI.field.activityTimelineContainer.width()) / activityDays;
-	var hourWidth = plenty_admin.UI.field.dayWidth /24;
-	
-	console.log("activityDays", plenty_admin.UI.field.dayWidth, hourWidth);
-	
-	if(activities.length === 0){
-		console.warn("could not calculate weatherDay width as weatherDays is empty");
-		bootbox.dialog({
-				message: "Could not calculate weatherDay witdh - there are no weatherDays being returned.", 
-				className: "danger",
-				buttons: {
-					danger: {
-					  label: "OK",
-					  className: "btn-danger",
-					  callback: plenty_admin.HELPER.hideLoadingOverlay,
-					}
-				}
-			});
-			
-		return;
-	}
-	
-	for(var a=0; a<activities.length; a++){
-		var activity = activities[a];
-		
-		activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
-		
-		activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
-		activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
-		activity.startOffsetDays = Math.round(plenty_admin.HELPER.daydiff(activities[0].startTime, activity.startTime));
-		
-		//console.log("activity", activity);
-
-		var leftPos = plenty_admin.UI.field.dayWidth*activity.startOffsetDays;
-		var eventWidth = Math.round(hourWidth*activity.durationInHours);
-		
-		//console.log("eventWidth: ", eventWidth);
-		
-		if(eventWidth < 26){
-			eventWidth = 26;
-		}
-		
-		if(leftPos < 0){
-			leftPos = 0;
-		}
-		
-		if(leftPos + eventWidth > plenty_admin.UI.field.activityTimelineContainer.width()){
-			leftPos = plenty_admin.UI.field.activityTimelineContainer.width() - eventWidth;
-		}
-		
-		var activityHTML = $("<div class='activity' data-toggle='tooltip' data-placement='top' title='"+plenty_admin.UI.field.getActivityTooltipTitle(activity)+"' style='left:"+leftPos+"px; width:"+eventWidth+"px'><i class='"+plenty_admin.DATA.activityTypes[activity.activityTypeId].name.toLowerCase().replace(/ /g, "")+" "+activity.iconClass+"'></i></div>");
-		
-		var activityFinances = $.grep(plenty_admin.UI.field.fieldCropActivityFinances.activityFinances, function(activityFinance, a){
-			return activityFinance.activityDto.id === activity.id;
-		});
-			
-		activityHTML
-		.tooltip({
-			html:true,
-			container:"body"
-		})
-		.data("activity", activity)
-		.data("activityFinance", activityFinances[0])
-		.click(function(){
-			plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
-		});
-		
-		plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
-		
-		if(!timelineOnly){
-			//build the activity list item
-			var activityItem = [
-					"<tr class='activity pointer'>",
-						"<td>",
-							"<i class='"+activity.iconClass+"'></i>",
-						"</td>",
-						"<td>",
-							activity.state,
-						"</td>",
-						"<td>",
-							plenty_admin.DATA.activityTypes[activity.activityTypeId].name,
-						"</td>",
-						"<td>",
-							activity.startDate.date,
-						"</td>",
-						"<td>",
-							plenty_admin.HELPER.daysFromHours(activity.durationInHours),
-						"</td>",
-						"<td class='text-right'>",
-							numeral(activity.cost).format('$0,0.00'),
-						"</td>",
-					"</tr>"
-			].join("");
-			
-			var $activityItem = $(activityItem);
-
-			$activityItem
-			.data("activity", activity)
-			.data("activityFinance", activityFinances[0])
-			.click(function(){
-				plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
-			});
-			
-			plenty_admin.UI.field.activityListContainer.append($activityItem);
-		}
-	}
-	
-	var $futureDays = plenty_admin.UI.field.DOM.find(".futureDays");
-	var $todayLabel = plenty_admin.UI.field.DOM.find(".todayLabel");
-	
-	console.log("MAKE PASTDAYS: ", plenty_admin.UI.field.dayWidth, plenty_admin.UI.field.__weatherDays.length);
-	
-	var pastDaysWidth = plenty_admin.UI.field.dayWidth * plenty_admin.UI.field.__weatherDays.length;
-	console.log("pastDaysWidth", pastDaysWidth);
-	
-	var keyOffsetElements = plenty_admin.UI.field.DOM.find(".keyOffset");
-	
-	keyOffsetElements.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
-	
-	var fdKeyOffset = $futureDays.parent().find(".keyOffset");
-	var todayDaysWidth = fdKeyOffset.width() + pastDaysWidth -1;
-	fdKeyOffset
-	.width(todayDaysWidth);
-	
-	$todayLabel
-	.css({
-		right: - ($todayLabel.width()/2)
-	})
-}
-
-plenty_admin.UI.field.renderEquipment = function(equipment){
-	plenty_admin.UI.field.equipmentListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #equipment tbody");
-	
-	plenty_admin.UI.field.equipmentListContainer
-	.closest("table")
-	.stickyTableHeaders();
-
-	console.log("equipmentListContainer", plenty_admin.UI.field.equipmentListContainer);
-	for(var a=0; a<equipment.length; a++){
-		var equipmentObject = equipment[a]/*.equipmentDto*/;
-		
-		console.log("equipmentObject", equipmentObject);
-		
-		//build the activity list item
-		var equipmentItemHTML = [
-				"<tr class='equipment pointer'>",
-					"<td>",
-						"<i class='pif pif-"+equipmentObject.equipmentTypeIds[0].name.toLowerCase().replace(/ /g, "-")+"'></i>",
-					"</td>",
-					"<td>",
-						equipmentObject.equipmentTypeIds[0].name,
-					"</td>",
-					"<td>",
-						plenty_admin.DATA.brandTypes[equipmentObject.brandId].name,
-					"</td>",
-					"<td>",
-						equipmentObject.name,
-					"</td>",
-				"</tr>"
-		].join("");
-		
-		var $equipmentItemHTML = $(equipmentItemHTML);
-		$equipmentItemHTML
-		.data("equipmentObject", equipmentObject)
-		.on("click", function(){
-			plenty_admin.UI.field.show_equipment_modal($(this).data("equipmentObject"));
-		});
-		
-		plenty_admin.UI.field.equipmentListContainer.append($equipmentItemHTML);
-		
-		//add equipment pins to field map
-		//get a google latlng object for each element
-		var latlng = new google.maps.LatLng(equipmentObject.latitude, equipmentObject.longitude);
-		
-		equipmentObject.latlng = latlng;
-		
-		var pinEvents = {
-			onMouseOver: function(event){ //mouseover event
-				//console.log("hover marker: ", this, $(this.markerContent_));
-				$(this.markerContent_)
-				.find(".marker")
-				.addClass("hover");
-				
-				$(this.markerWrapper_)
-				.css({
-					zIndex:10
-				});
-				
-				plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equipmentObject.name+"</strong>");
-			}, 
-			onMouseOut: function(event){ //mouseout event
-				$(this.markerContent_)
-				.find(".marker")
-				.removeClass("hover");
-				
-				$(this.markerWrapper_)
-				.css({
-					zIndex:1
-				});
-				
-				plenty_admin.MAPS.polygon_tooltip.hide();
-			}, 
-			onClick: function(event){ //click event
-				//event.stopPropagation();
-				plenty_admin.UI.field.show_equipment_modal(equipmentObject);
-			}, 
-			/*
-			onRightClick: function(event){ //right click event
-				console.log("event:", this, equip);
-				plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
-			},
-			onDragEnd: function(){ //drag end event
-				var that = this;
-				console.log("onDragEnd:", equip, that);
-				//check if the point has been moved to another polygon or is not in a polygon
-				var matchedPoly = null;
-				for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
-					var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
-					if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
-						console.log("Point is inside a polygon: ", polygon);
-						matchedPoly = polygon;
-						break;
-					}
-				}
-				
-				if(matchedPoly){
-					if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
-						console.log("do you want top move this equipment within this field?");
-						plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
-					}else{
-						console.log("Do you what to assosciate this equipment with a different field");
-						plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
-					}
-				}else{
-					console.log("are you sure you want to disassociate this equipment with any fields???");
-					plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
-					plenty_admin.MAPS.delete_field_equipment(equip, that);
-				}
-				return false;
-			}
-			*/
-		}
-		//draw the pin on the map
-		plenty_admin.MAPS.draw_pin(equipmentObject, pinEvents, plenty_admin.MAPS.map);
-	}
-}
-
-plenty_admin.UI.field.getActivityTooltipTitle = function(activity){
-	var title = plenty_admin.DATA.activityTypes[activity.activityTypeId].name+
-				"<br/>"+
-				activity.startDate.fullDate+
-				"<br/>"+
-				"$"+
-				numeral(activity.cost).format('$0,0.00');
-				
-	console.log("activity tooltip title:", title);
-	return title;
-}
-
-plenty_admin.UI.field.renderTempGraph = function(){
-	var tempGraphData = {
-			labels: plenty_admin.UI.field.weatherDays.labels,
-			datasets: [
-				{
-					label: "Min",
-					fillColor: "rgba(142,220,244,0.2)",
-					strokeColor: "rgba(142,220,244,1)",
-					pointColor: "rgba(108,202,224,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(142,220,244,1)",
-					data: plenty_admin.UI.field.weatherDays.minTemp
-				},
-				{
-					label: "Max",
-					fillColor: "rgba(249,216,110,0.2)",
-					strokeColor: "rgba(249,216,110,1)",
-					pointColor: "rgba(239,193,63,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(249,216,110,1)",
-					data: plenty_admin.UI.field.weatherDays.maxTemp
-				}
-			]
-		};
-		
-		
-		var tempGraphOptions = {
-			multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.0')%>℉",
-		};
-		
-		/*
-		var tempGraphOptions = {
-			hoverMode: 'single',
-			scales: {
-				xAxes: [{
-					scaleType: "linear", // scatter should not use a dataset axis
-					display: true,
-					position: "bottom",
-					id: "x-axis-temp", // need an ID so datasets can reference the scale
-	
-					// label settings
-					labels: {
-						show: true,
-						template: "<%=value%>",
-						fontSize: 12,
-						fontStyle: "normal",
-						fontColor: "#666",
-						fontFamily: "ff-enzo-web,Helvetica,Arial,sans-serif",
-						 
-						userCallback: function(tickValue, tickIndex, ticksArray) {
-							console.log("tickValue", tickValue); // tickValue {number} : the numerical value that a label is needed for
-							console.log("tickIndex", tickIndex); // tickIndex {number} : the index of the tick in the internal ticks array
-							console.log("ticksArray", ticksArray); // ticksArray {array} : the array of all ticks in the scale
-							
-							return tickValue.toString();
-						}
-					},
-				}]
-			}
-		};*/
-		
-		var helpers = Chart.helpers;
-	
-		plenty_admin.UI.field.tempGraph = new Chart(plenty_admin.UI.field.tempGraphEl.get(0).getContext("2d")).Line(tempGraphData, tempGraphOptions);
-		plenty_admin.UI.field.tempGraph.datasetId = "temp"; 
-		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.tempGraph);
-		
-		return plenty_admin.UI.field.tempGraph;
-}
-plenty_admin.UI.field.scaleScale = function(graphEl){
-	console.log("graphEl", graphEl);
-	var scaleWidth = graphEl.width();
-	var scaleHeight = graphEl.height();
-		
-	graphEl
-	.parent()
-	.find("svg.scale")
-	.prop("viewBox", "0 0 "+scaleWidth+" "+plenty_admin.UI.field.currentGraph.scale.endPoint)
-	.width(scaleWidth - plenty_admin.UI.field.currentGraph.datasets[0].points[0].x)
-	.height(plenty_admin.UI.field.currentGraph.scale.endPoint)
-	.css({"left": plenty_admin.UI.field.currentGraph.datasets[0].points[0].x})
-	.fadeIn("fast");
-}
-
-plenty_admin.UI.field.renderMoistureGraph = function(){
-	//create dynamic moisture datasets
-	var datasets = [];
-	var index = 0;
-	var palette = new Rainbow();
-	palette.setSpectrum("#0076b2", "#93b222", "#788912");
-	palette.setNumberRange(0, Object.keys(plenty_admin.UI.field.weatherDays.moisture).length);
-	
-	//for(var m=0; m<plenty_admin.UI.field.weatherDays.moisture.length; m++){
-	for(depth in plenty_admin.UI.field.weatherDays.moisture){
-		if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
-			//console.log("colour: ", index, depth);
-			var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
-			var colour = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index));
-			var label = depth.toString();
-			var dataset = {
-				label: label+"mm",
-				fillColor: "rgba("+colour.r+","+colour.g+","+colour.b+",0.2)", //define
-				strokeColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
-				pointColor: "rgba("+colour.r+","+colour.g+","+colour.b+",1)", //define
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba("+plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index))+",1)",
-				data: moistureDepth
-			};
-			datasets.push(dataset);
-			index +=1;
-		}
-	}
-	
-	console.log("moisture datasets: ", datasets);
-	
-	var moistureGraphData = {
-			labels: plenty_admin.UI.field.weatherDays.labels,
-			datasets: datasets
-		};
-		
-		var moistureGraphOptions = {
-			multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.00')%>cb",
-		};
-		
-		plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).Line(moistureGraphData, moistureGraphOptions);
-		plenty_admin.UI.field.moistureGraph.datasetId = "moisture";
-		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.moistureGraph);
-		
-		return plenty_admin.UI.field.moistureGraph;
-}
-
-plenty_admin.UI.field.renderPrecipGraph = function(){
-	var precipGraphData = {
-			labels: plenty_admin.UI.field.weatherDays.labels,
-			datasets: [
-				{
-					label: "Precipitation",
-					fillColor: "rgba(136,242,201,0.2)",
-					strokeColor: "rgba(136,242,201,1)",
-					pointColor: "rgba(97,226,174,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(136,242,201,1)",
-					data: plenty_admin.UI.field.weatherDays.percipTotalToToday
-				}
-			]
-		};
-		
-		var precipGraphOptions = {
-			tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>\"",
-		};
-		
-		plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).Line(precipGraphData, precipGraphOptions);
-		plenty_admin.UI.field.precipGraph.datasetId = "precipAmt";
-		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.precipGraph);
-		
-		return plenty_admin.UI.field.precipGraph;
-}
-
-plenty_admin.UI.field.renderGDDGraph = function(){
-	var GDDGraphData = {
-			labels: plenty_admin.UI.field.weatherDays.labels,
-			datasets: [
-				{
-					label: "GDD",
-					fillColor: "rgba(185,244,146,0.2)",
-					strokeColor: "rgba(185,244,146,1)",
-					pointColor: "rgba(150,234,96,1)",
-					pointStrokeColor: "#fff",
-					pointHighlightFill: "#fff",
-					pointHighlightStroke: "rgba(185,244,146,1)",
-					data: plenty_admin.UI.field.weatherDays.gddTotalToToday
-				}
-			]
-		};
-		
-		var GDDGraphOptions = {
-			tooltipTemplate: "<%= label %>: <%= Math.round(value) %>",
-		};
-		
-		plenty_admin.UI.field.gddGraph = new Chart(plenty_admin.UI.field.gddGraphEl.get(0).getContext("2d")).Line(GDDGraphData, GDDGraphOptions);
-		plenty_admin.UI.field.gddGraph.datasetId = "gddTotalToToday";
-		plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.gddGraph);
-		
-		return plenty_admin.UI.field.gddGraph;
-}
-
-plenty_admin.UI.field.renderActivityFinancesGraph = function(){
-	var finances = plenty_admin.UI.field.fieldCropActivityFinances;
-	//holder for graph data set
-	var financesData = [];
-	
-	//show profit / revenue / cost figures
-	plenty_admin.UI.field.DOM
-	.find(".topLine")
-	.find(".profit")
-	.text(numeral(finances.totalProfit).format('$0,0.00'))
-	.end()
-	.find(".cost")
-	.text(numeral(finances.totalCost).format('$0,0.00'))
-	.end()
-	.find(".revenue")
-	.text(numeral(finances.totalRevenue).format('$0,0.00'));
-	
-	//colour palette for graph segments
-	var palette = new Rainbow();
-	palette.setSpectrum("#0076b2", "#93b222", "#788912");
-	palette.setNumberRange(0, (finances.activityFinances.length > 0 ? finances.activityFinances.length : 1));
-	
-	//for(index in finances){
-	for(var a=0; a<finances.activityFinances.length; a++){
-		var finance = finances.activityFinances[a];
-		//console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
-		finance.colour = "#"+palette.colourAt(a);
-
-		var segment = {
-			value:		finance.cost,
-			color:		finance.colour,
-			highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
-			label: 		plenty_admin.DATA.activityTypes[finance.activityTypeId].name,
-		};
-		
-		financesData.push(segment);
-	}
-	
-	var financeChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
-		tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
-		animateRotate: true
-	};
-	
-	var helpers = Chart.helpers;
-	
-	console.log("helpers", helpers);
-	
-	plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
-	
-	console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
-	
-	//add a legend for this graph
-	var $legendHTML = $(plenty_admin.UI.field.financesGraph.generateLegend());
-	
-	var legendHolder = 
-	plenty_admin.UI.field.financesGraphEl
-	.parent()
-	.parent()
-	.parent()
-	.find(".legend");
-	
-	legendHolder
-	.html("")
-	.append($legendHTML);
-	
-	var resetLegentStyle = function(legendHolder){
-		$(legendHolder)
-		.find("li")
-		.css({"background-color": "transparent"})
-		.removeClass("active")
-		.find("span.swatch")
-		.each(function(){
-			$(this)
-			.css({"background-color": $(this).closest("li").data("hovercolour")});
-		})
-		.end()
-		.find("span.pct")
-		.text("");
-	}
-	
-	// Include a html legend template after the module doughnut itself
-	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
-		helpers.addEvent(legendNode, 'mouseover', function () {
-			var activeSegment = plenty_admin.UI.field.financesGraph.segments[index];
-			
-			var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
-			
-			activeSegment.save();
-			activeSegment.fillColor = activeSegment.highlightColor;
-			activeSegment.innerRadius = 60;
-			plenty_admin.UI.field.financesGraph.showTooltip([activeSegment]);
-			activeSegment.restore();
-			
-			$(legendNode)
-			.css({"background-color": $(this).data("hovercolour")})
-			.addClass("active")
-			.find("span.swatch")
-			.css({"background-color": activeSegment.highlightColor})
-			.end()
-			.find("span.pct")
-			.text(pct);
-		});
-	});
-	
-	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
-		plenty_admin.UI.field.financesGraph.draw();
-		resetLegentStyle(legendHolder);
-	});
-	
-	//highlight key element when hovering segment
-	plenty_admin.UI.field.financesGraphEl.on("mousemove", function(evt){
-		var activePoints = plenty_admin.UI.field.financesGraph.getSegmentsAtEvent(evt);
-		if(activePoints.length > 0){
-			//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
-			legendHolder
-			.find("li")
-			.removeClass("active");
-			
-			var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
-			var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
-			var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
-			
-			resetLegentStyle(legendHolder);
-			
-			legendItem
-			.addClass("active")
-			.css({"background-color": legendItem.data("hovercolour")})
-			.find("span.swatch")
-			.css({"background-color": activePoints[0].highlightColor})
-			.end()
-			.find("span.pct")
-			.text(pct);
-		}else{
-			resetLegentStyle(legendHolder);
-		}
-		// => activePoints is an array of segments on the canvas that are at the same position as the click event.
-	});
-	
-	//clear segment highlight onMouseOut
-	plenty_admin.UI.field.financesGraphEl.on("mouseout", function(evt){
-		resetLegentStyle(legendHolder);
-	});
-	
-	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.financesGraph);
-	
-}
-
-plenty_admin.UI.field.renderTasks = function(taskFinances){
-	var taskRows = "";
-	
-	for(var t=0; t<taskFinances.length; t++){
-		var task = taskFinances[t];
-		var taskStartDate = plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime);
-		console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
-		var taskRow = [
-			"<tr class='pointer'>",
-				"<td><span class='editable' data-type='text' data-pk='1' data-url='/post' data-title='Choose the task name'>",
-					task.taskDto.name,
-				"</span></td>",
-				"<td>",
-					task.taskDto.state,
-				"</td>",
-				"<td><span class='editable' data-type='date' data-pk='1' data-url='/post' data-title='Choose the start date'>",
-					plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
-				"</span></td>",
-				"<td>",
-					plenty_admin.HELPER.daysFromHours(task.taskDto.durationInHours),
-				"</td>",
-				"<td class='text-right'>",
-					task.taskDto.cost,
-				"</td>",
-			"</tr>",
-		].join("");
-		
-		taskRows += taskRow;
-	}
-	
-	$.fn.editable.defaults.mode = 'inline';
-	
-	plenty_admin.UI.map.MODAL_activity
-	.find(".activityTasksList table tbody tr")
-	.remove()
-	.end()
-	.find(".activityTasksList table tbody")
-	.append(taskRows)
-	.find(".editable")
-	.editable(plenty_admin.REST.inline_editing_options);
-}
-
-plenty_admin.UI.field.renderTaskFinancesGraph = function(taskFinances){
-	console.log("renderTaskFinancesGraph", taskFinances);
-	//colour palette for graph segments
-	var palette = new Rainbow();
-	palette.setSpectrum("#0076b2", "#93b222", "#788912");
-	palette.setNumberRange(0, 2);
-		
-	//holder for graph data set
-	var taskFinancesData = [
-		//equipment
-		{
-			value:		0,
-			color:		"#"+palette.colourAt(0),
-			highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(0), .4),
-			label: 		"Equipment",
-		},
-		//skill
-		{
-			value:		0,
-			color:		"#"+palette.colourAt(1),
-			highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(1), .4),
-			label: 		"Labor",
-		},
-		//skill
-		{
-			value:		0,
-			color:		"#"+palette.colourAt(2),
-			highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(2), .4),
-			label: 		"Products",
-		},
-	];
-	
-	//for(index in finances){
-	for(var a=0; a<taskFinances.length; a++){
-		//break the costs into equipment / skill / product
-		var taskFinance = taskFinances[a];
-		console.log("taskFinance", taskFinance);
-		taskFinancesData[0].value += taskFinance.equipmentCost.cost;
-		taskFinancesData[1].value += taskFinance.laborCost.cost;
-		taskFinancesData[2].value += taskFinance.productsCost.cost;
-	}
-	
-	var taskFinancesChartOptions = {
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\" class=\"taskHeader\" style=\"border-top:2px solid <%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
-		tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
-		animateRotate: true
-	};
-	
-	var helpers = Chart.helpers;
-	
-	console.log("helpers", helpers);
-	
-	plenty_admin.UI.field.taskFinancesGraph = new Chart(plenty_admin.UI.field.taskFinancesGraphEl.get(0).getContext("2d")).Doughnut(taskFinancesData,taskFinancesChartOptions);
-	
-	console.log("render task finances graph: ", plenty_admin.UI.field.taskFinancesGraph, taskFinancesData);
-	
-	//add a legend for this graph
-	var $legendHTML = $(plenty_admin.UI.field.taskFinancesGraph.generateLegend());
-	
-	var legendHolder = 
-	plenty_admin.UI.field.taskFinancesGraphEl
-	.parent()
-	.parent()
-	.find(".legend");
-	
-	legendHolder
-	.html("")
-	.append($legendHTML);
-	
-	var equipmentItems = "";
-	var laborItems = "";
-	var productItems = "";
-	
-	//INJECT THE DIFFERENT TASK COST ELEMENTS INTO THE LEGEND ONCE BUILT
-	//for(index in finances){
-	for(var a=0; a<taskFinances.length; a++){
-		//break the costs into equipment / skill / product
-		var taskFinance = taskFinances[a];
-		console.log("taskFinance", taskFinance);
-		
-		for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
-			var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
-			var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(0));
-			equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
-			
-			//add task resource costs breakdown to task resource type costs (indented)
-			for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
-				var resource = taskItem.taskResourceCosts[tr];
-				equipmentItems += "<li class='taskResourceItem equipmentTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
-			}
-		}
-		
-		for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
-			var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
-			var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(1));
-			laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
-			
-			//add task resource costs breakdown to task resource type costs (indented)
-			for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
-				var resource = taskItem.taskResourceCosts[tr];
-				laborItems += "<li class='taskResourceItem laborTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
-			}
-		}
-		
-		for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
-			var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
-			var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(2));
-			productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
-			
-			//add task resource costs breakdown to task resource type costs (indented)
-			for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
-				var resource = taskItem.taskResourceCosts[tr];
-				productItems += "<li class='taskResourceItem productTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
-			}
-		}
-	}
-	
-	console.log("equipmentItems", equipmentItems);
-	console.log("laborItems", laborItems);
-	console.log("productItems", productItems);
-	
-	legendHolder
-	.find("li[data-name='equipment']")
-	.after(equipmentItems)
-	.end()
-	.find("li[data-name='labor']")
-	.after(laborItems)
-	.end()
-	.find("li[data-name='products']")
-	.after(productItems)
-	.end()
-	.find(".equipmentTaskResourceItem")
-	.last()
-	.addClass("last")
-	.end()
-	.end()
-	.find(".laborTaskResourceItem")
-	.last()
-	.addClass("last")
-	.end()
-	.end()
-	.find(".productTaskResourceItem")
-	.last()
-	.addClass("last");
-	
-	var resetLegentStyle = function(legendHolder){
-		$(legendHolder)
-		.find("li:not(.taskItem):not(.taskResourceItem)")
-		.css({"background-color": "transparent"})
-		.removeClass("active")
-		.find("span.swatch")
-		.each(function(){
-			$(this)
-			.css({"background-color": $(this).closest("li").data("hovercolour")});
-		})
-		.end()
-		.find("span.pct")
-		.text("");
-	}
-	
-	// Include a html legend template after the module doughnut itself
-	helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
-		helpers.addEvent(legendNode, 'mouseover', function () {
-			console.log("hover legendNode: ", this, index, $(this).prop("class"));
-			
-			if($(this).hasClass("taskItem") || $(this).hasClass("taskResourceItem")){
-				if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
-					index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
-				}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
-					index = 1; //$(legendHolder).find("li[data-name='labor']").index();
-				}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
-					index = 2; //$(legendHolder).find("li[data-name='products']").index();
-				}
-			}else{
-				index = parseInt($(this).data("segmentid"));
-			}
-			
-			console.log("index: ", index);
-			
-			if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
-				var activeSegment = plenty_admin.UI.field.taskFinancesGraph.segments[index];
-				
-				var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
-				
-				activeSegment.save();
-				activeSegment.fillColor = activeSegment.highlightColor;
-				activeSegment.innerRadius = 60;
-				plenty_admin.UI.field.taskFinancesGraph.showTooltip([activeSegment]);
-				activeSegment.restore();
-				
-				$(legendNode)
-				.css({"background-color": $(this).data("hovercolour")})
-				.addClass("active")
-				.find("span.swatch")
-				.css({"background-color": activeSegment.highlightColor})
-				.end()
-				.find("span.pct")
-				.text(pct);
-			}
-		});
-	});
-	
-	helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
-		if($(this).hasClass("taskItem")){
-			if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
-				index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
-			}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
-				index = 1; //$(legendHolder).find("li[data-name='labor']").index();
-			}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
-				index = 2; //$(legendHolder).find("li[data-name='products']").index();
-			}
-			//return; //no hover effect on task items just yet
-		}
-		plenty_admin.UI.field.taskFinancesGraph.draw();
-		if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
-			resetLegentStyle(legendHolder);
-		}
-	});
-	
-	//highlight key element when hovering segment
-	plenty_admin.UI.field.taskFinancesGraphEl.on("mousemove", function(evt){
-		var activePoints = plenty_admin.UI.field.taskFinancesGraph.getSegmentsAtEvent(evt);
-		if(activePoints.length > 0){
-			//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
-			legendHolder
-			.find("li")
-			.removeClass("active");
-			
-			var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
-			var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
-			var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
-			
-			resetLegentStyle(legendHolder);
-			
-			legendItem
-			.addClass("active")
-			.css({"background-color": legendItem.data("hovercolour")})
-			.find("span.swatch")
-			.css({"background-color": activePoints[0].highlightColor})
-			.end()
-			.find("span.pct")
-			.text(pct);
-		}else{
-			resetLegentStyle(legendHolder);
-		}
-		// => activePoints is an array of segments on the canvas that are at the same position as the click event.
-	});
-	
-	//clear segment highlight onMouseOut
-	plenty_admin.UI.field.taskFinancesGraphEl.on("mouseout", function(evt){
-		resetLegentStyle(legendHolder);
-	});
-	
-	plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.taskFinancesGraph);
 }
 
 plenty_admin.DATA.load_field_observation = function(observationId, callback){
@@ -9423,6 +9340,20 @@ plenty_admin.UI.map.init = function(){
 	.on('show.bs.popover', function (e) {
 		plenty_admin.UI.map.orgs_quickfilter
 		.popover("hide");
+	})
+	.on("mouseenter", function () {
+		var _this = this;
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function () {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function () {
+		var _this = this;
+		setTimeout(function () {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 300);
 	});
 	
 	plenty_admin.UI.map.orgs_quickfilter
@@ -9443,6 +9374,20 @@ plenty_admin.UI.map.init = function(){
 	.on('show.bs.popover', function (e) {
 		plenty_admin.UI.map.farms_quickfilter
 		.popover("hide");
+	})
+	.on("mouseenter", function () {
+		var _this = this;
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function () {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function () {
+		var _this = this;
+		setTimeout(function () {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 300);
 	});
 	
 }
@@ -9542,28 +9487,25 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					}, 
-					/*
-					onDoubleClick: function(event){ //click event
-						event.stop();
-						this.isDblClick = true;
-						console.log("marker double clicked: ", event);
-						plenty_admin.UI.field.show_equipment_modal(equip);
-					},
-					*/ 
-					onClick: function(event){ //right click event
-						console.log("event:", this, equip);
+					onClick: function(){ //click event
+						console.log("event:", this, this.args);
+						plenty_admin.UI.map.clickedEquipment = true;
+						var t = setTimeout(function(){
+							plenty_admin.UI.map.clickedEquipment = false;
+						}, 300);
+						//event.stop();
 						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
 						plenty_admin.MAPS.polygon_tooltip.hide();
 					},
 					onDragEnd: function(){ //drag end event
 						var that = this;
-						console.log("onDragEnd:", equip, that);
+						//console.log("onDragEnd:", equip, that);
 						//check if the point has been moved to another polygon or is not in a polygon
 						var matchedPoly = null;
 						for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
 							var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
 							if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
-								console.log("Point is inside a polygon: ", polygon);
+								//console.log("Point is inside a polygon: ", polygon);
 								matchedPoly = polygon;
 								break;
 							}
@@ -9571,14 +9513,14 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 						
 						if(matchedPoly){
 							if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
-								console.log("do you want top move this equipment within this field?");
+								//console.log("do you want top move this equipment within this field?");
 								plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
 							}else{
-								console.log("Do you what to assosciate this equipment with a different field");
+								//console.log("Do you what to assosciate this equipment with a different field");
 								plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
 							}
 						}else{
-							console.log("are you sure you want to disassociate this equipment with any fields???");
+							//console.log("are you sure you want to disassociate this equipment with any fields???");
 							plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
 							plenty_admin.MAPS.delete_field_equipment(equip, that);
 						}
@@ -9786,7 +9728,11 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 		//for(var c=0; c<allCropTypes.length; c++){
 		for(id in plenty_admin.UI.map.allCropTypes){
 			if(plenty_admin.UI.map.allCropTypes.hasOwnProperty(id)){
-				legendItems[id] = {color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), colour: "#"+(plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "none" || plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), label : plenty_admin.UI.map.allCropTypes[id]};
+				legendItems[id] = {
+									color: "#"+plenty_admin.UI.brand_palette.colourAt(inc), 
+									colour: "#"+(plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "none" || plenty_admin.UI.map.allCropTypes[id].toLowerCase() === "nocroptypesfound" ? "000000" : plenty_admin.UI.brand_palette.colourAt(inc)), 
+									label : plenty_admin.UI.map.allCropTypes[id]
+								};
 				inc += 1;
 			}
 		}
@@ -9885,6 +9831,12 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 						});
 					}, 
 					onClick: function(event){
+						//if a marker sitting on top of a field has been clicked
+						//do not trigger the polygon click event
+						if(plenty_admin.UI.map.clickedEquipment){
+							plenty_admin.UI.map.clickedEquipment = false;
+							return;
+						}
 						console.log("polygon clicked");
 						var _this = this;
 						var checkDouble = setTimeout(function(){
@@ -9912,6 +9864,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 						event.stop();
 						this.isDblClick = true;
 						console.log("polygon double clicked: ", event);
+						
 						plenty_admin.HELPER.showLoadingOverlay();
 						var thisPoly = this;
 						//var polyPath = this.getPath().getArray();
@@ -9927,10 +9880,22 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 							polyPath.push(latlng);
 						});
 						
+						var _MouseEvent = null;
+						
+						for(prop in event){
+							if(event.hasOwnProperty(prop)){
+								//console.log("event properties: ", prop, event[prop] instanceof MouseEvent);
+								if( event[prop] instanceof MouseEvent){
+									_MouseEvent = event[prop];
+									break;
+								}
+							}
+						}
+						
 						
 						//only move to field screen
 						//if a polygon has been clicked, not a marker
-						if($(event.fb.target).hasClass("marker")){
+						if($(_MouseEvent && _MouseEvent.target).hasClass("marker")){
 							console.log("marker clicked instead of poly - return!");
 							return;
 						}else{
@@ -10010,6 +9975,8 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
 		});
 		
+		plenty_admin.HELPER.hideLoadingOverlay();
+		
 		//cluster the polygons and render clusters on the map
 		//plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);
 	});
@@ -10058,12 +10025,32 @@ $( document ).on( "dashboard_data_ready", function( event, orgs ) {
 //create namespace for plans layout
 plenty_admin.UI.plans = {};
 plenty_admin.UI.plans.DOM = plenty_admin.UI.DOM.find("#plans-container");
-plenty_admin.UI.plans.filterControls = $(".filter_controls");
+plenty_admin.UI.plans.filterControls = plenty_admin.UI.plans.DOM.find(".filter_controls");
 plenty_admin.UI.plans.toggleFilters = plenty_admin.UI.plans.filterControls.find(".toggleFilters a");
-//plenty_admin.UI.plans.farms_quickfilter = plenty_admin.UI.plans.filterControls.find(".quickFilter_farms");
+plenty_admin.UI.plans.farms_quickfilter = plenty_admin.UI.plans.filterControls.find(".quickFilter_farms");
 plenty_admin.UI.plans.orgs_quickfilter = plenty_admin.UI.plans.filterControls.find(".quickFilter_organizations");
-plenty_admin.UI.plans.plansTable = plenty_admin.UI.plans.DOM.find("#plans-container tbody");
-plenty_admin.UI.plans.applicableFilters = ["organizations"/*, "farms", "fields", "croptypes", "plans"*/];
+plenty_admin.UI.plans.plansTable = plenty_admin.UI.plans.DOM.find("#plans-list");
+plenty_admin.UI.plans.applicableFilters = ["organizations", "farms", "fields", "croptypes", "plans"];
+plenty_admin.UI.plans.add_template_plan_modal = plenty_admin.UI.plans.DOM.closest("body").find(".modal.add-plan");
+plenty_admin.UI.plans.dummyProfitProj = {
+	planDto: {
+		id:111,
+		name: "dummyPlan",
+		description:"dummy plan because getting profit projection failed"
+	},
+	fieldDto: {
+		id:1,
+		name:"dummyField",
+		acres:123
+	},
+	fieldCropDto:{
+		
+	},
+	revenue:12345,
+	expense:65432,
+	profit:88776,
+	profitPerAcre:234
+};
 
 //method to initiate the field page
 plenty_admin.UI.plans.init = function(){
@@ -10077,7 +10064,6 @@ plenty_admin.UI.plans.init = function(){
 		return false;
 	});
 	
-	/*
 	plenty_admin.UI.plans.farms_quickfilter
 	.popover({
 		content:function(){
@@ -10097,8 +10083,21 @@ plenty_admin.UI.plans.init = function(){
 	.on('show.bs.popover', function (e) {
 		plenty_admin.UI.plans.orgs_quickfilter
 		.popover("hide");
+	})
+	.on("mouseenter", function () {
+		var _this = this;
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function () {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function () {
+		var _this = this;
+		setTimeout(function () {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 300);
 	});
-	*/
 	
 	plenty_admin.UI.plans.orgs_quickfilter
 	.popover({
@@ -10116,71 +10115,594 @@ plenty_admin.UI.plans.init = function(){
 	})
 	.end()
 	.on('show.bs.popover', function (e) {
-		//plenty_admin.UI.plans.farms_quickfilter
-		//.popover("hide");
+		plenty_admin.UI.plans.farms_quickfilter
+		.popover("hide");
+	})
+	.on("mouseenter", function () {
+		var _this = this;
+		$(this).popover("show");
+		$(".popover").on("mouseleave", function () {
+			$(_this).popover('hide');
+		});
+	}).on("mouseleave", function () {
+		var _this = this;
+		setTimeout(function () {
+			if (!$(".popover:hover").length) {
+				$(_this).popover("hide");
+			}
+		}, 300);
 	});
 	
-	plenty_admin.UI.plans.plansTable
-	.off("click")
-	.on("click", function(e){
-		console.log("plans container clicked");
-		plenty_admin.UI.filters.toggleFilters("close");	
-		//plenty_admin.UI.plans.farms_quickfilter.popover("hide");
-		plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
+	plenty_admin.UI.plans.add_template_plan_modal
+	.find("input.datepicker").datepicker({
+		autoclose:true, 
+		startDate: '+0d'
 	});
+	
+	plenty_admin.UI.plans.DOM
+	.find(".btn.add-plan-to-displayed")
+	.click(function(){
+		plenty_admin.UI.plans.add_template_plan_modal
+		.data("fieldSet", plenty_admin.UI.plans.DOM.find("tbody.fieldPlans"))
+		.modal("show");
+	});
+	
+	plenty_admin.UI.plans.add_template_plan_modal
+	.find("button.add-plan")
+	.click(function(){
+		var selectedPlanTemplates = [];
+		var $this = $(this);
+		plenty_admin.UI.plans.add_template_plan_modal.find("input[type='checkbox']:checked:enabled").each(function(){
+			selectedPlanTemplates.push($(this).closest("tr"));
+		});
+		
+		console.log("selectedPlanTemplates", selectedPlanTemplates);
+		for(var t=0; t<selectedPlanTemplates.length; t++){
+			//calculateCostForPlan
+			//get cost calculation to push into plans list
+			var templatePlanDto = selectedPlanTemplates[t].data("templatePlan");
+			
+			var rDateObj = plenty_admin.UI.plans.add_template_plan_modal
+							.find("#replaceStartingDate").data("datepicker").date;
+			
+			var replaceStartingDate = rDateObj.getUTCFullYear()+"-"+
+										((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
+										(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
+										//(rDateObj.getUTCHours() < 10 ? "0"+rDateObj.getUTCHours() : rDateObj.getUTCHours())+":"+
+										//(rDateObj.getUTCMinutes() < 10 ? "0"+rDateObj.getUTCMinutes() : rDateObj.getUTCMinutes());
+			
+			/*			
+			var pDateObj = plenty_admin.UI.plans.add_template_plan_modal
+							.find("#plantationDate").data("datepicker").date;
+			
+			var plantationDate = pDateObj.getUTCFullYear()+"-"+
+										((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
+										(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate())+" "+
+										(pDateObj.getUTCHours() < 10 ? "0"+pDateObj.getUTCHours() : pDateObj.getUTCHours())+":"+
+										(pDateObj.getUTCMinutes() < 10 ? "0"+pDateObj.getUTCMinutes() : pDateObj.getUTCMinutes());
+			*/
+			
+			var activeFields = plenty_admin.UI.plans.add_template_plan_modal.data("fieldSet");
+			for(var fs=0; fs<activeFields.length; fs++){
+				var currentFS = activeFields[fs];
+				var planReplacementDto = {
+										organizationId: templatePlanDto.organizationId,
+										planId: $(currentFS).data("profitProjection").planDto.id,
+										templatePlanId: templatePlanDto.id, //this should be the ID of a newly added templatePlan
+										requestingUserId: plenty_admin.DATA.userDetails.id,
+										replaceStartingDate: replaceStartingDate,
+										fieldCropToReplacePlanForId: $(currentFS).data("profitProjection").fieldCropDto.id,
+										plantationDate: $(currentFS).data("profitProjection").planDto.plantationDate,
+										commit: false
+									}
+										
+				plenty_admin.REST.changePlan(planReplacementDto, function(profitProjection){
+					plenty_admin.UI.plans.add_template_plan_modal
+					.data("fieldSet")
+					.each(function(){
+						var $projectionPlanHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection, "templatePlan");
+						
+						$projectionPlanHTML
+						.data("planReplacementDto", planReplacementDto);
+						
+						$(this)
+						.append($projectionPlanHTML);
+					});
+					
+					plenty_admin.UI.plans.add_template_plan_modal
+					.modal("hide");
+				});
+			}
+		}
+	});
+}
+
+plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
+	var plan = profitProjection.planDto;
+	var field = profitProjection.fieldDto;
+	var fieldCrop = profitProjection.fieldCropDto;
+		
+	var $planHTML = $([
+			"<tr data-id='"+plan.id+"' class='plan"+(plan.active ? " active" : "")+" pointer "+type+"' title='View Plan Details'>",
+				"<td width='6%' class='activeToggle'></th>",
+				"<td width='10.66%'>"+plan.name+"</th>",
+				"<td width='16.66%'>"+plan.description+"</th>",
+				"<td width='8%'>"+plan.startTime+"</th>",
+				"<td width='12.66%'>"+numeral(profitProjection.revenue).format('$0,0.00')+"</th>",
+				"<td width='12.66%'>"+numeral(profitProjection.expense).format('$0,0.00')+"</th>",
+				"<td width='16.66%'>"+numeral(profitProjection.profit).format('$0,0.00')+"</th>",
+				"<td width='16.66%' class='text-right'>"+numeral(profitProjection.profitPerAcre).format('$0,0.00')+"</th>",
+			"</tr>"
+		].join("")).data("profitProjection", profitProjection);
+		
+		var $activeToggle = $("<i class=' glyphicon glyphicon-ok active "+(plan.active ? "true" : "false")+"' title='Use this plan' data-toggle='tooltip' data-placement='top'></i>");
+		$activeToggle
+		.click(function(e){
+			e.stopPropagation();
+			var $this = $(this);
+			var profitProjection = $this.closest("tr").data("profitProjection");
+			
+			if($(this).hasClass("true")){
+				//deactivate this plan from this field
+				$(this)
+				.removeClass("true")
+				.addClass("false");
+			}else{
+				
+				var $modalBody = 
+					$('<div class="row">' +
+						'<div class="col-md-12"> ' +
+							'<p>Are you sure you want to change Plan X for Plan Y starting on MM/DD/YYYY?</p>'+
+						'</div> '+
+					'</div>');
+				/*
+				var $modalBody = 
+					$('<div class="row">' +
+					'<div class="col-md-12"> ' +
+						'<form>' +
+							'<div class="form-group col-md-12 mln">' +
+								'<label class="col-md-12 control-label" for="replaceStartingDate">Replace Start Date</label>' +
+								'<div class="col-md-12">' +
+									'<input id="replaceStartingDate" name="replaceStartingDate" type="text" placeholder="Pick Start Date" class="datepicker form-control input-md">' +
+								'</div>' +
+							'</div>' +
+							
+							'<div class="form-group col-md-6 mrn">' +
+								'<label class="col-md-12 control-label" for="plantationDate">Plantation Date</label>' +
+								'<div class="col-md-12">' +
+									'<input id="plantationDate" name="plantationDate" type="text" placeholder="Pick Plantation Date" class="datepicker form-control input-md">' +
+								'</div>' +
+							'</div>' +
+							
+						'</form>'+
+					'</div> '+
+				'</div>');
+				*/
+				
+				//warn the user about changing plans
+				bootbox.dialog({
+					title: 'Confirm Change Plan',
+					message: $modalBody,
+					className: "info",
+					buttons: {
+						default: {
+						  label: "Cancel",
+						  className: "btn-default",
+						  callback: plenty_admin.HELPER.hideLoadingOverlay
+						},
+						primary: {
+						  label: "OK",
+						  className: "btn-primary",
+							callback: function(){
+								plenty_admin.HELPER.showLoadingOverlay();
+								
+								console.log("profitProjection", profitProjection);
+								/*	
+								var rDateObj = $modalBody.find("#replaceStartingDate").data("datepicker").date;
+								
+								var replaceStartingDate = rDateObj.getUTCFullYear()+"-"+
+															((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
+															(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
+															//(rDateObj.getUTCHours() < 10 ? "0"+rDateObj.getUTCHours() : rDateObj.getUTCHours())+":"+
+															//(rDateObj.getUTCMinutes() < 10 ? "0"+rDateObj.getUTCMinutes() : rDateObj.getUTCMinutes());
+								
+												
+								var pDateObj = $modalBody.find("#plantationDate").data("datepicker").date;
+								
+								var plantationDate = pDateObj.getUTCFullYear()+"-"+
+															((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
+															(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate())+" "+
+															(pDateObj.getUTCHours() < 10 ? "0"+pDateObj.getUTCHours() : pDateObj.getUTCHours())+":"+
+															(pDateObj.getUTCMinutes() < 10 ? "0"+pDateObj.getUTCMinutes() : pDateObj.getUTCMinutes());
+															
+								console.log("replaceStartingDate", replaceStartingDate);
+								console.log("plantationDate", plantationDate);
+								*/
+								
+								var planReplacementDto = {
+									organizationId: profitProjection.planDto.organizationId,
+									planId: profitProjection.planDto.id,
+									templatePlanId: profitProjection.planDto.id, //this should be the ID of a newly added templatePlan
+									requestingUserId: plenty_admin.DATA.userDetails.id,
+									replaceStartingDate: replaceStartingDate,
+									fieldCropToReplacePlanForId: profitProjection.fieldCropDto.id, 
+									plantationDate: null,
+									commit: true
+								}
+								
+								console.log("planReplacementDto", planReplacementDto);
+								
+								$this.closest("tr.plan").data("planReplacementDto", planReplacementDto);
+								
+								plenty_admin.REST.changePlan(planReplacementDto, function(){
+									//remove active class from other plans 
+									$this
+									.closest("tbody")
+									.find("tr.plan")
+									.removeClass("active")
+									.find("i.active") 
+									.removeClass("true")
+									.addClass("false");
+									
+									//enable this plan for this field
+									$this
+									.removeClass("false")
+									.addClass("true")
+									.closest("tr.plan")
+									.addClass("active");
+									
+									plenty_admin.HELPER.hideLoadingOverlay();
+								});
+							}
+						}
+					}
+				});
+			}
+			return false;
+		});
+		
+		$planHTML
+		.find("td.activeToggle")
+		.append($activeToggle)
+		.end()
+		.click(function(e){
+			e.stopPropagation();
+			console.log("clicked a plan");
+			
+			//build the breadcrumb trail object
+			var plan_breadcrumb = [
+				{
+					class:"back",
+					name:"Plans",
+					clickHandler:function(){
+						plenty_admin.UI.currentScreen
+						.fadeOut("normal", function(){
+							plenty_admin.UI.plan.clear();
+							plenty_admin.UI.currentScreen = plenty_admin.UI.plans.DOM;
+							plenty_admin.UI.currentScreen
+							.fadeIn("normal");
+						});
+						return false;
+					}
+				},
+				{
+					class:"active",
+					name:field.name+", "+plan.name,
+					clickHandler:null
+				}
+			];
+			
+			plenty_admin.UI.plan.DOM
+			.find(".breadcrumb-trail")
+			.remove()
+			.end()
+			.prepend(plenty_admin.UI.build_breadcrumb_trail(plan_breadcrumb));
+			
+			plenty_admin.UI.plan.init(profitProjection, $(this).hasClass("templatePlan"));
+		});
+		
+		return $planHTML;
 }
 
 plenty_admin.UI.plans.populate = function(){
-	plenty_admin.UI.plans.DOM
-	.find("tbody tr")
+	plenty_admin.UI.plans.plansTable
+	.find("tbody")
 	.remove();
-	
-	for(var p=0; p<plenty_admin.DATA.plans.length; p++){
-		var plan = plenty_admin.DATA.plans[p];
-		var $planHTML = $([
-			"<tr data-id='"+plan.id+"' class='plan'>",
-				"<td width='6%'><i class='active "+(plan.active ? "glyphicon glyphicon-ok" : "")+"'></i></th>",
-				"<td width='10.66%'>"+plan.name+"</th>",
-				"<td width='16.66%'>"+plan.description+"</th>",
-				"<td width='16.66%'>$27,754.00</th>",
-				"<td width='16.66%'>$27,754.00</th>",
-				"<td width='16.66%'>$27,754.00</th>",
-				"<td width='16.66%' class='text-right'>$25.56</th>",
-			"</tr>"
-		].join(""));
 		
-		$planHTML
-		.data("plan", plan);
+		var legendItems = {};
+		plenty_admin.UI.plans.allCropTypes = [];
 		
-		console.log("$planHTML", $planHTML);
+	for(var f=0; f<plenty_admin.DATA.plans.length; f++){
+		var profitProjection = plenty_admin.DATA.plans[f];
+		var plan = profitProjection.planDto;
+		var field = profitProjection.fieldDto;
+		var fieldCrop = profitProjection.fieldCropDto;
+			
+		if(!legendItems[fieldCrop.cropTypeId]){
+			//plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
+			plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(legendItems).length > 0 ? Object.keys(legendItems).length : 100));
+			legendItems[fieldCrop.cropTypeId] = {
+									color: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
+									colour: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
+									label : plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name
+								};
+		}
 		
-		plenty_admin.UI.plans.DOM
-		.find("tbody")
+		//add a legend to the map based on the filtered fields
+		console.log("legendItems: ", legendItems);
+		
+		if(plenty_admin.UI.plans.plansTable.find(".fieldPlans_"+field.id).length == 0){
+			var $tbody = $("<tbody class='fieldPlans fieldPlans_"+field.id+"'/>");
+			$tbody.data("profitProjection", profitProjection);
+			$fieldHTML = $([
+					"<tr class='field-row category'>",
+						"<td class='fieldPreview'><img src='' class='pointer'/></td>",
+						"<td colspan='6'><h4 class='mbn mtn'>"+field.name+"</h4><span class='fieldDetails capitalize'>"+field.acres+"ac, "+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</span></td>",
+						"<td>",
+							"<button class='btn btn-primary btn-inverted pull-right add-field-plan' title='Add a plan template to compare cost projections'>",
+								"<span class='glyphicon glyphicon-plus'></span>Add Plan Template",
+							"</button>",
+						"</td>",
+					"</tr>"
+			].join(""));
+			
+			$fieldHTML
+			.data("fieldDto", field)
+			.click(function(){
+				plenty_admin.UI.filters.toggleFilters("close");	
+				plenty_admin.UI.plans.farms_quickfilter.popover("hide");
+				plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
+			})
+			.find("button.add-field-plan")
+			.click(function(){
+				console.log("add field plan");
+				var $this = $(this);
+				
+				plenty_admin.UI.plans.add_template_plan_modal
+				.data("fieldSet", $this.closest("tbody.fieldPlans"))
+				.modal("show");
+			});
+			
+			plenty_admin.UI.plans.plansTable
+			.append($fieldHTML);
+			
+			$tbody
+			.append($fieldHTML);
+			
+			//create field thumbnail static map url
+			plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(profitProjection.fieldDto.id, 2, function(boundaries, fieldId, cropTypeId){
+				//console.log("got boundaries for field: ", boundaries, fieldId);
+				
+				var bounds = new google.maps.LatLngBounds();	
+				boundaries.forEach(function(xy, i) {
+					bounds.extend(new google.maps.LatLng(xy.latitude, xy.longitude));
+				});
+				
+				var fieldCenter = bounds.getCenter();
+				var cropColor = legendItems[cropTypeId].color.substring(legendItems[cropTypeId].color.indexOf('#')+1);
+				var pathString = "color:white|weight:2|fillcolor:0x"+cropColor;
+				boundaries.forEach(function(boundary, b){
+					pathString += "|" + boundary.latitude+","+boundary.longitude
+				});
+				
+				staticMapParams = {
+					center:fieldCenter.lat()+","+fieldCenter.lng(),
+					size:"110x110",
+					maptype:"hybrid",
+					zoom: plenty_admin.MAPS.getBoundsZoomLevel(bounds, {width:110, height:110}),
+					path:pathString
+				};
+				
+				var thumb_url = plenty_admin.MAPS.get_static_maps_url(staticMapParams);
+				
+				var field_thumb = plenty_admin.UI.plans.plansTable.find(".fieldPlans.fieldPlans_"+fieldId+" .fieldPreview img");
+				
+				set_thumb_url(thumb_url);
+				
+				field_thumb
+				.popover({
+						content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
+						title: field_thumb.closest("tr").data("fieldDto").name,
+						html:true,
+						id:"",
+						placement:"top",
+						container:"body"
+				})
+				.on("mouseenter", function () {
+					var _this = this;
+					$(this).popover("show");
+					$(".popover").on("mouseleave", function () {
+						$(_this).popover('hide');
+					});
+				}).on("mouseleave", function () {
+					var _this = this;
+					setTimeout(function () {
+						if (!$(".popover:hover").length) {
+							$(_this).popover("hide");
+						}
+					}, 300);
+				});
+				
+				function set_thumb_url(thumb_url){
+					if(field_thumb.length > 0){
+						field_thumb
+						.prop("src", thumb_url);
+					}else{
+						var to = setTimeout(function(){
+							console.log("checking field dom element");
+							set_thumb_url(thumb_url);
+						}, 300);
+					}
+				}
+			}, fieldCrop.cropTypeId);
+		}else{
+			var $tbody = plenty_admin.UI.plans.plansTable.find(".fieldPlans_"+field.id);
+		}
+		
+		var $planHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection);
+		$tbody
 		.append($planHTML);
+		
+		plenty_admin.UI.plans.plansTable
+		.append($tbody);
 	}
-	
+
 	plenty_admin.HELPER.hideLoadingOverlay();
 }
 
-// get all activity types and store them
-
+//get plans applicable to this filter
 plenty_admin.REST.getPlansFiltered = function(filterId){
-	plenty_admin.REST.plansFiltered = plenty_admin.api.one("filters/getPlansFiltered", filterId);
+	plenty_admin.REST.plansFiltered = plenty_admin.api.one("plan/getPlanProfitProjectionsForFilter", filterId);
 	plenty_admin.REST.plansFiltered.get()
-		.then(
-			function(plans){
-				console.log("got plans filtered: ", plans().data);
-				plenty_admin.DATA.plans = plans().data;
-				plenty_admin.UI.plans.populate();
-			},
-			function(err){
-				console.error("getting filtered plans: ", err);
-			});
+	.then(
+		function(plans){
+			console.log("got plans filtered: ", plans().data);
+			plenty_admin.DATA.plans = plans().data;
+			plenty_admin.UI.plans.populate();
+		},
+		function(err){
+			console.error("getting filtered plans: ", err);
+		}
+	);
 }
+
+//calculate cost for a plan
+plenty_admin.REST.getProfitProjectionForPlan = function(planDto, callback){
+	plenty_admin.REST.profitProjectionForPlan = plenty_admin.api.one("plan/calculateCostForPlanDto", planDto.id);
+	plenty_admin.REST.profitProjectionForPlan.get()
+	.then(
+		function(profitProjection){
+			console.log("got profit projection: ", profitProjection().data);
+			if(callback && typeof callback === "function"){
+				callback(profitProjection().data);
+			}
+		},
+		function(err){
+			console.error("getting profit proje tion for plan dto failed:: ", err);
+			
+			/* HACK - return dummy profitProjectionDto for UI testing only */
+			callback(plenty_admin.UI.plans.dummyProfitProj);
+		}
+	);
+}
+
+//get all template plans
+plenty_admin.REST.getTemplatePlans = function(callback){
+	plenty_admin.REST.templatePlans = plenty_admin.api.all("templatePlan/getAllTemplatePlans");
+	plenty_admin.REST.templatePlans.getAll()
+	.then(
+		function(templatePlans){
+			if(callback && typeof callback === "function"){
+				callback(templatePlans().data);
+			}
+			plenty_admin.DATA.eventCollector.done("event 1");
+		},
+		function(err){
+			console.error("getting templatePlans failed: ", err);
+		}
+	);
+}
+
+//change a plan
+plenty_admin.REST.changePlan = function(planReplacementDto, callback){
+	plenty_admin.REST.changePlan = plenty_admin.api.all("plan/changePlan");
+	plenty_admin.REST.changePlan.post(planReplacementDto)
+	.then(
+		function(changedPlan){
+			console.log("changed plan: ", changedPlan().data);
+			if(callback && typeof callback === "function"){
+				callback(changedPlan().data);
+			}
+		},
+		function(err){
+			console.error("changing plan failed: ", err);
+			bootbox.dialog({
+				message: "Could not apply plan to field! - "+err.status+" - "+err.statusText,
+				className: "danger",
+				buttons: {
+					danger: {
+					  label: "OK",
+					  className: "btn-danger",
+					  callback: function(){
+							plenty_admin.HELPER.hideLoadingOverlay();
+							
+							/* HACK - return dummy profitProjectionDto for UI testing only */
+							callback(plenty_admin.UI.plans.dummyProfitProj);
+						}
+					}
+				}
+			});
+		}
+	);
+}
+
 
 $( document ).on( "plans_data_ready", function( event ) {
 	console.log("plans_data_ready");
-    plenty_admin.UI.plans.init();
+	plenty_admin.DATA.eventCollector = window.eventcollector(3, 10000);
+	plenty_admin.REST.getCropTypes();
+	plenty_admin.REST.getActivityTypes();
+	
+	//get all template plans
+	plenty_admin.REST.getTemplatePlans(function(templatePlans){
+		console.log("got all template plans: ", templatePlans);
+		plenty_admin.DATA.templatePlans = templatePlans;
+	});
+		
+	plenty_admin.DATA.eventCollector.on('alldone', function(total) {
+		plenty_admin.DATA.selectedTemplatePlans = [];
+		var $tpBody = $("<tbody/>");
+		
+		plenty_admin.UI.plans.add_template_plan_modal
+		.find("#templateplans-list")
+		.append($tpBody);
+		
+		//populate the add plan modal
+		for(var tp=0; tp<plenty_admin.DATA.templatePlans.length; tp++){
+			var tplan = plenty_admin.DATA.templatePlans[tp];
+			var $templatePlan = $([
+				'<tr>',
+					'<td width="5%">',
+						'<input type="checkbox" class="selectTemplatePlan"></input>',
+					'</td>',
+					'<td width="35%">',
+						tplan.name,
+					'</td>',
+					'<td width="60%">',
+						tplan.description,
+					'</td>',
+				'</tr>'
+			].join(""))
+			.data("templatePlan", tplan)
+			.find("input.selectTemplatePlan")
+			.click(function(){
+				var thisTP = $(this).closest("tr").data("templatePlan");
+				if($(this).is(":checked")){
+					//add from the selected templatePlans array
+					plenty_admin.DATA.selectedTemplatePlans
+					.push(thisTP);
+				}else{
+					//remove from the selected templatePlans array
+					var index = null;
+					for(var a=0; a<plenty_admin.DATA.selectedTemplatePlans.length; a++){
+						var stp = plenty_admin.DATA.selectedTemplatePlans[a];
+						if(stp.id == thisTP.id){
+							plenty_admin.DATA.selectedTemplatePlans.splice(a, 1);
+							return;
+						}
+					}
+				}
+			})
+			.end();
+			
+			console.log("$templatePlan", $templatePlan);
+			
+			$tpBody
+			.append($templatePlan);
+		}
+		
+		plenty_admin.UI.plans.init();
+	});
 	
 	//populate filter panel options based on current user filters
 	plenty_admin.DATA.load_user_filters(function(filters){	
@@ -10189,7 +10711,6 @@ $( document ).on( "plans_data_ready", function( event ) {
 		plenty_admin.DATA.data_source = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList;
 		plenty_admin.DATA.update_filters(function(){
 			console.log("init filters");
-			//plenty_admin.UI.plans.add_equipment_to_map();
 			plenty_admin.UI.plans.toggleFilters
 			.parent()
 			.fadeIn("fast")
@@ -10199,6 +10720,1114 @@ $( document ).on( "plans_data_ready", function( event ) {
 		}, true);
 	});
 });
+//*********************** plan.js **************************//
+//create namespace for field layout
+plenty_admin.UI.plan = {
+	DOM: 	$("#plan-container"),
+	init: 	function(profitProjection, templatePlan){
+		console.log("plan - init", profitProjection);
+		plenty_admin.UI.plan.getTemplatePlanActivities(profitProjection.planDto.id, function(templateActivities){
+			plenty_admin.UI.currentScreen.fadeOut("normal");
+	
+			plenty_admin.UI.currentScreen = plenty_admin.UI.plan.DOM;
+			
+			plenty_admin.UI.currentScreen
+			.addClass("fill-area-content flexbox-item-grow"+(templatePlan ? " templatePlan" : ""));
+		
+			plenty_admin.UI.plan.populate(profitProjection, templateActivities);
+			plenty_admin.UI.plan.renderActivities(plenty_admin.UI.plan.dummyPlanActivities);
+			plenty_admin.UI.currentScreen.fadeIn("normal", function(){
+				plenty_admin.UI.plan.renderActivityFinancesGraph(plenty_admin.UI.plan.dummyPlanActivities);
+			});
+		});
+	},
+	populate: function(profitProjection, planActivities){
+		console.log("plan - populate", profitProjection, planActivities);
+		plenty_admin.UI.plan.DOM
+		.find(".profit")
+		.text(numeral(profitProjection.profit).format('$0,0.00'))
+		.end()
+		.find(".expense")
+		.text(numeral(profitProjection.expense).format('$0,0.00'))
+		.end()
+		.find(".revenue")
+		.text(numeral(profitProjection.revenue).format('$0,0.00'))
+		.end()
+		.find(".plan_field_acres")
+		.text(profitProjection.fieldDto.acres)
+		.end()
+	},
+	clear: function(){
+		console.log("plan - clear");
+	},
+	//get all template plan activities and finances
+	getTemplatePlanActivities: function(templatePlanId, callback){
+	plenty_admin.REST.templateActivities = plenty_admin.api.all("templateActivities/getAllTemplateActivities");
+		plenty_admin.REST.templateActivities.getAll()
+		.then(
+			function(templateActivities){
+				console.log("templateActivities", templateActivities().data);
+				if(callback && typeof callback === "function"){
+					callback(templateActivities().data);
+				}
+			},
+			function(err){
+				console.error("getting templateActivities failed: ", err);
+				plenty_admin.UI.plan.renderActivities(plenty_admin.UI.plan.dummyPlanActivities);
+				plenty_admin.UI.plan.renderActivityFinancesGraph(plenty_admin.UI.plan.dummyPlanActivities);
+			}
+		);
+	},
+	//get all plan activities and finances
+	getPlanActivities: function(planId, callback){
+	plenty_admin.REST.planActivities = plenty_admin.api.all("activities/getPlanActivities");
+		plenty_admin.REST.planActivities.getAll()
+		.then(
+			function(planActivities){
+				console.log("planActivities", planActivities().data);
+				if(callback && typeof callback === "function"){
+					callback(planActivities().data);
+				}
+			},
+			function(err){
+				console.error("getting templateActivities failed: ", err);
+				plenty_admin.UI.plan.renderActivities(plenty_admin.UI.plan.dummyPlanActivities);
+				plenty_admin.UI.plan.renderActivityFinancesGraph(plenty_admin.UI.plan.dummyPlanActivities);
+			}
+		);
+	},
+	renderActivityFinancesGraph: function(finances){
+		//holder for graph data set
+		var financesData = [];
+		
+		//colour palette for graph segments
+		var palette = new Rainbow();
+		palette.setSpectrum("#0076b2", "#93b222", "#788912");
+		palette.setNumberRange(0, (finances.activityFinances.length > 0 ? finances.activityFinances.length : 1));
+		
+		//for(index in finances){
+		for(var a=0; a<finances.activityFinances.length; a++){
+			var finance = finances.activityFinances[a];
+			//console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
+			finance.colour = "#"+palette.colourAt(a);
+	
+			var segment = {
+				value:		finance.cost,
+				color:		finance.colour,
+				highlight:	plenty_admin.HELPER.colorLuminance(finance.colour, .4),
+				label: 		plenty_admin.DATA.activityTypes[finance.activityTypeId].name,
+			};
+			
+			financesData.push(segment);
+		}
+		
+		var financeChartOptions = {
+			legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mrs\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+			tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
+			animateRotate: true
+		};
+		
+		var helpers = Chart.helpers;
+		
+		console.log("helpers", helpers);
+		
+		plenty_admin.UI.plan.financesGraph = new Chart(plenty_admin.UI.plan.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
+		
+		console.log("render finances graph: ", plenty_admin.UI.plan.financesGraph, financesData);
+		
+		//add a legend for this graph
+		var $legendHTML = $(plenty_admin.UI.plan.financesGraph.generateLegend());
+		
+		var legendHolder = 
+		plenty_admin.UI.plan.financesGraphEl
+		.parent()
+		.parent()
+		.parent()
+		.find(".legend");
+		
+		legendHolder
+		.html("")
+		.append($legendHTML);
+		
+		var resetLegentStyle = function(legendHolder){
+			$(legendHolder)
+			.find("li")
+			.css({"background-color": "transparent"})
+			.removeClass("active")
+			.find("span.swatch")
+			.each(function(){
+				$(this)
+				.css({"background-color": $(this).closest("li").data("hovercolour")});
+			})
+			.end()
+			.find("span.pct")
+			.text("");
+		}
+		
+		// Include a html legend template after the module doughnut itself
+		helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
+			helpers.addEvent(legendNode, 'mouseover', function () {
+				var activeSegment = plenty_admin.UI.plan.financesGraph.segments[index];
+				
+				var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
+				
+				activeSegment.save();
+				activeSegment.fillColor = activeSegment.highlightColor;
+				activeSegment.innerRadius = 60;
+				plenty_admin.UI.plan.financesGraph.showTooltip([activeSegment]);
+				activeSegment.restore();
+				
+				$(legendNode)
+				.css({"background-color": $(this).data("hovercolour")})
+				.addClass("active")
+				.find("span.swatch")
+				.css({"background-color": activeSegment.highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			});
+		});
+		
+		helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
+			plenty_admin.UI.plan.financesGraph.draw();
+			resetLegentStyle(legendHolder);
+		});
+		
+		//highlight key element when hovering segment
+		plenty_admin.UI.plan.financesGraphEl.on("mousemove", function(evt){
+			var activePoints = plenty_admin.UI.plan.financesGraph.getSegmentsAtEvent(evt);
+			if(activePoints.length > 0){
+				//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+				legendHolder
+				.find("li")
+				.removeClass("active");
+				
+				var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+				var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+				var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
+				
+				resetLegentStyle(legendHolder);
+				
+				legendItem
+				.addClass("active")
+				.css({"background-color": legendItem.data("hovercolour")})
+				.find("span.swatch")
+				.css({"background-color": activePoints[0].highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			}else{
+				resetLegentStyle(legendHolder);
+			}
+			// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+		});
+		
+		//clear segment highlight onMouseOut
+		plenty_admin.UI.plan.financesGraphEl.on("mouseout", function(evt){
+			resetLegentStyle(legendHolder);
+		});
+	},
+	renderActivities: function(activities){
+		//build the activity list item
+		plenty_admin.UI.plan.activityListContainer
+		.find("tr")
+		.remove();
+		
+		for(var a=0; a<activities.activityFinances.length; a++){
+			var activity = activities.activityFinances[a].activityDto;
+			activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
+			activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
+			activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
+			
+			var activityItem = [
+					"<tr class='activity pointer'>",
+						"<td width='5%'>",
+							"<i class='"+activity.iconClass+"'></i>",
+						"</td>",
+						"<td width='10%'>",
+							activity.state,
+						"</td>",
+						"<td width='60%'>",
+							plenty_admin.DATA.activityTypes[activity.activityTypeId].name,
+						"</td>",
+						"<td width='10%'>",
+							activity.startDate.date,
+						"</td>",
+						"<td width='10%'>",
+							plenty_admin.HELPER.daysFromHours(activity.durationInHours),
+						"</td>",
+						"<td width='10%' class='text-right'>",
+							numeral(activity.cost).format('$0,0.00'),
+						"</td>",
+					"</tr>"
+			].join("");
+			
+			var $activityItem = $(activityItem);
+
+			$activityItem
+			.data("activity", activity)
+			.data("activityFinance", activities.activityFinances[a])
+			.click(function(){
+				plenty_admin.UI.plan.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
+			});
+			
+			plenty_admin.UI.plan.activityListContainer.append($activityItem);
+		}
+	},
+	
+	// HACK Dummy Activity Data
+	dummyPlanActivities: {
+	  "activityFinances": [
+		{
+		  "activityDto": {
+			"id": 1,
+			"created": 1438133870099,
+			"lastModified": 1438133997409,
+			"planId": 1,
+			"indexInPlan": 8,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 8,
+			"startTime": 1446289200000,
+			"endTime": 1447063200000,
+			"durationInHours": 215,
+			"state": "SCHEDULED",
+			"cost": 33540,
+			"duplicateOfId": 0,
+			"bushlesPerAcre": 500
+		  },
+		  "activityTypeId": 8,
+		  "revenue": 66640,
+		  "cropPrice": 17,
+		  "cost": 33540,
+		  "profit": 33100,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 15,
+				"created": 1438133869770,
+				"lastModified": 1438133869770,
+				"activityId": 1,
+				"name": "harvest task1",
+				"startTime": 1446289200000,
+				"endTime": 1447063200000,
+				"durationInHours": 215,
+				"cost": 4290,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 16770,
+			  "laborCost": {
+				"cost": 12900,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 7,
+					"resourceTypeName": "Combine Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 24,
+						"resourceName": "joe test combine operatorworking as a Combine Operator",
+						"cost": 4300
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 8,
+					"resourceTypeName": "Driver",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 25,
+						"resourceName": "joe test driverworking as a Driver",
+						"cost": 4300
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 3,
+					"resourceTypeName": "Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 20,
+						"resourceName": "joe test operatorworking as a Operator",
+						"cost": 4300
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 3870,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 10,
+					"resourceTypeName": "Grain Cart",
+					"cost": 1290,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 18,
+						"resourceName": "Grain Cart #1",
+						"cost": 1290
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 11,
+					"resourceTypeName": "Grain Truck",
+					"cost": 1505,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 19,
+						"resourceName": "Grain Truck #1",
+						"cost": 1505
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 9,
+					"resourceTypeName": "Combine",
+					"cost": 1075,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 17,
+						"resourceName": "Combine #1",
+						"cost": 1075
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 0,
+				"taskResourceTypeCosts": []
+			  }
+			},
+			{
+			  "taskDto": {
+				"id": 16,
+				"created": 1438133870049,
+				"lastModified": 1438133870049,
+				"activityId": 1,
+				"name": "harvest task2",
+				"startTime": 1446289200000,
+				"endTime": 1447063200000,
+				"durationInHours": 215,
+				"cost": 4290,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 16770,
+			  "laborCost": {
+				"cost": 12900,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 7,
+					"resourceTypeName": "Combine Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 26,
+						"resourceName": "joe test combine operatorworking as a Combine Operator",
+						"cost": 4300
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 8,
+					"resourceTypeName": "Driver",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 27,
+						"resourceName": "joe test driverworking as a Driver",
+						"cost": 4300
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 3,
+					"resourceTypeName": "Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 21,
+						"resourceName": "joe test operatorworking as a Operator",
+						"cost": 4300
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 3870,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 10,
+					"resourceTypeName": "Grain Cart",
+					"cost": 1290,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 21,
+						"resourceName": "Grain Cart #2",
+						"cost": 1290
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 11,
+					"resourceTypeName": "Grain Truck",
+					"cost": 1505,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 22,
+						"resourceName": "Grain Truck #2",
+						"cost": 1505
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 9,
+					"resourceTypeName": "Combine",
+					"cost": 1075,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 20,
+						"resourceName": "Combine #2",
+						"cost": 1075
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 0,
+				"taskResourceTypeCosts": []
+			  }
+			}
+		  ],
+		  "colour": "#0076b2"
+		},
+		{
+		  "activityDto": {
+			"id": 3,
+			"created": 1438133870634,
+			"lastModified": 1438133997461,
+			"planId": 1,
+			"indexInPlan": 2,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 2,
+			"startTime": 1422097200000,
+			"endTime": 1422871200000,
+			"durationInHours": 215,
+			"state": "SCHEDULED",
+			"cost": 7263.21,
+			"duplicateOfId": 0
+		  },
+		  "activityTypeId": 2,
+		  "revenue": 0,
+		  "cropPrice": 17,
+		  "cost": 7263.21,
+		  "profit": -7263.21,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 19,
+				"created": 1438133870507,
+				"lastModified": 1438133870507,
+				"activityId": 3,
+				"name": "starter fertilizer",
+				"startTime": 1422097200000,
+				"endTime": 1422871200000,
+				"durationInHours": 215,
+				"cost": 1983.21,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 7263.21,
+			  "laborCost": {
+				"cost": 4300,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 3,
+					"resourceTypeName": "Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 20,
+						"resourceName": "joe test operatorworking as a Operator",
+						"cost": 4300
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 2795,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 5,
+					"resourceTypeName": "Spreader",
+					"cost": 1505,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 13,
+						"resourceName": "Spreader",
+						"cost": 1505
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 4,
+					"resourceTypeName": "Tractor",
+					"cost": 1290,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 12,
+						"resourceName": "Tractor",
+						"cost": 1290
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 168.21,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 4,
+					"resourceTypeName": "Nitrogen",
+					"cost": 71.98,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 14,
+						"resourceName": "nitrogen",
+						"cost": 71.98
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 3,
+					"resourceTypeName": "Potassium",
+					"cost": 16.16,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 13,
+						"resourceName": "potassium",
+						"cost": 16.16
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 2,
+					"resourceTypeName": "Phosphorus",
+					"cost": 80.07,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 12,
+						"resourceName": "phosphorus",
+						"cost": 80.07
+					  }
+					]
+				  }
+				]
+			  }
+			}
+		  ],
+		  "colour": "#2a8789"
+		},
+		{
+		  "activityDto": {
+			"id": 4,
+			"created": 1438133870753,
+			"lastModified": 1438133997479,
+			"planId": 1,
+			"indexInPlan": 3,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 3,
+			"startTime": 1422961200000,
+			"endTime": 1423825200000,
+			"durationInHours": 240,
+			"state": "SCHEDULED",
+			"cost": 7440,
+			"duplicateOfId": 0
+		  },
+		  "activityTypeId": 3,
+		  "revenue": 0,
+		  "cropPrice": 17,
+		  "cost": 7440,
+		  "profit": -7440,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 20,
+				"created": 1438133870729,
+				"lastModified": 1438133870729,
+				"activityId": 4,
+				"name": "tilling",
+				"startTime": 1422961200000,
+				"endTime": 1423825200000,
+				"durationInHours": 240,
+				"cost": 1488,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 7440,
+			  "laborCost": {
+				"cost": 4800,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 3,
+					"resourceTypeName": "Operator",
+					"cost": 4800,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 20,
+						"resourceName": "joe test operatorworking as a Operator",
+						"cost": 4800
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 2640,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 6,
+					"resourceTypeName": "Offset Disk",
+					"cost": 1200,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 14,
+						"resourceName": "Offset Disk",
+						"cost": 1200
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 4,
+					"resourceTypeName": "Tractor",
+					"cost": 1440,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 12,
+						"resourceName": "Tractor",
+						"cost": 1440
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 0,
+				"taskResourceTypeCosts": []
+			  }
+			}
+		  ],
+		  "colour": "#549860"
+		},
+		{
+		  "activityDto": {
+			"id": 5,
+			"created": 1438133870924,
+			"lastModified": 1438133997500,
+			"planId": 1,
+			"indexInPlan": 4,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 4,
+			"startTime": 1423825200000,
+			"endTime": 1424516400000,
+			"durationInHours": 192,
+			"state": "SCHEDULED",
+			"cost": 6149.01,
+			"duplicateOfId": 0
+		  },
+		  "activityTypeId": 4,
+		  "revenue": 0,
+		  "cropPrice": 17,
+		  "cost": 6149.01,
+		  "profit": -6149.01,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 21,
+				"created": 1438133870866,
+				"lastModified": 1438133870866,
+				"activityId": 5,
+				"name": "planting",
+				"startTime": 1423825200000,
+				"endTime": 1424516400000,
+				"durationInHours": 192,
+				"cost": 1541.01,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 6149.01,
+			  "laborCost": {
+				"cost": 3840,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 5,
+					"resourceTypeName": "Planter Operator",
+					"cost": 3840,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 22,
+						"resourceName": "joe test planter operatorworking as a Planter Operator",
+						"cost": 3840
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 2304,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 7,
+					"resourceTypeName": "Planter",
+					"cost": 1152,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 15,
+						"resourceName": "Planter",
+						"cost": 1152
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 4,
+					"resourceTypeName": "Tractor",
+					"cost": 1152,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 12,
+						"resourceName": "Tractor",
+						"cost": 1152
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 5.01,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 5,
+					"resourceTypeName": "Seed",
+					"cost": 5.01,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 15,
+						"resourceName": "seed",
+						"cost": 5.01
+					  }
+					]
+				  }
+				]
+			  }
+			}
+		  ],
+		  "colour": "#7ea937"
+		},
+		{
+		  "activityDto": {
+			"id": 6,
+			"created": 1438133871077,
+			"lastModified": 1438133997532,
+			"planId": 1,
+			"indexInPlan": 5,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 5,
+			"startTime": 1434193200000,
+			"endTime": 1434967200000,
+			"durationInHours": 215,
+			"state": "SCHEDULED",
+			"cost": 5948.96,
+			"duplicateOfId": 0
+		  },
+		  "activityTypeId": 5,
+		  "revenue": 0,
+		  "cropPrice": 17,
+		  "cost": 5948.96,
+		  "profit": -5948.96,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 22,
+				"created": 1438133871025,
+				"lastModified": 1438133871025,
+				"activityId": 6,
+				"name": "early nitrogen",
+				"startTime": 1434193200000,
+				"endTime": 1434967200000,
+				"durationInHours": 215,
+				"cost": 1628.96,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 5948.96,
+			  "laborCost": {
+				"cost": 4300,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 6,
+					"resourceTypeName": "Spray Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 23,
+						"resourceName": "joe test spray operatorworking as a Spray Operator",
+						"cost": 4300
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 1505,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 8,
+					"resourceTypeName": "Sprayer",
+					"cost": 1505,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 16,
+						"resourceName": "Sprayer",
+						"cost": 1505
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 143.96,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 4,
+					"resourceTypeName": "Nitrogen",
+					"cost": 143.96,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 14,
+						"resourceName": "nitrogen",
+						"cost": 143.96
+					  }
+					]
+				  }
+				]
+			  }
+			}
+		  ],
+		  "colour": "#8fac20"
+		},
+		{
+		  "activityDto": {
+			"id": 7,
+			"created": 1438133871271,
+			"lastModified": 1438133997552,
+			"planId": 1,
+			"indexInPlan": 6,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 6,
+			"startTime": 1435921200000,
+			"endTime": 1436695200000,
+			"durationInHours": 215,
+			"state": "SCHEDULED",
+			"cost": 6274.43,
+			"duplicateOfId": 0
+		  },
+		  "activityTypeId": 6,
+		  "revenue": 0,
+		  "cropPrice": 17,
+		  "cost": 6274.43,
+		  "profit": -6274.43,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 23,
+				"created": 1438133871181,
+				"lastModified": 1438133871181,
+				"activityId": 7,
+				"name": "late nitrogen",
+				"startTime": 1499079600000,
+				"endTime": 1499853600000,
+				"durationInHours": 215,
+				"cost": 1954.43,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 6274.43,
+			  "laborCost": {
+				"cost": 4300,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 6,
+					"resourceTypeName": "Spray Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 23,
+						"resourceName": "joe test spray operatorworking as a Spray Operator",
+						"cost": 4300
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 1505,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 8,
+					"resourceTypeName": "Sprayer",
+					"cost": 1505,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 16,
+						"resourceName": "Sprayer",
+						"cost": 1505
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 469.43,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 4,
+					"resourceTypeName": "Nitrogen",
+					"cost": 287.31,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 14,
+						"resourceName": "nitrogen",
+						"cost": 287.31
+					  }
+					]
+				  },
+				  {
+					"resourceTypeId": 6,
+					"resourceTypeName": "Broadleaf Herbicide",
+					"cost": 182.12,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 16,
+						"resourceName": "Broadleaf Herbicide",
+						"cost": 182.12
+					  }
+					]
+				  }
+				]
+			  }
+			}
+		  ],
+		  "colour": "#87a01b"
+		},
+		{
+		  "activityDto": {
+			"id": 8,
+			"created": 1438133871408,
+			"lastModified": 1438133997575,
+			"planId": 1,
+			"indexInPlan": 7,
+			"fieldCropId": 1,
+			"organizationId": 4,
+			"activityTypeId": 7,
+			"startTime": 1438513200000,
+			"endTime": 1439287200000,
+			"durationInHours": 215,
+			"state": "SCHEDULED",
+			"cost": 6120.57,
+			"duplicateOfId": 0
+		  },
+		  "activityTypeId": 7,
+		  "revenue": 0,
+		  "cropPrice": 17,
+		  "cost": 6120.57,
+		  "profit": -6120.57,
+		  "taskFinances": [
+			{
+			  "taskDto": {
+				"id": 24,
+				"created": 1438133871355,
+				"lastModified": 1438133871355,
+				"activityId": 8,
+				"name": "pest control",
+				"startTime": 1438513200000,
+				"endTime": 1439287200000,
+				"durationInHours": 215,
+				"cost": 1800.57,
+				"state": "UNSCHEDULED"
+			  },
+			  "cost": 6120.57,
+			  "laborCost": {
+				"cost": 4300,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 6,
+					"resourceTypeName": "Spray Operator",
+					"cost": 4300,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 23,
+						"resourceName": "joe test spray operatorworking as a Spray Operator",
+						"cost": 4300
+					  }
+					]
+				  }
+				]
+			  },
+			  "equipmentCost": {
+				"cost": 1505,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 8,
+					"resourceTypeName": "Sprayer",
+					"cost": 1505,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 16,
+						"resourceName": "Sprayer",
+						"cost": 1505
+					  }
+					]
+				  }
+				]
+			  },
+			  "productsCost": {
+				"cost": 315.57,
+				"taskResourceTypeCosts": [
+				  {
+					"resourceTypeId": 7,
+					"resourceTypeName": "Pesticide",
+					"cost": 315.57,
+					"taskResourceCosts": [
+					  {
+						"resourceId": 17,
+						"resourceName": "pesticide",
+						"cost": 315.57
+					  }
+					]
+				  }
+				]
+			  }
+			}
+		  ],
+		  "colour": "#809517"
+		}
+	  ],
+	  "totalCost": 72736.18,
+	  "totalRevenue": 66640,
+	  "totalProfit": -6096.18
+	}
+};
+
+plenty_admin.UI.plan.activityListContainer = plenty_admin.UI.plan.DOM.find("table.planActivities tbody");
+plenty_admin.UI.plan.financesGraphEl = plenty_admin.UI.plan.DOM.find("#plan_graph_wrapper canvas");
+
 //define an empty var for the sidebar HTML
 plenty_admin.UI.sideBar = {};
 plenty_admin.UI.sideBar.DOM = $("#sidebar");
@@ -10350,6 +11979,16 @@ plenty_admin.UI.filters.init = function(){
 	//once positioned, make the filters panel visible
 	plenty_admin.UI.filters.DOM
 	.show();
+	
+	plenty_admin.UI.filters.DOM
+	.on("mouseenter", function(){
+		clearTimeout(this.autohide);
+	})
+	.on("mouseleave", function(){
+		this.autohide = setTimeout(function(){
+			plenty_admin.UI.filters.toggleFilters("close");
+		}, 3000);
+	});
 }
 
 plenty_admin.UI.filters.add_selected_filter = function(filterData){
@@ -10921,6 +12560,8 @@ plenty_admin.REST.get_x_by_filtered = function(x, callback){
 
 plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context){
 	console.log("plenty_admin.DATA.update_filters", zoomFields);
+	plenty_admin.HELPER.showLoadingOverlay();
+	
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
 			console.log("data: ", data.body());
 			
@@ -10944,6 +12585,8 @@ plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context)
 			if(callback && typeof callback === "function"){
 				callback(data);
 			}
+			
+			//plenty_admin.HELPER.hideLoadingOverlay();
 		}
 	);
 }
