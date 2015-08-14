@@ -105,13 +105,13 @@ plenty_admin.init = function(context){
 						plenty_admin.REST.getBoundaryTypes();
 						plenty_admin.REST.getGrowthMethods();
 						plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
-						  //console.log('event %d of %d emitted', fired, total);
-						  //console.log('event description:', data);
+						  console.log('event %d of %d emitted', fired, total);
+						  console.log('event description:', data);
 						});
 						
 						plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 							$( document ).trigger( "organization_data_ready", [ plenty_admin.DATA.organizations ] );
-							plenty_admin.HELPER.hideLoadingOverlay();
+							//plenty_admin.HELPER.hideLoadingOverlay();
 						});	
 					});
 				});
@@ -413,7 +413,7 @@ plenty_admin.REST.getEquipmentTypes = function(){
 }
 
 plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
-	plenty_admin.REST.equipmentByOrgAndType = plenty_admin.api.one("equipment/getAllEquipmentByOrganizationAndType/"+org, type);
+	plenty_admin.REST.equipmentByOrgAndType = plenty_admin.api.one("equipmentEquipmentTypes/getByOrganizationAndType/"+org, type);
 	plenty_admin.REST.equipmentByOrgAndType.get()
 		.then(
 			function(equipmentReturn){
@@ -423,6 +423,23 @@ plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
 				
 				if(callback && typeof callback === "function"){
 					callback(orgEquipmentForType, el);
+				}
+			});
+}
+
+plenty_admin.REST.getSkillsAndRatesByUserAndSkillAndOrg = function(type, callback, el){
+	var org = plenty_admin.DATA.current_organization.id;
+	var user = plenty_admin.DATA.userDetails.id;
+	plenty_admin.REST.skillsAndRatesByUserAndSkillAndOrg = plenty_admin.api.one("skillsAndRates/getSkillsAndRatesByUserAndSkillAndOrganization/"+user+"/"+type, org);
+	plenty_admin.REST.skillsAndRatesByUserAndSkillAndOrg.get()
+		.then(
+			function(skillsAndRatesReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgSkillsAndRatesForType = plenty_admin.REST.get_object_from_data(skillsAndRatesReturn.body());
+				//console.log("Get equip types for org finished", orgEquipmentForType);
+				
+				if(callback && typeof callback === "function"){
+					callback(orgSkillsAndRatesForType, el);
 				}
 			});
 }
@@ -439,6 +456,18 @@ plenty_admin.REST.getEquipmentEquipmentTypesForOrg = function(){
 				plenty_admin.DATA.current_organization.equipmentEquipmentTypes = orgEquipmentEquipment;
 				
 				plenty_admin.DATA.eventCollector.done("equipmentEquipmentTypes");
+			});
+}
+
+plenty_admin.REST.allProducts = plenty_admin.api.all("products/getAllProducts");
+plenty_admin.REST.getAllProducts = function(){
+	plenty_admin.REST.allProducts.getAll()
+		.then(
+			function(productsReturn){
+				var products = plenty_admin.REST.get_object_from_data(productsReturn.body());
+				console.log("products", products);
+				plenty_admin.DATA.allProducts = products;
+				plenty_admin.DATA.eventCollector.done("allProducts");
 			});
 }
 
@@ -507,7 +536,13 @@ plenty_admin.REST.getSkillTypes = function(){
 	plenty_admin.REST.skillTypes.getAll()
 		.then(
 			function(skillTypesReturn){
-				plenty_admin.DATA.labourTypes = plenty_admin.REST.get_object_from_data(skillTypesReturn.body());
+				var dataTypes = {};
+				for(var r=0; r<skillTypesReturn.body().length; r++){
+					data = skillTypesReturn.body()[r].data();
+					dataTypes[data.id] = data;
+				}
+				
+				plenty_admin.DATA.labourTypes = dataTypes;
 				console.log("Get labour types finished");
 				
 				plenty_admin.DATA.eventCollector.done("labour");
@@ -555,7 +590,7 @@ plenty_admin.REST.getCropTypes = function(){
 			function(cropTypesReturn){
 				plenty_admin.DATA.cropTypes = plenty_admin.REST.get_object_from_data(cropTypesReturn.body());
 				console.log("Get crop types finished");
-				plenty_admin.DATA.eventCollector.done("event 1");
+				plenty_admin.DATA.eventCollector.done("Crop Types");
 			});
 }
 
@@ -568,7 +603,7 @@ plenty_admin.REST.getTillageTypes = function(){
 			function(tillageTypesReturn){
 				plenty_admin.DATA.tillageTypes = plenty_admin.REST.get_object_from_data(tillageTypesReturn.body());
 				console.log("Get tillage types finished");
-				plenty_admin.DATA.eventCollector.done("event 2");
+				plenty_admin.DATA.eventCollector.done("tillage types");
 			});
 }
 
@@ -581,7 +616,7 @@ plenty_admin.REST.getIrrigationTypes = function(){
 			function(irrigationTypesReturn){
 				plenty_admin.DATA.irrigationTypes = plenty_admin.REST.get_object_from_data(irrigationTypesReturn.body());
 				console.log("Get irrigation types finished");
-				plenty_admin.DATA.eventCollector.done("event 3");
+				plenty_admin.DATA.eventCollector.done("irrigation types");
 			});
 }
 
@@ -594,7 +629,7 @@ plenty_admin.REST.getOrganizationTypes = function(){
 			function(orgTypes){
 				plenty_admin.DATA.organizationTypes = plenty_admin.REST.get_object_from_data(orgTypes.body());
 				console.log("Get org types finished");
-				plenty_admin.DATA.eventCollector.done("event 3");
+				plenty_admin.DATA.eventCollector.done("organization types");
 			});
 }
 
@@ -607,7 +642,7 @@ plenty_admin.REST.getBoundaryTypes = function(){
 			function(boundaryTypes){
 				plenty_admin.DATA.boundaryTypes = plenty_admin.REST.get_object_from_data(boundaryTypes.body());
 				console.log("Get boundary types finished");
-				plenty_admin.DATA.eventCollector.done("event 4");
+				plenty_admin.DATA.eventCollector.done("boundary types");
 			});
 }
 

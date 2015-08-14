@@ -29,64 +29,6 @@ plenty_admin.UI.add_template_plan = {
 		.end()
 		.append(organizationOptionsHTML);
 		
-		var equipmentTypeList = plenty_admin.UI.add_template_plan.modal
-		.find("select#add_task_equipment_types");
-		
-		equipmentTypeList
-		.find("option")
-		.remove()
-		.end()
-		.append("<option value='' disabled selected style='display:none;'>Choose equipment type</option>");
-		
-		//populate equipment types
-		for(id in plenty_admin.DATA.equipmentTypes)
-		{
-			if(
-				plenty_admin.DATA.equipmentTypes.hasOwnProperty(id)
-				&& id !== "length"
-			){
-				var equip = plenty_admin.DATA.equipmentTypes[id];
-				var $equipmentTypeOptionsHTML = $("<option value='"+id+"'>"+equip.name+"</option>");
-				
-				$equipmentTypeOptionsHTML
-				.data("dto", equip);
-				
-				equipmentTypeList
-				.append($equipmentTypeOptionsHTML);
-				
-				plenty_admin.REST.getEquipmentByOrgAndType(plenty_admin.DATA.current_organization.id, equip.id, function(equipment, el){
-					console.log("equipments - ", equipment);
-					el.data("items", equipment);
-				}, $equipmentTypeOptionsHTML);
-			}
-		}
-		
-		//populate skill types
-		var skillTypeList = plenty_admin.UI.add_template_plan.modal
-		.find("select#add_task_labour_types");
-		
-		skillTypeList
-		.find("option")
-		.remove()
-		.end()
-		.append("<option value='' disabled selected style='display:none;'>Choose labour type</option>");
-		
-		for(id in plenty_admin.DATA.labourTypes)
-		{
-			if(
-				plenty_admin.DATA.labourTypes.hasOwnProperty(id)
-				&& id !== "length"
-			){
-				var skill = plenty_admin.DATA.labourTypes[id];
-				var $skillTypeOptionsHTML = $("<option value='"+id+"'>"+skill.name+"</option>");
-				
-				$skillTypeOptionsHTML
-				.data("dto", skill);
-				
-				skillTypeList
-				.append($skillTypeOptionsHTML);
-			}
-		}
 		
 		//populate product types
 		var productTypeList = plenty_admin.UI.add_template_plan.modal
@@ -145,6 +87,71 @@ plenty_admin.UI.add_template_plan = {
 		plenty_admin.UI.add_template_plan.modal
 		.on('show.bs.modal', function () {
 			$(this).find('.modal-content').css('height', $( window ).height()*0.9);
+			
+			//get the equipmentEquipment types for this org and populate the equipment dropdowns
+			var equipmentTypeList = plenty_admin.UI.add_template_plan.modal
+			.find("select#add_task_equipment_types");
+			
+			equipmentTypeList
+			.find("option")
+			.remove()
+			.end()
+			.append("<option value='' disabled selected style='display:none;'>Choose equipment type</option>");
+			
+			//populate equipment types
+			for(id in plenty_admin.DATA.equipmentTypes)
+			{
+				if(
+					plenty_admin.DATA.equipmentTypes.hasOwnProperty(id)
+					&& id !== "length"
+				){
+					var equip = plenty_admin.DATA.equipmentTypes[id];
+					var $equipmentTypeOptionsHTML = $("<option value='"+id+"'>"+equip.name+"</option>");
+					
+					$equipmentTypeOptionsHTML
+					.data("dto", equip);
+					
+					equipmentTypeList
+					.append($equipmentTypeOptionsHTML);
+					
+					plenty_admin.REST.getEquipmentByOrgAndType(plenty_admin.DATA.current_organization.id, equip.id, function(equipment, el){
+						console.log("equipments - ", equipment);
+						el.data("items", equipment);
+					}, $equipmentTypeOptionsHTML);
+				}
+			}
+			
+			//populate skill types
+			var skillTypeList = plenty_admin.UI.add_template_plan.modal
+			.find("select#add_task_labour_types");
+			
+			skillTypeList
+			.find("option")
+			.remove()
+			.end()
+			.append("<option value='' disabled selected style='display:none;'>Choose labour type</option>");
+			
+			for(id in plenty_admin.DATA.labourTypes)
+			{
+				if(
+					plenty_admin.DATA.labourTypes.hasOwnProperty(id)
+					&& id !== "length"
+				){
+					var skill = plenty_admin.DATA.labourTypes[id];
+					var $skillTypeOptionsHTML = $("<option value='"+id+"'>"+skill.name+"</option>");
+					
+					$skillTypeOptionsHTML
+					.data("dto", skill);
+					
+					skillTypeList
+					.append($skillTypeOptionsHTML);
+					
+					plenty_admin.REST.getSkillsAndRatesByUserAndSkillAndOrg(skill.id, function(skills, el){
+						console.log("skills - ", skills);
+						el.data("items", skills);
+					}, $skillTypeOptionsHTML);
+				}
+			}
 		})
 		.on('hidden.bs.modal', function () {
 			plenty_admin.UI.add_template_plan.clear();
@@ -180,7 +187,7 @@ plenty_admin.UI.add_template_plan = {
 			
 			if(
 				$(this).find("option:selected").val()
-				&& type === equipment
+				&& type === "equipment"
 			){
 				$(this)
 				.closest(".tab-pane")
@@ -218,29 +225,27 @@ plenty_admin.UI.add_template_plan = {
 				type = "product";
 			}else if($this.prop("id").indexOf("equipment") > -1){
 				type = "equipment";
+			}else if($this.prop("id").indexOf("labour") > -1){
+				type = "labour";
 			}
 			
-			console.log("type", type);
-			
-			if(type){
-				//list specific items for this type and show them
-				var specificItemsHTML = "<option value='' selected'>Choose specific "+selected.text()+"</option>";
-				//for(var s=0; s<specificItems.length; s++){
-				for(id in specificItems){
-					if(specificItems.hasOwnProperty(id)){
-						var item = specificItems[id];
-						specificItemsHTML += "<option value='"+item.id+"'>"+item.name+"</option>";
-					}
+			//list specific items for this type and show them
+			var specificItemsHTML = "<option value='' selected'>Choose specific "+selected.text()+"</option>";
+			//for(var s=0; s<specificItems.length; s++){
+			for(id in specificItems){
+				if(specificItems.hasOwnProperty(id)){
+					var item = specificItems[id];
+					specificItemsHTML += "<option value='"+(type === "equipment" ? item.equipmentId : item.id)+"'>"+(type === "equipment" ? item.equipmentName : item.name)+"</option>";
 				}
-				
-				specificItemsList
-				.find("option")
-				.remove()
-				.end()
-				.append(specificItemsHTML)
-				.show();
 			}
 			
+			specificItemsList
+			.find("option")
+			.remove()
+			.end()
+			.append(specificItemsHTML)
+			.show();
+
 			return false;
 		})
 		.end()
@@ -467,7 +472,8 @@ plenty_admin.UI.add_template_plan = {
 					equipmentIds:equipmentIds,
 					productAmountPairs:productAmountPairs,
 					anySpecificEquipmentIds:anySpecificEquipmentIds,
-					anySpecificProductIds:anySpecificProductIds
+					anySpecificProductIds:anySpecificProductIds,
+					anySpecificLabourIds:[]
 				}
 				
 				console.log("templateTaskDto", templateTaskDto);
@@ -529,6 +535,7 @@ plenty_admin.UI.add_template_plan = {
 			//collect all activities and their associated tasks
 			var addPlanForm = plenty_admin.UI.add_template_plan.modal.find("form.add_plan_form");
 			var valid = plenty_admin.HELPER.validateForm(addPlanForm);
+			var $this = $(this);
 			
 			//hide any current errors in activities
 			plenty_admin.UI.add_template_plan.modal.find(".activity .alert.help-block").slideUp("fast");
@@ -578,6 +585,10 @@ plenty_admin.UI.add_template_plan = {
 						activitiesAndTasks.push(taskWithActivities);
 					}
 					
+					//all validation tests passed - disable the button
+					$this
+					.button("disable");
+					
 					var TemplatePlanCreationDto = {
 							owningOrgId:plenty_admin.DATA.current_organization.id,//parseInt(owningOrgIdList.find("option:selected").val()),
 							planName:addPlanForm.find("#add_plan_name").val(),
@@ -589,6 +600,15 @@ plenty_admin.UI.add_template_plan = {
 					
 					plenty_admin.REST.plans.createTemplatePlan(TemplatePlanCreationDto, function(templatePlan){
 						console.log("add this templatePlan to the list: ", templatePlan);
+						var $planHTML = plenty_admin.UI.organization.addItemFunctionality($(plenty_admin.UI.create_item(templatePlan, "plans")));
+							
+						plenty_admin.UI.organization.DOM.find("table.plansList")
+						.find(".noItemsText")
+						.remove()
+						.end()
+						.append($planHTML);
+						
+						plenty_admin.UI.add_template_plan.hide();
 					});
 				}
 			}
@@ -603,6 +623,10 @@ plenty_admin.UI.add_template_plan = {
 	show: function(){
 		plenty_admin.UI.add_template_plan.modal
 		.modal("show");
+	},
+	hide: function(){
+		plenty_admin.UI.add_template_plan.modal
+		.modal("hide");
 	},
 	clear: function(){
 		//clear activities
@@ -634,22 +658,46 @@ plenty_admin.UI.add_template_plan = {
 		//reset form elements
 		plenty_admin.UI.add_template_plan.modal
 		.find("input, textarea")
-		.val("")
+		.each(function(){
+			if($(this).data("default")){
+				if($(this).prop("type") == "number"){
+					$(this).val(parseInt($(this).data("default")));
+				}else{
+					$(this).val($(this).data("default"));
+				}
+			}else{
+				$(this).val("");
+			}
+		})
+		//.val("")
 		.end()
 		.find("select")
 		.each(function(){
 			$(this)
 			.find("option:eq(0)")
 			.prop("selected", true);
+			
+			$(this)
+			.find("option:gt(0)")
+			.each(function(){
+				$(this)
+				.prop("disabled", false);
+			});
 		})
 		.end()
 		.find(".uom")
-		.hide();
+		.hide()
+		.end()
+		.find("button.add")
+		.button("reset");
 		
 		//remove any old task elements
 		plenty_admin.UI.add_template_plan.modal
 		.find("tr.task-element")
 		.remove();
+		
+		//hide the add task form
+		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents.hide();
 		
 	},
 	build_task_component: function(task_component, type){
@@ -677,9 +725,12 @@ plenty_admin.UI.add_template_plan = {
 		console.log("build_task_element", taskDto);
 		var $taskDOM = $([
 			'<li class="list-group-item overflowFix reveal-on-hover-wrap task">',
-				'<div class="col-md-12">',
+				'<div class="col-md-12 mbs">',
 					'<h4 class="pull-left">'+taskDto.name+'</h4>',
-					'<button class="btn btn-sm btn-danger reveal-on-hover-element pull-right delete-task"><span class="fa fa-trash-o"></span> Delete</button>',
+					'<p class="pull-right mbn reveal-on-hover-element mts" role="group" aria-label="...">',
+						'<button class="btn btn-sm btn-danger reveal-on-hover-element delete-task"><span class="fa fa-trash-o"></span> <span class="hidden-xs">Delete</span></button>',
+						'<button type="button" class="btn btn-sm btn-primary edit-task mls"><span class="glyphicon glyphicon-edit"></span> <span class="hidden-xs">Edit</span></button>',
+					'</p>',
 				'</div>',
 				'<div class="col-md-4 equipment prn">',
 					'<p><b>Equipment</b></p>',
@@ -697,13 +748,57 @@ plenty_admin.UI.add_template_plan = {
 		//build equipment taskItems
 		for(var e=0; e<taskDto.equipmentIds.length; e++){
 			var equip = taskDto.equipmentIds[e];
-			$equipment_task_item = $('<p>'+plenty_admin.DATA.equipmentTypes[equip].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$equipment_task_item = $('<p class="task-component">'+plenty_admin.DATA.equipmentTypes[equip].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			
 			$equipment_task_item
+			.data("id", equip)
+			.data("type", "equipmentIds")
+			.find("a.remove")
+			.click(function(){
+				var $this = $(this);
+				var taskComponent = $this.parent();
+				var idList = $this.closest(".task").data("taskDto")[taskComponent.data("type")];
+				console.log("idList", idList);
+				var index = -1;
+				for(var i=0; i<idList.length; i++){
+					if(parseInt(taskComponent.data("id")) === idList[i]){
+						index = i;
+					}
+					break;
+				}
+				
+				console.log("index", index);
+				
+				if(index >= -1){
+					idList.splice(index, 1);
+				}
+				
+				$(this)
+				.closest("p")
+				.remove();
+				return false;
+			});
+			
+			$taskDOM
+			.find(".equipment")
+			.append($equipment_task_item);
+		}
+		
+		//build specific equipment taskItems
+		for(var e=0; e<taskDto.anySpecificEquipmentIds.length; e++){
+			var equip = taskDto.anySpecificEquipmentIds[e];
+			$equipment_task_item = $('<p>'+plenty_admin.DATA.current_organization.equipmentEquipmentTypes[equip].equipmentName+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			
+			$equipment_task_item
+			.data("id", equip)
+			.data("type", "anySpecificEquipmentIds")
 			.find("a.remove")
 			.click(function(){
 				$(this)
 				.closest("p")
 				.remove();
+				
+				return false;
 			});
 			
 			$taskDOM
@@ -716,11 +811,33 @@ plenty_admin.UI.add_template_plan = {
 			var labour = taskDto.labourIds[e];
 			$labour_task_item = $('<p>'+plenty_admin.DATA.labourTypes[labour].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
 			$labour_task_item
+			.data("id", labour)
+			.data("type", "labourIds")
 			.find("a.remove")
 			.click(function(){
+				var $this = $(this);
+				var taskComponent = $this.parent();
+				var idList = $this.closest(".task").data("taskDto")[taskComponent.data("type")];
+				console.log("idList", idList);
+				var index = -1;
+				for(var i=0; i<idList.length; i++){
+					if(parseInt(taskComponent.data("id")) === idList[i]){
+						index = i;
+					}
+					break;
+				}
+				
+				console.log("index", index);
+				
+				if(index >= -1){
+					idList.splice(index, 1);
+				}
+				
 				$(this)
 				.closest("p")
 				.remove();
+				
+				return false;
 			});
 			
 			$taskDOM
@@ -732,12 +849,71 @@ plenty_admin.UI.add_template_plan = {
 		for(var e=0; e<taskDto.productAmountPairs.length; e++){
 			var prod = taskDto.productAmountPairs[e];
 			$product_task_item = $('<p>'+plenty_admin.DATA.productTypes[prod.productTypeId].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			
 			$product_task_item
+			.data("id", prod)
+			.data("type", "productAmountPairs")
 			.find("a.remove")
 			.click(function(){
+				var $this = $(this);
+				var taskComponent = $this.parent();
+				var idList = $this.closest(".task").data("taskDto")[taskComponent.data("type")];
+				console.log("idList", idList);
+				var index = -1;
+				for(var i=0; i<idList.length; i++){
+					if(parseInt(taskComponent.data("id").productTypeId) === idList[i]){
+						index = i;
+					}
+					break;
+				}
+				
+				console.log("index", index);
+				
+				if(index >= -1){
+					idList.splice(index, 1);
+				}
+				
 				$(this)
 				.closest("p")
 				.remove();
+				
+				return false;
+			});
+			
+			$taskDOM
+			.find(".product")
+			.append($product_task_item);
+		}
+		
+		//build specific product taskItems
+		for(var e=0; e<taskDto.anySpecificProductIds.length; e++){
+			var prod = taskDto.anySpecificProductIds[e];
+			$product_task_item = $('<p>'+plenty_admin.DATA.allProducts[prod].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			
+			$product_task_item
+			.data("id", prod)
+			.data("type", "anySpecificProductIds")
+			.find("a.remove")
+			.click(function(){
+				var $this = $(this);
+				var taskComponent = $this.parent();
+				var idList = $this.closest(".task").data("taskDto")[taskComponent.data("type")];
+				var index = null;
+				for(var i=0; i<idList.length; i++){
+					if(parseInt(taskComponent.data("id")) === idList[i]){
+						index = i;
+					}
+				}
+				
+				if(index){
+					idList.splice(index, 1);
+				}
+				
+				$this
+				.closest("p")
+				.remove();
+				
+				return false;
 			});
 			
 			$taskDOM
@@ -751,8 +927,22 @@ plenty_admin.UI.add_template_plan = {
 			$taskDOM
 			.remove();
 			
+			var allTasks = plenty_admin.UI.add_template_plan.taskListHolder
+			.find("ul.task_list li.task");
+			
+			if(allTasks.length === 0){
+				plenty_admin.UI.add_template_plan.taskListHolder.hide();
+			}
+			
 			return false;
-		});
+		})
+		.end()
+		.find("button.edit-task")
+		.click(function(){
+			plenty_admin.UI.add_template_plan.edit_task();
+			return false;
+		})
+		.end();
 		
 		var selectedActivityIndex = plenty_admin.UI.add_template_plan.activityListHolder.find(".activity.active").data("index");
 		plenty_admin.UI.add_template_plan.taskListHolder
@@ -767,14 +957,53 @@ plenty_admin.UI.add_template_plan = {
 	clear_add_task_form: function(){
 		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
 		.find("input")
-		.val("")
+		.each(function(){
+			if($(this).data("default")){
+				if($(this).prop("type") == "number"){
+					$(this).val(parseInt($(this).data("default")));
+				}else{
+					$(this).val($(this).data("default"));
+				}
+			}else{
+				$(this).val("");
+			}
+		})
 		.end()
 		.find("table.task-items tbody tr")
 		.remove()
 		.end()
 		.parent()
 		.find("select :nth-child(0)")
-		.prop("selected", true);
+		.prop("selected", true)
+		.end()
+		.find("select option:gt(0)")
+		.prop("disabled", false)
+		.end()
+		.find("select.specific_items, .uom")
+		.hide();
+	},
+	edit_activity: function(activity){
+		plenty_admin.UI.add_template_plan.addActivityBtn
+		.hide()
+		
+		plenty_admin.UI.add_template_plan.activityListHolder
+		.slideUp("fast", function(){
+			plenty_admin.UI.add_template_plan.addActivityForm
+			.slideDown("fast");
+		});
+	},
+	edit_task: function(task){
+		//hide the add task button
+		plenty_admin.UI.add_template_plan.addTaskBtn
+		.slideUp("fast");
+		
+		//hide the task list for this activity
+		plenty_admin.UI.add_template_plan.taskListHolder
+		.slideUp("fast");
+		
+		//show the add task form immediately
+		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+		.slideDown("fast");
 	},
 	build_activity_element: function(activityDto){
 		console.log("build_activity_element", activityDto);
@@ -784,7 +1013,10 @@ plenty_admin.UI.add_template_plan = {
 					'<h3>This activity has no tasks associated with it.</h3>',
 					'<p>Either add tasks to it or remove this activity.</p>',
 				'</div>',
-				'<button class="btn btn-danger btn-sm reveal-on-hover-element pull-right delete-activity"><span class="fa fa-trash-o"></span>  Delete</button>',
+				'<p class="pull-right mbn reveal-on-hover-element" role="group" aria-label="...">',
+					'<button class="btn btn-danger btn-sm delete-activity"><span class="fa fa-trash-o"></span> <span class="hidden-xs">Delete</span></button>',
+					'<button type="button" class="btn btn-sm btn-primary edit-activity"><span class="glyphicon glyphicon-edit"></span> <span class="hidden-xs">Edit</span></button>',
+				'</p>',
 				'<a href="">',
 					plenty_admin.DATA.activityTypes[activityDto.activityTypeId].name,
 				'</a>',
@@ -861,6 +1093,11 @@ plenty_admin.UI.add_template_plan = {
 				plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
 				.slideUp("fast");
 			}
+		})
+		.end()
+		.find("button.edit-activity")
+		.click(function(){
+			plenty_admin.UI.add_template_plan.edit_activity();
 		})
 		.end();
 		

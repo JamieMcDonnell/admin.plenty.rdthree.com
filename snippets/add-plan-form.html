@@ -27,7 +27,7 @@
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">Days from planting must not be empty</p>
 						<label for="add_activity_days_from_planting">Days from planting</label>
-						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0" required>
+						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0"  data-default="0" required>
 					</div>
 					<p class="form-group text-right">
 						<button class="btn btn-default cancel_activity"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
@@ -54,7 +54,7 @@
 						<div class="form-group col-md-6">
 							<p class="help-block alert alert-danger error" style="display:none;">Days from activity start can not be empty</p>
 							<label for="add_task_days_from_start">Days from activity start</label>
-							<input type="number" class="form-control" id="add_task_days_from_start" placeholder="e.g. Task 1" min="0" value="0" required>
+							<input type="number" class="form-control" id="add_task_days_from_start" placeholder="e.g. Task 1" min="0" value="0" data-default="0" required>
 						</div>
 					</form>
 					
@@ -66,7 +66,7 @@
 						
 					<!-- Tab panes -->
 					<div class="tab-content task-types pln prn pbn ptn flexbox-item-grow flexbox-parent">
-						<div role="tabpanel" class="tab-pane active flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="equipment" id="equipment_tab">
+						<div role="tabpanel" class="tab-pane active flexbox-item-grow flexbox-parent" data-type="equipment" id="equipment_tab">
 							<table class="table fitTable mbn">
 								<thead>
 									<tr>
@@ -91,7 +91,7 @@
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_equipment"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -115,15 +115,16 @@
 								</table>
 							</div>
 							<div class="overflowFix">
-								<div class="form-group col-xs-7 pln">
+								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Labour Type must be selected</p>
 									<select class="form-control component_type" id="add_task_labour_types" required></select>
+									<select class="form-control specific_items mts" id="add_task_specific_labour" style="display:none"></select>
 								</div>
-								<div class="form-group col-xs-2 pln prn">
+								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" data-default="1" required>
 								</div>
-								<div class="form-group col-xs-3 prn text-right">
+								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
 								</div>
 							</div>
@@ -146,17 +147,17 @@
 								</table>
 							</div>
 							<div class="overflowFix">
-								<div class="form-group col-xs-7 pln">
+								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Product Type must be selected</p>
-									<select class="form-control component_type mbs" id="add_task_product_types" required></select>
-									<select class="form-control specific_items" id="add_task_specific_product" style="display:none"></select>
+									<select class="form-control component_type" id="add_task_product_types" required></select>
+									<select class="form-control specific_items mts" id="add_task_specific_product" style="display:none"></select>
 								</div>
-								<div class="form-group col-xs-2 pln prn">
+								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_product_qty" min="0" value="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_product_qty" min="0" value="1" data-default="1" required>
 									<p class="uom" style="display:none;">UOM</p>
 								</div>
-								<div class="form-group col-xs-3 prn text-right">
+								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
 								</div>
 							</div>

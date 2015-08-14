@@ -57,15 +57,19 @@ plenty_admin.UI.organization.init = function(org, hash){
 	plenty_admin.UI.organization.populate(org, hash);
 	plenty_admin.UI.organization.populate_farms_filter();
 	
-	plenty_admin.DATA.eventCollector = window.eventcollector(7, 10000);
+	plenty_admin.DATA.eventCollector = window.eventcollector(8, 10000);
 	plenty_admin.REST.getCropTypes();
 	plenty_admin.REST.getTillageTypes();
 	plenty_admin.REST.getIrrigationTypes();
 	plenty_admin.REST.getActivityTypes();
 	plenty_admin.REST.getSkillTypes();
 	plenty_admin.REST.getProductTypes();
+	plenty_admin.REST.getAllProducts();
 	plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
-	
+	plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
+	  console.log('event %d of %d emitted', fired, total);
+	  console.log('event description:', data);
+	});
 	plenty_admin.DATA.eventCollector.on('alldone', function(total) {
 		plenty_admin.UI.organization.DOM.fadeIn("normal", function(){
 			plenty_admin.HELPER.hideLoadingOverlay();
@@ -506,8 +510,9 @@ plenty_admin.UI.organization.items = function(itemList, hash){
 		var itemsHTML = "<h3 class='noItemsText'>No properties in this object yet!</h3>";
 	}else{
 		var itemData = (hash == "fieldsAndCropTypes" ? itemList[0].field : itemList[0]);
-		var itemsHTML = plenty_admin.UI.create_header_row(itemData, hash);
-		itemsHTML += '<tbody>';
+		var itemsHeaderHTML = plenty_admin.UI.create_header_row(itemData, hash);
+		
+		var itemsHTML = '<tbody>';
 		for(var i=0; i< itemList.length; i++){
 			var item = itemList[i];
 			itemsHTML += plenty_admin.UI.create_item(item, hash);
@@ -517,7 +522,12 @@ plenty_admin.UI.organization.items = function(itemList, hash){
 	
 	var $itemsHTML = $(itemsHTML);
 	
-	return plenty_admin.UI.organization.addItemFunctionality($itemsHTML);
+	var tableElements = {
+		headerHTML: itemsHeaderHTML,
+		bodyHTML: plenty_admin.UI.organization.addItemFunctionality($itemsHTML)
+	};
+	
+	return tableElements;
 }
 plenty_admin.UI.organization.showFieldPage = function(fieldObj){
 	console.log("showFieldPage: ", fieldObj);
@@ -863,16 +873,24 @@ plenty_admin.UI.organization.populate = function(org, hash){
 				case "object":
 				
 					if(i === "fieldsAndCropTypes"){
-						var $panel = plenty_admin.UI.organization.DOM.find("table.fieldsList");
+						var $tableHeader = plenty_admin.UI.organization.DOM.find("table.fieldsListHeader");
+						var $tableBody = plenty_admin.UI.organization.DOM.find("table.fieldsList");
 					}else{
-						var $panel = plenty_admin.UI.organization.DOM.find("table."+i+"List");
+						var $tableHeader = plenty_admin.UI.organization.DOM.find("table."+i+"ListHeader");
+						var $tableBody = plenty_admin.UI.organization.DOM.find("table."+i+"List");
 					}
 					
-					$panel
+					var tableItems = plenty_admin.UI.organization.items(org[i], i);
+					
+					$tableBody
 					.html("")
-					.append(plenty_admin.UI.organization.items(org[i], i))
+					.append(tableItems.bodyHTML)
 					.find(".editable")
 					.editable(plenty_admin.REST.inline_editing_options);
+					
+					$tableHeader
+					.html("")
+					.append(tableItems.headerHTML);
 				break;
 			}
 		}

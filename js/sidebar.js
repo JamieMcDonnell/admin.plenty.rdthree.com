@@ -103,7 +103,6 @@ plenty_admin.UI.sideBar.organizations.init = function(orgs){
 	].join(""));
 	
 	$new_org_link
-	.find("a")
 	.click(function(){
 		//build the breadcrumb trail object
 		console.log("new org clicked");

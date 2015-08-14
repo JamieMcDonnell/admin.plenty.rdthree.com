@@ -1,4 +1,4 @@
-<div id="organization-container">
+<div id="organization-container" class="flexbox-item-grow flexbox-parent">
 	<div class="clearfix">
 		<h2 class="editable org-name pull-left mbn editable" data-type="text" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Change the organization name"> </h2>
 		<p class="editable org-organizationTypeId pull-left mbn editable clear" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'> </p>
@@ -6,8 +6,8 @@
 		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"> </p>
 		<p class="pull-left lead2 editable clear org-zip"> </p>
 	</div>
-	<div role="tabpanel" id="orgAssets"> 
-		
+	
+	<div role="tabpanel" id="orgAssets" class="flexbox-item-grow flexbox-parent mbs"> 
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs" role="tablist">
 			<li role="presentation" class="active" data-hash="farms"><a href="#farms" aria-controls="farms" role="tab" data-toggle="tab">Farms</a></li>
@@ -19,9 +19,8 @@
 			<li role="presentation" data-hash="skills"><a href="#skills" aria-controls="skills" role="tab" data-toggle="tab">Skills</a></li>
 			<li role="presentation" data-hash="payments" class="hide"><a href="#payments" aria-controls="payments" role="tab" data-toggle="tab">Payment</a></li>
 		</ul>
-		
 		<!-- Tab panes -->
-		<div class="tab-content container-fluid">
+		<div class="tab-content container-fluid flexbox-parent flexbox-item-grow">
 
 			<div class="alert alert-info alert-dismissible farm-info" role="alert">
 			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -46,45 +45,85 @@
 			  </div>
 			</form>
 				
-			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="farms">
-				<table class="farmsList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane active pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="farms">
+				<table class="farmsListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="farmssList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="fields">
-				<table class="fieldsList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="fields">
+				<table class="fieldsListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="fieldsList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="users">
-				<table class="usersList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="users">
+				<table class="usersListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="usersList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="equipments">
-				<table class="equipmentsList table table-striped table-hover mbn">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="equipments">
+				<table class="equipmentsListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="equipmentsList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="products">
-				<table class="productsList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="products">
+				<table class="productsListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="productsList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="plans">
-				<table class="plansList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="plans">
+				<table class="plansListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="plansList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="skills">
-				<table class="skillsList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="skills">
+				<table class="skillsListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="skillsList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="payments">
-				<table class="paymentsList table table-striped table-hover mbn fitTable">
+			<div role="tabpanel" class="tab-pane pull-left w100 clearfix flexbox-parent flexbox-item-grow" id="payments">
+				<table class="paymentsListHeader table mbn fitTable">
 					
 				</table>
+				<div class="flexbox-item-grow flexbox-scroll_y">
+					<table class="paymentsList table table-striped table-hover mbn fitTable">
+					
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

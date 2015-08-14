@@ -4,13 +4,28 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+html,
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  overflow-y: hidden;
+  background: #e8eae0 url(../img/background-pattern.png) no-repeat 0 0;
+  -webkit-background-size: cover;
+          background-size: cover;
+}
+html *,
+body *,
+html *:before,
+body *:before,
+html *:after,
+body *:after {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .equal,
 .equal > div[class*='col-'] {
@@ -84,7 +99,6 @@ body {
 .footer {
   position: fixed;
   bottom: 0;
-  z-index: 10001;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: auto;
@@ -96,8 +110,7 @@ body {
 .footer .container-fluid p {
   margin: 0;
 }
-body.map footer.footer,
-body.plans footer.footer {
+body footer.footer {
   position: relative;
   bottom: 0;
 }
@@ -144,6 +157,81 @@ body.plans footer.footer {
 }
 table .editable-container.editable-inline {
   background-color: #fff;
+}
+.flexbox-parent {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+  width: 100%;
+  height: 100%;
+          flex-direction: column;
+
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+          justify-content: flex-start;
+  /* align items in Main Axis */
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+          align-items: stretch;
+  /* align items in Cross Axis */
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+          align-content: stretch;
+  /* Extra space in Cross Axis */
+}
+.flexbox-parent.tab-pane.active {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+}
+.flexbox-item-grow {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  /* same as flex: 1 1 auto; */
+}
+.flexbox-scroll_y {
+  position: relative;
+  overflow-y: auto;
+}
+.fill-area {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+          flex-direction: row;
+
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+          justify-content: flex-start;
+  /* align items in Main Axis */
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+          align-items: stretch;
+  /* align items in Cross Axis */
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+          align-content: stretch;
+  /* Extra space in Cross Axis */
+}
+.fill-area-content {
+  /* Needed for when the area gets squished too far and there is content that can't be displayed */
+  overflow: hidden;
 }
 body.dragging,
 body.dragging * {
@@ -3071,7 +3159,7 @@ wi-wind-default._345-deg {
 .wi-moon-waning-crescent-6:before {
   content: "\f0b0";
 }
-body {
+body.login {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #eee;
@@ -3110,42 +3198,23 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-/*
- * Base structure
- */
-/* Move down content because we have a fixed navbar that is 50px tall */
-body {
-  padding-top: 50px;
+/* LESS Document */
+body.settings .container-fluid.page-container {
+  position: relative;
+  /* Hide for mobile, show later */
 }
-/*
- * Global add-ons
- */
-.sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-/*
- * Top navigation
- * Hide default border to remove 1px line.
- */
-.navbar-fixed-top {
-  border: 0;
-}
-/*
- * Sidebar
- */
-/* Hide for mobile, show later */
-.sidebar {
+body.settings .container-fluid.page-container .sidebar {
   display: none;
 }
 @media (min-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 51px;
+  body.settings .container-fluid.page-container .sidebar {
+    position: absolute;
+    top: 0;
     bottom: 0;
     left: 0;
     z-index: 1000;
     display: block;
+    height: 100%;
     padding: 20px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -3154,91 +3223,32 @@ body {
     border-right: 1px solid #eee;
   }
 }
-/* Sidebar navigation */
-.nav-sidebar {
-  margin-right: -21px;
-  /* 20px padding + 1px border */
-  margin-bottom: 20px;
-  margin-left: -20px;
-}
-.nav-sidebar > li > a {
-  padding-right: 20px;
-  padding-left: 20px;
-}
-.nav-sidebar > .active > a,
-.nav-sidebar > .active > a:hover,
-.nav-sidebar > .active > a:focus {
-  color: #fff;
-  background-color: #428bca;
-}
-/*
- * Main content
- */
-.main {
-  padding: 20px;
-}
-@media (min-width: 768px) {
-  .main {
-    padding-right: 40px;
-    padding-left: 40px;
-  }
-}
-.main .page-header {
-  margin-top: 0;
-}
-/*
- * Placeholder dashboard ideas
- */
-.organizations {
-  margin-bottom: 30px;
-  text-align: center;
-}
-.organizations h4 {
-  margin-bottom: 0;
-}
-.organizations .organization {
-  margin-bottom: 20px;
-}
-.organizations .organization .orgAssets .equal {
-  margin-bottom: 10px;
-}
-.organizations .organization .orgAssets .equal .asset {
-  display: block;
-  width: 100%;
-  padding: .5em;
-  background-color: #fff;
-}
-/* LESS Document */
-body {
+body.settings .container-fluid.page-container #main-panel {
   position: absolute;
-  width: 100%;
+  top: 0;
+  left: 0;
+  width: 83.33333333%;
   height: 100%;
-  overflow: auto;
 }
-body.settings {
-  background: #e8eae0 url(../img/background-pattern.png) no-repeat 0 0;
-  -webkit-background-size: cover;
-          background-size: cover;
-}
-.newOrgContainer form .more-details {
+body.settings .newOrgContainer form .more-details {
   display: none;
 }
-.newOrgContainer form .form-group {
+body.settings .newOrgContainer form .form-group {
   margin-bottom: 5px;
 }
-.newOrgContainer form .form-group .control-label {
+body.settings .newOrgContainer form .form-group .control-label {
   padding: 0 5px 0 0;
   margin-top: 5px;
   text-align: right;
 }
-.newOrgContainer form .form-group .col-sm-10 {
+body.settings .newOrgContainer form .form-group .col-sm-10 {
   padding: 0;
 }
-.newOrgContainer form .form-group .col-sm-10 input,
-.newOrgContainer form .form-group .col-sm-10 select {
+body.settings .newOrgContainer form .form-group .col-sm-10 input,
+body.settings .newOrgContainer form .form-group .col-sm-10 select {
   width: 100%;
 }
-.newOrgContainer .alert {
+body.settings .newOrgContainer .alert {
   display: none;
 }
 .navbar .brand img {
@@ -3622,24 +3632,6 @@ body.map #field-container {
   left: 50%;
   height: 100%;
 }
-html.map,
-body.map {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  overflow-y: hidden;
-}
-html.map *,
-body.map *,
-html.map *:before,
-body.map *:before,
-html.map *:after,
-body.map *:after {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-}
 .filter_controls .filter_loader {
   width: 21px;
   height: 24px;
@@ -3664,75 +3656,6 @@ body.map *:after {
   left: 0;
   z-index: 2;
   height: 100%;
-}
-.flexbox-parent {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display:         flex;
-  width: 100%;
-  height: 100%;
-          flex-direction: column;
-
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-  -ms-flex-pack: start;
-          justify-content: flex-start;
-  /* align items in Main Axis */
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-  -ms-flex-align: stretch;
-          align-items: stretch;
-  /* align items in Cross Axis */
-  -webkit-align-content: stretch;
-  -ms-flex-line-pack: stretch;
-          align-content: stretch;
-  /* Extra space in Cross Axis */
-}
-.flexbox-item-grow {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  /* same as flex: 1 1 auto; */
-}
-.flexbox-scroll_y {
-  position: relative;
-  overflow-y: auto;
-}
-.fill-area {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display:         flex;
-          flex-direction: row;
-
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-  -ms-flex-pack: start;
-          justify-content: flex-start;
-  /* align items in Main Axis */
-  -webkit-box-align: stretch;
-  -webkit-align-items: stretch;
-  -ms-flex-align: stretch;
-          align-items: stretch;
-  /* align items in Cross Axis */
-  -webkit-align-content: stretch;
-  -ms-flex-line-pack: stretch;
-          align-content: stretch;
-  /* Extra space in Cross Axis */
-}
-.fill-area-content {
-  /* Needed for when the area gets squished too far and there is content that can't be displayed */
-  overflow: hidden;
 }
 #map_legend {
   padding: 10px;
@@ -3807,27 +3730,6 @@ body.map *:after {
   color: #fff;
   pointer-events: none;
   cursor: pointer;
-}
-html.plans,
-body.plans {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  overflow-y: hidden;
-  background: #e8eae0 url(../img/background-pattern.png) no-repeat 0 0;
-  -webkit-background-size: cover;
-          background-size: cover;
-}
-html.plans *,
-body.plans *,
-html.plans *:before,
-body.plans *:before,
-html.plans *:after,
-body.plans *:after {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
 }
 html.plans .modal.add-plan .plantationDateWrapper,
 body.plans .modal.add-plan .plantationDateWrapper {
