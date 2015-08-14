@@ -1,4 +1,12 @@
 @import "variables.less";
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
 .clear{
 	clear:both !important;
 }
@@ -120,4 +128,20 @@ body.loading{
 	border-top-left-radius:0;
 	border-top-right-radius:0;
 	background-color:rgba(255,255,255,.8);
+}
+input[type='checkbox']{
+	width:14px;
+	height:14px;
+}
+.navbar-default {
+	.navbar-nav {
+    > :hover > a {
+      &,
+      &:hover,
+      &:focus {
+        color: @white;
+        background-color: @navbar-default-link-active-bg;
+      }
+    }
+  }
 }

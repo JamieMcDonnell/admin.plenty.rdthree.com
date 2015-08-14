@@ -34,7 +34,6 @@ plenty_admin.UI.sideBar.organizations.init = function(orgs){
 	plenty_admin.UI.sideBar.organizations.DOM.html("");
 	
 	//loop organizations and inject Organizations DOM
-	//loop organizations and inject Organizations DOM
 	for(id in plenty_admin.DATA.organizations){
 		if(
 			plenty_admin.DATA.organizations.hasOwnProperty(id)
@@ -96,6 +95,59 @@ plenty_admin.UI.sideBar.organizations.init = function(orgs){
 		//store the selected organization ID
 		store.set('filter::organization', orgId);
 	});
+	
+	var $new_org_link = $([
+		'<button class="btn btn-success btn-block panel-title add-org mtm">',
+			'<span class="glyphicon glyphicon-plus"></span> New Organization',
+		'</button>'
+	].join(""));
+	
+	$new_org_link
+	.find("a")
+	.click(function(){
+		//build the breadcrumb trail object
+		console.log("new org clicked");
+		var newOrg_breadcrumb = [
+			{
+				class:"back",
+				name:"Settings",
+				clickHandler:function(){
+					plenty_admin.UI.currentScreen
+					.fadeOut("normal", function(){
+						plenty_admin.UI.newOrganization.clear();
+						plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
+						plenty_admin.UI.currentScreen
+						.fadeIn("normal");
+					});
+					return false;
+				}
+			},
+			{
+				class:"active",
+				name:"Add Organization",
+				clickHandler:null
+			}
+		];
+		
+		plenty_admin.UI.newOrganization.DOM
+		.find(".breadcrumb-trail")
+		.remove()
+		.end()
+		.prepend(plenty_admin.UI.build_breadcrumb_trail(newOrg_breadcrumb));
+		
+		plenty_admin.UI.newOrganization.init();
+		
+		plenty_admin.UI.currentScreen
+		.fadeOut("normal", function(){
+			plenty_admin.UI.currentScreen = plenty_admin.UI.newOrganization.DOM;
+			plenty_admin.UI.currentScreen
+			.fadeIn("normal");
+		});
+return false;
+	});
+	
+	plenty_admin.UI.sideBar.organizations.DOM
+	.append($new_org_link);
 }
 
 plenty_admin.UI.sideBar.organizations.select_sub = function(orgId, hash){

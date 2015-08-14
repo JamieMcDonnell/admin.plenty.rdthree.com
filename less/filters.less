@@ -13,6 +13,7 @@ body.filters{
 			padding:0;
 			max-height:300px;
 			overflow-y:auto;
+			overflow-x:hidden;
 			
 			li{
 				list-style:none;
@@ -57,12 +58,11 @@ body.filters{
 }
 #filters-container{
 	position:absolute;
-	width:20%;
-	min-width:220px;
+	width:250px;
 	height:calc(~'100% - 30px');
 	background-color:fade(@brand-light-cream, 80);
 	top:30px;
-	right:-220px; /* hidden by default */
+	right:-251px; /* hidden by default */
 	z-index:10;
 	border-left:1px solid @brand-secondary;
 	text-align:left;

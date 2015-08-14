@@ -70,9 +70,12 @@ plenty_admin.init = function(context){
 	})
 	.on('hidden.bs.modal', '.modal', function () {
 		console.log('we have hidden a modal');
-		$('body')
-		.find(".page-container")
-		.removeClass("blur");
+		
+		if(!$('body').hasClass("loading")){
+			$('body')
+			.find(".page-container")
+			.removeClass("blur");
+		}
 	});
 
 	//get the logged in user's details
@@ -126,7 +129,6 @@ plenty_admin.init = function(context){
 						plenty_admin.DATA.organizations[org_data.id] = org_data;
 					}
 					
-					plenty_admin.HELPER.hideLoadingOverlay();
 					$( document ).trigger( "map_data_ready" );
 				});
 				
@@ -410,6 +412,51 @@ plenty_admin.REST.getEquipmentTypes = function(){
 			});
 }
 
+plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
+	plenty_admin.REST.equipmentByOrgAndType = plenty_admin.api.one("equipment/getAllEquipmentByOrganizationAndType/"+org, type);
+	plenty_admin.REST.equipmentByOrgAndType.get()
+		.then(
+			function(equipmentReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgEquipmentForType = plenty_admin.REST.get_object_from_data(equipmentReturn.body());
+				//console.log("Get equip types for org finished", orgEquipmentForType);
+				
+				if(callback && typeof callback === "function"){
+					callback(orgEquipmentForType, el);
+				}
+			});
+}
+
+plenty_admin.REST.getEquipmentEquipmentTypesForOrg = function(){
+	plenty_admin.REST.equipmentEquipmentByOrg = plenty_admin.api.one("equipmentEquipmentTypes/getByOrganization", plenty_admin.DATA.current_organization.id);
+	plenty_admin.REST.equipmentEquipmentByOrg.get()
+		.then(
+			function(equipmentReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgEquipmentEquipment = plenty_admin.REST.get_object_from_data(equipmentReturn.body());
+				//console.log("Get equip types for org finished", orgEquipmentForType);
+				
+				plenty_admin.DATA.current_organization.equipmentEquipmentTypes = orgEquipmentEquipment;
+				
+				plenty_admin.DATA.eventCollector.done("equipmentEquipmentTypes");
+			});
+}
+
+plenty_admin.REST.getProductsByType = function(type, callback, el){
+	plenty_admin.REST.productsByType = plenty_admin.api.one("products/getByProductType", type);
+	plenty_admin.REST.productsByType.get()
+		.then(
+			function(productReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgProductsForType = plenty_admin.REST.get_object_from_data(productReturn.body());
+				//console.log("Get product types for org finished", orgProductsForType);
+				
+				if(callback && typeof callback === "function"){
+					callback(orgProductsForType, el);
+				}
+			});
+}
+
 // get all equipment types and store them
 plenty_admin.REST.brandTypes = plenty_admin.api.all("brands/getAllBrands");
 plenty_admin.REST.getBrandTypes = function(){
@@ -441,7 +488,6 @@ plenty_admin.REST.getBrandTypes = function(){
 // get all activity types and store them
 plenty_admin.REST.activityTypes = plenty_admin.api.all("activityTypes/getAllActivityTypes");
 plenty_admin.REST.getActivityTypes = function(){
-	plenty_admin.DATA.activityTypes = {};
 	plenty_admin.REST.activityTypes.getAll()
 		.then(
 			function(activityTypesReturn){
@@ -455,6 +501,37 @@ plenty_admin.REST.getActivityTypes = function(){
 			});
 }
 
+// get all skill types and store them
+plenty_admin.REST.skillTypes = plenty_admin.api.all("skills/getAllSkills");
+plenty_admin.REST.getSkillTypes = function(){
+	plenty_admin.REST.skillTypes.getAll()
+		.then(
+			function(skillTypesReturn){
+				plenty_admin.DATA.labourTypes = plenty_admin.REST.get_object_from_data(skillTypesReturn.body());
+				console.log("Get labour types finished");
+				
+				plenty_admin.DATA.eventCollector.done("labour");
+			},
+			function(err){
+				console.error("getting skill types failed: ", err);
+			});
+}
+
+// get all skill types and store them
+plenty_admin.REST.productTypes = plenty_admin.api.all("productTypes/getAllProductTypes");
+plenty_admin.REST.getProductTypes = function(){
+	plenty_admin.REST.productTypes.getAll()
+		.then(
+			function(productTypesReturn){
+				plenty_admin.DATA.productTypes = plenty_admin.REST.get_object_from_data(productTypesReturn.body());
+				console.log("Get product types finished");
+				
+				plenty_admin.DATA.eventCollector.done("products");
+			},
+			function(err){
+				console.error("getting skill types failed: ", err);
+			});
+}
 
 // get all role types and store them
 plenty_admin.REST.roleTypes = plenty_admin.api.all("roleTypes/getAllRoleTypes");
@@ -537,12 +614,12 @@ plenty_admin.REST.getBoundaryTypes = function(){
 // get all growth methods and store them
 plenty_admin.REST.growthMethods = plenty_admin.api.all("cropStage/getAllGrowthMethods");
 plenty_admin.REST.getGrowthMethods = function(){
-	plenty_admin.DATA.growthMethods = {};
+	plenty_admin.DATA.growthMethodTypes = {};
 	plenty_admin.REST.growthMethods.getAll()
 		.then(
 			function(growthMethods){
-				plenty_admin.DATA.growthMethods = plenty_admin.REST.get_object_from_data(growthMethods.body());
-				console.log("Get growth methods finished");
+				plenty_admin.DATA.growthMethodTypes = plenty_admin.REST.get_object_from_data(growthMethods.body());
+				console.log("Get growth methods finished:", plenty_admin.DATA.growthMethodTypes);
 				plenty_admin.DATA.eventCollector.done("growth methods");
 			});
 }
@@ -968,6 +1045,20 @@ plenty_admin.REST.fields.updateFieldCrop = function(fieldCropObj, callback){
 	)
 }
 
+plenty_admin.REST.plans = {};
+plenty_admin.REST.plans.createTemplatePlan = function(TemplatePlanCreationDto, callback){
+	plenty_admin.REST.createTemplatePlan.post(TemplatePlanCreationDto)
+	.then(
+		function(templatePlan){
+			var templatePlan_body = templatePlan.body();
+			console.log("adding templatePlan success: ", templatePlan_body);
+			if(callback && typeof callback === "function"){
+				callback(templatePlan_body);
+			}
+		}
+	)
+}
+
 // call to REST api for health status
 plenty_admin.REST.getStatus = function(){
 	$.ajax({
@@ -983,7 +1074,8 @@ plenty_admin.REST.getStatus = function(){
 				className: "danger healthcheck",
 				buttons: {
 					
-				}
+				},
+				callback:plenty_admin.HELPER.hideLoadingOverlay
 			});	
 		}
 	});
@@ -1023,10 +1115,10 @@ plenty_admin.UI.updateBadges = function(hash, value){
 	plenty_admin.UI.settings.DOM.find(".organization[data-orgid='"+plenty_admin.DATA.current_organization.id+"'] panel .orgAssets ."+hash+" span.count").text(value);
 }
 
-plenty_admin.UI.populate_crop_tillage_irrigation_lists = function(parent, idPrefix){
+plenty_admin.UI.populate_type_lists = function(parent, idPrefix, data_types){
 	//set up type lists
 	//populate the data type fields
-	var data_types = ["crop", "irrigation", "tillage"];
+	//var data_types = ["crop", "irrigation", "tillage"];
 	
 	for(var d=0; d<data_types.length; d++){
 		//set up the list of crop types
@@ -1116,13 +1208,14 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	var year = a.getUTCFullYear();
 	var month = months[a.getUTCMonth()];
+	var monthIndex = a.getUTCMonth()+1;
 	var date = a.getUTCDate();
 	var hour = (a.getUTCHours() < 10 ? "0"+a.getUTCHours()-1 : a.getUTCHours()-1);
 	var min = (a.getUTCMinutes() < 10 ? "0"+a.getUTCMinutes() : a.getUTCMinutes());
 	var sec = (a.getUTCSeconds() < 10 ? "0"+a.getUTCSeconds() : a.getUTCSeconds());
 	var _date = (month ? month.slice(0,4) : month) + ' ' + date;
 	var fullDate = _date + ", " + year;
-	
+	var USDate = monthIndex+"/"+date+"/"+year;
 	var time = hour + ':' + min + ':' + sec;
 	var date_time = _date + ' ' +  time;
 	return {
@@ -1132,7 +1225,8 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 			month: month,
 			obj: a,
 			fullDate: fullDate,
-			year:year
+			year:year,
+			USDate: USDate
 		};
 }
 plenty_admin.HELPER.daysFromHours = function(hours){
@@ -1201,6 +1295,59 @@ plenty_admin.HELPER.dynamicSort = function(property) {
 	}
 }
 
+plenty_admin.HELPER.validateForm = function($form){
+	//$form is the container of form elements to be checked
+	var $errorAlerts = $form.find(".alert.help-block");
+	
+	//reset all validation
+	$errorAlerts.hide();
+	
+	$form
+	.find(".has-error")
+	.removeClass("has-error");
+	
+	var valid = true;
+	var invalidFields = [];
+	$form.find("input, select")
+	.each(function(){
+		console.log("field", this);
+		if($(this).prop("required")){
+			console.log("field is required", this, this.tagName);
+			var val = null;
+			switch(this.tagName.toLowerCase()){
+				case "input":
+					val = $(this).val();
+				break;
+				
+				case "select":
+					val = $(this).find("option:selected").val();
+				break;
+			}
+			console.log("val = ", val === null, val.length);
+			if(val.length <= 0 || val === null){
+				$(this).parent()
+				.addClass("has-error");
+				
+				invalidFields.push($(this));
+				
+				valid = false;
+			}
+		}
+	});
+	
+	if(valid){
+		return true;
+	}else{
+		for(var i=0; i<invalidFields.length; i++){
+			var invalidField = invalidFields[i];
+			invalidField
+			.parent()
+			.find(".alert.help-block")
+			.slideDown("fast");
+		}
+	}
+}
+
 plenty_admin.HELPER.returnFieldType = function(field){
 	switch(field){
 		case "mobileNumber":
@@ -1220,6 +1367,110 @@ plenty_admin.HELPER.returnFieldType = function(field){
 	}
 }
 
+
+plenty_admin.HELPER.initFloatingHeaders = function(table, headerClass, tableID) {
+	var $table = $(table);
+	var tableParent = $table.parent();
+	var wrapper = $('<div class="floating-header"/>');
+	var clone = $table.clone(true, true);
+	var thead = $table.find(headerClass+":eq(0)");
+	var scrollContainer = $(tableID);
+	var headerIndex = 0;
+	var lastScrollTop = 0;
+	var headerRows = $table.find(headerClass);
+	var tableWrapperOffset = tableParent.offset().top;
+	var nextHeader, nextHeaderOffset, prevHeader, prevHeaderOffset, tableBounds;
+	
+	$(window).on("resize", function(){
+		tableWrapperOffset = tableParent.offset().top;
+		//console.log("tableWrapperOffset", tableWrapperOffset);
+		
+		wrapper.css({
+			width:thead.outerWidth(),
+			height:thead.outerHeight()
+		});
+		
+		floatingHeaderTable.css({top:-$(headerRows.get(headerIndex)).position().top});
+		
+		if (tableBounds.bottom <= wrapper[0].offsetHeight) {
+			wrapper.css({
+				position:"absolute",
+				top:  ($table[0].offsetHeight + $table[0].offsetTop - wrapper[0].offsetHeight) +'px' 
+			});
+		} else {
+			wrapper.css({
+				position:"fixed",
+				top:  tableWrapperOffset,
+				"z-index":1 
+			});
+		}
+	});
+	
+	//console.log("tables", table, tableParent);
+	
+	wrapper.append(clone);
+	tableParent.prepend(wrapper);
+	
+	var floatingHeaderTable = wrapper.find("table");
+	
+	wrapper.css({
+		width:thead.outerWidth(),
+		height:thead.outerHeight(),
+		display:"none",
+		overflow:"hidden"
+	});
+  
+	scrollContainer.on("scroll", function() {
+		var headers = document.querySelectorAll('div.floating-header');
+		var bodyHeight = document.body.offsetHeight;
+		var i = headers.length;
+		var st = $(this).scrollTop();
+		
+		if (st > lastScrollTop){
+			// upscroll code
+			nextHeader = $(headerRows.get(headerIndex+1));
+			nextHeaderOffset = nextHeader.offset().top -tableWrapperOffset;
+			if(nextHeaderOffset <= 0){
+				//switch to this header
+				//console.log("switch header: ", nextHeader.position().top, floatingHeaderTable);
+				floatingHeaderTable.css({top:-nextHeader.position().top});
+				headerIndex += 1;
+				headerIndex > headerRows.length -1 ? headerIndex = headerRows.length -1 : null;
+			}
+		} else {
+			// downscroll code
+			//console.log("going DOWN");
+			prevHeader = $(headerRows.get(headerIndex));
+			prevHeaderOffset = prevHeader.offset().top -tableWrapperOffset;
+			if( headerIndex > 0 && prevHeaderOffset >= 0 ){
+				floatingHeaderTable.css({top:-$(headerRows.get(headerIndex-1)).position().top});
+				headerIndex -= 1;
+				headerIndex < 0 ? headerIndex = 0 : null;
+			}
+		}
+		
+		lastScrollTop = st;
+		tableBounds = $table[0].getBoundingClientRect();
+		
+		if ((tableBounds.top -tableWrapperOffset) <= 0 && tableBounds.bottom > 0) {
+			wrapper.show();
+			if (tableBounds.bottom <= wrapper[0].offsetHeight) {
+				wrapper.css({
+					position:"absolute",
+					top:  ($table[0].offsetHeight + $table[0].offsetTop - wrapper[0].offsetHeight) +'px' 
+				});
+			} else {
+				wrapper.css({
+					position:"fixed",
+					top:  tableWrapperOffset,
+					"z-index":1 
+				});
+			}
+		} else {
+			wrapper.hide();
+		}
+	});
+}
 
 plenty_admin.HELPER.colorLuminance = function(hex, lum) {
 
@@ -1267,7 +1518,7 @@ Chart.types.Line.extend({
 	name: "LineAlt",
 	initialize: function (data) {
 		Chart.types.Line.prototype.initialize.apply(this, arguments);
-		console.log("Init LineAlt: ", this);
+		console.log("Init LineAlt: ", this, arguments);
 		var xLabels = this.scale.xLabels
 		//set the day label increment
 		var label_step = 1;
@@ -1281,12 +1532,7 @@ Chart.types.Line.extend({
 			label_step = 20
 		}
 		
-		console.log("LineAlt: ", xLabels, label_step);
-		
 		xLabels.forEach(function (label, i) {
-			//console.log("i % 2", i % 2);
-			//console.log("i % 6", i % 6);
-			//console.log("i % 14", i % 14);
 			if (i % label_step > 0)
 				xLabels[i] = '';
 		});

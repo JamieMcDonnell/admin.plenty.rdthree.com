@@ -242,6 +242,38 @@
 				background: none;
 				border: none;
 				pointer-events: all;
+				overflow:visible;
+				
+				img.growthStageImg{
+					width:100px;
+					height:250px;
+					position:absolute;
+					left:-35px;
+					bottom:0;
+				}
+			}
+		}
+	}
+	.zoomInLayer{
+		position:absolute;
+		left:0;
+		width: 100%;
+  		padding: 0 15px;
+		z-index:4;
+		height: calc(100% - (120px));
+		
+		.zoomInControl{
+			display:none;
+			height:100%;
+			position:absolute;
+			width:60px;
+			background-color:rgba(0,0,0,.5);
+			cursor:pointer;
+			text-align:center;
+			
+			p{
+				padding:5px;
+				color:#fff;
 			}
 		}
 	}
@@ -277,6 +309,9 @@
 			text-transform:capitalize;
 		}
 	}  
+	.slider.slider-horizontal{
+		width:100%;
+	}
 }
 
 .legend{

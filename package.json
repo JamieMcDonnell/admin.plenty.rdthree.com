@@ -4,8 +4,8 @@
   "version": "1.0.1",
   "keywords": [
     "farm",
-	"farming",
-	"farm management"
+    "farming",
+    "farm management"
   ],
   "homepage": "http://plenty.rdthree.com",
   "author": "RDThree Inc.",
@@ -87,5 +87,12 @@
     "buildConfig": {
       "uglify": true
     }
+  },
+  "dependencies": {
+    "bootstrap-slider": "^4.14.4",
+    "eventcollector": "^0.1.5",
+    "font-awesome": "^4.4.0",
+    "numeral": "^1.5.3",
+    "rainbowvis.js": "^1.0.1"
   }
 }

@@ -1305,6 +1305,7 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 	// to return the MVCArray of LatLngs.
 	console.log("showEditFieldForm", fieldObj, map);
 	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
+	plenty_admin.MAPS.polygonToEdit = polygon;
 	var that = this;
 	var MAPS = plenty_admin.MAPS;
 	var originalPolyPath = [];
@@ -1327,6 +1328,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 		//hide equipment
 		plenty_admin.MAPS.hide_equipment(plenty_admin.MAPS.equipment_pins);
 		
+		plenty_admin.MAPS.edit_field_state = 1;
+		
 		return false;
 	}
 	function endEditFieldBoundary(){
@@ -1347,6 +1350,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 		
 		//show equipment
 		plenty_admin.MAPS.show_equipment(plenty_admin.MAPS.equipment_pins, map);
+		
+		plenty_admin.MAPS.edit_field_state = 0;
 	}
 	
 	polygon.getPath().getArray().forEach(function(point, p){
@@ -1508,6 +1513,7 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 									  callback: function(){
 										 	plenty_admin.HELPER.hideLoadingOverlay();
 											//show edit form
+											polygon.setPaths(originalPolyPath);
 											endEditFieldBoundary();
 										}
 									}
@@ -1599,15 +1605,18 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 				.find("button.saveCropYear")
 				.click(function(e){
 					//save the crop year for this field
-					var fieldCropDto = {};
-					fieldCropDto.fieldId = fieldObj.id;
-					fieldCropDto.cropTypeId = parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_type option:selected").val());
-					fieldCropDto.irrigationTypeId = parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_irrigation_type option:selected").val());
-					fieldCropDto.tillageTypeId = parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_tillage_type option:selected").val());
-					fieldCropDto.year = plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_year option:selected").val();
+					var fieldCropDto = {
+						fieldId: fieldObj.id,
+						cropTypeId: parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_type option:selected").val()),
+						irrigationTypeId: parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_irrigation_type option:selected").val()),
+						tillageTypeId: parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_tillage_type option:selected").val()),
+						year: plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_year option:selected").val(),
+						growthMethodId: plenty_admin.MAPS.infoWindowContent.find("#edit_field_growthMethod_type option:selected").val()
+					};
+					
 					
 					plenty_admin.REST.fields.insertFieldCrop(fieldCropDto, function(fieldCrop){
-						console.log("field crop inserted");
+						console.log("field crop inserted", fieldCrop);
 						
 						$(e.target)
 						.hide()
@@ -1625,7 +1634,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 						var newCropYear = "<tr><td>"+fieldCrop.year+"</td>"+
 											"<td>"+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</td>"+
 											"<td>"+plenty_admin.DATA.tillageTypes[fieldCrop.tillageTypeId].name+"</td>"+
-											"<td>"+plenty_admin.DATA.irrigationTypes[fieldCrop.irrigationTypeId].name+"</td></tr>";
+											"<td>"+plenty_admin.DATA.irrigationTypes[fieldCrop.irrigationTypeId].name+"</td>"+
+											"<td>"+plenty_admin.DATA.growthMethodTypes[fieldCrop.growthMethodId].name+"</td></tr>";
 						cropYearTable
 						.find("tbody .new-crop-year")
 						.before(newCropYear);
@@ -1649,7 +1659,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 				$farmList.append(farmOptionsHTML);
 				
 				//populate crop / tillage / irrigation select lists
-				plenty_admin.UI.populate_crop_tillage_irrigation_lists(plenty_admin.MAPS.infoWindowContent, "edit_field");
+				var data_types = ["crop", "irrigation", "tillage", "growthMethod"];
+				plenty_admin.UI.populate_type_lists(plenty_admin.MAPS.infoWindowContent, "edit_field", data_types);
 				
 				//populate the table of crop years already associated with this field
 				var cropYearRowsHTML = "";
@@ -1662,7 +1673,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 						cropYearRowsHTML += "<tr data-id='"+cropYear.id+"'><td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(years)+"' data-name='year' data-pk='"+cropYear.id+"/fieldCrop/' data-title='Year'>"+year+"</td>"+
 											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.cropTypes)+"' data-name='cropTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Year'>"+plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name+"</td>"+
 											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.tillageTypes)+"' data-name='tillageTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Tillage Type'>"+plenty_admin.DATA.tillageTypes[cropYear.tillageTypeId].name+"</td>"+
-											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.irrigationTypes)+"' data-name='irrigationTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Irrigation Type'>"+plenty_admin.DATA.irrigationTypes[cropYear.irrigationTypeId].name+"</td></tr>";
+											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.irrigationTypes)+"' data-name='irrigationTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Irrigation Type'>"+plenty_admin.DATA.irrigationTypes[cropYear.irrigationTypeId].name+"</td>"+
+											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.growthMethodTypes)+"' data-name='growthMethodId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Growth Method'>"+plenty_admin.DATA.growthMethodTypes[cropYear.growthMethodId].name+"</td></tr>";
 					}
 				}
 				//set inline editing as inline before setting up this window

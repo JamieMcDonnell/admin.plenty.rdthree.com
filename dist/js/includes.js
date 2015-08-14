@@ -1473,7 +1473,7 @@ function hasOwnProperty(obj, prop) {
 },{"./support/isBuffer":5,"_process":4,"inherits":3}]},{},[1])(1)
 });
 /*! =======================================================
-                      VERSION  4.8.3              
+                      VERSION  4.14.3              
 ========================================================= */
 /*! =========================================================
  * bootstrap-slider.js
@@ -1500,7 +1500,8 @@ function hasOwnProperty(obj, prop) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ========================================================= */
-!function(a,b){if("function"==typeof define&&define.amd)define(["jquery"],b);else if("object"==typeof module&&module.exports){var c;try{c=require("jquery")}catch(d){c=null}module.exports=b(c)}else a.Slider=b(a.jQuery)}(this,function(a){var b;return function(a){"use strict";function b(){}function c(a){function c(b){b.prototype.option||(b.prototype.option=function(b){a.isPlainObject(b)&&(this.options=a.extend(!0,this.options,b))})}function e(b,c){a.fn[b]=function(e){if("string"==typeof e){for(var g=d.call(arguments,1),h=0,i=this.length;i>h;h++){var j=this[h],k=a.data(j,b);if(k)if(a.isFunction(k[e])&&"_"!==e.charAt(0)){var l=k[e].apply(k,g);if(void 0!==l&&l!==k)return l}else f("no such method '"+e+"' for "+b+" instance");else f("cannot call methods on "+b+" prior to initialization; attempted to call '"+e+"'")}return this}var m=this.map(function(){var d=a.data(this,b);return d?(d.option(e),d._init()):(d=new c(this,e),a.data(this,b,d)),a(this)});return!m||m.length>1?m:m[0]}}if(a){var f="undefined"==typeof console?b:function(a){console.error(a)};return a.bridget=function(a,b){c(b),e(a,b)},a.bridget}}var d=Array.prototype.slice;c(a)}(a),function(a){function c(b,c){function d(a,b){var c="data-slider-"+b.replace(/_/g,"-"),d=a.getAttribute(c);try{return JSON.parse(d)}catch(e){return d}}"string"==typeof b?this.element=document.querySelector(b):b instanceof HTMLElement&&(this.element=b),c=c?c:{};for(var f=Object.keys(this.defaultOptions),g=0;g<f.length;g++){var h=f[g],i=c[h];i="undefined"!=typeof i?i:d(this.element,h),i=null!==i?i:this.defaultOptions[h],this.options||(this.options={}),this.options[h]=i}var j,k,l,m,n,o=this.element.style.width,p=!1,q=this.element.parentNode;if(this.sliderElem)p=!0;else{this.sliderElem=document.createElement("div"),this.sliderElem.className="slider";var r=document.createElement("div");if(r.className="slider-track",k=document.createElement("div"),k.className="slider-track-low",j=document.createElement("div"),j.className="slider-selection",l=document.createElement("div"),l.className="slider-track-high",m=document.createElement("div"),m.className="slider-handle min-slider-handle",n=document.createElement("div"),n.className="slider-handle max-slider-handle",r.appendChild(k),r.appendChild(j),r.appendChild(l),this.ticks=[],Array.isArray(this.options.ticks)&&this.options.ticks.length>0){for(g=0;g<this.options.ticks.length;g++){var s=document.createElement("div");s.className="slider-tick",this.ticks.push(s),r.appendChild(s)}j.className+=" tick-slider-selection"}if(r.appendChild(m),r.appendChild(n),this.tickLabels=[],Array.isArray(this.options.ticks_labels)&&this.options.ticks_labels.length>0)for(this.tickLabelContainer=document.createElement("div"),this.tickLabelContainer.className="slider-tick-label-container",g=0;g<this.options.ticks_labels.length;g++){var t=document.createElement("div");t.className="slider-tick-label",t.innerHTML=this.options.ticks_labels[g],this.tickLabels.push(t),this.tickLabelContainer.appendChild(t)}var u=function(a){var b=document.createElement("div");b.className="tooltip-arrow";var c=document.createElement("div");c.className="tooltip-inner",a.appendChild(b),a.appendChild(c)},v=document.createElement("div");v.className="tooltip tooltip-main",u(v);var w=document.createElement("div");w.className="tooltip tooltip-min",u(w);var x=document.createElement("div");x.className="tooltip tooltip-max",u(x),this.sliderElem.appendChild(r),this.sliderElem.appendChild(v),this.sliderElem.appendChild(w),this.sliderElem.appendChild(x),this.tickLabelContainer&&this.sliderElem.appendChild(this.tickLabelContainer),q.insertBefore(this.sliderElem,this.element),this.element.style.display="none"}if(a&&(this.$element=a(this.element),this.$sliderElem=a(this.sliderElem)),this.eventToCallbackMap={},this.sliderElem.id=this.options.id,this.touchCapable="ontouchstart"in window||window.DocumentTouch&&document instanceof window.DocumentTouch,this.tooltip=this.sliderElem.querySelector(".tooltip-main"),this.tooltipInner=this.tooltip.querySelector(".tooltip-inner"),this.tooltip_min=this.sliderElem.querySelector(".tooltip-min"),this.tooltipInner_min=this.tooltip_min.querySelector(".tooltip-inner"),this.tooltip_max=this.sliderElem.querySelector(".tooltip-max"),this.tooltipInner_max=this.tooltip_max.querySelector(".tooltip-inner"),e[this.options.scale]&&(this.options.scale=e[this.options.scale]),p===!0&&(this._removeClass(this.sliderElem,"slider-horizontal"),this._removeClass(this.sliderElem,"slider-vertical"),this._removeClass(this.tooltip,"hide"),this._removeClass(this.tooltip_min,"hide"),this._removeClass(this.tooltip_max,"hide"),["left","top","width","height"].forEach(function(a){this._removeProperty(this.trackLow,a),this._removeProperty(this.trackSelection,a),this._removeProperty(this.trackHigh,a)},this),[this.handle1,this.handle2].forEach(function(a){this._removeProperty(a,"left"),this._removeProperty(a,"top")},this),[this.tooltip,this.tooltip_min,this.tooltip_max].forEach(function(a){this._removeProperty(a,"left"),this._removeProperty(a,"top"),this._removeProperty(a,"margin-left"),this._removeProperty(a,"margin-top"),this._removeClass(a,"right"),this._removeClass(a,"top")},this)),"vertical"===this.options.orientation?(this._addClass(this.sliderElem,"slider-vertical"),this.stylePos="top",this.mousePos="pageY",this.sizePos="offsetHeight",this._addClass(this.tooltip,"right"),this.tooltip.style.left="100%",this._addClass(this.tooltip_min,"right"),this.tooltip_min.style.left="100%",this._addClass(this.tooltip_max,"right"),this.tooltip_max.style.left="100%"):(this._addClass(this.sliderElem,"slider-horizontal"),this.sliderElem.style.width=o,this.options.orientation="horizontal",this.stylePos="left",this.mousePos="pageX",this.sizePos="offsetWidth",this._addClass(this.tooltip,"top"),this.tooltip.style.top=-this.tooltip.outerHeight-14+"px",this._addClass(this.tooltip_min,"top"),this.tooltip_min.style.top=-this.tooltip_min.outerHeight-14+"px",this._addClass(this.tooltip_max,"top"),this.tooltip_max.style.top=-this.tooltip_max.outerHeight-14+"px"),Array.isArray(this.options.ticks)&&this.options.ticks.length>0&&(this.options.max=Math.max.apply(Math,this.options.ticks),this.options.min=Math.min.apply(Math,this.options.ticks)),Array.isArray(this.options.value)?this.options.range=!0:this.options.range&&(this.options.value=[this.options.value,this.options.max]),this.trackLow=k||this.trackLow,this.trackSelection=j||this.trackSelection,this.trackHigh=l||this.trackHigh,"none"===this.options.selection&&(this._addClass(this.trackLow,"hide"),this._addClass(this.trackSelection,"hide"),this._addClass(this.trackHigh,"hide")),this.handle1=m||this.handle1,this.handle2=n||this.handle2,p===!0)for(this._removeClass(this.handle1,"round triangle"),this._removeClass(this.handle2,"round triangle hide"),g=0;g<this.ticks.length;g++)this._removeClass(this.ticks[g],"round triangle hide");var y=["round","triangle","custom"],z=-1!==y.indexOf(this.options.handle);if(z)for(this._addClass(this.handle1,this.options.handle),this._addClass(this.handle2,this.options.handle),g=0;g<this.ticks.length;g++)this._addClass(this.ticks[g],this.options.handle);this.offset=this._offset(this.sliderElem),this.size=this.sliderElem[this.sizePos],this.setValue(this.options.value),this.handle1Keydown=this._keydown.bind(this,0),this.handle1.addEventListener("keydown",this.handle1Keydown,!1),this.handle2Keydown=this._keydown.bind(this,1),this.handle2.addEventListener("keydown",this.handle2Keydown,!1),this.mousedown=this._mousedown.bind(this),this.touchCapable&&this.sliderElem.addEventListener("touchstart",this.mousedown,!1),this.sliderElem.addEventListener("mousedown",this.mousedown,!1),"hide"===this.options.tooltip?(this._addClass(this.tooltip,"hide"),this._addClass(this.tooltip_min,"hide"),this._addClass(this.tooltip_max,"hide")):"always"===this.options.tooltip?(this._showTooltip(),this._alwaysShowTooltip=!0):(this.showTooltip=this._showTooltip.bind(this),this.hideTooltip=this._hideTooltip.bind(this),this.sliderElem.addEventListener("mouseenter",this.showTooltip,!1),this.sliderElem.addEventListener("mouseleave",this.hideTooltip,!1),this.handle1.addEventListener("focus",this.showTooltip,!1),this.handle1.addEventListener("blur",this.hideTooltip,!1),this.handle2.addEventListener("focus",this.showTooltip,!1),this.handle2.addEventListener("blur",this.hideTooltip,!1)),this.options.enabled?this.enable():this.disable()}var d={formatInvalidInputErrorMsg:function(a){return"Invalid input value '"+a+"' passed in"},callingContextNotSliderInstance:"Calling context element does not have instance of Slider bound to it. Check your code to make sure the JQuery object returned from the call to the slider() initializer is calling the method"},e={linear:{toValue:function(a){var b=a/100*(this.options.max-this.options.min);if(this.options.ticks_positions.length>0){for(var c,d,e,f=0,g=0;g<this.options.ticks_positions.length;g++)if(a<=this.options.ticks_positions[g]){c=g>0?this.options.ticks[g-1]:0,e=g>0?this.options.ticks_positions[g-1]:0,d=this.options.ticks[g],f=this.options.ticks_positions[g];break}if(g>0){var h=(a-e)/(f-e);b=c+h*(d-c)}}var i=this.options.min+Math.round(b/this.options.step)*this.options.step;return i<this.options.min?this.options.min:i>this.options.max?this.options.max:i},toPercentage:function(a){if(this.options.max===this.options.min)return 0;if(this.options.ticks_positions.length>0){for(var b,c,d,e=0,f=0;f<this.options.ticks.length;f++)if(a<=this.options.ticks[f]){b=f>0?this.options.ticks[f-1]:0,d=f>0?this.options.ticks_positions[f-1]:0,c=this.options.ticks[f],e=this.options.ticks_positions[f];break}if(f>0){var g=(a-b)/(c-b);return d+g*(e-d)}}return 100*(a-this.options.min)/(this.options.max-this.options.min)}},logarithmic:{toValue:function(a){var b=0===this.options.min?0:Math.log(this.options.min),c=Math.log(this.options.max),d=Math.exp(b+(c-b)*a/100);return d=this.options.min+Math.round((d-this.options.min)/this.options.step)*this.options.step,d<this.options.min?this.options.min:d>this.options.max?this.options.max:d},toPercentage:function(a){if(this.options.max===this.options.min)return 0;var b=Math.log(this.options.max),c=0===this.options.min?0:Math.log(this.options.min),d=0===a?0:Math.log(a);return 100*(d-c)/(b-c)}}};if(b=function(a,b){return c.call(this,a,b),this},b.prototype={_init:function(){},constructor:b,defaultOptions:{id:"",min:0,max:10,step:1,precision:0,orientation:"horizontal",value:5,range:!1,selection:"before",tooltip:"show",tooltip_split:!1,handle:"round",reversed:!1,enabled:!0,formatter:function(a){return Array.isArray(a)?a[0]+" : "+a[1]:a},natural_arrow_keys:!1,ticks:[],ticks_positions:[],ticks_labels:[],ticks_snap_bounds:0,scale:"linear",focus:!1},over:!1,inDrag:!1,getValue:function(){return this.options.range?this.options.value:this.options.value[0]},setValue:function(a,b,c){a||(a=0);var d=this.getValue();this.options.value=this._validateInputValue(a);var e=this._applyPrecision.bind(this);this.options.range?(this.options.value[0]=e(this.options.value[0]),this.options.value[1]=e(this.options.value[1]),this.options.value[0]=Math.max(this.options.min,Math.min(this.options.max,this.options.value[0])),this.options.value[1]=Math.max(this.options.min,Math.min(this.options.max,this.options.value[1]))):(this.options.value=e(this.options.value),this.options.value=[Math.max(this.options.min,Math.min(this.options.max,this.options.value))],this._addClass(this.handle2,"hide"),this.options.value[1]="after"===this.options.selection?this.options.max:this.options.min),this.percentage=this.options.max>this.options.min?[this._toPercentage(this.options.value[0]),this._toPercentage(this.options.value[1]),100*this.options.step/(this.options.max-this.options.min)]:[0,0,100],this._layout();var f=this.options.range?this.options.value:this.options.value[0];return b===!0&&this._trigger("slide",f),d!==f&&c===!0&&this._trigger("change",{oldValue:d,newValue:f}),this._setDataVal(f),this},destroy:function(){this._removeSliderEventHandlers(),this.sliderElem.parentNode.removeChild(this.sliderElem),this.element.style.display="",this._cleanUpEventCallbacksMap(),this.element.removeAttribute("data"),a&&(this._unbindJQueryEventHandlers(),this.$element.removeData("slider"))},disable:function(){return this.options.enabled=!1,this.handle1.removeAttribute("tabindex"),this.handle2.removeAttribute("tabindex"),this._addClass(this.sliderElem,"slider-disabled"),this._trigger("slideDisabled"),this},enable:function(){return this.options.enabled=!0,this.handle1.setAttribute("tabindex",0),this.handle2.setAttribute("tabindex",0),this._removeClass(this.sliderElem,"slider-disabled"),this._trigger("slideEnabled"),this},toggle:function(){return this.options.enabled?this.disable():this.enable(),this},isEnabled:function(){return this.options.enabled},on:function(a,b){return this._bindNonQueryEventHandler(a,b),this},getAttribute:function(a){return a?this.options[a]:this.options},setAttribute:function(a,b){return this.options[a]=b,this},refresh:function(){return this._removeSliderEventHandlers(),c.call(this,this.element,this.options),a&&a.data(this.element,"slider",this),this},relayout:function(){return this._layout(),this},_removeSliderEventHandlers:function(){this.handle1.removeEventListener("keydown",this.handle1Keydown,!1),this.handle1.removeEventListener("focus",this.showTooltip,!1),this.handle1.removeEventListener("blur",this.hideTooltip,!1),this.handle2.removeEventListener("keydown",this.handle2Keydown,!1),this.handle2.removeEventListener("focus",this.handle2Keydown,!1),this.handle2.removeEventListener("blur",this.handle2Keydown,!1),this.sliderElem.removeEventListener("mouseenter",this.showTooltip,!1),this.sliderElem.removeEventListener("mouseleave",this.hideTooltip,!1),this.sliderElem.removeEventListener("touchstart",this.mousedown,!1),this.sliderElem.removeEventListener("mousedown",this.mousedown,!1)},_bindNonQueryEventHandler:function(a,b){void 0===this.eventToCallbackMap[a]&&(this.eventToCallbackMap[a]=[]),this.eventToCallbackMap[a].push(b)},_cleanUpEventCallbacksMap:function(){for(var a=Object.keys(this.eventToCallbackMap),b=0;b<a.length;b++){var c=a[b];this.eventToCallbackMap[c]=null}},_showTooltip:function(){this.options.tooltip_split===!1?(this._addClass(this.tooltip,"in"),this.tooltip_min.style.display="none",this.tooltip_max.style.display="none"):(this._addClass(this.tooltip_min,"in"),this._addClass(this.tooltip_max,"in"),this.tooltip.style.display="none"),this.over=!0},_hideTooltip:function(){this.inDrag===!1&&this.alwaysShowTooltip!==!0&&(this._removeClass(this.tooltip,"in"),this._removeClass(this.tooltip_min,"in"),this._removeClass(this.tooltip_max,"in")),this.over=!1},_layout:function(){var a;if(a=this.options.reversed?[100-this.percentage[0],this.percentage[1]]:[this.percentage[0],this.percentage[1]],this.handle1.style[this.stylePos]=a[0]+"%",this.handle2.style[this.stylePos]=a[1]+"%",Array.isArray(this.options.ticks)&&this.options.ticks.length>0){var b=Math.max.apply(Math,this.options.ticks),c=Math.min.apply(Math,this.options.ticks),d="vertical"===this.options.orientation?"height":"width",e="vertical"===this.options.orientation?"marginTop":"marginLeft",f=this.size/(this.options.ticks.length-1);if(this.tickLabelContainer){var g=0;if(0===this.options.ticks_positions.length)this.tickLabelContainer.style[e]=-f/2+"px",g=this.tickLabelContainer.offsetHeight;else for(h=0;h<this.tickLabelContainer.childNodes.length;h++)this.tickLabelContainer.childNodes[h].offsetHeight>g&&(g=this.tickLabelContainer.childNodes[h].offsetHeight);"horizontal"===this.options.orientation&&(this.sliderElem.style.marginBottom=g+"px")}for(var h=0;h<this.options.ticks.length;h++){var i=this.options.ticks_positions[h]||100*(this.options.ticks[h]-c)/(b-c);this.ticks[h].style[this.stylePos]=i+"%",this._removeClass(this.ticks[h],"in-selection"),this.options.range?i>=a[0]&&i<=a[1]&&this._addClass(this.ticks[h],"in-selection"):"after"===this.options.selection&&i>=a[0]?this._addClass(this.ticks[h],"in-selection"):"before"===this.options.selection&&i<=a[0]&&this._addClass(this.ticks[h],"in-selection"),this.tickLabels[h]&&(this.tickLabels[h].style[d]=f+"px",void 0!==this.options.ticks_positions[h]&&(this.tickLabels[h].style.position="absolute",this.tickLabels[h].style[this.stylePos]=this.options.ticks_positions[h]+"%",this.tickLabels[h].style[e]=-f/2+"px"))}}if("vertical"===this.options.orientation)this.trackLow.style.top="0",this.trackLow.style.height=Math.min(a[0],a[1])+"%",this.trackSelection.style.top=Math.min(a[0],a[1])+"%",this.trackSelection.style.height=Math.abs(a[0]-a[1])+"%",this.trackHigh.style.bottom="0",this.trackHigh.style.height=100-Math.min(a[0],a[1])-Math.abs(a[0]-a[1])+"%";else{this.trackLow.style.left="0",this.trackLow.style.width=Math.min(a[0],a[1])+"%",this.trackSelection.style.left=Math.min(a[0],a[1])+"%",this.trackSelection.style.width=Math.abs(a[0]-a[1])+"%",this.trackHigh.style.right="0",this.trackHigh.style.width=100-Math.min(a[0],a[1])-Math.abs(a[0]-a[1])+"%";var j=this.tooltip_min.getBoundingClientRect(),k=this.tooltip_max.getBoundingClientRect();j.right>k.left?(this._removeClass(this.tooltip_max,"top"),this._addClass(this.tooltip_max,"bottom"),this.tooltip_max.style.top="18px"):(this._removeClass(this.tooltip_max,"bottom"),this._addClass(this.tooltip_max,"top"),this.tooltip_max.style.top=this.tooltip_min.style.top)}var l;if(this.options.range){l=this.options.formatter(this.options.value),this._setText(this.tooltipInner,l),this.tooltip.style[this.stylePos]=(a[1]+a[0])/2+"%","vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px"),"vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px");var m=this.options.formatter(this.options.value[0]);this._setText(this.tooltipInner_min,m);var n=this.options.formatter(this.options.value[1]);this._setText(this.tooltipInner_max,n),this.tooltip_min.style[this.stylePos]=a[0]+"%","vertical"===this.options.orientation?this._css(this.tooltip_min,"margin-top",-this.tooltip_min.offsetHeight/2+"px"):this._css(this.tooltip_min,"margin-left",-this.tooltip_min.offsetWidth/2+"px"),this.tooltip_max.style[this.stylePos]=a[1]+"%","vertical"===this.options.orientation?this._css(this.tooltip_max,"margin-top",-this.tooltip_max.offsetHeight/2+"px"):this._css(this.tooltip_max,"margin-left",-this.tooltip_max.offsetWidth/2+"px")}else l=this.options.formatter(this.options.value[0]),this._setText(this.tooltipInner,l),this.tooltip.style[this.stylePos]=a[0]+"%","vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px")},_removeProperty:function(a,b){a.style.removeProperty?a.style.removeProperty(b):a.style.removeAttribute(b)},_mousedown:function(a){if(!this.options.enabled)return!1;this.offset=this._offset(this.sliderElem),this.size=this.sliderElem[this.sizePos];var b=this._getPercentage(a);if(this.options.range){var c=Math.abs(this.percentage[0]-b),d=Math.abs(this.percentage[1]-b);this.dragged=d>c?0:1}else this.dragged=0;this.percentage[this.dragged]=this.options.reversed?100-b:b,this._layout(),this.touchCapable&&(document.removeEventListener("touchmove",this.mousemove,!1),document.removeEventListener("touchend",this.mouseup,!1)),this.mousemove&&document.removeEventListener("mousemove",this.mousemove,!1),this.mouseup&&document.removeEventListener("mouseup",this.mouseup,!1),this.mousemove=this._mousemove.bind(this),this.mouseup=this._mouseup.bind(this),this.touchCapable&&(document.addEventListener("touchmove",this.mousemove,!1),document.addEventListener("touchend",this.mouseup,!1)),document.addEventListener("mousemove",this.mousemove,!1),document.addEventListener("mouseup",this.mouseup,!1),this.inDrag=!0;var e=this._calculateValue();return this._trigger("slideStart",e),this._setDataVal(e),this.setValue(e,!1,!0),this._pauseEvent(a),this.options.focus&&this._triggerFocusOnHandle(this.dragged),!0},_triggerFocusOnHandle:function(a){0===a&&this.handle1.focus(),1===a&&this.handle2.focus()},_keydown:function(a,b){if(!this.options.enabled)return!1;var c;switch(b.keyCode){case 37:case 40:c=-1;break;case 39:case 38:c=1}if(c){if(this.options.natural_arrow_keys){var d="vertical"===this.options.orientation&&!this.options.reversed,e="horizontal"===this.options.orientation&&this.options.reversed;(d||e)&&(c=-c)}var f=this.options.value[a]+c*this.options.step;return this.options.range&&(f=[a?this.options.value[0]:f,a?f:this.options.value[1]]),this._trigger("slideStart",f),this._setDataVal(f),this.setValue(f,!0,!0),this._trigger("slideStop",f),this._setDataVal(f),this._layout(),this._pauseEvent(b),!1}},_pauseEvent:function(a){a.stopPropagation&&a.stopPropagation(),a.preventDefault&&a.preventDefault(),a.cancelBubble=!0,a.returnValue=!1},_mousemove:function(a){if(!this.options.enabled)return!1;var b=this._getPercentage(a);this._adjustPercentageForRangeSliders(b),this.percentage[this.dragged]=this.options.reversed?100-b:b,this._layout();var c=this._calculateValue(!0);return this.setValue(c,!0,!0),!1},_adjustPercentageForRangeSliders:function(a){this.options.range&&(0===this.dragged&&this.percentage[1]<a?(this.percentage[0]=this.percentage[1],this.dragged=1):1===this.dragged&&this.percentage[0]>a&&(this.percentage[1]=this.percentage[0],this.dragged=0))},_mouseup:function(){if(!this.options.enabled)return!1;this.touchCapable&&(document.removeEventListener("touchmove",this.mousemove,!1),document.removeEventListener("touchend",this.mouseup,!1)),document.removeEventListener("mousemove",this.mousemove,!1),document.removeEventListener("mouseup",this.mouseup,!1),this.inDrag=!1,this.over===!1&&this._hideTooltip();var a=this._calculateValue(!0);return this._layout(),this._trigger("slideStop",a),this._setDataVal(a),!1},_calculateValue:function(a){var b;if(this.options.range?(b=[this.options.min,this.options.max],0!==this.percentage[0]&&(b[0]=this._toValue(this.percentage[0]),b[0]=this._applyPrecision(b[0])),100!==this.percentage[1]&&(b[1]=this._toValue(this.percentage[1]),b[1]=this._applyPrecision(b[1]))):(b=this._toValue(this.percentage[0]),b=parseFloat(b),b=this._applyPrecision(b)),a){for(var c=[b,1/0],d=0;d<this.options.ticks.length;d++){var e=Math.abs(this.options.ticks[d]-b);e<=c[1]&&(c=[this.options.ticks[d],e])}if(c[1]<=this.options.ticks_snap_bounds)return c[0]}return b},_applyPrecision:function(a){var b=this.options.precision||this._getNumDigitsAfterDecimalPlace(this.options.step);return this._applyToFixedAndParseFloat(a,b)},_getNumDigitsAfterDecimalPlace:function(a){var b=(""+a).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return b?Math.max(0,(b[1]?b[1].length:0)-(b[2]?+b[2]:0)):0},_applyToFixedAndParseFloat:function(a,b){var c=a.toFixed(b);return parseFloat(c)},_getPercentage:function(a){!this.touchCapable||"touchstart"!==a.type&&"touchmove"!==a.type||(a=a.touches[0]);var b=a[this.mousePos],c=this.offset[this.stylePos],d=b-c,e=d/this.size*100;return e=Math.round(e/this.percentage[2])*this.percentage[2],Math.max(0,Math.min(100,e))},_validateInputValue:function(a){if("number"==typeof a)return a;if(Array.isArray(a))return this._validateArray(a),a;throw new Error(d.formatInvalidInputErrorMsg(a))},_validateArray:function(a){for(var b=0;b<a.length;b++){var c=a[b];if("number"!=typeof c)throw new Error(d.formatInvalidInputErrorMsg(c))}},_setDataVal:function(a){var b="value: '"+a+"'";this.element.setAttribute("data",b),this.element.setAttribute("value",a),this.element.value=a},_trigger:function(b,c){c=c||0===c?c:void 0;var d=this.eventToCallbackMap[b];if(d&&d.length)for(var e=0;e<d.length;e++){var f=d[e];f(c)}a&&this._triggerJQueryEvent(b,c)},_triggerJQueryEvent:function(a,b){var c={type:a,value:b};this.$element.trigger(c),this.$sliderElem.trigger(c)},_unbindJQueryEventHandlers:function(){this.$element.off(),this.$sliderElem.off()},_setText:function(a,b){"undefined"!=typeof a.innerText?a.innerText=b:"undefined"!=typeof a.textContent&&(a.textContent=b)},_removeClass:function(a,b){for(var c=b.split(" "),d=a.className,e=0;e<c.length;e++){var f=c[e],g=new RegExp("(?:\\s|^)"+f+"(?:\\s|$)");d=d.replace(g," ")}a.className=d.trim()},_addClass:function(a,b){for(var c=b.split(" "),d=a.className,e=0;e<c.length;e++){var f=c[e],g=new RegExp("(?:\\s|^)"+f+"(?:\\s|$)"),h=g.test(d);h||(d+=" "+f)}a.className=d.trim()},_offsetLeft:function(a){for(var b=a.offsetLeft;(a=a.offsetParent)&&!isNaN(a.offsetLeft);)b+=a.offsetLeft;return b},_offsetTop:function(a){for(var b=a.offsetTop;(a=a.offsetParent)&&!isNaN(a.offsetTop);)b+=a.offsetTop;return b},_offset:function(a){return{left:this._offsetLeft(a),top:this._offsetTop(a)}},_css:function(b,c,d){if(a)a.style(b,c,d);else{var e=c.replace(/^-ms-/,"ms-").replace(/-([\da-z])/gi,function(a,b){return b.toUpperCase()});b.style[e]=d}},_toValue:function(a){return this.options.scale.toValue.apply(this,[a])},_toPercentage:function(a){return this.options.scale.toPercentage.apply(this,[a])}},a){var f=a.fn.slider?"bootstrapSlider":"slider";a.bridget(f,b)}}(a),b});
+!function(a,b){if("function"==typeof define&&define.amd)define(["jquery"],b);else if("object"==typeof module&&module.exports){var c;try{c=require("jquery")}catch(d){c=null}module.exports=b(c)}else a.Slider=b(a.jQuery)}(this,function(a){var b;return function(a){"use strict";function b(){}function c(a){function c(b){b.prototype.option||(b.prototype.option=function(b){a.isPlainObject(b)&&(this.options=a.extend(!0,this.options,b))})}function e(b,c){a.fn[b]=function(e){if("string"==typeof e){for(var g=d.call(arguments,1),h=0,i=this.length;i>h;h++){var j=this[h],k=a.data(j,b);if(k)if(a.isFunction(k[e])&&"_"!==e.charAt(0)){var l=k[e].apply(k,g);if(void 0!==l&&l!==k)return l}else f("no such method '"+e+"' for "+b+" instance");else f("cannot call methods on "+b+" prior to initialization; attempted to call '"+e+"'")}return this}var m=this.map(function(){var d=a.data(this,b);return d?(d.option(e),d._init()):(d=new c(this,e),a.data(this,b,d)),a(this)});return!m||m.length>1?m:m[0]}}if(a){var f="undefined"==typeof console?b:function(a){console.error(a)};return a.bridget=function(a,b){c(b),e(a,b)},a.bridget}}var d=Array.prototype.slice;c(a)}(a),function(a){function c(b,c){function d(a,b){var c="data-slider-"+b.replace(/_/g,"-"),d=a.getAttribute(c);try{return JSON.parse(d)}catch(e){return d}}this._state={value:null,enabled:null,offset:null,size:null,percentage:null,inDrag:null,over:null},"string"==typeof b?this.element=document.querySelector(b):b instanceof HTMLElement&&(this.element=b),c=c?c:{};for(var f=Object.keys(this.defaultOptions),g=0;g<f.length;g++){var h=f[g],i=c[h];i="undefined"!=typeof i?i:d(this.element,h),i=null!==i?i:this.defaultOptions[h],this.options||(this.options={}),this.options[h]=i}"vertical"!==this.options.orientation||"top"!==this.options.tooltip_position&&"bottom"!==this.options.tooltip_position?"horizontal"!==this.options.orientation||"left"!==this.options.tooltip_position&&"right"!==this.options.tooltip_position||(this.options.tooltip_position="top"):this.options.tooltip_position="right";var j,k,l,m,n,o=this.element.style.width,p=!1,q=this.element.parentNode;if(this.sliderElem)p=!0;else{this.sliderElem=document.createElement("div"),this.sliderElem.className="slider";var r=document.createElement("div");if(r.className="slider-track",k=document.createElement("div"),k.className="slider-track-low",j=document.createElement("div"),j.className="slider-selection",l=document.createElement("div"),l.className="slider-track-high",m=document.createElement("div"),m.className="slider-handle min-slider-handle",n=document.createElement("div"),n.className="slider-handle max-slider-handle",r.appendChild(k),r.appendChild(j),r.appendChild(l),this.ticks=[],Array.isArray(this.options.ticks)&&this.options.ticks.length>0){for(g=0;g<this.options.ticks.length;g++){var s=document.createElement("div");s.className="slider-tick",this.ticks.push(s),r.appendChild(s)}j.className+=" tick-slider-selection"}if(r.appendChild(m),r.appendChild(n),this.tickLabels=[],Array.isArray(this.options.ticks_labels)&&this.options.ticks_labels.length>0)for(this.tickLabelContainer=document.createElement("div"),this.tickLabelContainer.className="slider-tick-label-container",g=0;g<this.options.ticks_labels.length;g++){var t=document.createElement("div");t.className="slider-tick-label",t.innerHTML=this.options.ticks_labels[g],this.tickLabels.push(t),this.tickLabelContainer.appendChild(t)}var u=function(a){var b=document.createElement("div");b.className="tooltip-arrow";var c=document.createElement("div");c.className="tooltip-inner",a.appendChild(b),a.appendChild(c)},v=document.createElement("div");v.className="tooltip tooltip-main",u(v);var w=document.createElement("div");w.className="tooltip tooltip-min",u(w);var x=document.createElement("div");x.className="tooltip tooltip-max",u(x),this.sliderElem.appendChild(r),this.sliderElem.appendChild(v),this.sliderElem.appendChild(w),this.sliderElem.appendChild(x),this.tickLabelContainer&&this.sliderElem.appendChild(this.tickLabelContainer),q.insertBefore(this.sliderElem,this.element),this.element.style.display="none"}if(a&&(this.$element=a(this.element),this.$sliderElem=a(this.sliderElem)),this.eventToCallbackMap={},this.sliderElem.id=this.options.id,this.touchCapable="ontouchstart"in window||window.DocumentTouch&&document instanceof window.DocumentTouch,this.tooltip=this.sliderElem.querySelector(".tooltip-main"),this.tooltipInner=this.tooltip.querySelector(".tooltip-inner"),this.tooltip_min=this.sliderElem.querySelector(".tooltip-min"),this.tooltipInner_min=this.tooltip_min.querySelector(".tooltip-inner"),this.tooltip_max=this.sliderElem.querySelector(".tooltip-max"),this.tooltipInner_max=this.tooltip_max.querySelector(".tooltip-inner"),e[this.options.scale]&&(this.options.scale=e[this.options.scale]),p===!0&&(this._removeClass(this.sliderElem,"slider-horizontal"),this._removeClass(this.sliderElem,"slider-vertical"),this._removeClass(this.tooltip,"hide"),this._removeClass(this.tooltip_min,"hide"),this._removeClass(this.tooltip_max,"hide"),["left","top","width","height"].forEach(function(a){this._removeProperty(this.trackLow,a),this._removeProperty(this.trackSelection,a),this._removeProperty(this.trackHigh,a)},this),[this.handle1,this.handle2].forEach(function(a){this._removeProperty(a,"left"),this._removeProperty(a,"top")},this),[this.tooltip,this.tooltip_min,this.tooltip_max].forEach(function(a){this._removeProperty(a,"left"),this._removeProperty(a,"top"),this._removeProperty(a,"margin-left"),this._removeProperty(a,"margin-top"),this._removeClass(a,"right"),this._removeClass(a,"top")},this)),"vertical"===this.options.orientation?(this._addClass(this.sliderElem,"slider-vertical"),this.stylePos="top",this.mousePos="pageY",this.sizePos="offsetHeight"):(this._addClass(this.sliderElem,"slider-horizontal"),this.sliderElem.style.width=o,this.options.orientation="horizontal",this.stylePos="left",this.mousePos="pageX",this.sizePos="offsetWidth"),this._setTooltipPosition(),Array.isArray(this.options.ticks)&&this.options.ticks.length>0&&(this.options.max=Math.max.apply(Math,this.options.ticks),this.options.min=Math.min.apply(Math,this.options.ticks)),Array.isArray(this.options.value)?(this.options.range=!0,this._state.value=this.options.value):this._state.value=this.options.range?[this.options.value,this.options.max]:this.options.value,this.trackLow=k||this.trackLow,this.trackSelection=j||this.trackSelection,this.trackHigh=l||this.trackHigh,"none"===this.options.selection&&(this._addClass(this.trackLow,"hide"),this._addClass(this.trackSelection,"hide"),this._addClass(this.trackHigh,"hide")),this.handle1=m||this.handle1,this.handle2=n||this.handle2,p===!0)for(this._removeClass(this.handle1,"round triangle"),this._removeClass(this.handle2,"round triangle hide"),g=0;g<this.ticks.length;g++)this._removeClass(this.ticks[g],"round triangle hide");var y=["round","triangle","custom"],z=-1!==y.indexOf(this.options.handle);if(z)for(this._addClass(this.handle1,this.options.handle),this._addClass(this.handle2,this.options.handle),g=0;g<this.ticks.length;g++)this._addClass(this.ticks[g],this.options.handle);this._state.offset=this._offset(this.sliderElem),this._state.size=this.sliderElem[this.sizePos],this.setValue(this._state.value),this.handle1Keydown=this._keydown.bind(this,0),this.handle1.addEventListener("keydown",this.handle1Keydown,!1),this.handle2Keydown=this._keydown.bind(this,1),this.handle2.addEventListener("keydown",this.handle2Keydown,!1),this.mousedown=this._mousedown.bind(this),this.touchCapable&&this.sliderElem.addEventListener("touchstart",this.mousedown,!1),this.sliderElem.addEventListener("mousedown",this.mousedown,!1),"hide"===this.options.tooltip?(this._addClass(this.tooltip,"hide"),this._addClass(this.tooltip_min,"hide"),this._addClass(this.tooltip_max,"hide")):"always"===this.options.tooltip?(this._showTooltip(),this._alwaysShowTooltip=!0):(this.showTooltip=this._showTooltip.bind(this),this.hideTooltip=this._hideTooltip.bind(this),this.sliderElem.addEventListener("mouseenter",this.showTooltip,!1),this.sliderElem.addEventListener("mouseleave",this.hideTooltip,!1),this.handle1.addEventListener("focus",this.showTooltip,!1),this.handle1.addEventListener("blur",this.hideTooltip,!1),this.handle2.addEventListener("focus",this.showTooltip,!1),this.handle2.addEventListener("blur",this.hideTooltip,!1)),this.options.enabled?this.enable():this.disable()}var d={formatInvalidInputErrorMsg:function(a){return"Invalid input value '"+a+"' passed in"},callingContextNotSliderInstance:"Calling context element does not have instance of Slider bound to it. Check your code to make sure the JQuery object returned from the call to the slider() initializer is calling the method"},e={linear:{toValue:function(a){var b=a/100*(this.options.max-this.options.min);if(this.options.ticks_positions.length>0){for(var c,d,e,f=0,g=0;g<this.options.ticks_positions.length;g++)if(a<=this.options.ticks_positions[g]){c=g>0?this.options.ticks[g-1]:0,e=g>0?this.options.ticks_positions[g-1]:0,d=this.options.ticks[g],f=this.options.ticks_positions[g];break}if(g>0){var h=(a-e)/(f-e);b=c+h*(d-c)}}var i=this.options.min+Math.round(b/this.options.step)*this.options.step;return i<this.options.min?this.options.min:i>this.options.max?this.options.max:i},toPercentage:function(a){if(this.options.max===this.options.min)return 0;if(this.options.ticks_positions.length>0){for(var b,c,d,e=0,f=0;f<this.options.ticks.length;f++)if(a<=this.options.ticks[f]){b=f>0?this.options.ticks[f-1]:0,d=f>0?this.options.ticks_positions[f-1]:0,c=this.options.ticks[f],e=this.options.ticks_positions[f];break}if(f>0){var g=(a-b)/(c-b);return d+g*(e-d)}}return 100*(a-this.options.min)/(this.options.max-this.options.min)}},logarithmic:{toValue:function(a){var b=0===this.options.min?0:Math.log(this.options.min),c=Math.log(this.options.max),d=Math.exp(b+(c-b)*a/100);return d=this.options.min+Math.round((d-this.options.min)/this.options.step)*this.options.step,d<this.options.min?this.options.min:d>this.options.max?this.options.max:d},toPercentage:function(a){if(this.options.max===this.options.min)return 0;var b=Math.log(this.options.max),c=0===this.options.min?0:Math.log(this.options.min),d=0===a?0:Math.log(a);return 100*(d-c)/(b-c)}}};if(b=function(a,b){return c.call(this,a,b),this},b.prototype={_init:function(){},constructor:b,defaultOptions:{id:"",min:0,max:10,step:1,precision:0,orientation:"horizontal",value:5,range:!1,selection:"before",tooltip:"show",tooltip_split:!1,handle:"round",reversed:!1,enabled:!0,formatter:function(a){return Array.isArray(a)?a[0]+" : "+a[1]:a},natural_arrow_keys:!1,ticks:[],ticks_positions:[],ticks_labels:[],ticks_snap_bounds:0,scale:"linear",focus:!1,tooltip_position:null},getElement:function(){return this.sliderElem},getValue:function(){return this.options.range?this._state.value:this._state.value[0]},setValue:function(a,b,c){a||(a=0);var d=this.getValue();this._state.value=this._validateInputValue(a);var e=this._applyPrecision.bind(this);this.options.range?(this._state.value[0]=e(this._state.value[0]),this._state.value[1]=e(this._state.value[1]),this._state.value[0]=Math.max(this.options.min,Math.min(this.options.max,this._state.value[0])),this._state.value[1]=Math.max(this.options.min,Math.min(this.options.max,this._state.value[1]))):(this._state.value=e(this._state.value),this._state.value=[Math.max(this.options.min,Math.min(this.options.max,this._state.value))],this._addClass(this.handle2,"hide"),this._state.value[1]="after"===this.options.selection?this.options.max:this.options.min),this._state.percentage=this.options.max>this.options.min?[this._toPercentage(this._state.value[0]),this._toPercentage(this._state.value[1]),100*this.options.step/(this.options.max-this.options.min)]:[0,0,100],this._layout();var f=this.options.range?this._state.value:this._state.value[0];return b===!0&&this._trigger("slide",f),d!==f&&c===!0&&this._trigger("change",{oldValue:d,newValue:f}),this._setDataVal(f),this},destroy:function(){this._removeSliderEventHandlers(),this.sliderElem.parentNode.removeChild(this.sliderElem),this.element.style.display="",this._cleanUpEventCallbacksMap(),this.element.removeAttribute("data"),a&&(this._unbindJQueryEventHandlers(),this.$element.removeData("slider"))},disable:function(){return this._state.enabled=!1,this.handle1.removeAttribute("tabindex"),this.handle2.removeAttribute("tabindex"),this._addClass(this.sliderElem,"slider-disabled"),this._trigger("slideDisabled"),this},enable:function(){return this._state.enabled=!0,this.handle1.setAttribute("tabindex",0),this.handle2.setAttribute("tabindex",0),this._removeClass(this.sliderElem,"slider-disabled"),this._trigger("slideEnabled"),this},toggle:function(){return this._state.enabled?this.disable():this.enable(),this},isEnabled:function(){return this._state.enabled},on:function(a,b){return this._bindNonQueryEventHandler(a,b),this},off:function(b,c){a?(this.$element.off(b,c),this.$sliderElem.off(b,c)):this._unbindNonQueryEventHandler(b,c)},getAttribute:function(a){return a?this.options[a]:this.options},setAttribute:function(a,b){return this.options[a]=b,this},refresh:function(){return this._removeSliderEventHandlers(),c.call(this,this.element,this.options),a&&a.data(this.element,"slider",this),this},relayout:function(){return this._layout(),this},_removeSliderEventHandlers:function(){this.handle1.removeEventListener("keydown",this.handle1Keydown,!1),this.handle1.removeEventListener("focus",this.showTooltip,!1),this.handle1.removeEventListener("blur",this.hideTooltip,!1),this.handle2.removeEventListener("keydown",this.handle2Keydown,!1),this.handle2.removeEventListener("focus",this.handle2Keydown,!1),this.handle2.removeEventListener("blur",this.handle2Keydown,!1),this.sliderElem.removeEventListener("mouseenter",this.showTooltip,!1),this.sliderElem.removeEventListener("mouseleave",this.hideTooltip,!1),this.sliderElem.removeEventListener("touchstart",this.mousedown,!1),this.sliderElem.removeEventListener("mousedown",this.mousedown,!1)},_bindNonQueryEventHandler:function(a,b){void 0===this.eventToCallbackMap[a]&&(this.eventToCallbackMap[a]=[]),this.eventToCallbackMap[a].push(b)},_unbindNonQueryEventHandler:function(a,b){var c=this.eventToCallbackMap[a];if(void 0!==c)for(var d=0;d<c.length;d++)if(c[d]===b){c.splice(d,1);break}},_cleanUpEventCallbacksMap:function(){for(var a=Object.keys(this.eventToCallbackMap),b=0;b<a.length;b++){var c=a[b];this.eventToCallbackMap[c]=null}},_showTooltip:function(){this.options.tooltip_split===!1?(this._addClass(this.tooltip,"in"),this.tooltip_min.style.display="none",this.tooltip_max.style.display="none"):(this._addClass(this.tooltip_min,"in"),this._addClass(this.tooltip_max,"in"),this.tooltip.style.display="none"),this._state.over=!0},_hideTooltip:function(){this._state.inDrag===!1&&this.alwaysShowTooltip!==!0&&(this._removeClass(this.tooltip,"in"),this._removeClass(this.tooltip_min,"in"),this._removeClass(this.tooltip_max,"in")),this._state.over=!1},_layout:function(){var a;if(a=this.options.reversed?[100-this._state.percentage[0],this.options.range?100-this._state.percentage[1]:this._state.percentage[1]]:[this._state.percentage[0],this._state.percentage[1]],this.handle1.style[this.stylePos]=a[0]+"%",this.handle2.style[this.stylePos]=a[1]+"%",Array.isArray(this.options.ticks)&&this.options.ticks.length>0){var b=Math.max.apply(Math,this.options.ticks),c=Math.min.apply(Math,this.options.ticks),d="vertical"===this.options.orientation?"height":"width",e="vertical"===this.options.orientation?"marginTop":"marginLeft",f=this._state.size/(this.options.ticks.length-1);if(this.tickLabelContainer){var g=0;if(0===this.options.ticks_positions.length)this.tickLabelContainer.style[e]=-f/2+"px",g=this.tickLabelContainer.offsetHeight;else for(h=0;h<this.tickLabelContainer.childNodes.length;h++)this.tickLabelContainer.childNodes[h].offsetHeight>g&&(g=this.tickLabelContainer.childNodes[h].offsetHeight);"horizontal"===this.options.orientation&&(this.sliderElem.style.marginBottom=g+"px")}for(var h=0;h<this.options.ticks.length;h++){var i=this.options.ticks_positions[h]||100*(this.options.ticks[h]-c)/(b-c);this.ticks[h].style[this.stylePos]=i+"%",this._removeClass(this.ticks[h],"in-selection"),this.options.range?i>=a[0]&&i<=a[1]&&this._addClass(this.ticks[h],"in-selection"):"after"===this.options.selection&&i>=a[0]?this._addClass(this.ticks[h],"in-selection"):"before"===this.options.selection&&i<=a[0]&&this._addClass(this.ticks[h],"in-selection"),this.tickLabels[h]&&(this.tickLabels[h].style[d]=f+"px",void 0!==this.options.ticks_positions[h]&&(this.tickLabels[h].style.position="absolute",this.tickLabels[h].style[this.stylePos]=this.options.ticks_positions[h]+"%",this.tickLabels[h].style[e]=-f/2+"px"))}}if("vertical"===this.options.orientation)this.trackLow.style.top="0",this.trackLow.style.height=Math.min(a[0],a[1])+"%",this.trackSelection.style.top=Math.min(a[0],a[1])+"%",this.trackSelection.style.height=Math.abs(a[0]-a[1])+"%",this.trackHigh.style.bottom="0",this.trackHigh.style.height=100-Math.min(a[0],a[1])-Math.abs(a[0]-a[1])+"%";else{this.trackLow.style.left="0",this.trackLow.style.width=Math.min(a[0],a[1])+"%",this.trackSelection.style.left=Math.min(a[0],a[1])+"%",this.trackSelection.style.width=Math.abs(a[0]-a[1])+"%",this.trackHigh.style.right="0",this.trackHigh.style.width=100-Math.min(a[0],a[1])-Math.abs(a[0]-a[1])+"%";var j=this.tooltip_min.getBoundingClientRect(),k=this.tooltip_max.getBoundingClientRect();j.right>k.left?(this._removeClass(this.tooltip_max,"top"),this._addClass(this.tooltip_max,"bottom"),this.tooltip_max.style.top="18px"):(this._removeClass(this.tooltip_max,"bottom"),this._addClass(this.tooltip_max,"top"),this.tooltip_max.style.top=this.tooltip_min.style.top)}var l;if(this.options.range){l=this.options.formatter(this._state.value),this._setText(this.tooltipInner,l),this.tooltip.style[this.stylePos]=(a[1]+a[0])/2+"%","vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px"),"vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px");var m=this.options.formatter(this._state.value[0]);this._setText(this.tooltipInner_min,m);var n=this.options.formatter(this._state.value[1]);this._setText(this.tooltipInner_max,n),this.tooltip_min.style[this.stylePos]=a[0]+"%","vertical"===this.options.orientation?this._css(this.tooltip_min,"margin-top",-this.tooltip_min.offsetHeight/2+"px"):this._css(this.tooltip_min,"margin-left",-this.tooltip_min.offsetWidth/2+"px"),this.tooltip_max.style[this.stylePos]=a[1]+"%","vertical"===this.options.orientation?this._css(this.tooltip_max,"margin-top",-this.tooltip_max.offsetHeight/2+"px"):this._css(this.tooltip_max,"margin-left",-this.tooltip_max.offsetWidth/2+"px")}else l=this.options.formatter(this._state.value[0]),this._setText(this.tooltipInner,l),this.tooltip.style[this.stylePos]=a[0]+"%","vertical"===this.options.orientation?this._css(this.tooltip,"margin-top",-this.tooltip.offsetHeight/2+"px"):this._css(this.tooltip,"margin-left",-this.tooltip.offsetWidth/2+"px")},_removeProperty:function(a,b){a.style.removeProperty?a.style.removeProperty(b):a.style.removeAttribute(b)},_mousedown:function(a){if(!this._state.enabled)return!1;this._state.offset=this._offset(this.sliderElem),this._state.size=this.sliderElem[this.sizePos];var b=this._getPercentage(a);if(this.options.range){var c=Math.abs(this._state.percentage[0]-b),d=Math.abs(this._state.percentage[1]-b);this._state.dragged=d>c?0:1}else this._state.dragged=0;this._state.percentage[this._state.dragged]=b,this._layout(),this.touchCapable&&(document.removeEventListener("touchmove",this.mousemove,!1),document.removeEventListener("touchend",this.mouseup,!1)),this.mousemove&&document.removeEventListener("mousemove",this.mousemove,!1),this.mouseup&&document.removeEventListener("mouseup",this.mouseup,!1),this.mousemove=this._mousemove.bind(this),this.mouseup=this._mouseup.bind(this),this.touchCapable&&(document.addEventListener("touchmove",this.mousemove,!1),document.addEventListener("touchend",this.mouseup,!1)),document.addEventListener("mousemove",this.mousemove,!1),document.addEventListener("mouseup",this.mouseup,!1),this._state.inDrag=!0;var e=this._calculateValue();return this._trigger("slideStart",e),this._setDataVal(e),this.setValue(e,!1,!0),this._pauseEvent(a),this.options.focus&&this._triggerFocusOnHandle(this._state.dragged),!0},_triggerFocusOnHandle:function(a){0===a&&this.handle1.focus(),1===a&&this.handle2.focus()},_keydown:function(a,b){if(!this._state.enabled)return!1;var c;switch(b.keyCode){case 37:case 40:c=-1;break;case 39:case 38:c=1}if(c){if(this.options.natural_arrow_keys){var d="vertical"===this.options.orientation&&!this.options.reversed,e="horizontal"===this.options.orientation&&this.options.reversed;(d||e)&&(c=-c)}var f=this._state.value[a]+c*this.options.step;return this.options.range&&(f=[a?this._state.value[0]:f,a?f:this._state.value[1]]),this._trigger("slideStart",f),this._setDataVal(f),this.setValue(f,!0,!0),this._setDataVal(f),this._trigger("slideStop",f),this._layout(),this._pauseEvent(b),!1}},_pauseEvent:function(a){a.stopPropagation&&a.stopPropagation(),a.preventDefault&&a.preventDefault(),a.cancelBubble=!0,a.returnValue=!1},_mousemove:function(a){if(!this._state.enabled)return!1;var b=this._getPercentage(a);this._adjustPercentageForRangeSliders(b),this._state.percentage[this._state.dragged]=b,this._layout();var c=this._calculateValue(!0);return this.setValue(c,!0,!0),!1},_adjustPercentageForRangeSliders:function(a){if(this.options.range){var b=this._getNumDigitsAfterDecimalPlace(a);b=b?b-1:0;var c=this._applyToFixedAndParseFloat(a,b);0===this._state.dragged&&this._applyToFixedAndParseFloat(this._state.percentage[1],b)<c?(this._state.percentage[0]=this._state.percentage[1],this._state.dragged=1):1===this._state.dragged&&this._applyToFixedAndParseFloat(this._state.percentage[0],b)>c&&(this._state.percentage[1]=this._state.percentage[0],this._state.dragged=0)}},_mouseup:function(){if(!this._state.enabled)return!1;this.touchCapable&&(document.removeEventListener("touchmove",this.mousemove,!1),document.removeEventListener("touchend",this.mouseup,!1)),document.removeEventListener("mousemove",this.mousemove,!1),document.removeEventListener("mouseup",this.mouseup,!1),this._state.inDrag=!1,this._state.over===!1&&this._hideTooltip();var a=this._calculateValue(!0);return this._layout(),this._setDataVal(a),this._trigger("slideStop",a),!1},_calculateValue:function(a){var b;if(this.options.range?(b=[this.options.min,this.options.max],0!==this._state.percentage[0]&&(b[0]=this._toValue(this._state.percentage[0]),b[0]=this._applyPrecision(b[0])),100!==this._state.percentage[1]&&(b[1]=this._toValue(this._state.percentage[1]),b[1]=this._applyPrecision(b[1]))):(b=this._toValue(this._state.percentage[0]),b=parseFloat(b),b=this._applyPrecision(b)),a){for(var c=[b,1/0],d=0;d<this.options.ticks.length;d++){var e=Math.abs(this.options.ticks[d]-b);e<=c[1]&&(c=[this.options.ticks[d],e])}if(c[1]<=this.options.ticks_snap_bounds)return c[0]}return b},_applyPrecision:function(a){var b=this.options.precision||this._getNumDigitsAfterDecimalPlace(this.options.step);return this._applyToFixedAndParseFloat(a,b)},_getNumDigitsAfterDecimalPlace:function(a){var b=(""+a).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);return b?Math.max(0,(b[1]?b[1].length:0)-(b[2]?+b[2]:0)):0},_applyToFixedAndParseFloat:function(a,b){var c=a.toFixed(b);return parseFloat(c)},_getPercentage:function(a){!this.touchCapable||"touchstart"!==a.type&&"touchmove"!==a.type||(a=a.touches[0]);var b=a[this.mousePos],c=this._state.offset[this.stylePos],d=b-c,e=d/this._state.size*100;return e=Math.round(e/this._state.percentage[2])*this._state.percentage[2],this.options.reversed&&(e=100-e),Math.max(0,Math.min(100,e))},_validateInputValue:function(a){if("number"==typeof a)return a;if(Array.isArray(a))return this._validateArray(a),a;throw new Error(d.formatInvalidInputErrorMsg(a))},_validateArray:function(a){for(var b=0;b<a.length;b++){var c=a[b];if("number"!=typeof c)throw new Error(d.formatInvalidInputErrorMsg(c))}},_setDataVal:function(a){var b="value: '"+a+"'";this.element.setAttribute("data",b),this.element.setAttribute("value",a),this.element.value=a},_trigger:function(b,c){c=c||0===c?c:void 0;var d=this.eventToCallbackMap[b];if(d&&d.length)for(var e=0;e<d.length;e++){var f=d[e];f(c)}a&&this._triggerJQueryEvent(b,c)},_triggerJQueryEvent:function(a,b){var c={type:a,value:b};this.$element.trigger(c),this.$sliderElem.trigger(c)},_unbindJQueryEventHandlers:function(){this.$element.off(),this.$sliderElem.off()},_setText:function(a,b){"undefined"!=typeof a.innerText?a.innerText=b:"undefined"!=typeof a.textContent&&(a.textContent=b)},_removeClass:function(a,b){for(var c=b.split(" "),d=a.className,e=0;e<c.length;e++){var f=c[e],g=new RegExp("(?:\\s|^)"+f+"(?:\\s|$)");d=d.replace(g," ")}a.className=d.trim()},_addClass:function(a,b){for(var c=b.split(" "),d=a.className,e=0;e<c.length;e++){var f=c[e],g=new RegExp("(?:\\s|^)"+f+"(?:\\s|$)"),h=g.test(d);h||(d+=" "+f)}a.className=d.trim()},_offsetLeft:function(a){return a.getBoundingClientRect().left},_offsetTop:function(a){for(var b=a.offsetTop;(a=a.offsetParent)&&!isNaN(a.offsetTop);)b+=a.offsetTop;return b},_offset:function(a){return{left:this._offsetLeft(a),top:this._offsetTop(a)}},_css:function(b,c,d){if(a)a.style(b,c,d);else{var e=c.replace(/^-ms-/,"ms-").replace(/-([\da-z])/gi,function(a,b){return b.toUpperCase()});b.style[e]=d}},_toValue:function(a){return this.options.scale.toValue.apply(this,[a])},_toPercentage:function(a){return this.options.scale.toPercentage.apply(this,[a])},_setTooltipPosition:function(){var a=[this.tooltip,this.tooltip_min,this.tooltip_max];if("vertical"===this.options.orientation){var b=this.options.tooltip_position||"right",c="left"===b?"right":"left";a.forEach(function(a){this._addClass(a,b),a.style[c]="100%"}.bind(this))}else a.forEach("bottom"===this.options.tooltip_position?function(a){this._addClass(a,"bottom"),a.style.top="22px"}.bind(this):function(a){this._addClass(a,"top"),a.style.top=-this.tooltip.outerHeight-14+"px"}.bind(this))}},a){var f=a.fn.slider?"bootstrapSlider":"slider";a.bridget(f,b)}}(a),b});
+(function(){var t=[].slice;!function(e,i){"use strict";var n;return n=function(){function t(t,i){null==i&&(i={}),this.$element=e(t),this.options=e.extend({},e.fn.bootstrapSwitch.defaults,{state:this.$element.is(":checked"),size:this.$element.data("size"),animate:this.$element.data("animate"),disabled:this.$element.is(":disabled"),readonly:this.$element.is("[readonly]"),indeterminate:this.$element.data("indeterminate"),inverse:this.$element.data("inverse"),radioAllOff:this.$element.data("radio-all-off"),onColor:this.$element.data("on-color"),offColor:this.$element.data("off-color"),onText:this.$element.data("on-text"),offText:this.$element.data("off-text"),labelText:this.$element.data("label-text"),handleWidth:this.$element.data("handle-width"),labelWidth:this.$element.data("label-width"),baseClass:this.$element.data("base-class"),wrapperClass:this.$element.data("wrapper-class")},i),this.$wrapper=e("<div>",{"class":function(t){return function(){var e;return e=[""+t.options.baseClass].concat(t._getClasses(t.options.wrapperClass)),e.push(t.options.state?""+t.options.baseClass+"-on":""+t.options.baseClass+"-off"),null!=t.options.size&&e.push(""+t.options.baseClass+"-"+t.options.size),t.options.disabled&&e.push(""+t.options.baseClass+"-disabled"),t.options.readonly&&e.push(""+t.options.baseClass+"-readonly"),t.options.indeterminate&&e.push(""+t.options.baseClass+"-indeterminate"),t.options.inverse&&e.push(""+t.options.baseClass+"-inverse"),t.$element.attr("id")&&e.push(""+t.options.baseClass+"-id-"+t.$element.attr("id")),e.join(" ")}}(this)()}),this.$container=e("<div>",{"class":""+this.options.baseClass+"-container"}),this.$on=e("<span>",{html:this.options.onText,"class":""+this.options.baseClass+"-handle-on "+this.options.baseClass+"-"+this.options.onColor}),this.$off=e("<span>",{html:this.options.offText,"class":""+this.options.baseClass+"-handle-off "+this.options.baseClass+"-"+this.options.offColor}),this.$label=e("<span>",{html:this.options.labelText,"class":""+this.options.baseClass+"-label"}),this.$element.on("init.bootstrapSwitch",function(e){return function(){return e.options.onInit.apply(t,arguments)}}(this)),this.$element.on("switchChange.bootstrapSwitch",function(e){return function(){return e.options.onSwitchChange.apply(t,arguments)}}(this)),this.$container=this.$element.wrap(this.$container).parent(),this.$wrapper=this.$container.wrap(this.$wrapper).parent(),this.$element.before(this.options.inverse?this.$off:this.$on).before(this.$label).before(this.options.inverse?this.$on:this.$off),this.options.indeterminate&&this.$element.prop("indeterminate",!0),this._init(),this._elementHandlers(),this._handleHandlers(),this._labelHandlers(),this._formHandler(),this._externalLabelHandler(),this.$element.trigger("init.bootstrapSwitch")}return t.prototype._constructor=t,t.prototype.state=function(t,e){return"undefined"==typeof t?this.options.state:this.options.disabled||this.options.readonly?this.$element:this.options.state&&!this.options.radioAllOff&&this.$element.is(":radio")?this.$element:(this.options.indeterminate&&this.indeterminate(!1),t=!!t,this.$element.prop("checked",t).trigger("change.bootstrapSwitch",e),this.$element)},t.prototype.toggleState=function(t){return this.options.disabled||this.options.readonly?this.$element:this.options.indeterminate?(this.indeterminate(!1),this.state(!0)):this.$element.prop("checked",!this.options.state).trigger("change.bootstrapSwitch",t)},t.prototype.size=function(t){return"undefined"==typeof t?this.options.size:(null!=this.options.size&&this.$wrapper.removeClass(""+this.options.baseClass+"-"+this.options.size),t&&this.$wrapper.addClass(""+this.options.baseClass+"-"+t),this._width(),this._containerPosition(),this.options.size=t,this.$element)},t.prototype.animate=function(t){return"undefined"==typeof t?this.options.animate:(t=!!t,t===this.options.animate?this.$element:this.toggleAnimate())},t.prototype.toggleAnimate=function(){return this.options.animate=!this.options.animate,this.$wrapper.toggleClass(""+this.options.baseClass+"-animate"),this.$element},t.prototype.disabled=function(t){return"undefined"==typeof t?this.options.disabled:(t=!!t,t===this.options.disabled?this.$element:this.toggleDisabled())},t.prototype.toggleDisabled=function(){return this.options.disabled=!this.options.disabled,this.$element.prop("disabled",this.options.disabled),this.$wrapper.toggleClass(""+this.options.baseClass+"-disabled"),this.$element},t.prototype.readonly=function(t){return"undefined"==typeof t?this.options.readonly:(t=!!t,t===this.options.readonly?this.$element:this.toggleReadonly())},t.prototype.toggleReadonly=function(){return this.options.readonly=!this.options.readonly,this.$element.prop("readonly",this.options.readonly),this.$wrapper.toggleClass(""+this.options.baseClass+"-readonly"),this.$element},t.prototype.indeterminate=function(t){return"undefined"==typeof t?this.options.indeterminate:(t=!!t,t===this.options.indeterminate?this.$element:this.toggleIndeterminate())},t.prototype.toggleIndeterminate=function(){return this.options.indeterminate=!this.options.indeterminate,this.$element.prop("indeterminate",this.options.indeterminate),this.$wrapper.toggleClass(""+this.options.baseClass+"-indeterminate"),this._containerPosition(),this.$element},t.prototype.inverse=function(t){return"undefined"==typeof t?this.options.inverse:(t=!!t,t===this.options.inverse?this.$element:this.toggleInverse())},t.prototype.toggleInverse=function(){var t,e;return this.$wrapper.toggleClass(""+this.options.baseClass+"-inverse"),e=this.$on.clone(!0),t=this.$off.clone(!0),this.$on.replaceWith(t),this.$off.replaceWith(e),this.$on=t,this.$off=e,this.options.inverse=!this.options.inverse,this.$element},t.prototype.onColor=function(t){var e;return e=this.options.onColor,"undefined"==typeof t?e:(null!=e&&this.$on.removeClass(""+this.options.baseClass+"-"+e),this.$on.addClass(""+this.options.baseClass+"-"+t),this.options.onColor=t,this.$element)},t.prototype.offColor=function(t){var e;return e=this.options.offColor,"undefined"==typeof t?e:(null!=e&&this.$off.removeClass(""+this.options.baseClass+"-"+e),this.$off.addClass(""+this.options.baseClass+"-"+t),this.options.offColor=t,this.$element)},t.prototype.onText=function(t){return"undefined"==typeof t?this.options.onText:(this.$on.html(t),this._width(),this._containerPosition(),this.options.onText=t,this.$element)},t.prototype.offText=function(t){return"undefined"==typeof t?this.options.offText:(this.$off.html(t),this._width(),this._containerPosition(),this.options.offText=t,this.$element)},t.prototype.labelText=function(t){return"undefined"==typeof t?this.options.labelText:(this.$label.html(t),this._width(),this.options.labelText=t,this.$element)},t.prototype.handleWidth=function(t){return"undefined"==typeof t?this.options.handleWidth:(this.options.handleWidth=t,this._width(),this._containerPosition(),this.$element)},t.prototype.labelWidth=function(t){return"undefined"==typeof t?this.options.labelWidth:(this.options.labelWidth=t,this._width(),this._containerPosition(),this.$element)},t.prototype.baseClass=function(){return this.options.baseClass},t.prototype.wrapperClass=function(t){return"undefined"==typeof t?this.options.wrapperClass:(t||(t=e.fn.bootstrapSwitch.defaults.wrapperClass),this.$wrapper.removeClass(this._getClasses(this.options.wrapperClass).join(" ")),this.$wrapper.addClass(this._getClasses(t).join(" ")),this.options.wrapperClass=t,this.$element)},t.prototype.radioAllOff=function(t){return"undefined"==typeof t?this.options.radioAllOff:(t=!!t,t===this.options.radioAllOff?this.$element:(this.options.radioAllOff=t,this.$element))},t.prototype.onInit=function(t){return"undefined"==typeof t?this.options.onInit:(t||(t=e.fn.bootstrapSwitch.defaults.onInit),this.options.onInit=t,this.$element)},t.prototype.onSwitchChange=function(t){return"undefined"==typeof t?this.options.onSwitchChange:(t||(t=e.fn.bootstrapSwitch.defaults.onSwitchChange),this.options.onSwitchChange=t,this.$element)},t.prototype.destroy=function(){var t;return t=this.$element.closest("form"),t.length&&t.off("reset.bootstrapSwitch").removeData("bootstrap-switch"),this.$container.children().not(this.$element).remove(),this.$element.unwrap().unwrap().off(".bootstrapSwitch").removeData("bootstrap-switch"),this.$element},t.prototype._width=function(){var t,e;return t=this.$on.add(this.$off),t.add(this.$label).css("width",""),e="auto"===this.options.handleWidth?Math.max(this.$on.width(),this.$off.width()):this.options.handleWidth,t.width(e),this.$label.width(function(t){return function(i,n){return"auto"!==t.options.labelWidth?t.options.labelWidth:e>n?e:n}}(this)),this._handleWidth=this.$on.outerWidth(),this._labelWidth=this.$label.outerWidth(),this.$container.width(2*this._handleWidth+this._labelWidth),this.$wrapper.width(this._handleWidth+this._labelWidth)},t.prototype._containerPosition=function(t,e){return null==t&&(t=this.options.state),this.$container.css("margin-left",function(e){return function(){var i;return i=[0,"-"+e._handleWidth+"px"],e.options.indeterminate?"-"+e._handleWidth/2+"px":t?e.options.inverse?i[1]:i[0]:e.options.inverse?i[0]:i[1]}}(this)),e?setTimeout(function(){return e()},50):void 0},t.prototype._init=function(){var t,e;return t=function(t){return function(){return t._width(),t._containerPosition(null,function(){return t.options.animate?t.$wrapper.addClass(""+t.options.baseClass+"-animate"):void 0})}}(this),this.$wrapper.is(":visible")?t():e=i.setInterval(function(n){return function(){return n.$wrapper.is(":visible")?(t(),i.clearInterval(e)):void 0}}(this),50)},t.prototype._elementHandlers=function(){return this.$element.on({"change.bootstrapSwitch":function(t){return function(i,n){var o;return i.preventDefault(),i.stopImmediatePropagation(),o=t.$element.is(":checked"),t._containerPosition(o),o!==t.options.state?(t.options.state=o,t.$wrapper.toggleClass(""+t.options.baseClass+"-off").toggleClass(""+t.options.baseClass+"-on"),n?void 0:(t.$element.is(":radio")&&e("[name='"+t.$element.attr("name")+"']").not(t.$element).prop("checked",!1).trigger("change.bootstrapSwitch",!0),t.$element.trigger("switchChange.bootstrapSwitch",[o]))):void 0}}(this),"focus.bootstrapSwitch":function(t){return function(e){return e.preventDefault(),t.$wrapper.addClass(""+t.options.baseClass+"-focused")}}(this),"blur.bootstrapSwitch":function(t){return function(e){return e.preventDefault(),t.$wrapper.removeClass(""+t.options.baseClass+"-focused")}}(this),"keydown.bootstrapSwitch":function(t){return function(e){if(e.which&&!t.options.disabled&&!t.options.readonly)switch(e.which){case 37:return e.preventDefault(),e.stopImmediatePropagation(),t.state(!1);case 39:return e.preventDefault(),e.stopImmediatePropagation(),t.state(!0)}}}(this)})},t.prototype._handleHandlers=function(){return this.$on.on("click.bootstrapSwitch",function(t){return function(e){return e.preventDefault(),e.stopPropagation(),t.state(!1),t.$element.trigger("focus.bootstrapSwitch")}}(this)),this.$off.on("click.bootstrapSwitch",function(t){return function(e){return e.preventDefault(),e.stopPropagation(),t.state(!0),t.$element.trigger("focus.bootstrapSwitch")}}(this))},t.prototype._labelHandlers=function(){return this.$label.on({"mousedown.bootstrapSwitch touchstart.bootstrapSwitch":function(t){return function(e){return t._dragStart||t.options.disabled||t.options.readonly?void 0:(e.preventDefault(),e.stopPropagation(),t._dragStart=(e.pageX||e.originalEvent.touches[0].pageX)-parseInt(t.$container.css("margin-left"),10),t.options.animate&&t.$wrapper.removeClass(""+t.options.baseClass+"-animate"),t.$element.trigger("focus.bootstrapSwitch"))}}(this),"mousemove.bootstrapSwitch touchmove.bootstrapSwitch":function(t){return function(e){var i;if(null!=t._dragStart&&(e.preventDefault(),i=(e.pageX||e.originalEvent.touches[0].pageX)-t._dragStart,!(i<-t._handleWidth||i>0)))return t._dragEnd=i,t.$container.css("margin-left",""+t._dragEnd+"px")}}(this),"mouseup.bootstrapSwitch touchend.bootstrapSwitch":function(t){return function(e){var i;if(t._dragStart)return e.preventDefault(),t.options.animate&&t.$wrapper.addClass(""+t.options.baseClass+"-animate"),t._dragEnd?(i=t._dragEnd>-(t._handleWidth/2),t._dragEnd=!1,t.state(t.options.inverse?!i:i)):t.state(!t.options.state),t._dragStart=!1}}(this),"mouseleave.bootstrapSwitch":function(t){return function(){return t.$label.trigger("mouseup.bootstrapSwitch")}}(this)})},t.prototype._externalLabelHandler=function(){var t;return t=this.$element.closest("label"),t.on("click",function(e){return function(i){return i.preventDefault(),i.stopImmediatePropagation(),i.target===t[0]?e.toggleState():void 0}}(this))},t.prototype._formHandler=function(){var t;return t=this.$element.closest("form"),t.data("bootstrap-switch")?void 0:t.on("reset.bootstrapSwitch",function(){return i.setTimeout(function(){return t.find("input").filter(function(){return e(this).data("bootstrap-switch")}).each(function(){return e(this).bootstrapSwitch("state",this.checked)})},1)}).data("bootstrap-switch",!0)},t.prototype._getClasses=function(t){var i,n,o,s;if(!e.isArray(t))return[""+this.options.baseClass+"-"+t];for(n=[],o=0,s=t.length;s>o;o++)i=t[o],n.push(""+this.options.baseClass+"-"+i);return n},t}(),e.fn.bootstrapSwitch=function(){var i,o,s;return o=arguments[0],i=2<=arguments.length?t.call(arguments,1):[],s=this,this.each(function(){var t,a;return t=e(this),a=t.data("bootstrap-switch"),a||t.data("bootstrap-switch",a=new n(this,o)),"string"==typeof o?s=a[o].apply(a,i):void 0}),s},e.fn.bootstrapSwitch.Constructor=n,e.fn.bootstrapSwitch.defaults={state:!0,size:null,animate:!0,disabled:!1,readonly:!1,indeterminate:!1,inverse:!1,radioAllOff:!1,onColor:"primary",offColor:"default",onText:"ON",offText:"OFF",labelText:"&nbsp;",handleWidth:"auto",labelWidth:"auto",baseClass:"bootstrap-switch",wrapperClass:"wrapper",onInit:function(){},onSwitchChange:function(){}}}(window.jQuery,window)}).call(this);
 /*!
  * numeral.js
  * version : 1.5.3
@@ -2500,6 +2501,26 @@ function hasOwnProperty(obj, prop) {
   return exports;
 }));
 
+!function(d,B,m,f){function v(a,b){var c=Math.max(0,a[0]-b[0],b[0]-a[1]),e=Math.max(0,a[2]-b[1],b[1]-a[3]);return c+e}function w(a,b,c,e){var k=a.length;e=e?"offset":"position";for(c=c||0;k--;){var g=a[k].el?a[k].el:d(a[k]),l=g[e]();l.left+=parseInt(g.css("margin-left"),10);l.top+=parseInt(g.css("margin-top"),10);b[k]=[l.left-c,l.left+g.outerWidth()+c,l.top-c,l.top+g.outerHeight()+c]}}function p(a,b){var c=b.offset();return{left:a.left-c.left,top:a.top-c.top}}function x(a,b,c){b=[b.left,b.top];c=
+c&&[c.left,c.top];for(var e,k=a.length,d=[];k--;)e=a[k],d[k]=[k,v(e,b),c&&v(e,c)];return d=d.sort(function(a,b){return b[1]-a[1]||b[2]-a[2]||b[0]-a[0]})}function q(a){this.options=d.extend({},n,a);this.containers=[];this.options.rootGroup||(this.scrollProxy=d.proxy(this.scroll,this),this.dragProxy=d.proxy(this.drag,this),this.dropProxy=d.proxy(this.drop,this),this.placeholder=d(this.options.placeholder),a.isValidTarget||(this.options.isValidTarget=f))}function t(a,b){this.el=a;this.options=d.extend({},
+z,b);this.group=q.get(this.options);this.rootGroup=this.options.rootGroup||this.group;this.handle=this.rootGroup.options.handle||this.rootGroup.options.itemSelector;var c=this.rootGroup.options.itemPath;this.target=c?this.el.find(c):this.el;this.target.on(r.start,this.handle,d.proxy(this.dragInit,this));this.options.drop&&this.group.containers.push(this)}var r,z={drag:!0,drop:!0,exclude:"",nested:!0,vertical:!0},n={afterMove:function(a,b,c){},containerPath:"",containerSelector:"ol, ul",distance:0,
+delay:0,handle:"",itemPath:"",itemSelector:"li",bodyClass:"dragging",draggedClass:"dragged",isValidTarget:function(a,b){return!0},onCancel:function(a,b,c,e){},onDrag:function(a,b,c,e){a.css(b)},onDragStart:function(a,b,c,e){a.css({height:a.outerHeight(),width:a.outerWidth()});a.addClass(b.group.options.draggedClass);d("body").addClass(b.group.options.bodyClass)},onDrop:function(a,b,c,e){a.removeClass(b.group.options.draggedClass).removeAttr("style");d("body").removeClass(b.group.options.bodyClass)},
+onMousedown:function(a,b,c){if(!c.target.nodeName.match(/^(input|select|textarea)$/i))return c.preventDefault(),!0},placeholderClass:"placeholder",placeholder:'<li class="placeholder"></li>',pullPlaceholder:!0,serialize:function(a,b,c){a=d.extend({},a.data());if(c)return[b];b[0]&&(a.children=b);delete a.subContainers;delete a.sortable;return a},tolerance:0},s={},y=0,A={left:0,top:0,bottom:0,right:0};r={start:"touchstart.sortable mousedown.sortable",drop:"touchend.sortable touchcancel.sortable mouseup.sortable",
+drag:"touchmove.sortable mousemove.sortable",scroll:"scroll.sortable"};q.get=function(a){s[a.group]||(a.group===f&&(a.group=y++),s[a.group]=new q(a));return s[a.group]};q.prototype={dragInit:function(a,b){this.$document=d(b.el[0].ownerDocument);var c=d(a.target).closest(this.options.itemSelector);c.length&&(this.item=c,this.itemContainer=b,!this.item.is(this.options.exclude)&&this.options.onMousedown(this.item,n.onMousedown,a)&&(this.setPointer(a),this.toggleListeners("on"),this.setupDelayTimer(),
+this.dragInitDone=!0))},drag:function(a){if(!this.dragging){if(!this.distanceMet(a)||!this.delayMet)return;this.options.onDragStart(this.item,this.itemContainer,n.onDragStart,a);this.item.before(this.placeholder);this.dragging=!0}this.setPointer(a);this.options.onDrag(this.item,p(this.pointer,this.item.offsetParent()),n.onDrag,a);a=this.getPointer(a);var b=this.sameResultBox,c=this.options.tolerance;(!b||b.top-c>a.top||b.bottom+c<a.top||b.left-c>a.left||b.right+c<a.left)&&!this.searchValidTarget()&&
+(this.placeholder.detach(),this.lastAppendedItem=f)},drop:function(a){this.toggleListeners("off");this.dragInitDone=!1;if(this.dragging){if(this.placeholder.closest("html")[0])this.placeholder.before(this.item).detach();else this.options.onCancel(this.item,this.itemContainer,n.onCancel,a);this.options.onDrop(this.item,this.getContainer(this.item),n.onDrop,a);this.clearDimensions();this.clearOffsetParent();this.lastAppendedItem=this.sameResultBox=f;this.dragging=!1}},searchValidTarget:function(a,b){a||
+(a=this.relativePointer||this.pointer,b=this.lastRelativePointer||this.lastPointer);for(var c=x(this.getContainerDimensions(),a,b),e=c.length;e--;){var d=c[e][0];if(!c[e][1]||this.options.pullPlaceholder)if(d=this.containers[d],!d.disabled){if(!this.$getOffsetParent()){var g=d.getItemOffsetParent();a=p(a,g);b=p(b,g)}if(d.searchValidTarget(a,b))return!0}}this.sameResultBox&&(this.sameResultBox=f)},movePlaceholder:function(a,b,c,e){var d=this.lastAppendedItem;if(e||!d||d[0]!==b[0])b[c](this.placeholder),
+this.lastAppendedItem=b,this.sameResultBox=e,this.options.afterMove(this.placeholder,a,b)},getContainerDimensions:function(){this.containerDimensions||w(this.containers,this.containerDimensions=[],this.options.tolerance,!this.$getOffsetParent());return this.containerDimensions},getContainer:function(a){return a.closest(this.options.containerSelector).data(m)},$getOffsetParent:function(){if(this.offsetParent===f){var a=this.containers.length-1,b=this.containers[a].getItemOffsetParent();if(!this.options.rootGroup)for(;a--;)if(b[0]!=
+this.containers[a].getItemOffsetParent()[0]){b=!1;break}this.offsetParent=b}return this.offsetParent},setPointer:function(a){a=this.getPointer(a);if(this.$getOffsetParent()){var b=p(a,this.$getOffsetParent());this.lastRelativePointer=this.relativePointer;this.relativePointer=b}this.lastPointer=this.pointer;this.pointer=a},distanceMet:function(a){a=this.getPointer(a);return Math.max(Math.abs(this.pointer.left-a.left),Math.abs(this.pointer.top-a.top))>=this.options.distance},getPointer:function(a){var b=
+a.originalEvent||a.originalEvent.touches&&a.originalEvent.touches[0];return{left:a.pageX||b.pageX,top:a.pageY||b.pageY}},setupDelayTimer:function(){var a=this;this.delayMet=!this.options.delay;this.delayMet||(clearTimeout(this._mouseDelayTimer),this._mouseDelayTimer=setTimeout(function(){a.delayMet=!0},this.options.delay))},scroll:function(a){this.clearDimensions();this.clearOffsetParent()},toggleListeners:function(a){var b=this;d.each(["drag","drop","scroll"],function(c,e){b.$document[a](r[e],b[e+
+"Proxy"])})},clearOffsetParent:function(){this.offsetParent=f},clearDimensions:function(){this.traverse(function(a){a._clearDimensions()})},traverse:function(a){a(this);for(var b=this.containers.length;b--;)this.containers[b].traverse(a)},_clearDimensions:function(){this.containerDimensions=f},_destroy:function(){s[this.options.group]=f}};t.prototype={dragInit:function(a){var b=this.rootGroup;!this.disabled&&!b.dragInitDone&&this.options.drag&&this.isValidDrag(a)&&b.dragInit(a,this)},isValidDrag:function(a){return 1==
+a.which||"touchstart"==a.type&&1==a.originalEvent.touches.length},searchValidTarget:function(a,b){var c=x(this.getItemDimensions(),a,b),e=c.length,d=this.rootGroup,g=!d.options.isValidTarget||d.options.isValidTarget(d.item,this);if(!e&&g)return d.movePlaceholder(this,this.target,"append"),!0;for(;e--;)if(d=c[e][0],!c[e][1]&&this.hasChildGroup(d)){if(this.getContainerGroup(d).searchValidTarget(a,b))return!0}else if(g)return this.movePlaceholder(d,a),!0},movePlaceholder:function(a,b){var c=d(this.items[a]),
+e=this.itemDimensions[a],k="after",g=c.outerWidth(),f=c.outerHeight(),h=c.offset(),h={left:h.left,right:h.left+g,top:h.top,bottom:h.top+f};this.options.vertical?b.top<=(e[2]+e[3])/2?(k="before",h.bottom-=f/2):h.top+=f/2:b.left<=(e[0]+e[1])/2?(k="before",h.right-=g/2):h.left+=g/2;this.hasChildGroup(a)&&(h=A);this.rootGroup.movePlaceholder(this,c,k,h)},getItemDimensions:function(){this.itemDimensions||(this.items=this.$getChildren(this.el,"item").filter(":not(."+this.group.options.placeholderClass+
+", ."+this.group.options.draggedClass+")").get(),w(this.items,this.itemDimensions=[],this.options.tolerance));return this.itemDimensions},getItemOffsetParent:function(){var a=this.el;return"relative"===a.css("position")||"absolute"===a.css("position")||"fixed"===a.css("position")?a:a.offsetParent()},hasChildGroup:function(a){return this.options.nested&&this.getContainerGroup(a)},getContainerGroup:function(a){var b=d.data(this.items[a],"subContainers");if(b===f){var c=this.$getChildren(this.items[a],
+"container"),b=!1;c[0]&&(b=d.extend({},this.options,{rootGroup:this.rootGroup,group:y++}),b=c[m](b).data(m).group);d.data(this.items[a],"subContainers",b)}return b},$getChildren:function(a,b){var c=this.rootGroup.options,e=c[b+"Path"],c=c[b+"Selector"];a=d(a);e&&(a=a.find(e));return a.children(c)},_serialize:function(a,b){var c=this,e=this.$getChildren(a,b?"item":"container").not(this.options.exclude).map(function(){return c._serialize(d(this),!b)}).get();return this.rootGroup.options.serialize(a,
+e,b)},traverse:function(a){d.each(this.items||[],function(b){(b=d.data(this,"subContainers"))&&b.traverse(a)});a(this)},_clearDimensions:function(){this.itemDimensions=f},_destroy:function(){var a=this;this.target.off(r.start,this.handle);this.el.removeData(m);this.options.drop&&(this.group.containers=d.grep(this.group.containers,function(b){return b!=a}));d.each(this.items||[],function(){d.removeData(this,"subContainers")})}};var u={enable:function(){this.traverse(function(a){a.disabled=!1})},disable:function(){this.traverse(function(a){a.disabled=
+!0})},serialize:function(){return this._serialize(this.el,!0)},refresh:function(){this.traverse(function(a){a._clearDimensions()})},destroy:function(){this.traverse(function(a){a._destroy()})}};d.extend(t.prototype,u);d.fn[m]=function(a){var b=Array.prototype.slice.call(arguments,1);return this.map(function(){var c=d(this),e=c.data(m);if(e&&u[a])return u[a].apply(e,b)||this;e||a!==f&&"object"!==typeof a||c.data(m,new t(c,a));return this})}}(jQuery,window,"sortable");
+
 !function(a,b){"use strict";function c(c,g){var h=this;h.$el=a(c),h.el=c,h.id=e++,h.$window=a(b),h.$document=a(document),h.$el.bind("destroyed",a.proxy(h.teardown,h)),h.$clonedHeader=null,h.$originalHeader=null,h.isSticky=!1,h.hasBeenSticky=!1,h.leftOffset=null,h.topOffset=null,h.init=function(){h.$el.each(function(){var b=a(this);b.css("padding",0),h.$originalHeader=a("thead:first",this),h.$clonedHeader=h.$originalHeader.clone(),b.trigger("clonedHeader."+d,[h.$clonedHeader]),h.$clonedHeader.addClass("tableFloatingHeader"),h.$clonedHeader.css("display","none"),h.$originalHeader.addClass("tableFloatingHeaderOriginal"),h.$originalHeader.after(h.$clonedHeader),h.$printStyle=a('<style type="text/css" media="print">.tableFloatingHeader{display:none !important;}.tableFloatingHeaderOriginal{position:static !important;}</style>'),a("head").append(h.$printStyle)}),h.setOptions(g),h.updateWidth(),h.toggleHeaders(),h.bind()},h.destroy=function(){h.$el.unbind("destroyed",h.teardown),h.teardown()},h.teardown=function(){h.isSticky&&h.$originalHeader.css("position","static"),a.removeData(h.el,"plugin_"+d),h.unbind(),h.$clonedHeader.remove(),h.$originalHeader.removeClass("tableFloatingHeaderOriginal"),h.$originalHeader.css("visibility","visible"),h.$printStyle.remove(),h.el=null,h.$el=null},h.bind=function(){h.$scrollableArea.on("scroll."+d,h.toggleHeaders),h.isWindowScrolling||(h.$window.on("scroll."+d+h.id,h.setPositionValues),h.$window.on("resize."+d+h.id,h.toggleHeaders)),h.$scrollableArea.on("resize."+d,h.toggleHeaders),h.$scrollableArea.on("resize."+d,h.updateWidth)},h.unbind=function(){h.$scrollableArea.off("."+d,h.toggleHeaders),h.isWindowScrolling||(h.$window.off("."+d+h.id,h.setPositionValues),h.$window.off("."+d+h.id,h.toggleHeaders)),h.$scrollableArea.off("."+d,h.updateWidth)},h.toggleHeaders=function(){h.$el&&h.$el.each(function(){var b,c=a(this),e=h.isWindowScrolling?isNaN(h.options.fixedOffset)?h.options.fixedOffset.outerHeight():h.options.fixedOffset:h.$scrollableArea.offset().top+(isNaN(h.options.fixedOffset)?0:h.options.fixedOffset),f=c.offset(),g=h.$scrollableArea.scrollTop()+e,i=h.$scrollableArea.scrollLeft(),j=h.isWindowScrolling?g>f.top:e>f.top,k=(h.isWindowScrolling?g:0)<f.top+c.height()-h.$clonedHeader.height()-(h.isWindowScrolling?0:e);j&&k?(b=f.left-i+h.options.leftOffset,h.$originalHeader.css({position:"fixed","margin-top":h.options.marginTop,left:b,"z-index":3}),h.leftOffset=b,h.topOffset=e,h.$clonedHeader.css("display",""),h.isSticky||(h.isSticky=!0,h.updateWidth(),c.trigger("enabledStickiness."+d)),h.setPositionValues()):h.isSticky&&(h.$originalHeader.css("position","static"),h.$clonedHeader.css("display","none"),h.isSticky=!1,h.resetWidth(a("td,th",h.$clonedHeader),a("td,th",h.$originalHeader)),c.trigger("disabledStickiness."+d))})},h.setPositionValues=function(){var a=h.$window.scrollTop(),b=h.$window.scrollLeft();!h.isSticky||0>a||a+h.$window.height()>h.$document.height()||0>b||b+h.$window.width()>h.$document.width()||h.$originalHeader.css({top:h.topOffset-(h.isWindowScrolling?0:a),left:h.leftOffset-(h.isWindowScrolling?0:b)})},h.updateWidth=function(){if(h.isSticky){h.$originalHeaderCells||(h.$originalHeaderCells=a("th,td",h.$originalHeader)),h.$clonedHeaderCells||(h.$clonedHeaderCells=a("th,td",h.$clonedHeader));var b=h.getWidth(h.$clonedHeaderCells);h.setWidth(b,h.$clonedHeaderCells,h.$originalHeaderCells),h.$originalHeader.css("width",h.$clonedHeader.width())}},h.getWidth=function(c){var d=[];return c.each(function(c){var e,f=a(this);if("border-box"===f.css("box-sizing")){var g=f[0].getBoundingClientRect();e=g.width?g.width:g.right-g.left}else{var i=a("th",h.$originalHeader);if("collapse"===i.css("border-collapse"))if(b.getComputedStyle)e=parseFloat(b.getComputedStyle(this,null).width);else{var j=parseFloat(f.css("padding-left")),k=parseFloat(f.css("padding-right")),l=parseFloat(f.css("border-width"));e=f.outerWidth()-j-k-l}else e=f.width()}d[c]=e}),d},h.setWidth=function(a,b,c){b.each(function(b){var d=a[b];c.eq(b).css({"min-width":d,"max-width":d})})},h.resetWidth=function(b,c){b.each(function(b){var d=a(this);c.eq(b).css({"min-width":d.css("min-width"),"max-width":d.css("max-width")})})},h.setOptions=function(c){h.options=a.extend({},f,c),h.$scrollableArea=a(h.options.scrollableArea),h.isWindowScrolling=h.$scrollableArea[0]===b},h.updateOptions=function(a){h.setOptions(a),h.unbind(),h.bind(),h.updateWidth(),h.toggleHeaders()},h.init()}var d="stickyTableHeaders",e=0,f={fixedOffset:0,leftOffset:0,marginTop:0,scrollableArea:b};a.fn[d]=function(b){return this.each(function(){var e=a.data(this,"plugin_"+d);e?"string"==typeof b?e[b].apply(e):e.updateOptions(b):"destroy"!==b&&a.data(this,"plugin_"+d,new c(this,b))})}}(jQuery,window);
 'use strict';
 //define namespaces for global functionality sets
@@ -2573,9 +2594,12 @@ plenty_admin.init = function(context){
 	})
 	.on('hidden.bs.modal', '.modal', function () {
 		console.log('we have hidden a modal');
-		$('body')
-		.find(".page-container")
-		.removeClass("blur");
+		
+		if(!$('body').hasClass("loading")){
+			$('body')
+			.find(".page-container")
+			.removeClass("blur");
+		}
 	});
 
 	//get the logged in user's details
@@ -2629,7 +2653,6 @@ plenty_admin.init = function(context){
 						plenty_admin.DATA.organizations[org_data.id] = org_data;
 					}
 					
-					plenty_admin.HELPER.hideLoadingOverlay();
 					$( document ).trigger( "map_data_ready" );
 				});
 				
@@ -2913,6 +2936,51 @@ plenty_admin.REST.getEquipmentTypes = function(){
 			});
 }
 
+plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
+	plenty_admin.REST.equipmentByOrgAndType = plenty_admin.api.one("equipment/getAllEquipmentByOrganizationAndType/"+org, type);
+	plenty_admin.REST.equipmentByOrgAndType.get()
+		.then(
+			function(equipmentReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgEquipmentForType = plenty_admin.REST.get_object_from_data(equipmentReturn.body());
+				//console.log("Get equip types for org finished", orgEquipmentForType);
+				
+				if(callback && typeof callback === "function"){
+					callback(orgEquipmentForType, el);
+				}
+			});
+}
+
+plenty_admin.REST.getEquipmentEquipmentTypesForOrg = function(){
+	plenty_admin.REST.equipmentEquipmentByOrg = plenty_admin.api.one("equipmentEquipmentTypes/getByOrganization", plenty_admin.DATA.current_organization.id);
+	plenty_admin.REST.equipmentEquipmentByOrg.get()
+		.then(
+			function(equipmentReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgEquipmentEquipment = plenty_admin.REST.get_object_from_data(equipmentReturn.body());
+				//console.log("Get equip types for org finished", orgEquipmentForType);
+				
+				plenty_admin.DATA.current_organization.equipmentEquipmentTypes = orgEquipmentEquipment;
+				
+				plenty_admin.DATA.eventCollector.done("equipmentEquipmentTypes");
+			});
+}
+
+plenty_admin.REST.getProductsByType = function(type, callback, el){
+	plenty_admin.REST.productsByType = plenty_admin.api.one("products/getByProductType", type);
+	plenty_admin.REST.productsByType.get()
+		.then(
+			function(productReturn){
+				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				var orgProductsForType = plenty_admin.REST.get_object_from_data(productReturn.body());
+				//console.log("Get product types for org finished", orgProductsForType);
+				
+				if(callback && typeof callback === "function"){
+					callback(orgProductsForType, el);
+				}
+			});
+}
+
 // get all equipment types and store them
 plenty_admin.REST.brandTypes = plenty_admin.api.all("brands/getAllBrands");
 plenty_admin.REST.getBrandTypes = function(){
@@ -2944,7 +3012,6 @@ plenty_admin.REST.getBrandTypes = function(){
 // get all activity types and store them
 plenty_admin.REST.activityTypes = plenty_admin.api.all("activityTypes/getAllActivityTypes");
 plenty_admin.REST.getActivityTypes = function(){
-	plenty_admin.DATA.activityTypes = {};
 	plenty_admin.REST.activityTypes.getAll()
 		.then(
 			function(activityTypesReturn){
@@ -2958,6 +3025,37 @@ plenty_admin.REST.getActivityTypes = function(){
 			});
 }
 
+// get all skill types and store them
+plenty_admin.REST.skillTypes = plenty_admin.api.all("skills/getAllSkills");
+plenty_admin.REST.getSkillTypes = function(){
+	plenty_admin.REST.skillTypes.getAll()
+		.then(
+			function(skillTypesReturn){
+				plenty_admin.DATA.labourTypes = plenty_admin.REST.get_object_from_data(skillTypesReturn.body());
+				console.log("Get labour types finished");
+				
+				plenty_admin.DATA.eventCollector.done("labour");
+			},
+			function(err){
+				console.error("getting skill types failed: ", err);
+			});
+}
+
+// get all skill types and store them
+plenty_admin.REST.productTypes = plenty_admin.api.all("productTypes/getAllProductTypes");
+plenty_admin.REST.getProductTypes = function(){
+	plenty_admin.REST.productTypes.getAll()
+		.then(
+			function(productTypesReturn){
+				plenty_admin.DATA.productTypes = plenty_admin.REST.get_object_from_data(productTypesReturn.body());
+				console.log("Get product types finished");
+				
+				plenty_admin.DATA.eventCollector.done("products");
+			},
+			function(err){
+				console.error("getting skill types failed: ", err);
+			});
+}
 
 // get all role types and store them
 plenty_admin.REST.roleTypes = plenty_admin.api.all("roleTypes/getAllRoleTypes");
@@ -3040,12 +3138,12 @@ plenty_admin.REST.getBoundaryTypes = function(){
 // get all growth methods and store them
 plenty_admin.REST.growthMethods = plenty_admin.api.all("cropStage/getAllGrowthMethods");
 plenty_admin.REST.getGrowthMethods = function(){
-	plenty_admin.DATA.growthMethods = {};
+	plenty_admin.DATA.growthMethodTypes = {};
 	plenty_admin.REST.growthMethods.getAll()
 		.then(
 			function(growthMethods){
-				plenty_admin.DATA.growthMethods = plenty_admin.REST.get_object_from_data(growthMethods.body());
-				console.log("Get growth methods finished");
+				plenty_admin.DATA.growthMethodTypes = plenty_admin.REST.get_object_from_data(growthMethods.body());
+				console.log("Get growth methods finished:", plenty_admin.DATA.growthMethodTypes);
 				plenty_admin.DATA.eventCollector.done("growth methods");
 			});
 }
@@ -3471,6 +3569,20 @@ plenty_admin.REST.fields.updateFieldCrop = function(fieldCropObj, callback){
 	)
 }
 
+plenty_admin.REST.plans = {};
+plenty_admin.REST.plans.createTemplatePlan = function(TemplatePlanCreationDto, callback){
+	plenty_admin.REST.createTemplatePlan.post(TemplatePlanCreationDto)
+	.then(
+		function(templatePlan){
+			var templatePlan_body = templatePlan.body();
+			console.log("adding templatePlan success: ", templatePlan_body);
+			if(callback && typeof callback === "function"){
+				callback(templatePlan_body);
+			}
+		}
+	)
+}
+
 // call to REST api for health status
 plenty_admin.REST.getStatus = function(){
 	$.ajax({
@@ -3486,7 +3598,8 @@ plenty_admin.REST.getStatus = function(){
 				className: "danger healthcheck",
 				buttons: {
 					
-				}
+				},
+				callback:plenty_admin.HELPER.hideLoadingOverlay
 			});	
 		}
 	});
@@ -3526,10 +3639,10 @@ plenty_admin.UI.updateBadges = function(hash, value){
 	plenty_admin.UI.settings.DOM.find(".organization[data-orgid='"+plenty_admin.DATA.current_organization.id+"'] panel .orgAssets ."+hash+" span.count").text(value);
 }
 
-plenty_admin.UI.populate_crop_tillage_irrigation_lists = function(parent, idPrefix){
+plenty_admin.UI.populate_type_lists = function(parent, idPrefix, data_types){
 	//set up type lists
 	//populate the data type fields
-	var data_types = ["crop", "irrigation", "tillage"];
+	//var data_types = ["crop", "irrigation", "tillage"];
 	
 	for(var d=0; d<data_types.length; d++){
 		//set up the list of crop types
@@ -3619,13 +3732,14 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	var year = a.getUTCFullYear();
 	var month = months[a.getUTCMonth()];
+	var monthIndex = a.getUTCMonth()+1;
 	var date = a.getUTCDate();
 	var hour = (a.getUTCHours() < 10 ? "0"+a.getUTCHours()-1 : a.getUTCHours()-1);
 	var min = (a.getUTCMinutes() < 10 ? "0"+a.getUTCMinutes() : a.getUTCMinutes());
 	var sec = (a.getUTCSeconds() < 10 ? "0"+a.getUTCSeconds() : a.getUTCSeconds());
 	var _date = (month ? month.slice(0,4) : month) + ' ' + date;
 	var fullDate = _date + ", " + year;
-	
+	var USDate = monthIndex+"/"+date+"/"+year;
 	var time = hour + ':' + min + ':' + sec;
 	var date_time = _date + ' ' +  time;
 	return {
@@ -3635,7 +3749,8 @@ plenty_admin.HELPER.formatJavaDate = function(unix_timestamp){
 			month: month,
 			obj: a,
 			fullDate: fullDate,
-			year:year
+			year:year,
+			USDate: USDate
 		};
 }
 plenty_admin.HELPER.daysFromHours = function(hours){
@@ -3704,6 +3819,59 @@ plenty_admin.HELPER.dynamicSort = function(property) {
 	}
 }
 
+plenty_admin.HELPER.validateForm = function($form){
+	//$form is the container of form elements to be checked
+	var $errorAlerts = $form.find(".alert.help-block");
+	
+	//reset all validation
+	$errorAlerts.hide();
+	
+	$form
+	.find(".has-error")
+	.removeClass("has-error");
+	
+	var valid = true;
+	var invalidFields = [];
+	$form.find("input, select")
+	.each(function(){
+		console.log("field", this);
+		if($(this).prop("required")){
+			console.log("field is required", this, this.tagName);
+			var val = null;
+			switch(this.tagName.toLowerCase()){
+				case "input":
+					val = $(this).val();
+				break;
+				
+				case "select":
+					val = $(this).find("option:selected").val();
+				break;
+			}
+			console.log("val = ", val === null, val.length);
+			if(val.length <= 0 || val === null){
+				$(this).parent()
+				.addClass("has-error");
+				
+				invalidFields.push($(this));
+				
+				valid = false;
+			}
+		}
+	});
+	
+	if(valid){
+		return true;
+	}else{
+		for(var i=0; i<invalidFields.length; i++){
+			var invalidField = invalidFields[i];
+			invalidField
+			.parent()
+			.find(".alert.help-block")
+			.slideDown("fast");
+		}
+	}
+}
+
 plenty_admin.HELPER.returnFieldType = function(field){
 	switch(field){
 		case "mobileNumber":
@@ -3723,6 +3891,110 @@ plenty_admin.HELPER.returnFieldType = function(field){
 	}
 }
 
+
+plenty_admin.HELPER.initFloatingHeaders = function(table, headerClass, tableID) {
+	var $table = $(table);
+	var tableParent = $table.parent();
+	var wrapper = $('<div class="floating-header"/>');
+	var clone = $table.clone(true, true);
+	var thead = $table.find(headerClass+":eq(0)");
+	var scrollContainer = $(tableID);
+	var headerIndex = 0;
+	var lastScrollTop = 0;
+	var headerRows = $table.find(headerClass);
+	var tableWrapperOffset = tableParent.offset().top;
+	var nextHeader, nextHeaderOffset, prevHeader, prevHeaderOffset, tableBounds;
+	
+	$(window).on("resize", function(){
+		tableWrapperOffset = tableParent.offset().top;
+		//console.log("tableWrapperOffset", tableWrapperOffset);
+		
+		wrapper.css({
+			width:thead.outerWidth(),
+			height:thead.outerHeight()
+		});
+		
+		floatingHeaderTable.css({top:-$(headerRows.get(headerIndex)).position().top});
+		
+		if (tableBounds.bottom <= wrapper[0].offsetHeight) {
+			wrapper.css({
+				position:"absolute",
+				top:  ($table[0].offsetHeight + $table[0].offsetTop - wrapper[0].offsetHeight) +'px' 
+			});
+		} else {
+			wrapper.css({
+				position:"fixed",
+				top:  tableWrapperOffset,
+				"z-index":1 
+			});
+		}
+	});
+	
+	//console.log("tables", table, tableParent);
+	
+	wrapper.append(clone);
+	tableParent.prepend(wrapper);
+	
+	var floatingHeaderTable = wrapper.find("table");
+	
+	wrapper.css({
+		width:thead.outerWidth(),
+		height:thead.outerHeight(),
+		display:"none",
+		overflow:"hidden"
+	});
+  
+	scrollContainer.on("scroll", function() {
+		var headers = document.querySelectorAll('div.floating-header');
+		var bodyHeight = document.body.offsetHeight;
+		var i = headers.length;
+		var st = $(this).scrollTop();
+		
+		if (st > lastScrollTop){
+			// upscroll code
+			nextHeader = $(headerRows.get(headerIndex+1));
+			nextHeaderOffset = nextHeader.offset().top -tableWrapperOffset;
+			if(nextHeaderOffset <= 0){
+				//switch to this header
+				//console.log("switch header: ", nextHeader.position().top, floatingHeaderTable);
+				floatingHeaderTable.css({top:-nextHeader.position().top});
+				headerIndex += 1;
+				headerIndex > headerRows.length -1 ? headerIndex = headerRows.length -1 : null;
+			}
+		} else {
+			// downscroll code
+			//console.log("going DOWN");
+			prevHeader = $(headerRows.get(headerIndex));
+			prevHeaderOffset = prevHeader.offset().top -tableWrapperOffset;
+			if( headerIndex > 0 && prevHeaderOffset >= 0 ){
+				floatingHeaderTable.css({top:-$(headerRows.get(headerIndex-1)).position().top});
+				headerIndex -= 1;
+				headerIndex < 0 ? headerIndex = 0 : null;
+			}
+		}
+		
+		lastScrollTop = st;
+		tableBounds = $table[0].getBoundingClientRect();
+		
+		if ((tableBounds.top -tableWrapperOffset) <= 0 && tableBounds.bottom > 0) {
+			wrapper.show();
+			if (tableBounds.bottom <= wrapper[0].offsetHeight) {
+				wrapper.css({
+					position:"absolute",
+					top:  ($table[0].offsetHeight + $table[0].offsetTop - wrapper[0].offsetHeight) +'px' 
+				});
+			} else {
+				wrapper.css({
+					position:"fixed",
+					top:  tableWrapperOffset,
+					"z-index":1 
+				});
+			}
+		} else {
+			wrapper.hide();
+		}
+	});
+}
 
 plenty_admin.HELPER.colorLuminance = function(hex, lum) {
 
@@ -3770,7 +4042,7 @@ Chart.types.Line.extend({
 	name: "LineAlt",
 	initialize: function (data) {
 		Chart.types.Line.prototype.initialize.apply(this, arguments);
-		console.log("Init LineAlt: ", this);
+		console.log("Init LineAlt: ", this, arguments);
 		var xLabels = this.scale.xLabels
 		//set the day label increment
 		var label_step = 1;
@@ -3784,12 +4056,7 @@ Chart.types.Line.extend({
 			label_step = 20
 		}
 		
-		console.log("LineAlt: ", xLabels, label_step);
-		
 		xLabels.forEach(function (label, i) {
-			//console.log("i % 2", i % 2);
-			//console.log("i % 6", i % 6);
-			//console.log("i % 14", i % 14);
 			if (i % label_step > 0)
 				xLabels[i] = '';
 		});
@@ -6129,6 +6396,7 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 	// to return the MVCArray of LatLngs.
 	console.log("showEditFieldForm", fieldObj, map);
 	plenty_admin.MAPS.infoWindow = new google.maps.InfoWindow();
+	plenty_admin.MAPS.polygonToEdit = polygon;
 	var that = this;
 	var MAPS = plenty_admin.MAPS;
 	var originalPolyPath = [];
@@ -6151,6 +6419,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 		//hide equipment
 		plenty_admin.MAPS.hide_equipment(plenty_admin.MAPS.equipment_pins);
 		
+		plenty_admin.MAPS.edit_field_state = 1;
+		
 		return false;
 	}
 	function endEditFieldBoundary(){
@@ -6171,6 +6441,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 		
 		//show equipment
 		plenty_admin.MAPS.show_equipment(plenty_admin.MAPS.equipment_pins, map);
+		
+		plenty_admin.MAPS.edit_field_state = 0;
 	}
 	
 	polygon.getPath().getArray().forEach(function(point, p){
@@ -6332,6 +6604,7 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 									  callback: function(){
 										 	plenty_admin.HELPER.hideLoadingOverlay();
 											//show edit form
+											polygon.setPaths(originalPolyPath);
 											endEditFieldBoundary();
 										}
 									}
@@ -6423,15 +6696,18 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 				.find("button.saveCropYear")
 				.click(function(e){
 					//save the crop year for this field
-					var fieldCropDto = {};
-					fieldCropDto.fieldId = fieldObj.id;
-					fieldCropDto.cropTypeId = parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_type option:selected").val());
-					fieldCropDto.irrigationTypeId = parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_irrigation_type option:selected").val());
-					fieldCropDto.tillageTypeId = parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_tillage_type option:selected").val());
-					fieldCropDto.year = plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_year option:selected").val();
+					var fieldCropDto = {
+						fieldId: fieldObj.id,
+						cropTypeId: parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_type option:selected").val()),
+						irrigationTypeId: parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_irrigation_type option:selected").val()),
+						tillageTypeId: parseInt(plenty_admin.MAPS.infoWindowContent.find("#edit_field_tillage_type option:selected").val()),
+						year: plenty_admin.MAPS.infoWindowContent.find("#edit_field_crop_year option:selected").val(),
+						growthMethodId: plenty_admin.MAPS.infoWindowContent.find("#edit_field_growthMethod_type option:selected").val()
+					};
+					
 					
 					plenty_admin.REST.fields.insertFieldCrop(fieldCropDto, function(fieldCrop){
-						console.log("field crop inserted");
+						console.log("field crop inserted", fieldCrop);
 						
 						$(e.target)
 						.hide()
@@ -6449,7 +6725,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 						var newCropYear = "<tr><td>"+fieldCrop.year+"</td>"+
 											"<td>"+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</td>"+
 											"<td>"+plenty_admin.DATA.tillageTypes[fieldCrop.tillageTypeId].name+"</td>"+
-											"<td>"+plenty_admin.DATA.irrigationTypes[fieldCrop.irrigationTypeId].name+"</td></tr>";
+											"<td>"+plenty_admin.DATA.irrigationTypes[fieldCrop.irrigationTypeId].name+"</td>"+
+											"<td>"+plenty_admin.DATA.growthMethodTypes[fieldCrop.growthMethodId].name+"</td></tr>";
 						cropYearTable
 						.find("tbody .new-crop-year")
 						.before(newCropYear);
@@ -6473,7 +6750,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 				$farmList.append(farmOptionsHTML);
 				
 				//populate crop / tillage / irrigation select lists
-				plenty_admin.UI.populate_crop_tillage_irrigation_lists(plenty_admin.MAPS.infoWindowContent, "edit_field");
+				var data_types = ["crop", "irrigation", "tillage", "growthMethod"];
+				plenty_admin.UI.populate_type_lists(plenty_admin.MAPS.infoWindowContent, "edit_field", data_types);
 				
 				//populate the table of crop years already associated with this field
 				var cropYearRowsHTML = "";
@@ -6486,7 +6764,8 @@ plenty_admin.MAPS.showEditFieldForm = function(fieldObj, map, polygon) {
 						cropYearRowsHTML += "<tr data-id='"+cropYear.id+"'><td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(years)+"' data-name='year' data-pk='"+cropYear.id+"/fieldCrop/' data-title='Year'>"+year+"</td>"+
 											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.cropTypes)+"' data-name='cropTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Year'>"+plenty_admin.DATA.cropTypes[cropYear.cropTypeId].name+"</td>"+
 											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.tillageTypes)+"' data-name='tillageTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Tillage Type'>"+plenty_admin.DATA.tillageTypes[cropYear.tillageTypeId].name+"</td>"+
-											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.irrigationTypes)+"' data-name='irrigationTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Irrigation Type'>"+plenty_admin.DATA.irrigationTypes[cropYear.irrigationTypeId].name+"</td></tr>";
+											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.irrigationTypes)+"' data-name='irrigationTypeId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Irrigation Type'>"+plenty_admin.DATA.irrigationTypes[cropYear.irrigationTypeId].name+"</td>"+
+											"<td class='editable' data-type='select' data-source='"+plenty_admin.UI.get_inline_editing_options(plenty_admin.DATA.growthMethodTypes)+"' data-name='growthMethodId' data-pk='"+cropYear.id+"/fieldCrop/"+cropYear.cropTypeId+"/"+cropYear.tillageTypeId+"/"+cropYear.irrigationTypeId+"/"+year+"/"+fieldObj.id+"' data-title='Growth Method'>"+plenty_admin.DATA.growthMethodTypes[cropYear.growthMethodId].name+"</td></tr>";
 					}
 				}
 				//set inline editing as inline before setting up this window
@@ -7259,7 +7538,7 @@ plenty_admin.UI.settings.DOM = plenty_admin.UI.main.DOM.find("#settings");
 plenty_admin.UI.currentScreen = plenty_admin.UI.settings.DOM;
 plenty_admin.UI.settings.new_organization = plenty_admin.UI.settings.DOM.find(".newOrgContainer");
 
-
+/*
 //create HTML for an organization element in the settings
 plenty_admin.UI.settings.organization.create = function(org){
 	console.log("plenty_admin.UI.settings.organization.create:", org, plenty_admin.DATA.organizationTypes, plenty_admin.DATA.organizationTypes[org.organizationTypeId]);
@@ -7378,138 +7657,24 @@ plenty_admin.UI.settings.organization.create = function(org){
 	
 	return $org_html;
 }
+*/
 
 plenty_admin.UI.settings.init = function(){
 	//store a ref to the organization items:
 	plenty_admin.UI.settings.organizations = plenty_admin.UI.settings.DOM.find(".organizations");
 	
-	//empty it's current contents
-	plenty_admin.UI.settings.organizations
-	.find(".organization")
-	.remove();
+	var orgId = Object.keys(plenty_admin.DATA.organizations)[0];
+	var hash = "#farms";			
 	
-	//loop organizations and inject Organizations DOM
-	for(id in plenty_admin.DATA.organizations){
-		if(
-			plenty_admin.DATA.organizations.hasOwnProperty(id)
-			&& id !== "length"
-		){
-			
-			var org = plenty_admin.DATA.organizations[id];
-			
-			//TODO: this should go before NEW ORGANIZATION and not PREPENDED
-			plenty_admin.UI.settings.organizations.prepend(plenty_admin.UI.settings.organization.create(org));
-		}
-	}
-	//build the breadcrumb trail object
-	var fsettings_breadcrumb = [
-		{
-			class:"active",
-			name:"Settings",
-			clickHandler:null
-		}
-	];
+	//set the current screen
+	plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
 	
-	plenty_admin.UI.settings.DOM
-	.find(".breadcrumb-trail")
-	.remove()
-	.end()
-	.prepend(plenty_admin.UI.build_breadcrumb_trail(fsettings_breadcrumb));
-	
-	// enable editable on dynamic fields
-	//$('.editable').editable(plenty_admin.REST.inline_editing_options);
+	//build the organization panel
+	plenty_admin.UI.organization.init(plenty_admin.DATA.organizations[Object.keys(plenty_admin.DATA.organizations)[0]], hash);
 };
 
 $( document ).on( "organization_data_ready", function( event, orgs ) {
-	plenty_admin.UI.settings.new_organization
-	.find("button.newOrg")
-	.off("click")
-	.on("click", function(){
-		var $form = $(this).closest(".panel").find("form");
-		var organizationDto = {};
-		organizationDto.name = $form.find("#new_org_name").val();
-		organizationDto.organizationTypeId = parseInt($form.find("#new_org_type").val());
-		organizationDto.addressLine1 = $form.find("#new_org_address_1").val();
-		organizationDto.addressLine2 = $form.find("#new_org_address_2").val();
-		organizationDto.city = $form.find("#new_org_city").val();
-		organizationDto.state = $form.find("#new_org_state").val();
-		organizationDto.zip = $form.find("#new_org_zip").val();
-		
-		console.log("organizationDto: ", organizationDto);
-		
-		$form
-		.fadeOut("fast", function(){
-			plenty_admin.UI.settings.new_organization
-			.find(".alert-info")
-			.fadeIn("fast");
-		});
-		plenty_admin.REST.insertOrganization.post(organizationDto).then(
-			function(insertedOrg){
-				console.log("organization inserted: ", insertedOrg().data);
-				
-				var roleData = {
-					organizationId:insertedOrg().data.id,
-					userId: plenty_admin.DATA.userDetails.id,
-					roleTypeId:1
-				};
-				plenty_admin.REST.insertRole.post(roleData).then(function(newUser){
-					plenty_admin.UI.settings.new_organization
-					.find(".alert-info")
-					.fadeOut("fast", function(){
-						plenty_admin.UI.settings.new_organization
-						.find(".alert-success")
-						.fadeIn("fast");
-						
-						var to = setTimeout(function(){
-							plenty_admin.UI.settings.new_organization
-							.find(".alert-success")
-							.fadeOut("fast", function(){
-								$form
-								.fadeIn("fast");
-							});
-						}, 5000);
-					});
-					
-					//TODO: this should go before NEW ORGANIZATION and not PREPENDED
-					plenty_admin.UI.settings.organizations.prepend(plenty_admin.UI.settings.organization.create(insertedOrg().data));
-				});
-			},
-			function(){
-				plenty_admin.UI.settings.new_organization
-				.find(".alert-info")
-				.fadeOut("fast", function(){
-					plenty_admin.UI.settings.new_organization
-					.find(".alert-danger")
-					.fadeIn("fast");
-					
-					var to = setTimeout(function(){
-						plenty_admin.UI.settings.new_organization
-						.find(".alert-danger")
-						.fadeOut("fast", function(){
-							$form
-							.fadeIn("fast");
-						});
-					}, 5000);
-				});
-			}
-		)
-		return false;
-	})
-	.end()
-	.find("a.moreDetailsToggle")
-	.off("click")
-	.on("click", function(){
-		$(this)
-		.find("span")
-		.toggle()
-		.end()
-		.parent()
-		.find(".more-details")
-		.slideToggle();
-		return false;
-	});
-	
-    plenty_admin.UI.settings.init();
+	plenty_admin.UI.settings.init();
 });
 //*********************** field.js **************************//
 //create namespace for field layout
@@ -7625,6 +7790,12 @@ plenty_admin.UI.field = {
 			graph.destroy();
 		}
 		
+		plenty_admin.UI.field.renderedGraphs = [];
+		plenty_admin.UI.field.tempGraph = null;
+		plenty_admin.UI.field.moistureGraph = null;
+		plenty_admin.UI.field.precipGraph = null;
+		plenty_admin.UI.field.gddGraph = null;
+		
 		//clear weatherEvents
 		plenty_admin.UI.field.DOM
 		.find(".weatherEvents")
@@ -7662,10 +7833,23 @@ plenty_admin.UI.field = {
 			.remove();
 		}
 		
-		//destroy the year slider
-		if(plenty_admin.UI.field.field_year_slider && typeof plenty_admin.UI.field.field_year_slider.slider === "function"){
-			plenty_admin.UI.field.field_year_slider
-			.slider("destroy");
+		//clear the finance graph legend
+		plenty_admin.UI.field.financesGraphEl
+		.parent()
+		.parent()
+		.parent()
+		.find(".legend")
+		.find(".legendItem")
+		.remove();
+		
+		//clear the finance values
+		plenty_admin.UI.field.DOM
+		.find(".topLine")
+		.find(".profit, .cost, .revenue")
+		.text("");
+		
+		if(plenty_admin.UI.field.financesGraph){
+			plenty_admin.UI.field.financesGraph.destroy();
 		}
 	},
 	
@@ -7707,6 +7891,8 @@ plenty_admin.UI.field = {
 			
 			plenty_admin.UI.field.field_year_slider = plenty_admin.UI.field.DOM.find(".field_year_slider");
 			
+			console.log("plenty_admin.UI.field.field_year_slider", plenty_admin.UI.field.field_year_slider.slider, typeof plenty_admin.UI.field.field_year_slider.slider);
+			
 			plenty_admin.UI.field.field_year_slider
 			.slider({
 				min: parseInt(fieldData[fieldData.length-1].year),
@@ -7738,6 +7924,7 @@ plenty_admin.UI.field = {
 				
 				//console.log("cropYear:", cropYear);
 				//console.log("cropName:", cropName);
+				plenty_admin.UI.field.clear();
 				
 				plenty_admin.UI.field.update_field_year(fieldObj.id, cropYear);
 				
@@ -7784,6 +7971,7 @@ plenty_admin.UI.field = {
 	
 	updateWeatherGraph: function(hash){
 		var graph = "";
+		
 		switch(hash){
 			case "#temp":
 				//create the temp graph object if it does not yet exist
@@ -7832,6 +8020,7 @@ plenty_admin.UI.field = {
 		try{
 			keyOffsetElement.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
 			plenty_admin.UI.field.positionToday(plenty_admin.UI.field.activitiesForCropType[0].startTime);
+			//plenty_admin.UI.field.buildChartZoomer();
 		}catch(err){
 			console.error("something failed: ", err);
 			bootbox.dialog({
@@ -7919,7 +8108,7 @@ plenty_admin.UI.field = {
 						dates: [],
 						months: [],
 						labels: [],
-						
+						allLabels: [],
 						weatherEvents: {
 							precip: [],
 							temp: [],
@@ -7930,21 +8119,7 @@ plenty_admin.UI.field = {
 				var millisecondsPerDay = 24 * 60 * 60 * 1000;
 				var lastWeatherDayDate = weatherDays[weatherDays.length-1].date;
 				var lastActivityDate = activitiesForCropType[activitiesForCropType.length -1].endTime;
-				
-				//set the day label increment
-				var label_step = 1;
-				if(weatherDays.length > 31 && weatherDays.length < 125){
-					label_step = 3
-				}else if(weatherDays.length > 125 && weatherDays.length < 500){
-					label_step = 7
-				}else if(weatherDays.length > 500 && weatherDays.length < 1000){
-					label_step = 14
-				}else if(weatherDays.length > 1000){
-					label_step = 20
-				}
-					
-				
-				var label_inc = 0;
+
 				
 				for(var wO = 0; wO < weatherDays.length; wO++){
 					weatherOb = weatherDays[wO];
@@ -7952,6 +8127,7 @@ plenty_admin.UI.field = {
 					
 					//create labelling sets for graphs
 					plenty_admin.UI.field.weatherDays.labels.push(obTime.date);
+					plenty_admin.UI.field.weatherDays.allLabels.push(obTime.date);
 					
 					//process existing weather days
 					for(prop in weatherOb){
@@ -8001,10 +8177,10 @@ plenty_admin.UI.field = {
 									var moistureDepth = weatherOb[prop][w];
 									//console.log("moisture depth: ", w, moistureDepth);
 									if(!plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth]){
-										plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth] = [];
+										plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth] = {};
 									}
 									
-									plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth].push(moistureDepth.moisture);
+									plenty_admin.UI.field.weatherDays.moisture[moistureDepth.depth][wO] = moistureDepth.moisture;
 								}
 							}else if(prop === "cropSurvey"){
 								if(!plenty_admin.UI.field.weatherDays["cropSurvey"]){
@@ -8233,7 +8409,7 @@ plenty_admin.UI.field = {
 							"growthStageId: "+cS.growthStageId,
 						].join("");
 			
-			var cropSurveyHTML = $("<div class='cropSurvey alert alert-warning' data-toggle='tooltip' data-placement='top' title='"+tooltip+"' style='left:"+leftPos+"px'><i class='fa fa-file-text'></i></div>");
+			var cropSurveyHTML = $("<div class='cropSurvey alert alert-warning' data-toggle='tooltip' data-placement='top' title='"+tooltip+"' style='left:"+leftPos+"px'><i class='fa fa-file-text'></i><img class='growthStageImg' src=''/></div>");
 			
 			cropSurveyHTML
 			.off("click")
@@ -8246,7 +8422,15 @@ plenty_admin.UI.field = {
 						html:true
 					});
 			
-			plenty_admin.UI.field.cropSurveysContainer.append(cropSurveyHTML);
+			//get the crop stage image for this crop survey
+			plenty_admin.REST.fields.getGrowthStageFile(cS.growthStageId, cropSurveyHTML, function(growthStageImageString, _cropSurveyHTML){
+				//create a container for the image
+				_cropSurveyHTML
+				.find("img.growthStageImg")
+				.prop("src", "data:image/jpeg;base64,"+growthStageImageString);
+				//position it behind the crop survey element
+				plenty_admin.UI.field.cropSurveysContainer.append(_cropSurveyHTML);
+			});
 		}
 	},
 	
@@ -8326,7 +8510,7 @@ plenty_admin.UI.field = {
 			.data("activity", activity)
 			.data("activityFinance", activityFinances[0])
 			.click(function(){
-				plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
+				plenty_admin.UI.field.show_activity_modal($(this).data("activity"), $(this).data("activityFinance").taskFinances, $(this));
 			});
 			
 			plenty_admin.UI.field.activityTimelineContainer.append(activityHTML);
@@ -8362,7 +8546,7 @@ plenty_admin.UI.field = {
 				.data("activity", activity)
 				.data("activityFinance", activityFinances[0])
 				.click(function(){
-					plenty_admin.UI.field.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
+					plenty_admin.UI.field.show_activity_modal($(this).data("activity"), $(this).data("activityFinance").taskFinances, $(this));
 				});
 				
 				plenty_admin.UI.field.activityListContainer.append($activityItem);
@@ -8373,6 +8557,7 @@ plenty_admin.UI.field = {
 		keyOffsetElements.width(plenty_admin.UI.field.currentGraph.datasets[0].points[0].x);
 		
 		plenty_admin.UI.field.positionToday(activities[0].startTime);
+		//plenty_admin.UI.field.buildChartZoomer();
 	},
 	
 	positionToday: function(startTime){
@@ -8410,7 +8595,25 @@ plenty_admin.UI.field = {
 			.hide();
 		}
 	},
-	
+	buildChartZoomer: function(){
+		var $zoomInLayer = plenty_admin.UI.field.DOM.find(".zoomInLayer");
+		console.log("buildChartZoomer", $zoomInLayer, plenty_admin.UI.field.currentGraph.scale);
+		$zoomInLayer
+		.css({
+			height: Math.round(plenty_admin.UI.field.currentGraph.scale.endPoint),
+			bottom: Math.round(plenty_admin.UI.field.currentGraph.scale.height - plenty_admin.UI.field.currentGraph.scale.endPoint)
+		})
+		.on("click", function(e){
+			console.log("chartZoomer", $(this), e);
+			var zoomInCtrl = $(this).find(".zoomInControl");
+			var offset = $(this).offset();
+			var ctrlPosition = e.pageX - offset.left - (zoomInCtrl.width()/2)
+			
+			zoomInCtrl
+			.css({left:ctrlPosition})
+			.fadeIn("fast");
+		});
+	},
 	renderEquipment: function(equipment){
 		plenty_admin.UI.field.equipmentListContainer = plenty_admin.UI.field.DOM.find(".field_asset_data .tab-content #equipment tbody");
 		
@@ -8418,6 +8621,9 @@ plenty_admin.UI.field = {
 		for(var a=0; a<equipment.length; a++){
 			var equipmentObject = equipment[a]/*.equipmentDto*/;
 			
+			if(equipmentObject.fieldEquipmentDto === null){
+				continue;
+			}
 			//console.log("equipmentObject", equipmentObject);
 			
 			//build the activity list item
@@ -8531,11 +8737,18 @@ plenty_admin.UI.field = {
 			
 			var tempGraphOptions = {
 				multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.0')%>℉",
-				pointHitDetectionRadius:1
+				pointHitDetectionRadius:0,
+				scaleLabel: plenty_admin.UI.field.yAxisPadder
 			};
 			
 			var helpers = Chart.helpers;
-		
+			
+			if(plenty_admin.UI.field.tempGraph){
+				plenty_admin.UI.field.tempGraph.destroy();
+			}
+			
+			plenty_admin.UI.field.weatherDays.labels = plenty_admin.UI.field.weatherDays.allLabels.slice();
+			
 			plenty_admin.UI.field.tempGraph = new Chart(plenty_admin.UI.field.tempGraphEl.get(0).getContext("2d")).LineAlt(tempGraphData, tempGraphOptions);
 			plenty_admin.UI.field.tempGraph.datasetId = "temp"; 
 			plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.tempGraph);
@@ -8571,6 +8784,18 @@ plenty_admin.UI.field = {
 			if(plenty_admin.UI.field.weatherDays.moisture.hasOwnProperty(depth)){
 				//console.log("colour: ", index, depth);
 				var moistureDepth = plenty_admin.UI.field.weatherDays.moisture[depth];
+				var depthDays = [];
+				//loop through all days in range and create full data set for moisture dats
+				for(var d=0; d<plenty_admin.UI.field.weatherDays.length; d++){
+					if(moistureDepth[d]){
+						depthDays.push(moistureDepth[d]);
+					}else{
+						if(index == 0){
+							depthDays.push(0);
+						}
+					}
+				}
+				
 				var colour = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index));
 				var label = depth.toString();
 				var dataset = {
@@ -8581,14 +8806,14 @@ plenty_admin.UI.field = {
 					pointStrokeColor: "#fff",
 					pointHighlightFill: "#fff",
 					pointHighlightStroke: "rgba("+plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(index))+",1)",
-					data: moistureDepth
+					data: depthDays
 				};
 				datasets.push(dataset);
 				index +=1;
 			}
 		}
 		
-		console.log("moisture datasets: ", datasets);
+		//console.log("moisture datasets: ", datasets);
 		
 		var moistureGraphData = {
 				labels: plenty_admin.UI.field.weatherDays.labels,
@@ -8597,8 +8822,16 @@ plenty_admin.UI.field = {
 			
 			var moistureGraphOptions = {
 				multiTooltipTemplate: "<%= datasetLabel %>: <%=numeral(value).format('0,0.00')%>cb",
-				pointHitDetectionRadius: 1
+				pointHitDetectionRadius: 0,
+				animation:false,
+				scaleLabel: plenty_admin.UI.field.yAxisPadder
 			};
+			
+			if(plenty_admin.UI.field.moistureGraph){
+				plenty_admin.UI.field.moistureGraph.destroy();
+			}
+			
+			plenty_admin.UI.field.weatherDays.labels = plenty_admin.UI.field.weatherDays.allLabels.slice();
 			
 			plenty_admin.UI.field.moistureGraph = new Chart(plenty_admin.UI.field.moistureGraphEl.get(0).getContext("2d")).LineAlt(moistureGraphData, moistureGraphOptions);
 			plenty_admin.UI.field.moistureGraph.datasetId = "moisture";
@@ -8625,9 +8858,17 @@ plenty_admin.UI.field = {
 			};
 			
 			var precipGraphOptions = {
-				tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>\"",
-				pointHitDetectionRadius: 1
+				//tooltipTemplate: "<%=label%>: <%=numeral(value).format('0,0.00')%>\"",
+				tooltipTemplate: "<%= label %>: <%= Math.round(value) %>",
+				pointHitDetectionRadius: 0,
+				scaleLabel: plenty_admin.UI.field.yAxisPadder
 			};
+			
+			if(plenty_admin.UI.field.precipGraph){
+				plenty_admin.UI.field.precipGraph.destroy();
+			}
+			
+			plenty_admin.UI.field.weatherDays.labels = plenty_admin.UI.field.weatherDays.allLabels.slice();
 			
 			plenty_admin.UI.field.precipGraph = new Chart(plenty_admin.UI.field.precipGraphEl.get(0).getContext("2d")).LineAlt(precipGraphData, precipGraphOptions);
 			plenty_admin.UI.field.precipGraph.datasetId = "precipAmt";
@@ -8635,7 +8876,16 @@ plenty_admin.UI.field = {
 			
 			return plenty_admin.UI.field.precipGraph;
 	},
-
+	yAxisPadder: function(object){
+		//console.log("value length: ", object.value, object.value.length, 12-object.value.length);
+		var maxSpaces = 9;
+		var addedSpace = "";
+		var extraSpaces = maxSpaces-object.value.length;
+		for(var s=0; s<extraSpaces; s++){
+			addedSpace += " ";
+		}
+		return addedSpace + object.value;
+	},
 	renderGDDGraph: function(){
 		var GDDGraphData = {
 				labels: plenty_admin.UI.field.weatherDays.labels,
@@ -8655,11 +8905,26 @@ plenty_admin.UI.field = {
 			
 			var GDDGraphOptions = {
 				tooltipTemplate: "<%= label %>: <%= Math.round(value) %>",
-				pointHitDetectionRadius: 1
+				pointHitDetectionRadius: 0,
+				scaleLabel: plenty_admin.UI.field.yAxisPadder
 			};
+			
+			if(plenty_admin.UI.field.gddGraph){
+				plenty_admin.UI.field.gddGraph.destroy();
+			}
+			
+			plenty_admin.UI.field.weatherDays.labels = plenty_admin.UI.field.weatherDays.allLabels.slice();
 			
 			plenty_admin.UI.field.gddGraph = new Chart(plenty_admin.UI.field.gddGraphEl.get(0).getContext("2d")).LineAlt(GDDGraphData, GDDGraphOptions);
 			plenty_admin.UI.field.gddGraph.datasetId = "gddTotalToToday";
+			
+			plenty_admin.UI.field.gddGraphEl
+			.onclick = function(evt){
+				var activePoints = myLineChart.getPointsAtEvent(evt);
+				console.log("graph clicked: ", activePoints);
+				// => activePoints is an array of points on the canvas that are at the same position as the click event.
+			};
+			
 			plenty_admin.UI.field.renderedGraphs.push(plenty_admin.UI.field.gddGraph);
 			
 			return plenty_admin.UI.field.gddGraph;
@@ -8704,7 +8969,7 @@ plenty_admin.UI.field = {
 		}
 		
 		var financeChartOptions = {
-			legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+			legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\" class=\"legendItem\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
 			tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
 			animateRotate: true
 		};
@@ -8713,6 +8978,10 @@ plenty_admin.UI.field = {
 		
 		console.log("helpers", helpers);
 		
+		if(plenty_admin.UI.field.financesGraph){
+			plenty_admin.UI.field.financesGraph.destroy();
+		}
+			
 		plenty_admin.UI.field.financesGraph = new Chart(plenty_admin.UI.field.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
 		
 		console.log("render finances graph: ", plenty_admin.UI.field.financesGraph, financesData);
@@ -9125,10 +9394,12 @@ plenty_admin.UI.field.financesGraphEl = plenty_admin.UI.field.DOM.find(".tab-con
 /* Set up the global properties of the charts plugin*/
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.maintainAspectRatio = false;
+Chart.defaults.global.scaleFontFamily = "'Lucida Console', Monaco, monospace";
 Chart.defaults.Line.scaleShowHorizontalLines = true;
 Chart.defaults.Line.scaleShowVerticalLines = true;
 Chart.defaults.Line.scaleShowGridLines = true;
 Chart.defaults.Line.pointHitDetectionRadius = 1;
+
 
 //get field order by year
 plenty_admin.REST.get_fieldCrops_order_by_year_descending = function(fieldId, callback){
@@ -9160,6 +9431,25 @@ plenty_admin.REST.get_activities_by_field_crop_order_by_desc = function(fieldCro
 			callback(returnData);
 		}
 	});
+}
+
+//get image for growth stage
+plenty_admin.REST.fields.getGrowthStageFile = function(growthStageId, html, callback){
+	plenty_admin.REST.growthStageFile = plenty_admin.api.all("growthStageFile/getImage");
+	plenty_admin.REST.growthStageFile.get(growthStageId)
+	.then(
+		function(growthStageImageString){
+			console.log("growthStageImageString: ", growthStageImageString().data);
+			if(callback && typeof callback == "function"){
+				callback(growthStageImageString().data, html);
+			}
+		},
+		function(){
+			console.log("getting growth stage image failed: ");
+			if(callback && typeof callback == "function"){
+				callback("NO IMAGE AVAILABLE", html);
+			}
+		});
 }
 
 //get activities for organization by date range
@@ -9251,11 +9541,14 @@ plenty_admin.UI.map.filtered_field_polygons = [];
 plenty_admin.UI.map.MODAL_equipment = $("body").find(".modal#equipment");
 plenty_admin.UI.map.MODAL_activity = $("body").find(".modal#activity");
 plenty_admin.UI.field.taskFinancesGraphEl = plenty_admin.UI.map.MODAL_activity.find("canvas#taskGraph");
+plenty_admin.UI.map.isInit = 0;
+
 //method to initiate the field page
 plenty_admin.UI.map.init = function(){
 	console.log("plenty_admin.UI.map.init");
 	plenty_admin.UI.currentScreen = plenty_admin.UI.map.DOM;
 	plenty_admin.MAPS.add_field_state = 1;
+	plenty_admin.MAPS.edit_field_state = 0;
 	function loadMap(){
 		var center = new google.maps.LatLng(38.017922, -95.494064);
 		
@@ -9269,9 +9562,6 @@ plenty_admin.UI.map.init = function(){
 		
 		plenty_admin.MAPS.mainMap = plenty_admin.MAPS.create_map("map-container", mapOptions);
 		
-		//add the location search tools to the map
-		//plenty_admin.MAPS.location_search(plenty_admin.MAPS.map, plenty_admin.UI.map.DOM);
-		
 		//update the map when the user finishes interacting with it
 		plenty_admin.MAPS.set_on_idle_event(plenty_admin.MAPS.mainMap, function(e){
 			console.log("map bounds changed");
@@ -9281,10 +9571,14 @@ plenty_admin.UI.map.init = function(){
 			console.log("map zoom: ", zoom);
 			
 			//always show equipment pins when zoom or pan
-			if(plenty_admin.DATA.userFilters){
+			if(
+				plenty_admin.DATA.userFilters
+				&& plenty_admin.MAPS.edit_field_state == 0
+			){
 				plenty_admin.UI.map.add_equipment_to_map();
 			}
 		});
+		
 		plenty_admin.MAPS.set_on_click_event(plenty_admin.MAPS.mainMap, function(e){
 			console.log("map clicked", e);
 			plenty_admin.UI.filters.toggleFilters("close");	
@@ -9296,7 +9590,7 @@ plenty_admin.UI.map.init = function(){
 		plenty_admin.MAPS.add_zoom_to_fields_control(plenty_admin.MAPS.mainMap);
 		
 		//prepare all data type lists and wait till they've loaded
-		plenty_admin.DATA.eventCollector = window.eventcollector(6, 10000);
+		plenty_admin.DATA.eventCollector = window.eventcollector(8, 10000);
 		plenty_admin.REST.getCropTypes();
 		plenty_admin.REST.getTillageTypes();
 		plenty_admin.REST.getIrrigationTypes();
@@ -9444,98 +9738,98 @@ plenty_admin.UI.map.add_equipment_to_map = function(){
 			}
 		}
 		
-		//loop the equipment
-		equipment.forEach(function(equip, e){
-			var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
-				return pin.id === equip.id;
+		if(plenty_admin.UI.map.isInit < 1){
+			plenty_admin.UI.map.isInit += 1;
+		}else{
+			//loop the equipment
+			equipment.forEach(function(equip, e){
+				var iconExists = $.grep(plenty_admin.MAPS.equipment_pins, function(pin, p){
+					return pin.id === equip.id;
+				});
+				
+				if(iconExists.length === 0){
+					//get a google latlng object for each element
+					var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
+					
+					//extend the map boundary to include all points
+					boundaryLatLngs.push(latlng);
+					
+					plenty_admin.UI.map.latlngbounds.extend(latlng);
+					
+					equip.latlng = latlng;
+					
+					var pinEvents = {
+						onMouseOver: function(event){ //mouseover event
+							//console.log("hover marker: ", this, $(this.markerContent_));
+							$(this.markerContent_)
+							.find(".marker")
+							.addClass("hover");
+							
+							$(this.markerWrapper_)
+							.css({
+								zIndex:10
+							});
+							
+							plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equip.name+"</strong><br /><p>Drag to reposition, right click to delete</p>");
+						}, 
+						onMouseOut: function(event){ //mouseout event
+							$(this.markerContent_)
+							.find(".marker")
+							.removeClass("hover");
+							
+							$(this.markerWrapper_)
+							.css({
+								zIndex:1
+							});
+							
+							plenty_admin.MAPS.polygon_tooltip.hide();
+						}, 
+						onClick: function(){ //click event
+							console.log("event:", this, this.args);
+							plenty_admin.UI.map.clickedEquipment = true;
+							var t = setTimeout(function(){
+								plenty_admin.UI.map.clickedEquipment = false;
+							}, 300);
+							//event.stop();
+							plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
+							plenty_admin.MAPS.polygon_tooltip.hide();
+						},
+						onDragEnd: function(){ //drag end event
+							var that = this;
+							//console.log("onDragEnd:", equip, that);
+							//check if the point has been moved to another polygon or is not in a polygon
+							var matchedPoly = null;
+							for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
+								var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
+								if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
+									//console.log("Point is inside a polygon: ", polygon);
+									matchedPoly = polygon;
+									break;
+								}
+							}
+							
+							if(matchedPoly){
+								if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
+									//console.log("do you want top move this equipment within this field?");
+									plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+								}else{
+									//console.log("Do you what to assosciate this equipment with a different field");
+									plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
+								}
+							}else{
+								//console.log("are you sure you want to disassociate this equipment with any fields???");
+								plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
+								plenty_admin.MAPS.delete_field_equipment(equip, that);
+							}
+							return false;
+						}
+					}
+					//draw the pin on the map
+					plenty_admin.MAPS.draw_pin(equip, pinEvents, plenty_admin.MAPS.mainMap);
+				}
 			});
 			
-			if(iconExists.length === 0){
-				//get a google latlng object for each element
-				var latlng = new google.maps.LatLng(equip.latitude, equip.longitude);
-				
-				//extend the map boundary to include all points
-				boundaryLatLngs.push(latlng);
-				
-				plenty_admin.UI.map.latlngbounds.extend(latlng);
-				
-				equip.latlng = latlng;
-				
-				var pinEvents = {
-					onMouseOver: function(event){ //mouseover event
-						//console.log("hover marker: ", this, $(this.markerContent_));
-						$(this.markerContent_)
-						.find(".marker")
-						.addClass("hover");
-						
-						$(this.markerWrapper_)
-						.css({
-							zIndex:10
-						});
-						
-						plenty_admin.MAPS.polygon_tooltip.show("<strong>"+equip.name+"</strong><br /><p>Drag to reposition, right click to delete</p>");
-					}, 
-					onMouseOut: function(event){ //mouseout event
-						$(this.markerContent_)
-						.find(".marker")
-						.removeClass("hover");
-						
-						$(this.markerWrapper_)
-						.css({
-							zIndex:1
-						});
-						
-						plenty_admin.MAPS.polygon_tooltip.hide();
-					}, 
-					onClick: function(){ //click event
-						console.log("event:", this, this.args);
-						plenty_admin.UI.map.clickedEquipment = true;
-						var t = setTimeout(function(){
-							plenty_admin.UI.map.clickedEquipment = false;
-						}, 300);
-						//event.stop();
-						plenty_admin.MAPS.show_equipment_pin_context_menu(equip, this);
-						plenty_admin.MAPS.polygon_tooltip.hide();
-					},
-					onDragEnd: function(){ //drag end event
-						var that = this;
-						//console.log("onDragEnd:", equip, that);
-						//check if the point has been moved to another polygon or is not in a polygon
-						var matchedPoly = null;
-						for(var p=0; p<plenty_admin.UI.map.filtered_field_polygons.length; p++){
-							var polygon = plenty_admin.UI.map.filtered_field_polygons[p];
-							if(google.maps.geometry.poly.containsLocation(that.position, polygon)){
-								//console.log("Point is inside a polygon: ", polygon);
-								matchedPoly = polygon;
-								break;
-							}
-						}
-						
-						if(matchedPoly){
-							if(matchedPoly.id === equip.fieldEquipmentDto.fieldId){
-								//console.log("do you want top move this equipment within this field?");
-								plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
-							}else{
-								//console.log("Do you what to assosciate this equipment with a different field");
-								plenty_admin.MAPS.update_fixed_equipment_position_and_change_field(equip, matchedPoly, that);
-							}
-						}else{
-							//console.log("are you sure you want to disassociate this equipment with any fields???");
-							plenty_admin.MAPS.update_fixed_equipment_position(equip, that);
-							plenty_admin.MAPS.delete_field_equipment(equip, that);
-						}
-						return false;
-					}
-				}
-				//draw the pin on the map
-				plenty_admin.MAPS.draw_pin(equip, pinEvents, plenty_admin.MAPS.mainMap);
-			}
-			//}
-		});
-		
-		if(equipment.length > 0){
-			//plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
-			//var markerCluster = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.MAPS.equipment_pins);
+			plenty_admin.DATA.eventCollector.done("equipment");
 		}
 	});
 }
@@ -9753,7 +10047,11 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 				latlng.seqNumber = xy.seqNumber;
 				boundaryLatLngs.push(latlng);
 				
-				if(zoomFields === undefined || zoomFields === null || zoomFields === false){
+				if(
+					zoomFields === undefined 
+					|| zoomFields === null 
+					|| zoomFields === false
+				){
 					plenty_admin.UI.map.latlngbounds.extend(boundaryLatLngs[i]);
 				}
 			});
@@ -9763,6 +10061,7 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 			var fieldNameObj = $.grep(fieldIDs, function(_field, f){
 				return field.fieldId === _field.id;
 			});
+			
 			var fieldName = "NO NAME";
 			(fieldNameObj.length > 0 ? fieldName = fieldNameObj[0].name : null);
 			
@@ -9955,8 +10254,8 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 				
 				plenty_admin.UI.map.filtered_field_polygons.push(polygon);
 			}	
+			
 		});
-		
 		
 		if(
 			fieldBoundaries.length > 0){
@@ -9972,11 +10271,15 @@ plenty_admin.UI.map.populate = function(fieldIDs, zoomFields){
 		
 		//recenter fields if map size changes
 		$(window).on("resize",function(){
-			plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+			if(plenty_admin.MAPS.edit_field_state == 1){
+				plenty_admin.MAPS.zoomToPolygon(plenty_admin.MAPS.polygonToEdit, plenty_admin.MAPS.mainMap);
+			}else{
+				plenty_admin.MAPS.mainMap.fitBounds(plenty_admin.UI.map.latlngbounds);
+			}
 		});
 		
-		plenty_admin.HELPER.hideLoadingOverlay();
-		
+		//plenty_admin.HELPER.hideLoadingOverlay();
+		plenty_admin.DATA.eventCollector.done("boundary points");
 		//cluster the polygons and render clusters on the map
 		//plenty_admin.MAPS.mainMap.clusterer = new MarkerClusterer(plenty_admin.MAPS.mainMap, plenty_admin.UI.map.filtered_field_polygons);
 	});
@@ -9990,16 +10293,7 @@ $( document ).on( "map_data_ready", function( event, orgs ) {
 		console.log("filters", filters);
 		plenty_admin.DATA.userFilters = filters().data;
 		plenty_admin.DATA.data_source = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList;
-		plenty_admin.DATA.update_filters(function(){
-			console.log("init filters");
-			plenty_admin.UI.map.add_equipment_to_map();
-			plenty_admin.UI.map.toggleFilters
-			.parent()
-			.fadeIn("fast")
-			.parent()
-			.find(".filter_loader")
-			.fadeOut("fast");
-		}, true);
+		plenty_admin.DATA.update_filters(null, true);
 	});
 });
 //*********************** dashboard.js **************************//
@@ -10036,7 +10330,8 @@ plenty_admin.UI.plans.dummyProfitProj = {
 	planDto: {
 		id:111,
 		name: "dummyPlan",
-		description:"dummy plan because getting profit projection failed"
+		description:"dummy plan because getting profit projection failed",
+		state: "UNSCHEDULED"
 	},
 	fieldDto: {
 		id:1,
@@ -10132,152 +10427,487 @@ plenty_admin.UI.plans.init = function(){
 			}
 		}, 300);
 	});
+
+	var t = Date.now();
+	var today = plenty_admin.HELPER.formatJavaDate(t);
+	var m = ((today.obj.getUTCMonth()+1) > 9 ? today.obj.getUTCMonth()+1 : "0"+(today.obj.getUTCMonth()+1));
+	var d = (today.obj.getUTCDate() > 9 ? today.obj.getUTCDate() : "0"+today.obj.getUTCDate());
+	var todayStr = today.year+"-"+m+"-"+d;
+	var datePickers = plenty_admin.UI.plans.add_template_plan_modal
+	.find("input.datepicker");
 	
-	plenty_admin.UI.plans.add_template_plan_modal
-	.find("input.datepicker").datepicker({
+	datePickers
+	.datepicker({
 		autoclose:true, 
 		startDate: '+0d'
 	});
 	
+	datePickers
+	.datepicker('setValue', todayStr)
+	.datepicker('update');
+	
+	datePickers
+	.on('show hide',function(e){ e.stopPropagation() });
+	
 	plenty_admin.UI.plans.DOM
 	.find(".btn.add-plan-to-displayed")
 	.click(function(){
-		plenty_admin.UI.plans.add_template_plan_modal
-		.data("fieldSet", plenty_admin.UI.plans.DOM.find("tbody.fieldPlans"))
-		.modal("show");
+		var fieldSet = plenty_admin.UI.plans.DOM.find("tbody.fieldPlans");
+		var openAddTemplateModal = function(fieldSet){
+			//check if any of the fields need a plantation date
+			for(var f=0; f<fieldSet.length; f++){
+				if($(this).find(".plan").length == 0){
+					plenty_admin.UI.plans.add_template_plan_modal
+					.addClass("plantAndStart");
+				}else{
+					plenty_admin.UI.plans.add_template_plan_modal
+					.removeClass("plantAndStart");
+				}
+			}
+			
+			plenty_admin.UI.plans.add_template_plan_modal
+			.data("fieldSet", fieldSet)
+			.modal("show");
+		}
+		if(fieldSet.length === 1){
+			for(var f=0; f<fieldSet.length; f++){
+				var tbody = fieldSet[f];
+				$(tbody)
+				.find("tr.plan")
+				.each(function(){
+					console.log("plan for this tbody: ", $(this));
+					var manifestedPlanId = parseInt($(this).data("manifested_plan_id"));
+					console.log("manifestedPlanId", manifestedPlanId);
+					
+					plenty_admin.UI.plans.add_template_plan_modal
+					.find(".templatePlan-"+manifestedPlanId)
+					.addClass("hide");
+				});
+			};
+			
+			if(plenty_admin.UI.plans.add_template_plan_modal.find(".templatePlan:not(.hide)").length == 0){ //if all template plans have been hidden	
+				bootbox.dialog({
+					message: "You have added all available plan templates.",
+					className: "info",
+					buttons: {
+						danger: {
+						  label: "OK",
+						  className: "btn-primary",
+						  callback: function(){
+								plenty_admin.HELPER.hideLoadingOverlay();
+							}
+						}
+					}
+				});
+			}else{
+				openAddTemplateModal(fieldSet);
+			}
+		}else{
+			openAddTemplateModal(fieldSet);
+		}
 	});
 	
 	plenty_admin.UI.plans.add_template_plan_modal
+	.find('a[data-toggle="tab"]')
+	.on('show.bs.tab', function (e) {
+	 // e.target // newly activated tab
+	  //e.relatedTarget // previous active tab
+	  console.log("tab switch: ", $(e.target).data("target"));
+	  
+	  switch($(e.target).data("target")){
+		 case "#plans_list":
+		 	plenty_admin.UI.plans.add_template_plan_modal
+			.find("button.next")
+			.show()
+			.end()
+			.find("button.back, button.add-plan")
+			.hide();
+		 break; 
+		 
+		 case "#plans_criterea":
+		 	plenty_admin.UI.plans.add_template_plan_modal
+			.find("button.next")
+			.hide()
+			.end()
+			.find("button.back, button.add-plan")
+			.show();
+		 break; 
+	  }
+	})
+	.end()
+	.find("button.next")
+	.click(function(){
+		console.log("next");
+		plenty_admin.UI.plans.add_template_plan_modal
+		.find('.nav-tabs a[data-target="#plans_criterea"]')
+		.tab('show');
+	})
+	.end()
+	.find("button.back")
+	.click(function(){
+		plenty_admin.UI.plans.add_template_plan_modal
+		.find('.nav-tabs a[data-target="#plans_list"]')
+		.tab('show');
+	})
+	.end()
 	.find("button.add-plan")
 	.click(function(){
 		var selectedPlanTemplates = [];
 		var $this = $(this);
-		plenty_admin.UI.plans.add_template_plan_modal.find("input[type='checkbox']:checked:enabled").each(function(){
+		
+		$this.button("loading");
+		
+		plenty_admin.UI.plans.add_template_plan_modal.find("input[type='checkbox']:checked").each(function(){
 			selectedPlanTemplates.push($(this).closest("tr"));
 		});
 		
 		console.log("selectedPlanTemplates", selectedPlanTemplates);
+		
+		plenty_admin.UI.plans.add_plan_eventCollector = window.eventcollector(selectedPlanTemplates.length, 10000);
+		
+		plenty_admin.UI.plans.add_plan_eventCollector.on('alldone', function(total) {
+			plenty_admin.HELPER.hideLoadingOverlay();
+		});
+		
 		for(var t=0; t<selectedPlanTemplates.length; t++){
 			//calculateCostForPlan
 			//get cost calculation to push into plans list
 			var templatePlanDto = selectedPlanTemplates[t].data("templatePlan");
+			var autoSchedule = plenty_admin.UI.plans.add_template_plan_modal
+			.find("#autoSchedule").is(":checked");
 			
-			var rDateObj = plenty_admin.UI.plans.add_template_plan_modal
-							.find("#replaceStartingDate").data("datepicker").date;
+			var plantationDate = null;
+			var replacementStartDate = null;
 			
-			var replaceStartingDate = rDateObj.getUTCFullYear()+"-"+
-										((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
-										(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
-										//(rDateObj.getUTCHours() < 10 ? "0"+rDateObj.getUTCHours() : rDateObj.getUTCHours())+":"+
-										//(rDateObj.getUTCMinutes() < 10 ? "0"+rDateObj.getUTCMinutes() : rDateObj.getUTCMinutes());
+			function getPlantationDate(){
+				var pDateObj = plenty_admin.UI.plans.add_template_plan_modal
+				.find("#plantationDate").data("datepicker").date;
 			
-			/*			
-			var pDateObj = plenty_admin.UI.plans.add_template_plan_modal
-							.find("#plantationDate").data("datepicker").date;
+				plantationDate = pDateObj.getUTCFullYear()+"-"+
+									((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
+									(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate());
+			}
 			
-			var plantationDate = pDateObj.getUTCFullYear()+"-"+
-										((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
-										(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate())+" "+
-										(pDateObj.getUTCHours() < 10 ? "0"+pDateObj.getUTCHours() : pDateObj.getUTCHours())+":"+
-										(pDateObj.getUTCMinutes() < 10 ? "0"+pDateObj.getUTCMinutes() : pDateObj.getUTCMinutes());
-			*/
-			
+			function getReplacementStartDate(){
+				var rDateObj = plenty_admin.UI.plans.add_template_plan_modal
+				.find("#replaceStartingDate").data("datepicker").date; //selected date
+				
+				replacementStartDate = rDateObj.getUTCFullYear()+"-"+
+									((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
+									(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
+			}
+							
 			var activeFields = plenty_admin.UI.plans.add_template_plan_modal.data("fieldSet");
+			var fieldCropReplaceDatePlantationDateDtos = [];
+			
+			var dates = plenty_admin.UI.plans.get_plan_start_end_range();
+			var currentFS = activeFields[fs];
+			
 			for(var fs=0; fs<activeFields.length; fs++){
-				var currentFS = activeFields[fs];
-				var planReplacementDto = {
-										organizationId: templatePlanDto.organizationId,
-										planId: $(currentFS).data("profitProjection").planDto.id,
-										templatePlanId: templatePlanDto.id, //this should be the ID of a newly added templatePlan
-										requestingUserId: plenty_admin.DATA.userDetails.id,
-										replaceStartingDate: replaceStartingDate,
-										fieldCropToReplacePlanForId: $(currentFS).data("profitProjection").fieldCropDto.id,
-										plantationDate: $(currentFS).data("profitProjection").planDto.plantationDate,
-										commit: false
-									}
-										
-				plenty_admin.REST.changePlan(planReplacementDto, function(profitProjection){
-					plenty_admin.UI.plans.add_template_plan_modal
-					.data("fieldSet")
-					.each(function(){
-						var $projectionPlanHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection, "templatePlan");
-						
-						$projectionPlanHTML
-						.data("planReplacementDto", planReplacementDto);
-						
-						$(this)
-						.append($projectionPlanHTML);
-					});
-					
-					plenty_admin.UI.plans.add_template_plan_modal
-					.modal("hide");
+				var isAdd = $(activeFields[fs]).find(".plan.active").length == 0;
+				if(
+					isAdd
+				){
+					getPlantationDate();
+					replacementStartDate = null;
+				}else {
+					getReplacementStartDate();
+					plantationDate = null;
+				}
+				fieldCropReplaceDatePlantationDateDtos.push({
+					fieldCropId: $(activeFields[fs]).find(".field-row").data("fieldDto").id,
+					replacementStartDate:replacementStartDate,
+					plantationDate: plantationDate
 				});
 			}
+			
+			var orgId = parseInt(plenty_admin.UI.plans.add_template_plan_modal.find("#organizationList option:selected").val());
+			
+			var templatePlanApplicationDto = {
+					templatePlanId: templatePlanDto.id, 
+					organizationId: orgId,
+					fieldCropReplaceDatePlantationDateDtos: fieldCropReplaceDatePlantationDateDtos,
+					autoSchedule: autoSchedule,
+					commit: false,
+					schedulerRequestArguments: {
+						organizationId: orgId,
+						triggeringUserId: plenty_admin.DATA.userDetails.id,
+						dateRangeStart: dates.dateRangeStart,
+						dateRangeEnd: dates.dateRangeEnd,
+						planningTimeAllowed: "ONE_MINUTE" //Will become an option of [THREE_MINUTES, FIVE_MINUTES, TEN_MINUTES, HALF_HOUR, HOUR]
+					}
+			}
+			
+			console.log("templatePlanApplicationDto", templatePlanApplicationDto);
+			
+			plenty_admin.UI.plans.add_template_plan_modal
+			.modal("hide");
+			
+			plenty_admin.HELPER.showLoadingOverlay();
+									
+			plenty_admin.REST.applyTemplatePlanToFieldCrops(templatePlanApplicationDto, function(planManifestation){
+				plenty_admin.UI.plans.add_template_plan_modal
+				.data("fieldSet")
+				.each(function(){
+					var status = {
+						planning:planManifestation.planning,
+						possible:planManifestation.possible,
+						ready:planManifestation.ready
+					};
+					
+					var $projectionPlanHTML = plenty_admin.UI.plans.create_plan_projection(planManifestation, "templatePlan");
+					
+					$projectionPlanHTML
+					.data("planManifestationResultsDto", planManifestation)
+					.data("templatePlanApplicationDto", templatePlanApplicationDto);
+					
+					$(this)
+					.append($projectionPlanHTML);
+				});
+				plenty_admin.UI.plans.add_plan_eventCollector.done("template plans added");
+			});
 		}
+	})
+	.end()
+	.find("#autoSchedule")
+	.bootstrapSwitch()
+	.end()
+	.on("show.bs.modal", function(){
+		console.log("show add plan modal");
+	})
+	.on("hidden.bs.modal", function(){
+		$(this).removeClass("addPlan plantAndStart");
+		var that = $(this);
+		
+		that
+		.find(".templatePlan")
+		.removeClass("hide alert-success")
+		.find("input[type=checkbox]")
+		.prop("checked", false)
+		.end()
+		.end()
+		.find("button.add-plan")
+		.button("reset")
+		.end()
+		.find('a[data-toggle="tab"][data-target="#plans_criterea"]')
+		.parent()
+		.hide()
+		.end()
+		.end()
+		.find('a[data-toggle="tab"][data-target="#plans_list"]')
+		.trigger("click")
+		.end()
+		.find("button.next")
+		.prop("disabled", true);
+		
+		var to = setTimeout(function(){
+			plenty_admin.UI.plans.add_template_plan_modal
+			.find("button.add-plan")
+			.prop('disabled', true);
+		}, 50);
 	});
 }
 
-plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
-	var plan = profitProjection.planDto;
-	var field = profitProjection.fieldDto;
-	var fieldCrop = profitProjection.fieldCropDto;
+plenty_admin.UI.plans.get_plan_start_end_range = function(){
+	var rsDate = Date.now() + -180*24*3600*1000; // date 5 days ago in milliseconds UTC
+	var dateRangeStartObj = new Date(rsDate);
+
+	var dateRangeStart = dateRangeStartObj.getUTCFullYear()+"-"+
+							((dateRangeStartObj.getUTCMonth()+1) < 10 ? "0"+(dateRangeStartObj.getUTCMonth()+1) : dateRangeStartObj.getUTCMonth()+1)+"-"+
+							(dateRangeStartObj.getUTCDate() < 10 ? "0"+dateRangeStartObj.getUTCDate() : dateRangeStartObj.getUTCDate());
+	
+	var reDate = Date.now() + 180*24*3600*1000; // date 5 days ago in milliseconds UTC
+	var dateRangeEndObj = new Date(reDate);
+	var dateRangeEnd = dateRangeEndObj.getUTCFullYear()+"-"+
+							((dateRangeEndObj.getUTCMonth()+1) < 10 ? "0"+(dateRangeEndObj.getUTCMonth()+1) : dateRangeEndObj.getUTCMonth()+1)+"-"+
+							(dateRangeEndObj.getUTCDate() < 10 ? "0"+dateRangeEndObj.getUTCDate() : dateRangeEndObj.getUTCDate());
+							
+	var dates = {
+		dateRangeEnd: dateRangeEnd,
+		dateRangeStart: dateRangeStart
+	};
+	
+	return dates;
+}
+
+plenty_admin.UI.plans.get_state_icon_class = function(state){
+	var statusClass = "thumbs-down";
+	switch(state){
+			case "SCHEDULED":
+				statusClass = "calendar";
+			break;
+			case "IN_PROGRESS":
+				statusClass = "hourglass-half";
+			break;
+			case "FINISHED":
+				statusClass = "flag-checkered";
+			break;
+			case "REPLACED":
+				statusClass = "exchange";
+			break;
+			case "UNSCHEDULED":
+				statusClass = "calendar-minus-o";
+			break;
+			case "SCHEDULING":
+				statusClass = "hourglass-half";
+			break;
+			case "CONFLICT":
+				statusClass = "hand-stop-o";
+			break;
+		}
+	return statusClass;
+}
+
+plenty_admin.UI.plans.create_plan_projection = function(planData, type){
+	//console.log("planData", planData);
+	switch (type){
+		case "plan":
+			var drilldownData = {
+				plan: planData.planDto,
+				field: planData.fieldDto,
+				fieldCrop: planData.fieldCropDto,
+				activities:planData.activityListDetailedFinancesDto,
+				profitProjection:planData,
+				manifestedPlan: {manifestedFromId: planData.planDto.manifestedFromId}
+			}
+		break;
 		
+		case "templatePlan":
+			var drilldownData = {
+				plan: planData.planManifestationResults[0].profitProjectionDto.planDto,
+				field: planData.planManifestationResults[0].profitProjectionDto.fieldDto,
+				fieldCrop: planData.planManifestationResults[0].profitProjectionDto.fieldCropDto,
+				activities:planData.planManifestationResults[0].profitProjectionDto.activityListDetailedFinancesDto,
+				profitProjection:planData.planManifestationResults[0].profitProjectionDto,
+				manifestedPlan: planData.planManifestationResults[0].manifestedPlan
+			}
+		break;
+	}
+	
+	var statusClass = "ready";
+	var active = false;
+	//calculate status
+	if(drilldownData.plan.state){
+		switch(drilldownData.plan.state){
+			case "SCHEDULED":
+				active = true;
+				statusClass = "calendar";
+			break;
+			case "IN_PROGRESS":
+				active = true;
+				statusClass = "hourglass-half";
+			break;
+			case "FINISHED":
+				active = true;
+				statusClass = "flag-checkered";
+			break;
+			case "REPLACED":
+				active = false;
+				statusClass = "exchange";
+			break;
+			case "UNSCHEDULED":
+				active = false;
+				statusClass = "calendar-minus-o";
+			break;
+			case "SCHEDULING":
+				active = false;
+				statusClass = "hourglass-half";
+			break;
+			case "CONFLICT":
+				active = false;
+				statusClass = "hand-stop-o";
+			break;
+		}
+	}
+	
+	var statePossibilities = "UNSCHEDULED SCHEDULING SCHEDULED CONFLICT IN_PROGRESS FINISHED REPLACED";
+	
 	var $planHTML = $([
-			"<tr data-id='"+plan.id+"' class='plan"+(plan.active ? " active" : "")+" pointer "+type+"' title='View Plan Details'>",
-				"<td width='6%' class='activeToggle'></th>",
-				"<td width='10.66%'>"+plan.name+"</th>",
-				"<td width='16.66%'>"+plan.description+"</th>",
-				"<td width='8%'>"+plan.startTime+"</th>",
-				"<td width='12.66%'>"+numeral(profitProjection.revenue).format('$0,0.00')+"</th>",
-				"<td width='12.66%'>"+numeral(profitProjection.expense).format('$0,0.00')+"</th>",
-				"<td width='16.66%'>"+numeral(profitProjection.profit).format('$0,0.00')+"</th>",
-				"<td width='16.66%' class='text-right'>"+numeral(profitProjection.profitPerAcre).format('$0,0.00')+"</th>",
+			"<tr data-id='"+drilldownData.plan.id+"' data-manifested_plan_id='"+drilldownData.manifestedPlan.manifestedFromId+"' class='plan"+(active ? " active" : "")+" pointer "+type+" "+drilldownData.plan.state+"' title='View Plan Details'>",
+				"<td width='7%' class='status text-center' title='This plan is currently "+drilldownData.plan.state+"'><i class='fa fa-"+statusClass+"'></i><br/><span class='statusText'>"+drilldownData.plan.state+"</span></i></td>",
+				"<td width='19%'>"+drilldownData.plan.name+"<i class='glyphicon glyphicon-info-sign desc mls' title='"+drilldownData.plan.description+"' data-toggle='tooltip' data-placement='top'></i></td>",
+				"<td width='12%'>"+numeral(drilldownData.profitProjection.revenue).format('$0,0.00')+"</td>",
+				"<td width='12%'>"+numeral(drilldownData.profitProjection.expense).format('$0,0.00')+"</td>",
+				"<td width='12%'>"+numeral(drilldownData.profitProjection.profit).format('$0,0.00')+"</td>",
+				//"<td width='20%'>"+drilldownData.plan.description+"</td>",
+				"<td width='12%'>"+plenty_admin.HELPER.formatJavaDate(drilldownData.plan.startDate).USDate+"</td>",
+				"<td width='18%' class='useplan'></td>",
+				"<td width='8%' class='text-right profitPerAcre'>"+numeral(drilldownData.profitProjection.profitPerAcre).format('$0,0.00')+"</td>",
 			"</tr>"
-		].join("")).data("profitProjection", profitProjection);
+		].join("")).data("drilldownData", drilldownData);
 		
-		var $activeToggle = $("<i class=' glyphicon glyphicon-ok active "+(plan.active ? "true" : "false")+"' title='Use this plan' data-toggle='tooltip' data-placement='top'></i>");
-		$activeToggle
-		.click(function(e){
-			e.stopPropagation();
-			var $this = $(this);
-			var profitProjection = $this.closest("tr").data("profitProjection");
+		if(drilldownData.plan.state == "UNSCHEDULED"){
+			var $usePlan = $("<button class='btn btn-primary btn-sm' title='Use this plan'><span class='glyphicon glyphicon-ok'></span> Use Plan</button>");
 			
-			if($(this).hasClass("true")){
-				//deactivate this plan from this field
-				$(this)
-				.removeClass("true")
-				.addClass("false");
-			}else{
+			$usePlan
+			.click(function(e){
+				e.stopPropagation();
+				var $this = $(this);
+				var drilldownData = $this.closest("tr").data("drilldownData");
+				var templatePlanApplicationDto = $this.closest("tr").data("templatePlanApplicationDto");
+				var planManifestationResultsDto = $this.closest("tr").data("planManifestationResultsDto");
+				var fieldRow = $this.closest("tbody").find(".field-row");
+				var fieldDto = fieldRow.data("fieldDto");
+				var fieldCropDto = fieldRow.data("fieldCropDto");
+				console.log("fieldDto", fieldDto);
+				console.log("fieldCropDto", fieldCropDto);
+				
+				try{
+					var currentPlanName = $this.closest("tbody").find(".plan.active").data("drilldownData").plan.name;
+				}catch(err){
+					var currentPlanName = null;
+				}
+				var newPlanName =  drilldownData.plan.name;
+				var manifestedPlanId = $this.closest("tr").data("manifested_plan_id");
+				
+				if(!templatePlanApplicationDto){
+					var dates = plenty_admin.UI.plans.get_plan_start_end_range();
+					fieldCropReplaceDatePlantationDateDtos = [{
+						fieldCropId: drilldownData.fieldCrop.id,
+						replacementStartDate:drilldownData.plan.startDate,
+						plantationDate: null
+					}];
+					templatePlanApplicationDto = {
+							templatePlanId: manifestedPlanId, 
+							organizationId: drilldownData.plan.organizationId,
+							fieldCropReplaceDatePlantationDateDtos: fieldCropReplaceDatePlantationDateDtos,
+							autoSchedule: false,
+							commit: true,
+							schedulerRequestArguments: {
+								organizationId: drilldownData.plan.organizationId,
+								triggeringUserId: plenty_admin.DATA.userDetails.id,
+								dateRangeStart: dates.dateRangeStart,
+								dateRangeEnd: dates.dateRangeEnd,
+								planningTimeAllowed: "ONE_MINUTE" //Will become an option of [THREE_MINUTES, FIVE_MINUTES, TEN_MINUTES, HALF_HOUR, HOUR]
+							}
+					}
+				}
+				
+				if(!currentPlanName){
+					var planManifestationResult = $.grep(planManifestationResultsDto.planManifestationResults, function(plan, p){
+						return plan.manifestedPlan.fieldCropId === drilldownData.fieldCrop.id;
+					});
+					
+					//console.log("planManifestationResult", planManifestationResult);
+					var newPlanPlantationDate = planManifestationResult[0].manifestedPlan.plantationDate;
+					var changeMsg = 'Are you sure you want to make</p><h4>'+newPlanName+'</h4><p>the active plan for</p><h4>'+fieldDto.name+'</h4><p>starting on</p><h4>'+newPlanPlantationDate+'?';
+				}else{
+					try{
+						var newPlanChangeDate = templatePlanApplicationDto.fieldCropReplaceDatePlantationDateDtos[0].replacementStartDate;
+						var changeMsg = 'Are you sure you want to change</p><h4>'+currentPlanName+'</h4><p>for</p><h4>'+newPlanName+'</h4><p>starting on</p><h4>'+newPlanChangeDate+'?';
+					}catch(err){
+						console.error("current plans dfo not have a templatePlanApplicationDto");
+						var changeMsg = 'Are you sure you want to change</p><h4>'+currentPlanName+'</h4><p>for</p><h4>'+newPlanName+'?</h4>';
+					}
+				}
+				
 				
 				var $modalBody = 
 					$('<div class="row">' +
 						'<div class="col-md-12"> ' +
-							'<p>Are you sure you want to change Plan X for Plan Y starting on MM/DD/YYYY?</p>'+
+							'<p>'+changeMsg+'</h4>'+
 						'</div> '+
 					'</div>');
-				/*
-				var $modalBody = 
-					$('<div class="row">' +
-					'<div class="col-md-12"> ' +
-						'<form>' +
-							'<div class="form-group col-md-12 mln">' +
-								'<label class="col-md-12 control-label" for="replaceStartingDate">Replace Start Date</label>' +
-								'<div class="col-md-12">' +
-									'<input id="replaceStartingDate" name="replaceStartingDate" type="text" placeholder="Pick Start Date" class="datepicker form-control input-md">' +
-								'</div>' +
-							'</div>' +
-							
-							'<div class="form-group col-md-6 mrn">' +
-								'<label class="col-md-12 control-label" for="plantationDate">Plantation Date</label>' +
-								'<div class="col-md-12">' +
-									'<input id="plantationDate" name="plantationDate" type="text" placeholder="Pick Plantation Date" class="datepicker form-control input-md">' +
-								'</div>' +
-							'</div>' +
-							
-						'</form>'+
-					'</div> '+
-				'</div>');
-				*/
 				
 				//warn the user about changing plans
 				bootbox.dialog({
@@ -10296,60 +10926,69 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 							callback: function(){
 								plenty_admin.HELPER.showLoadingOverlay();
 								
-								console.log("profitProjection", profitProjection);
-								/*	
-								var rDateObj = $modalBody.find("#replaceStartingDate").data("datepicker").date;
+								console.log("templatePlanApplicationDto", templatePlanApplicationDto);
+								templatePlanApplicationDto.commit = true;
 								
-								var replaceStartingDate = rDateObj.getUTCFullYear()+"-"+
-															((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
-															(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
-															//(rDateObj.getUTCHours() < 10 ? "0"+rDateObj.getUTCHours() : rDateObj.getUTCHours())+":"+
-															//(rDateObj.getUTCMinutes() < 10 ? "0"+rDateObj.getUTCMinutes() : rDateObj.getUTCMinutes());
-								
-												
-								var pDateObj = $modalBody.find("#plantationDate").data("datepicker").date;
-								
-								var plantationDate = pDateObj.getUTCFullYear()+"-"+
-															((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
-															(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate())+" "+
-															(pDateObj.getUTCHours() < 10 ? "0"+pDateObj.getUTCHours() : pDateObj.getUTCHours())+":"+
-															(pDateObj.getUTCMinutes() < 10 ? "0"+pDateObj.getUTCMinutes() : pDateObj.getUTCMinutes());
-															
-								console.log("replaceStartingDate", replaceStartingDate);
-								console.log("plantationDate", plantationDate);
-								*/
-								
-								var planReplacementDto = {
-									organizationId: profitProjection.planDto.organizationId,
-									planId: profitProjection.planDto.id,
-									templatePlanId: profitProjection.planDto.id, //this should be the ID of a newly added templatePlan
-									requestingUserId: plenty_admin.DATA.userDetails.id,
-									replaceStartingDate: replaceStartingDate,
-									fieldCropToReplacePlanForId: profitProjection.fieldCropDto.id, 
-									plantationDate: null,
-									commit: true
-								}
-								
-								console.log("planReplacementDto", planReplacementDto);
-								
-								$this.closest("tr.plan").data("planReplacementDto", planReplacementDto);
-								
-								plenty_admin.REST.changePlan(planReplacementDto, function(){
+								plenty_admin.REST.applyTemplatePlanToFieldCrops(templatePlanApplicationDto, function(planManifestationResultsDto){
 									//remove active class from other plans 
-									$this
+									var activePlan = $this
 									.closest("tbody")
-									.find("tr.plan")
-									.removeClass("active")
-									.find("i.active") 
-									.removeClass("true")
-									.addClass("false");
+									.find("tr.plan.active");
+									
+									var newState = planManifestationResultsDto.planManifestationResults[0].profitProjectionDto.planDto.state;
+									var previousPlanState = (
+																planManifestationResultsDto.planManifestationResults[0].replacedPlan ?
+																planManifestationResultsDto.planManifestationResults[0].replacedPlan.state :
+																null
+															)
+									
+									if(planManifestationResultsDto.planManifestationResults[0].profitProjectionDtoForReplacedPlan){
+										var previousPlanProfitProj = planManifestationResultsDto.planManifestationResults[0].profitProjectionDtoForReplacedPlan;
+										var drilldownData = {
+											plan: previousPlanProfitProj.planDto,
+											field: previousPlanProfitProj.fieldDto,
+											fieldCrop: previousPlanProfitProj.fieldCropDto,
+											activities:previousPlanProfitProj.activityListDetailedFinancesDto,
+											profitProjection:previousPlanProfitProj,
+											manifestedPlan: {manifestedFromId: previousPlanProfitProj.planDto.manifestedFromId}
+										};
+									}
+									
+															
+									if(previousPlanState){
+										activePlan
+										.removeClass("active "+statePossibilities)
+										.addClass(previousPlanState)
+										.data("profitProjection", previousPlanProfitProj)
+										.data("drilldownData", drilldownData)
+											.find("td.status")
+											.removeClass(statePossibilities)
+											.addClass(previousPlanState)
+											.prop("title", "This plan is currently "+previousPlanState)
+												.find("i.fa")
+												.prop("class", "")
+												.addClass("fa fa-"+plenty_admin.UI.plans.get_state_icon_class(previousPlanState))
+											.end()
+												.find("span.statusText")
+												.text(previousPlanState);
+									}
 									
 									//enable this plan for this field
 									$this
-									.removeClass("false")
-									.addClass("true")
-									.closest("tr.plan")
-									.addClass("active");
+										.closest("tr.plan")
+										.removeClass(statePossibilities)
+										.addClass("active "+newState)
+											.find("i.fa")
+												.prop("class", "")
+												.addClass("fa fa-"+plenty_admin.UI.plans.get_state_icon_class(newState))
+											.end()
+											.find("span.statusText")
+											.text(newState)
+											.closest("td")
+											.prop("title", "This plan is currently "+newState);
+											
+									$this
+									.remove();
 									
 									plenty_admin.HELPER.hideLoadingOverlay();
 								});
@@ -10357,17 +10996,22 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 						}
 					}
 				});
-			}
-			return false;
-		});
+				return false;
+			});
+			
+			$planHTML
+			.find("td.useplan")
+			.append($usePlan);
+		}
 		
 		$planHTML
-		.find("td.activeToggle")
-		.append($activeToggle)
+		.find("i.desc")
+		.tooltip()
 		.end()
 		.click(function(e){
 			e.stopPropagation();
 			console.log("clicked a plan");
+			var drilldownData = $(this).data("drilldownData");
 			
 			//build the breadcrumb trail object
 			var plan_breadcrumb = [
@@ -10387,7 +11031,7 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 				},
 				{
 					class:"active",
-					name:field.name+", "+plan.name,
+					name:drilldownData.field.name+", "+drilldownData.plan.name,
 					clickHandler:null
 				}
 			];
@@ -10398,115 +11042,205 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 			.end()
 			.prepend(plenty_admin.UI.build_breadcrumb_trail(plan_breadcrumb));
 			
-			plenty_admin.UI.plan.init(profitProjection, $(this).hasClass("templatePlan"));
+			plenty_admin.UI.plan.init(drilldownData);
 		});
 		
-		return $planHTML;
-}
-
-plenty_admin.UI.plans.populate = function(){
-	plenty_admin.UI.plans.plansTable
-	.find("tbody")
-	.remove();
-		
-		var legendItems = {};
-		plenty_admin.UI.plans.allCropTypes = [];
-		
-	for(var f=0; f<plenty_admin.DATA.plans.length; f++){
-		var profitProjection = plenty_admin.DATA.plans[f];
-		var plan = profitProjection.planDto;
-		var field = profitProjection.fieldDto;
-		var fieldCrop = profitProjection.fieldCropDto;
-			
-		if(!legendItems[fieldCrop.cropTypeId]){
-			//plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
-			plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(legendItems).length > 0 ? Object.keys(legendItems).length : 100));
-			legendItems[fieldCrop.cropTypeId] = {
-									color: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
-									colour: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
-									label : plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name
-								};
+		//add polling to this plan if it is currently planning to check status
+		if(statusClass === "planning"){
+			$planHTML.checkStatus = setTimeout(function(){
+				plenty_admin.REST.getPlan(profitProjection.planDto.id, function(plan){
+					console.log("got plan from polling: ", plan);
+				});
+			}, 5000);
 		}
 		
-		//add a legend to the map based on the filtered fields
-		console.log("legendItems: ", legendItems);
+		return $planHTML;
+};
+
+plenty_admin.UI.plans.create_field_tbody = function(field, profitProjection){
+	var $tbody = $("<tbody class='fieldPlans fieldPlans_"+field.id+"'/>");
+	//$tbody.data("profitProjection", profitProjection);
+	return $tbody;
+}
+
+plenty_admin.UI.plans.create_field_row = function(field, fieldCrop, legendItems){
+	$fieldHTML = $([
+			"<tr class='field-row field-row-"+field.id+" category pointer' data-id='"+field.id+"' title='View the plan summary for this field'>",
+				"<td width='7%' class='fieldPreview'><img src='' class='pointer pull-left field_thumb_"+field.id+"'/></th>",
+				"<td width='19%'>",
+					"<h4 class=''>"+field.name+"</h4>",
+					"<span class='fieldDetails capitalize'>"+field.acres+"ac, "+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</span>",
+				"</td>",
+				"<td width='12%' class='revenue'></td>",
+				"<td width='12%' class='expense'></td>",
+				"<td width='12%' class='profit'></td>",
+				"<td width='12%' class='startDate'></td>",
+				"<td width='18%'>",
+					"<button class='btn btn-primary btn-inverted add-field-plan' title='Add plan(s) to compare cost projections'>",
+						"<span class='glyphicon glyphicon-plus'></span>Add Plan(s)",
+					"</button>",
+				"</td>",
+				"<td width='8%' class='text-right profitPerAcre' class='profitPerAcre'></td>",
+			"</tr>"
+	].join(""));
+	
+	$fieldHTML
+	.data("fieldDto", field)
+	.data("fieldCropDto", fieldCrop)
+	.data("revenue", 0)
+	.data("expense", 0)
+	.data("profit", 0)
+	.data("profitPerAcre", 0)
+	.click(function(e){
+		e.stopPropagation();
+		plenty_admin.UI.filters.toggleFilters("close");	
+		plenty_admin.UI.plans.farms_quickfilter.popover("hide");
+		plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
+		var $fieldRow = $(this);
+		var fieldDto = $fieldRow.data("fieldDto");
 		
-		if(plenty_admin.UI.plans.plansTable.find(".fieldPlans_"+field.id).length == 0){
-			var $tbody = $("<tbody class='fieldPlans fieldPlans_"+field.id+"'/>");
-			$tbody.data("profitProjection", profitProjection);
-			$fieldHTML = $([
-					"<tr class='field-row category'>",
-						"<td class='fieldPreview'><img src='' class='pointer'/></td>",
-						"<td colspan='6'><h4 class='mbn mtn'>"+field.name+"</h4><span class='fieldDetails capitalize'>"+field.acres+"ac, "+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</span></td>",
-						"<td>",
-							"<button class='btn btn-primary btn-inverted pull-right add-field-plan' title='Add a plan template to compare cost projections'>",
-								"<span class='glyphicon glyphicon-plus'></span>Add Plan Template",
-							"</button>",
-						"</td>",
-					"</tr>"
-			].join(""));
-			
-			$fieldHTML
-			.data("fieldDto", field)
-			.click(function(){
-				plenty_admin.UI.filters.toggleFilters("close");	
-				plenty_admin.UI.plans.farms_quickfilter.popover("hide");
-				plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
-			})
-			.find("button.add-field-plan")
-			.click(function(){
-				console.log("add field plan");
-				var $this = $(this);
-				
-				plenty_admin.UI.plans.add_template_plan_modal
-				.data("fieldSet", $this.closest("tbody.fieldPlans"))
-				.modal("show");
+		console.log("clicked a field");
+		var drilldownDatasArray = [];
+		
+		var activePlansForField = $fieldRow.closest("tbody").find("tr.plan:not(.UNSCHEDULED)");
+		activePlansForField
+		.each(function(){
+			drilldownDatasArray.push($(this).data("drilldownData"));
+		});
+		
+		if(activePlansForField.length == 0){
+			bootbox.dialog({
+				message: "There are currently no active plans for this field.",
+				className: "info",
+				buttons: {
+					danger: {
+					  label: "OK",
+					  className: "btn-primary",
+					  callback: function(){
+							plenty_admin.HELPER.hideLoadingOverlay();
+						}
+					}
+				}
 			});
+		}else{
+			//build the breadcrumb trail object
+			var plan_breadcrumb = [
+				{
+					class:"back",
+					name:"Plans",
+					clickHandler:function(){
+						plenty_admin.UI.currentScreen
+						.fadeOut("normal", function(){
+							plenty_admin.UI.plan.clear();
+							plenty_admin.UI.currentScreen = plenty_admin.UI.plans.DOM;
+							plenty_admin.UI.currentScreen
+							.fadeIn("normal");
+						});
+						return false;
+					}
+				},
+				{
+					class:"active",
+					name:fieldDto.name+" Plan Summary",
+					clickHandler:null
+				}
+			];
 			
-			plenty_admin.UI.plans.plansTable
-			.append($fieldHTML);
+			plenty_admin.UI.plan.DOM
+			.find(".breadcrumb-trail")
+			.remove()
+			.end()
+			.prepend(plenty_admin.UI.build_breadcrumb_trail(plan_breadcrumb));
 			
-			$tbody
-			.append($fieldHTML);
-			
-			//create field thumbnail static map url
-			plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(profitProjection.fieldDto.id, 2, function(boundaries, fieldId, cropTypeId){
-				//console.log("got boundaries for field: ", boundaries, fieldId);
-				
-				var bounds = new google.maps.LatLngBounds();	
-				boundaries.forEach(function(xy, i) {
-					bounds.extend(new google.maps.LatLng(xy.latitude, xy.longitude));
-				});
-				
-				var fieldCenter = bounds.getCenter();
-				var cropColor = legendItems[cropTypeId].color.substring(legendItems[cropTypeId].color.indexOf('#')+1);
-				var pathString = "color:white|weight:2|fillcolor:0x"+cropColor;
-				boundaries.forEach(function(boundary, b){
-					pathString += "|" + boundary.latitude+","+boundary.longitude
-				});
-				
-				staticMapParams = {
-					center:fieldCenter.lat()+","+fieldCenter.lng(),
-					size:"110x110",
-					maptype:"hybrid",
-					zoom: plenty_admin.MAPS.getBoundsZoomLevel(bounds, {width:110, height:110}),
-					path:pathString
-				};
-				
-				var thumb_url = plenty_admin.MAPS.get_static_maps_url(staticMapParams);
-				
-				var field_thumb = plenty_admin.UI.plans.plansTable.find(".fieldPlans.fieldPlans_"+fieldId+" .fieldPreview img");
-				
-				set_thumb_url(thumb_url);
-				
+			plenty_admin.UI.plan.init(drilldownDatasArray);
+		}
+	})
+	.find("button.add-field-plan")
+	.click(function(e){
+		console.log("add field plan");
+		e.stopPropagation();
+		var $this = $(this);
+		var replacePlan = $this.closest("tbody").find(".plan.active").length == 1;
+		
+		if(replacePlan){
+			plenty_admin.UI.plans.add_template_plan_modal
+			.removeClass("addPlan");
+		}else{
+			plenty_admin.UI.plans.add_template_plan_modal
+			.addClass("addPlan");
+		}
+		
+		plenty_admin.UI.plans.add_template_plan_modal
+		.data("fieldSet", $this.closest("tbody.fieldPlans"))
+		.modal("show");
+	});
+	
+	//create field thumbnail static map url
+	plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(field.id, 2, function(boundaries, fieldId, cropTypeId){
+		var bounds = new google.maps.LatLngBounds();	
+		boundaries.forEach(function(xy, i) {
+			bounds.extend(new google.maps.LatLng(xy.latitude, xy.longitude));
+		});
+		
+		var fieldCenter = bounds.getCenter();
+		var cropColor = legendItems[cropTypeId].color.substring(legendItems[cropTypeId].color.indexOf('#')+1);
+		var pathString = "color:white|weight:2|fillcolor:0x"+cropColor;
+		boundaries.forEach(function(boundary, b){
+			pathString += "|" + boundary.latitude+","+boundary.longitude
+		});
+		
+		staticMapParams = {
+			center:fieldCenter.lat()+","+fieldCenter.lng(),
+			size:"110x110",
+			maptype:"hybrid",
+			zoom: plenty_admin.MAPS.getBoundsZoomLevel(bounds, {width:110, height:110}),
+			path:pathString
+		};
+		
+		var thumb_url = plenty_admin.MAPS.get_static_maps_url(staticMapParams);
+		
+		var field_thumb = plenty_admin.UI.plans.plansTable.find(".fieldPlans.fieldPlans_"+fieldId+" .fieldPreview img");
+		
+		set_thumb_url(thumb_url, fieldId);
+		
+		field_thumb
+		.popover({
+				content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
+				title: field_thumb.closest("tr").data("fieldDto").name,
+				html:true,
+				id:"",
+				placement:"right",
+				container:"body"
+		})
+		.on("mouseenter", function () {
+			var _this = this;
+			$(this).popover("show");
+			$(".popover").on("mouseleave", function () {
+				$(_this).popover('hide');
+			});
+		}).on("mouseleave", function () {
+			var _this = this;
+			setTimeout(function () {
+				if (!$(".popover:hover").length) {
+					$(_this).popover("hide");
+				}
+			}, 300);
+		});
+		
+		function set_thumb_url(thumb_url, fieldId){
+			if(field_thumb.length > 0){
 				field_thumb
-				.popover({
-						content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
-						title: field_thumb.closest("tr").data("fieldDto").name,
-						html:true,
-						id:"",
-						placement:"top",
-						container:"body"
+				.prop("src", thumb_url);
+				
+				var field_thumb_clone = field_thumb.clone(true, true);
+				field_thumb_clone
+					.popover({
+					content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
+					title: field_thumb.closest("tr").data("fieldDto").name,
+					html:true,
+					id:"",
+					placement:"right",
+					container:"body"
 				})
 				.on("mouseenter", function () {
 					var _this = this;
@@ -10523,29 +11257,122 @@ plenty_admin.UI.plans.populate = function(){
 					}, 300);
 				});
 				
-				function set_thumb_url(thumb_url){
-					if(field_thumb.length > 0){
-						field_thumb
-						.prop("src", thumb_url);
-					}else{
-						var to = setTimeout(function(){
-							console.log("checking field dom element");
-							set_thumb_url(thumb_url);
-						}, 300);
-					}
-				}
-			}, fieldCrop.cropTypeId);
-		}else{
-			var $tbody = plenty_admin.UI.plans.plansTable.find(".fieldPlans_"+field.id);
+				var cloneContainer = field_thumb
+				.closest(".flexbox-scroll_y")
+				.find(".floating-header .field-row-"+fieldId+" .fieldPreview");
+				
+				cloneContainer
+				.find("img.field_thumb_"+fieldId)
+				.remove();
+				
+				cloneContainer
+				.append(field_thumb_clone);
+			}else{
+				var to = setTimeout(function(){
+					console.log("checking field dom element");
+					set_thumb_url(thumb_url);
+				}, 300);
+			}
+		}
+	}, fieldCrop.cropTypeId);
+	
+	return $fieldHTML;
+};
+
+plenty_admin.UI.plans.populate = function(){
+	plenty_admin.UI.plans.plansTable
+	.find("tbody")
+	.remove();
+		
+	var legendItems = {};
+	var $fieldHTML = null;
+	plenty_admin.UI.plans.allCropTypes = [];
+	
+	//loop fields in the filter and add tbody elements for each field
+	for(var f=0; f<plenty_admin.DATA.fieldCrops.length; f++){
+		var fieldCrop = plenty_admin.DATA.fieldCrops[f];
+		var field = fieldCrop.fieldDto;
+		console.log("field", field);
+		
+		var $fieldTBody = plenty_admin.UI.plans.create_field_tbody(field);
+		plenty_admin.UI.plans.plansTable.append($fieldTBody);
+	}
+	
+	//loop fields in the filter and add tbody elements with the field row for each
+	for(var f=0; f<plenty_admin.DATA.fieldCrops.length; f++){
+		var fieldCrop = plenty_admin.DATA.fieldCrops[f];
+		var field = fieldCrop.fieldDto;
+		console.log("fieldCrop", fieldCrop);
+		console.log("field", field);
+		
+		if(!legendItems[fieldCrop.cropTypeId]){
+			//plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
+			plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(legendItems).length > 0 ? Object.keys(legendItems).length : 100));
+			legendItems[fieldCrop.cropTypeId] = {
+									color: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
+									colour: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
+									label : plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name
+								};
 		}
 		
-		var $planHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection);
-		$tbody
-		.append($planHTML);
+		//add a legend to the map based on the filtered fields
+		console.log("legendItems: ", legendItems);
+		
+		$fieldHTML = plenty_admin.UI.plans.create_field_row(field, fieldCrop, legendItems);
 		
 		plenty_admin.UI.plans.plansTable
-		.append($tbody);
+		.find("tbody.fieldPlans_"+field.id)
+		.prepend($fieldHTML);
 	}
+	
+	//loop the field plans and add them to the appropriate tbody element
+	for(var p=0; p<plenty_admin.DATA.plans.length; p++){
+		var profitProjection = plenty_admin.DATA.plans[p];
+		var plan = profitProjection.planDto;
+		var field = profitProjection.fieldDto;
+		var fieldCrop = profitProjection.fieldCropDto;
+		
+		var $planHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection, "plan");
+		
+		//store the original object on the DOM element
+		$planHTML
+		.data("profitProjection", profitProjection);
+		
+		var tbody = plenty_admin.UI.plans.plansTable
+		.find("tbody.fieldPlans_"+field.id);
+		
+		tbody
+		.append($planHTML);
+		
+		var fieldRow = tbody.find("tr.field-row");
+		
+		//calculate field totals from plans
+		fieldRow
+		.data("revenue", fieldRow.data("revenue") + profitProjection.revenue)
+		.data("expense", fieldRow.data("expense") + profitProjection.expense)
+		.data("profit", fieldRow.data("profit") + profitProjection.profit)
+		.data("profitPerAcre", fieldRow.data("profitPerAcre") + profitProjection.profitPerAcre);
+	}
+	
+	plenty_admin.UI.plans.plansTable
+	.find("tr.field-row")
+	.each(function(field, f){
+		console.log("field row: ", $(this), f);
+		$(this)
+		.find(".profit")
+		.text(numeral($(f).data("profit")).format('$0,0.00'))
+		.end()
+		.find(".expense")
+		.text(numeral($(f).data("expense")).format('$0,0.00'))
+		.end()
+		.find(".revenue")
+		.text(numeral($(f).data("revenue")).format('$0,0.00'))
+		.end()
+		.find(".profitPerAcre")
+		.text(numeral($(f).data("profitPerAcre")).format('$0,0.00'));
+	});
+	
+	plenty_admin.HELPER.initFloatingHeaders(plenty_admin.UI.plans.plansTable, ".field-row", "#plans-wrapper");
 
 	plenty_admin.HELPER.hideLoadingOverlay();
 }
@@ -10558,7 +11385,40 @@ plenty_admin.REST.getPlansFiltered = function(filterId){
 		function(plans){
 			console.log("got plans filtered: ", plans().data);
 			plenty_admin.DATA.plans = plans().data;
-			plenty_admin.UI.plans.populate();
+			plenty_admin.UI.plans.eventCollector.done("plans filtered");
+		},
+		function(err){
+			console.error("getting filtered plans: ", err);
+		}
+	);
+}
+
+//get field and fieldCrops filtered
+plenty_admin.REST.getFieldCropsByYearFiltered = function(filterId, year){
+	plenty_admin.REST.fieldCropsByYearFiltered = plenty_admin.api.one("filters/getFieldCropsByYearFiltered/"+year, filterId);
+	plenty_admin.REST.fieldCropsByYearFiltered.get()
+	.then(
+		function(fieldCrops){
+			console.log("got field crops by year filtered: ", fieldCrops().data);
+			plenty_admin.DATA.fieldCrops = fieldCrops().data;
+			plenty_admin.UI.plans.eventCollector.done("field crops by year filtered");
+		},
+		function(err){
+			console.error("getting filtered fieldCrops by year failed: ", err);
+		}
+	);
+}
+
+//get plans applicable to this filter
+plenty_admin.REST.getPlan = function(planId, callback){
+	plenty_admin.REST.plan = plenty_admin.api.one("plan/getPlan", planId);
+	plenty_admin.REST.plan.get()
+	.then(
+		function(plan){
+			console.log("got plan: ", plan().data);
+			if(callback && typeof callback === "function"){
+				callback(plan().data);
+			}
 		},
 		function(err){
 			console.error("getting filtered plans: ", err);
@@ -10578,7 +11438,7 @@ plenty_admin.REST.getProfitProjectionForPlan = function(planDto, callback){
 			}
 		},
 		function(err){
-			console.error("getting profit proje tion for plan dto failed:: ", err);
+			console.error("getting profit projection for plan dto failed:: ", err);
 			
 			/* HACK - return dummy profitProjectionDto for UI testing only */
 			callback(plenty_admin.UI.plans.dummyProfitProj);
@@ -10604,18 +11464,18 @@ plenty_admin.REST.getTemplatePlans = function(callback){
 }
 
 //change a plan
-plenty_admin.REST.changePlan = function(planReplacementDto, callback){
-	plenty_admin.REST.changePlan = plenty_admin.api.all("plan/changePlan");
-	plenty_admin.REST.changePlan.post(planReplacementDto)
+plenty_admin.REST.applyTemplatePlanToFieldCrops = function(templatePlanApplicationDto, callback){
+	plenty_admin.REST.templatePlanToFieldCrops = plenty_admin.api.all("plan/applyTemplatePlanToFieldCrops");
+	plenty_admin.REST.templatePlanToFieldCrops.post(templatePlanApplicationDto)
 	.then(
-		function(changedPlan){
-			console.log("changed plan: ", changedPlan().data);
+		function(planManifestationResultsDto){
+			console.log("planManifestationResultsDto: ", planManifestationResultsDto().data);
 			if(callback && typeof callback === "function"){
-				callback(changedPlan().data);
+				callback(planManifestationResultsDto().data);
 			}
 		},
 		function(err){
-			console.error("changing plan failed: ", err);
+			console.error("applyTemplatePlanToFieldCrops failed: ", err);
 			bootbox.dialog({
 				message: "Could not apply plan to field! - "+err.status+" - "+err.statusText,
 				className: "danger",
@@ -10624,10 +11484,10 @@ plenty_admin.REST.changePlan = function(planReplacementDto, callback){
 					  label: "OK",
 					  className: "btn-danger",
 					  callback: function(){
-							plenty_admin.HELPER.hideLoadingOverlay();
-							
-							/* HACK - return dummy profitProjectionDto for UI testing only */
-							callback(plenty_admin.UI.plans.dummyProfitProj);
+							//plenty_admin.HELPER.hideLoadingOverlay();
+							plenty_admin.UI.plans.add_template_plan_modal
+							.find("button.add-plan")
+							.button('reset');
 						}
 					}
 				}
@@ -10661,9 +11521,9 @@ $( document ).on( "plans_data_ready", function( event ) {
 		for(var tp=0; tp<plenty_admin.DATA.templatePlans.length; tp++){
 			var tplan = plenty_admin.DATA.templatePlans[tp];
 			var $templatePlan = $([
-				'<tr>',
-					'<td width="5%">',
-						'<input type="checkbox" class="selectTemplatePlan"></input>',
+				'<tr class="templatePlan templatePlan-'+tplan.id+' pointer">',
+					'<td width="5%" class="select">',
+						'<input type="checkbox" class="selectTemplatePlan pointer"></input>',
 					'</td>',
 					'<td width="35%">',
 						tplan.name,
@@ -10681,6 +11541,20 @@ $( document ).on( "plans_data_ready", function( event ) {
 					//add from the selected templatePlans array
 					plenty_admin.DATA.selectedTemplatePlans
 					.push(thisTP);
+					
+					console.log("enable");
+					
+					$(this)
+					.closest("tr")
+					.addClass("alert-success");
+					
+					plenty_admin.UI.plans.add_template_plan_modal
+					.find("button.add-plan, button.next")
+					.prop('disabled', false)
+					.end()
+					.find('.nav-tabs a[data-target="#plans_criterea"]')
+					.parent()
+					.show();
 				}else{
 					//remove from the selected templatePlans array
 					var index = null;
@@ -10688,14 +11562,36 @@ $( document ).on( "plans_data_ready", function( event ) {
 						var stp = plenty_admin.DATA.selectedTemplatePlans[a];
 						if(stp.id == thisTP.id){
 							plenty_admin.DATA.selectedTemplatePlans.splice(a, 1);
+							if(plenty_admin.DATA.selectedTemplatePlans.length == 0){
+								plenty_admin.UI.plans.add_template_plan_modal
+								.find("button.add-plan, button.next")
+								.prop('disabled', true)
+								.end()
+								.find('.nav-tabs a[data-target="#plans_criterea"]')
+								.parent()
+								.hide();
+							}
+							
+							$(this)
+							.closest("tr")
+							.removeClass("alert-success");
+					
 							return;
 						}
 					}
+					$(this)
+					.closest("tr")
+					.removeClass("alert-success");
 				}
 			})
-			.end();
-			
-			console.log("$templatePlan", $templatePlan);
+			.end()
+			.click(function(e){
+				if(e.target.type !== "checkbox"){
+					$(this)
+					.find("input.selectTemplatePlan")
+					.trigger("click");
+				}
+			});
 			
 			$tpBody
 			.append($templatePlan);
@@ -10706,7 +11602,7 @@ $( document ).on( "plans_data_ready", function( event ) {
 	
 	//populate filter panel options based on current user filters
 	plenty_admin.DATA.load_user_filters(function(filters){	
-		console.log("filters", filters);
+		//console.log("filters", filters);
 		plenty_admin.DATA.userFilters = filters().data;
 		plenty_admin.DATA.data_source = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList;
 		plenty_admin.DATA.update_filters(function(){
@@ -10717,6 +11613,22 @@ $( document ).on( "plans_data_ready", function( event ) {
 			.parent()
 			.find(".filter_loader")
 			.fadeOut("fast");
+			
+			//populate the organizations dropdown in Add Plan modal
+			var organizationOptionsHTML = "";
+			for(var o=0; o<plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.organizations.length; o++)
+			{
+				var org = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.organizations[o];
+				organizationOptionsHTML += "<option value='"+org.id+"'>"+org.name+"</option>";
+			}
+			
+			plenty_admin.UI.plans.add_template_plan_modal
+			.find("select#organizationList")
+			.find("option")
+			.remove()
+			.end()
+			.append(organizationOptionsHTML);
+			
 		}, true);
 	});
 });
@@ -10724,90 +11636,134 @@ $( document ).on( "plans_data_ready", function( event ) {
 //create namespace for field layout
 plenty_admin.UI.plan = {
 	DOM: 	$("#plan-container"),
-	init: 	function(profitProjection, templatePlan){
-		console.log("plan - init", profitProjection);
-		plenty_admin.UI.plan.getTemplatePlanActivities(profitProjection.planDto.id, function(templateActivities){
-			plenty_admin.UI.currentScreen.fadeOut("normal");
-	
-			plenty_admin.UI.currentScreen = plenty_admin.UI.plan.DOM;
-			
-			plenty_admin.UI.currentScreen
-			.addClass("fill-area-content flexbox-item-grow"+(templatePlan ? " templatePlan" : ""));
+	init: 	function(drilldownData){
+		console.log("plan - init", drilldownData);
+		plenty_admin.UI.currentScreen.fadeOut("normal");
+
+		plenty_admin.UI.currentScreen = plenty_admin.UI.plan.DOM;
 		
-			plenty_admin.UI.plan.populate(profitProjection, templateActivities);
-			plenty_admin.UI.plan.renderActivities(plenty_admin.UI.plan.dummyPlanActivities);
-			plenty_admin.UI.currentScreen.fadeIn("normal", function(){
-				plenty_admin.UI.plan.renderActivityFinancesGraph(plenty_admin.UI.plan.dummyPlanActivities);
-			});
+		plenty_admin.UI.currentScreen
+		.addClass("fill-area-content flexbox-item-grow");
+	
+		plenty_admin.UI.plan.populate(drilldownData);
+		plenty_admin.UI.plan.renderActivities(drilldownData);
+		plenty_admin.UI.currentScreen.fadeIn("normal", function(){
+			plenty_admin.UI.plan.renderActivityFinancesGraph(drilldownData);
 		});
 	},
-	populate: function(profitProjection, planActivities){
-		console.log("plan - populate", profitProjection, planActivities);
-		plenty_admin.UI.plan.DOM
-		.find(".profit")
-		.text(numeral(profitProjection.profit).format('$0,0.00'))
-		.end()
-		.find(".expense")
-		.text(numeral(profitProjection.expense).format('$0,0.00'))
-		.end()
-		.find(".revenue")
-		.text(numeral(profitProjection.revenue).format('$0,0.00'))
-		.end()
-		.find(".plan_field_acres")
-		.text(profitProjection.fieldDto.acres)
-		.end()
+	populate: function(drilldownData){
+		console.log("plan - populate", drilldownData);
+		if(Array.isArray(drilldownData)){
+			var profit = 0;
+			var expense = 0;
+			var revenue = 0;
+			var bushelsPerAcreTotal = 0;
+			var cropPriceTotal = 0;
+			var subsidyTotal = 0;
+			var profitPerAcreTotal = 0;
+			
+			//loop active plans and total up values
+			for(var a=0; a< drilldownData.length; a++){
+				var plan = drilldownData[a];
+				profit += plan.profitProjection.profit;
+				expense += plan.profitProjection.expense;
+				revenue += plan.profitProjection.revenue;
+				bushelsPerAcreTotal += plan.profitProjection.avgBushlesPerAcre;
+				cropPriceTotal += plan.profitProjection.cropPrice;
+				subsidyTotal += plan.profitProjection.subsidy;
+				profitPerAcreTotal += plan.profitProjection.profitPerAcre;
+			}
+			
+			var bushelsPerAcreAvg = bushelsPerAcreTotal / drilldownData.length;
+			var cropPriceAvg = cropPriceTotal / drilldownData.length;
+			profitPerAcreAvg = profitPerAcreTotal / drilldownData.length;
+			
+			//populate fields with totalled data
+			plenty_admin.UI.plan.DOM
+			.find(".profit")
+			.text(numeral(profit).format('$0,0.00'))
+			.end()
+			.find(".expense")
+			.text(numeral(expense).format('$0,0.00'))
+			.end()
+			.find(".revenue")
+			.text(numeral(revenue).format('$0,0.00'))
+			.end()
+			.find(".plan_field_acres")
+			.text(drilldownData[0].field.acres)
+			.end()
+			.find(".plan_field_bushels_per_acre")
+			.text(bushelsPerAcreAvg)
+			.end()
+			.find(".plan_field_price_per_bushel")
+			.text(numeral(cropPriceAvg).format('$0,0.00'))
+			.end()
+			.find(".text-right.plan_field_subsidy_total")
+			.text(numeral(subsidyTotal).format('$0,0.00'))
+			.end()
+			.find(".plan_field_profit_per_acre")
+			.text(numeral(profitPerAcreAvg).format('$0,0.00'));
+			
+		}else{
+			plenty_admin.UI.plan.DOM
+			.find(".profit")
+			.text(numeral(drilldownData.profitProjection.profit).format('$0,0.00'))
+			.end()
+			.find(".expense")
+			.text(numeral(drilldownData.profitProjection.expense).format('$0,0.00'))
+			.end()
+			.find(".revenue")
+			.text(numeral(drilldownData.profitProjection.revenue).format('$0,0.00'))
+			.end()
+			.find(".plan_field_acres")
+			.text(drilldownData.field.acres)
+			.end()
+			.find(".plan_field_bushels_per_acre")
+			.text(drilldownData.profitProjection.avgBushlesPerAcre)
+			.end()
+			.find(".plan_field_price_per_bushel")
+			.text(numeral(drilldownData.profitProjection.cropPrice).format('$0,0.00'))
+			.end()
+			.find(".text-right.plan_field_subsidy_total")
+			.text(numeral(drilldownData.profitProjection.subsidy).format('$0,0.00'))
+			.end()
+			.find(".plan_field_profit_per_acre")
+			.text(numeral(drilldownData.profitProjection.profitPerAcre).format('$0,0.00'));
+			
+		}
 	},
 	clear: function(){
 		console.log("plan - clear");
+		if(plenty_admin.UI.plan.financesGraph){
+			plenty_admin.UI.plan.financesGraph.destroy();
+		}
 	},
-	//get all template plan activities and finances
-	getTemplatePlanActivities: function(templatePlanId, callback){
-	plenty_admin.REST.templateActivities = plenty_admin.api.all("templateActivities/getAllTemplateActivities");
-		plenty_admin.REST.templateActivities.getAll()
-		.then(
-			function(templateActivities){
-				console.log("templateActivities", templateActivities().data);
-				if(callback && typeof callback === "function"){
-					callback(templateActivities().data);
+	renderActivityFinancesGraph: function(drilldownData){
+		//console.log("renderActivityFinancesGraph", drilldownData, Array.isArray(drilldownData));
+		if(Array.isArray(drilldownData)){
+			var finances = [];
+			for(var a=0; a< drilldownData.length; a++){
+				for(var f=0; f<drilldownData[a].activities.activityFinances.length; f++){
+					var finance = drilldownData[a].activities.activityFinances[f];
+					finances.push(finance);
 				}
-			},
-			function(err){
-				console.error("getting templateActivities failed: ", err);
-				plenty_admin.UI.plan.renderActivities(plenty_admin.UI.plan.dummyPlanActivities);
-				plenty_admin.UI.plan.renderActivityFinancesGraph(plenty_admin.UI.plan.dummyPlanActivities);
 			}
-		);
-	},
-	//get all plan activities and finances
-	getPlanActivities: function(planId, callback){
-	plenty_admin.REST.planActivities = plenty_admin.api.all("activities/getPlanActivities");
-		plenty_admin.REST.planActivities.getAll()
-		.then(
-			function(planActivities){
-				console.log("planActivities", planActivities().data);
-				if(callback && typeof callback === "function"){
-					callback(planActivities().data);
-				}
-			},
-			function(err){
-				console.error("getting templateActivities failed: ", err);
-				plenty_admin.UI.plan.renderActivities(plenty_admin.UI.plan.dummyPlanActivities);
-				plenty_admin.UI.plan.renderActivityFinancesGraph(plenty_admin.UI.plan.dummyPlanActivities);
-			}
-		);
-	},
-	renderActivityFinancesGraph: function(finances){
+			//console.log("all finances: ", finances);
+		}else{
+			var finances = drilldownData.activities.activityFinances;
+		}
+		
 		//holder for graph data set
 		var financesData = [];
 		
 		//colour palette for graph segments
 		var palette = new Rainbow();
 		palette.setSpectrum("#0076b2", "#93b222", "#788912");
-		palette.setNumberRange(0, (finances.activityFinances.length > 0 ? finances.activityFinances.length : 1));
+		palette.setNumberRange(0, (finances.length > 0 ? finances.length : 1));
 		
 		//for(index in finances){
-		for(var a=0; a<finances.activityFinances.length; a++){
-			var finance = finances.activityFinances[a];
+		for(var a=0; a<finances.length; a++){
+			var finance = finances[a];
 			//console.log("finance", finance, plenty_admin.DATA.activityTypes[finance.activityTypeId]);
 			finance.colour = "#"+palette.colourAt(a);
 	
@@ -10829,11 +11785,11 @@ plenty_admin.UI.plan = {
 		
 		var helpers = Chart.helpers;
 		
-		console.log("helpers", helpers);
+		//console.log("helpers", helpers);
 		
 		plenty_admin.UI.plan.financesGraph = new Chart(plenty_admin.UI.plan.financesGraphEl.get(0).getContext("2d")).Doughnut(financesData,financeChartOptions);
 		
-		console.log("render finances graph: ", plenty_admin.UI.plan.financesGraph, financesData);
+		//console.log("render finances graph: ", plenty_admin.UI.plan.financesGraph, financesData);
 		
 		//add a legend for this graph
 		var $legendHTML = $(plenty_admin.UI.plan.financesGraph.generateLegend());
@@ -10927,906 +11883,417 @@ plenty_admin.UI.plan = {
 			resetLegentStyle(legendHolder);
 		});
 	},
-	renderActivities: function(activities){
-		//build the activity list item
+	renderActivities: function(drilldownData){
 		plenty_admin.UI.plan.activityListContainer
 		.find("tr")
 		.remove();
 		
-		for(var a=0; a<activities.activityFinances.length; a++){
-			var activity = activities.activityFinances[a].activityDto;
-			activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
-			activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
-			activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
-			
-			var activityItem = [
-					"<tr class='activity pointer'>",
-						"<td width='5%'>",
-							"<i class='"+activity.iconClass+"'></i>",
-						"</td>",
-						"<td width='10%'>",
-							activity.state,
-						"</td>",
-						"<td width='60%'>",
-							plenty_admin.DATA.activityTypes[activity.activityTypeId].name,
-						"</td>",
-						"<td width='10%'>",
-							activity.startDate.date,
-						"</td>",
-						"<td width='10%'>",
-							plenty_admin.HELPER.daysFromHours(activity.durationInHours),
-						"</td>",
-						"<td width='10%' class='text-right'>",
-							numeral(activity.cost).format('$0,0.00'),
-						"</td>",
-					"</tr>"
-			].join("");
-			
-			var $activityItem = $(activityItem);
-
-			$activityItem
-			.data("activity", activity)
-			.data("activityFinance", activities.activityFinances[a])
-			.click(function(){
-				plenty_admin.UI.plan.show_activity_modal(activity, $(this).data("activityFinance").taskFinances, $(this));
-			});
-			
-			plenty_admin.UI.plan.activityListContainer.append($activityItem);
+		function buildActivityFinances(activityFinances){
+			//build the activity list item
+			for(var a=0; a<activityFinances.length; a++){
+				var activity = activityFinances[a].activityDto;
+				activity.iconClass = plenty_admin.UI.field.getActivityIconClass(activity.activityTypeId);
+				activity.startDate = plenty_admin.HELPER.formatJavaDate(activity.startTime);
+				activity.endDate = plenty_admin.HELPER.formatJavaDate(activity.endTime);
+				
+				var activityItem = [
+						"<tr class='activity pointer'>",
+							"<td width='5%'>",
+								"<i class='"+activity.iconClass+"'></i>",
+							"</td>",
+							"<td width='20%'>",
+								activity.state,
+							"</td>",
+							"<td width='35%'>",
+								plenty_admin.DATA.activityTypes[activity.activityTypeId].name,
+							"</td>",
+							"<td width='13.333%'>",
+								activity.startDate.date,
+							"</td>",
+							"<td width='13.333%'>",
+								plenty_admin.HELPER.daysFromHours(activity.durationInHours),
+							"</td>",
+							"<td width='13.333%' class='text-right'>",
+								numeral(activity.cost).format('$0,0.00'),
+							"</td>",
+						"</tr>"
+				].join("");
+				
+				var $activityItem = $(activityItem);
+	
+				$activityItem
+				.data("activity", activity)
+				.data("activityFinance", activityFinances[a])
+				.click(function(){
+					plenty_admin.UI.plan.show_activity_modal($(this).data("activity"), $(this).data("activityFinance").taskFinances, $(this));
+				});
+				
+				plenty_admin.UI.plan.activityListContainer.append($activityItem);
+			}
+		}
+		
+		if(Array.isArray(drilldownData)){
+			for(var a=0; a< drilldownData.length; a++){
+				var activityFinances = drilldownData[a].activities.activityFinances;
+				buildActivityFinances(activityFinances);
+			}
+		}else{
+			var activityFinances = drilldownData.activities.activityFinances;
+			buildActivityFinances(activityFinances);
 		}
 	},
-	
-	// HACK Dummy Activity Data
-	dummyPlanActivities: {
-	  "activityFinances": [
-		{
-		  "activityDto": {
-			"id": 1,
-			"created": 1438133870099,
-			"lastModified": 1438133997409,
-			"planId": 1,
-			"indexInPlan": 8,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 8,
-			"startTime": 1446289200000,
-			"endTime": 1447063200000,
-			"durationInHours": 215,
-			"state": "SCHEDULED",
-			"cost": 33540,
-			"duplicateOfId": 0,
-			"bushlesPerAcre": 500
-		  },
-		  "activityTypeId": 8,
-		  "revenue": 66640,
-		  "cropPrice": 17,
-		  "cost": 33540,
-		  "profit": 33100,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 15,
-				"created": 1438133869770,
-				"lastModified": 1438133869770,
-				"activityId": 1,
-				"name": "harvest task1",
-				"startTime": 1446289200000,
-				"endTime": 1447063200000,
-				"durationInHours": 215,
-				"cost": 4290,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 16770,
-			  "laborCost": {
-				"cost": 12900,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 7,
-					"resourceTypeName": "Combine Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 24,
-						"resourceName": "joe test combine operatorworking as a Combine Operator",
-						"cost": 4300
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 8,
-					"resourceTypeName": "Driver",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 25,
-						"resourceName": "joe test driverworking as a Driver",
-						"cost": 4300
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 3,
-					"resourceTypeName": "Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 20,
-						"resourceName": "joe test operatorworking as a Operator",
-						"cost": 4300
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 3870,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 10,
-					"resourceTypeName": "Grain Cart",
-					"cost": 1290,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 18,
-						"resourceName": "Grain Cart #1",
-						"cost": 1290
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 11,
-					"resourceTypeName": "Grain Truck",
-					"cost": 1505,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 19,
-						"resourceName": "Grain Truck #1",
-						"cost": 1505
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 9,
-					"resourceTypeName": "Combine",
-					"cost": 1075,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 17,
-						"resourceName": "Combine #1",
-						"cost": 1075
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 0,
-				"taskResourceTypeCosts": []
-			  }
-			},
-			{
-			  "taskDto": {
-				"id": 16,
-				"created": 1438133870049,
-				"lastModified": 1438133870049,
-				"activityId": 1,
-				"name": "harvest task2",
-				"startTime": 1446289200000,
-				"endTime": 1447063200000,
-				"durationInHours": 215,
-				"cost": 4290,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 16770,
-			  "laborCost": {
-				"cost": 12900,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 7,
-					"resourceTypeName": "Combine Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 26,
-						"resourceName": "joe test combine operatorworking as a Combine Operator",
-						"cost": 4300
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 8,
-					"resourceTypeName": "Driver",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 27,
-						"resourceName": "joe test driverworking as a Driver",
-						"cost": 4300
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 3,
-					"resourceTypeName": "Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 21,
-						"resourceName": "joe test operatorworking as a Operator",
-						"cost": 4300
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 3870,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 10,
-					"resourceTypeName": "Grain Cart",
-					"cost": 1290,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 21,
-						"resourceName": "Grain Cart #2",
-						"cost": 1290
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 11,
-					"resourceTypeName": "Grain Truck",
-					"cost": 1505,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 22,
-						"resourceName": "Grain Truck #2",
-						"cost": 1505
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 9,
-					"resourceTypeName": "Combine",
-					"cost": 1075,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 20,
-						"resourceName": "Combine #2",
-						"cost": 1075
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 0,
-				"taskResourceTypeCosts": []
-			  }
-			}
-		  ],
-		  "colour": "#0076b2"
-		},
-		{
-		  "activityDto": {
-			"id": 3,
-			"created": 1438133870634,
-			"lastModified": 1438133997461,
-			"planId": 1,
-			"indexInPlan": 2,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 2,
-			"startTime": 1422097200000,
-			"endTime": 1422871200000,
-			"durationInHours": 215,
-			"state": "SCHEDULED",
-			"cost": 7263.21,
-			"duplicateOfId": 0
-		  },
-		  "activityTypeId": 2,
-		  "revenue": 0,
-		  "cropPrice": 17,
-		  "cost": 7263.21,
-		  "profit": -7263.21,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 19,
-				"created": 1438133870507,
-				"lastModified": 1438133870507,
-				"activityId": 3,
-				"name": "starter fertilizer",
-				"startTime": 1422097200000,
-				"endTime": 1422871200000,
-				"durationInHours": 215,
-				"cost": 1983.21,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 7263.21,
-			  "laborCost": {
-				"cost": 4300,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 3,
-					"resourceTypeName": "Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 20,
-						"resourceName": "joe test operatorworking as a Operator",
-						"cost": 4300
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 2795,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 5,
-					"resourceTypeName": "Spreader",
-					"cost": 1505,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 13,
-						"resourceName": "Spreader",
-						"cost": 1505
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 4,
-					"resourceTypeName": "Tractor",
-					"cost": 1290,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 12,
-						"resourceName": "Tractor",
-						"cost": 1290
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 168.21,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 4,
-					"resourceTypeName": "Nitrogen",
-					"cost": 71.98,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 14,
-						"resourceName": "nitrogen",
-						"cost": 71.98
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 3,
-					"resourceTypeName": "Potassium",
-					"cost": 16.16,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 13,
-						"resourceName": "potassium",
-						"cost": 16.16
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 2,
-					"resourceTypeName": "Phosphorus",
-					"cost": 80.07,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 12,
-						"resourceName": "phosphorus",
-						"cost": 80.07
-					  }
-					]
-				  }
-				]
-			  }
-			}
-		  ],
-		  "colour": "#2a8789"
-		},
-		{
-		  "activityDto": {
-			"id": 4,
-			"created": 1438133870753,
-			"lastModified": 1438133997479,
-			"planId": 1,
-			"indexInPlan": 3,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 3,
-			"startTime": 1422961200000,
-			"endTime": 1423825200000,
-			"durationInHours": 240,
-			"state": "SCHEDULED",
-			"cost": 7440,
-			"duplicateOfId": 0
-		  },
-		  "activityTypeId": 3,
-		  "revenue": 0,
-		  "cropPrice": 17,
-		  "cost": 7440,
-		  "profit": -7440,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 20,
-				"created": 1438133870729,
-				"lastModified": 1438133870729,
-				"activityId": 4,
-				"name": "tilling",
-				"startTime": 1422961200000,
-				"endTime": 1423825200000,
-				"durationInHours": 240,
-				"cost": 1488,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 7440,
-			  "laborCost": {
-				"cost": 4800,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 3,
-					"resourceTypeName": "Operator",
-					"cost": 4800,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 20,
-						"resourceName": "joe test operatorworking as a Operator",
-						"cost": 4800
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 2640,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 6,
-					"resourceTypeName": "Offset Disk",
-					"cost": 1200,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 14,
-						"resourceName": "Offset Disk",
-						"cost": 1200
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 4,
-					"resourceTypeName": "Tractor",
-					"cost": 1440,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 12,
-						"resourceName": "Tractor",
-						"cost": 1440
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 0,
-				"taskResourceTypeCosts": []
-			  }
-			}
-		  ],
-		  "colour": "#549860"
-		},
-		{
-		  "activityDto": {
-			"id": 5,
-			"created": 1438133870924,
-			"lastModified": 1438133997500,
-			"planId": 1,
-			"indexInPlan": 4,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 4,
-			"startTime": 1423825200000,
-			"endTime": 1424516400000,
-			"durationInHours": 192,
-			"state": "SCHEDULED",
-			"cost": 6149.01,
-			"duplicateOfId": 0
-		  },
-		  "activityTypeId": 4,
-		  "revenue": 0,
-		  "cropPrice": 17,
-		  "cost": 6149.01,
-		  "profit": -6149.01,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 21,
-				"created": 1438133870866,
-				"lastModified": 1438133870866,
-				"activityId": 5,
-				"name": "planting",
-				"startTime": 1423825200000,
-				"endTime": 1424516400000,
-				"durationInHours": 192,
-				"cost": 1541.01,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 6149.01,
-			  "laborCost": {
-				"cost": 3840,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 5,
-					"resourceTypeName": "Planter Operator",
-					"cost": 3840,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 22,
-						"resourceName": "joe test planter operatorworking as a Planter Operator",
-						"cost": 3840
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 2304,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 7,
-					"resourceTypeName": "Planter",
-					"cost": 1152,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 15,
-						"resourceName": "Planter",
-						"cost": 1152
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 4,
-					"resourceTypeName": "Tractor",
-					"cost": 1152,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 12,
-						"resourceName": "Tractor",
-						"cost": 1152
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 5.01,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 5,
-					"resourceTypeName": "Seed",
-					"cost": 5.01,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 15,
-						"resourceName": "seed",
-						"cost": 5.01
-					  }
-					]
-				  }
-				]
-			  }
-			}
-		  ],
-		  "colour": "#7ea937"
-		},
-		{
-		  "activityDto": {
-			"id": 6,
-			"created": 1438133871077,
-			"lastModified": 1438133997532,
-			"planId": 1,
-			"indexInPlan": 5,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 5,
-			"startTime": 1434193200000,
-			"endTime": 1434967200000,
-			"durationInHours": 215,
-			"state": "SCHEDULED",
-			"cost": 5948.96,
-			"duplicateOfId": 0
-		  },
-		  "activityTypeId": 5,
-		  "revenue": 0,
-		  "cropPrice": 17,
-		  "cost": 5948.96,
-		  "profit": -5948.96,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 22,
-				"created": 1438133871025,
-				"lastModified": 1438133871025,
-				"activityId": 6,
-				"name": "early nitrogen",
-				"startTime": 1434193200000,
-				"endTime": 1434967200000,
-				"durationInHours": 215,
-				"cost": 1628.96,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 5948.96,
-			  "laborCost": {
-				"cost": 4300,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 6,
-					"resourceTypeName": "Spray Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 23,
-						"resourceName": "joe test spray operatorworking as a Spray Operator",
-						"cost": 4300
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 1505,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 8,
-					"resourceTypeName": "Sprayer",
-					"cost": 1505,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 16,
-						"resourceName": "Sprayer",
-						"cost": 1505
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 143.96,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 4,
-					"resourceTypeName": "Nitrogen",
-					"cost": 143.96,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 14,
-						"resourceName": "nitrogen",
-						"cost": 143.96
-					  }
-					]
-				  }
-				]
-			  }
-			}
-		  ],
-		  "colour": "#8fac20"
-		},
-		{
-		  "activityDto": {
-			"id": 7,
-			"created": 1438133871271,
-			"lastModified": 1438133997552,
-			"planId": 1,
-			"indexInPlan": 6,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 6,
-			"startTime": 1435921200000,
-			"endTime": 1436695200000,
-			"durationInHours": 215,
-			"state": "SCHEDULED",
-			"cost": 6274.43,
-			"duplicateOfId": 0
-		  },
-		  "activityTypeId": 6,
-		  "revenue": 0,
-		  "cropPrice": 17,
-		  "cost": 6274.43,
-		  "profit": -6274.43,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 23,
-				"created": 1438133871181,
-				"lastModified": 1438133871181,
-				"activityId": 7,
-				"name": "late nitrogen",
-				"startTime": 1499079600000,
-				"endTime": 1499853600000,
-				"durationInHours": 215,
-				"cost": 1954.43,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 6274.43,
-			  "laborCost": {
-				"cost": 4300,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 6,
-					"resourceTypeName": "Spray Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 23,
-						"resourceName": "joe test spray operatorworking as a Spray Operator",
-						"cost": 4300
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 1505,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 8,
-					"resourceTypeName": "Sprayer",
-					"cost": 1505,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 16,
-						"resourceName": "Sprayer",
-						"cost": 1505
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 469.43,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 4,
-					"resourceTypeName": "Nitrogen",
-					"cost": 287.31,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 14,
-						"resourceName": "nitrogen",
-						"cost": 287.31
-					  }
-					]
-				  },
-				  {
-					"resourceTypeId": 6,
-					"resourceTypeName": "Broadleaf Herbicide",
-					"cost": 182.12,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 16,
-						"resourceName": "Broadleaf Herbicide",
-						"cost": 182.12
-					  }
-					]
-				  }
-				]
-			  }
-			}
-		  ],
-		  "colour": "#87a01b"
-		},
-		{
-		  "activityDto": {
-			"id": 8,
-			"created": 1438133871408,
-			"lastModified": 1438133997575,
-			"planId": 1,
-			"indexInPlan": 7,
-			"fieldCropId": 1,
-			"organizationId": 4,
-			"activityTypeId": 7,
-			"startTime": 1438513200000,
-			"endTime": 1439287200000,
-			"durationInHours": 215,
-			"state": "SCHEDULED",
-			"cost": 6120.57,
-			"duplicateOfId": 0
-		  },
-		  "activityTypeId": 7,
-		  "revenue": 0,
-		  "cropPrice": 17,
-		  "cost": 6120.57,
-		  "profit": -6120.57,
-		  "taskFinances": [
-			{
-			  "taskDto": {
-				"id": 24,
-				"created": 1438133871355,
-				"lastModified": 1438133871355,
-				"activityId": 8,
-				"name": "pest control",
-				"startTime": 1438513200000,
-				"endTime": 1439287200000,
-				"durationInHours": 215,
-				"cost": 1800.57,
-				"state": "UNSCHEDULED"
-			  },
-			  "cost": 6120.57,
-			  "laborCost": {
-				"cost": 4300,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 6,
-					"resourceTypeName": "Spray Operator",
-					"cost": 4300,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 23,
-						"resourceName": "joe test spray operatorworking as a Spray Operator",
-						"cost": 4300
-					  }
-					]
-				  }
-				]
-			  },
-			  "equipmentCost": {
-				"cost": 1505,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 8,
-					"resourceTypeName": "Sprayer",
-					"cost": 1505,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 16,
-						"resourceName": "Sprayer",
-						"cost": 1505
-					  }
-					]
-				  }
-				]
-			  },
-			  "productsCost": {
-				"cost": 315.57,
-				"taskResourceTypeCosts": [
-				  {
-					"resourceTypeId": 7,
-					"resourceTypeName": "Pesticide",
-					"cost": 315.57,
-					"taskResourceCosts": [
-					  {
-						"resourceId": 17,
-						"resourceName": "pesticide",
-						"cost": 315.57
-					  }
-					]
-				  }
-				]
-			  }
-			}
-		  ],
-		  "colour": "#809517"
+	show_activity_modal: function(activity, taskFinances, el){
+		console.log("show_activity_modal", activity, taskFinances);
+		plenty_admin.UI.plan.MODAL_activity
+		.find(".modal-title")
+		.text(plenty_admin.DATA.activityTypes[activity.activityTypeId].name)
+		.end()
+		.find("button.delete")
+		.off("click")
+		.on("click", function(){
+				plenty_admin.UI.plan.MODAL_activity
+				.find(".modal-content")
+				.addClass("blur")
+				.end()
+				.find(".confirmDelete")
+				.show();
+		})
+		.end()
+		.find("button.cancel")
+		.off("click")
+		.on("click", function(){
+				plenty_admin.UI.plan.MODAL_activity
+				.find(".modal-content")
+				.removeClass("blur")
+				.end()
+				.find(".confirmDelete")
+				.hide();
+		})
+		.end()
+		.find(".confirmDelete button.delete")
+		.off("click")
+		.on("click", function(){
+			plenty_admin.REST.deleteActivity
+			.delete(activity.id)
+			.then(function(data){
+				console.log("Activity Deleted:", data);
+				plenty_admin.UI.plan.MODAL_activity
+				.modal("hide");
+				
+				el
+				.remove();
+			})
+		})
+		.end()
+		.on("shown.bs.modal", function(){
+			plenty_admin.UI.plan.renderTaskFinancesGraph(taskFinances);
+			plenty_admin.UI.plan.renderTasks(taskFinances);
+		})
+		.on("hidden.bs.modal", function(){
+			plenty_admin.UI.plan.taskFinancesGraph.destroy();
+		})
+		.modal("show");
+	},
+	renderTasks: function(taskFinances){
+		var taskRows = "";
+		
+		for(var t=0; t<taskFinances.length; t++){
+			var task = taskFinances[t];
+			var taskStartDate = plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime);
+			console.log("taskStartDate - ", taskStartDate, task.taskDto.startTime);
+			var taskRow = [
+				"<tr class='pointer'>",
+					"<td><span class='editable' data-type='text' data-pk='1' data-url='/post' data-title='Choose the task name'>",
+						task.taskDto.name,
+					"</span></td>",
+					"<td>",
+						task.taskDto.state,
+					"</td>",
+					"<td><span class='editable' data-type='date' data-pk='1' data-url='/post' data-title='Choose the start date'>",
+						plenty_admin.HELPER.formatJavaDate(task.taskDto.startTime).date,
+					"</span></td>",
+					"<td>",
+						plenty_admin.HELPER.daysFromHours(task.taskDto.durationInHours),
+					"</td>",
+					"<td class='text-right'>",
+						task.taskDto.cost,
+					"</td>",
+				"</tr>",
+			].join("");
+			
+			taskRows += taskRow;
 		}
-	  ],
-	  "totalCost": 72736.18,
-	  "totalRevenue": 66640,
-	  "totalProfit": -6096.18
+		
+		$.fn.editable.defaults.mode = 'inline';
+		
+		plenty_admin.UI.plan.MODAL_activity
+		.find(".activityTasksList table tbody tr")
+		.remove()
+		.end()
+		.find(".activityTasksList table tbody")
+		.append(taskRows)
+		.find(".editable")
+		.editable(plenty_admin.REST.inline_editing_options);
+	},
+	renderTaskFinancesGraph: function(taskFinances){
+		console.log("renderTaskFinancesGraph", taskFinances);
+		//colour palette for graph segments
+		var palette = new Rainbow();
+		palette.setSpectrum("#0076b2", "#93b222", "#788912");
+		palette.setNumberRange(0, 2);
+			
+		//holder for graph data set
+		var taskFinancesData = [
+			//equipment
+			{
+				value:		0,
+				color:		"#"+palette.colourAt(0),
+				highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(0), .4),
+				label: 		"Equipment",
+			},
+			//skill
+			{
+				value:		0,
+				color:		"#"+palette.colourAt(1),
+				highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(1), .4),
+				label: 		"Labor",
+			},
+			//skill
+			{
+				value:		0,
+				color:		"#"+palette.colourAt(2),
+				highlight:	plenty_admin.HELPER.colorLuminance("#"+palette.colourAt(2), .4),
+				label: 		"Products",
+			},
+		];
+		
+		//for(index in finances){
+		for(var a=0; a<taskFinances.length; a++){
+			//break the costs into equipment / skill / product
+			var taskFinance = taskFinances[a];
+			console.log("taskFinance", taskFinance);
+			taskFinancesData[0].value += taskFinance.equipmentCost.cost;
+			taskFinancesData[1].value += taskFinance.laborCost.cost;
+			taskFinancesData[2].value += taskFinance.productsCost.cost;
+		}
+		
+		var taskFinancesChartOptions = {
+			legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend mts\"><% for (var i=0; i<segments.length; i++){%><li data-segmentid=\"<%=i%>\" data-hovercolour=\"<%=segments[i].fillColor%>\" data-name=\"<%=segments[i].label.replace(/ /g, \"\").toLowerCase()%>\" class=\"taskHeader\" style=\"border-top:2px solid <%=segments[i].fillColor%>\"><span class=\"swatch\" style=\"background-color:<%=segments[i].fillColor%>\"><i class=\"pif pif-<%=segments[i].label.toLowerCase().replace(/ /g, \"-\")%>\"></i></span><%if(segments[i].label){%><%=segments[i].label%><%}%> <span class=\"pct\"></span><span class=\"pull-right\"><%= numeral(segments[i].value).format('$0,0.00') %></span></li><%}%></ul>",
+			tooltipTemplate: "<%=label%>: <%= numeral(value).format('$0,0.00') %> | <%= numeral(circumference / 6.283).format('00.00%') %>",
+			animateRotate: true
+		};
+		
+		var helpers = Chart.helpers;
+		
+		console.log("helpers", helpers);
+		
+		plenty_admin.UI.plan.taskFinancesGraph = new Chart(plenty_admin.UI.plan.taskFinancesGraphEl.get(0).getContext("2d")).Doughnut(taskFinancesData,taskFinancesChartOptions);
+		
+		console.log("render task finances graph: ", plenty_admin.UI.plan.taskFinancesGraph, taskFinancesData);
+		
+		//add a legend for this graph
+		var $legendHTML = $(plenty_admin.UI.plan.taskFinancesGraph.generateLegend());
+		
+		var legendHolder = 
+		plenty_admin.UI.plan.taskFinancesGraphEl
+		.parent()
+		.parent()
+		.find(".legend");
+		
+		legendHolder
+		.html("")
+		.append($legendHTML);
+		
+		var equipmentItems = "";
+		var laborItems = "";
+		var productItems = "";
+		
+		//INJECT THE DIFFERENT TASK COST ELEMENTS INTO THE LEGEND ONCE BUILT
+		//for(index in finances){
+		for(var a=0; a<taskFinances.length; a++){
+			//break the costs into equipment / skill / product
+			var taskFinance = taskFinances[a];
+			console.log("taskFinance", taskFinance);
+			
+			for(var e=0; e<taskFinance.equipmentCost.taskResourceTypeCosts.length; e++){
+				var taskItem = taskFinance.equipmentCost.taskResourceTypeCosts[e];
+				var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(0));
+				equipmentItems += "<li class='taskItem equipmentTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+				
+				//add task resource costs breakdown to task resource type costs (indented)
+				for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+					var resource = taskItem.taskResourceCosts[tr];
+					equipmentItems += "<li class='taskResourceItem equipmentTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+				}
+			}
+			
+			for(var l=0; l<taskFinance.laborCost.taskResourceTypeCosts.length; l++){
+				var taskItem = taskFinance.laborCost.taskResourceTypeCosts[l];
+				var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(1));
+				laborItems += "<li class='taskItem laborTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+				
+				//add task resource costs breakdown to task resource type costs (indented)
+				for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+					var resource = taskItem.taskResourceCosts[tr];
+					laborItems += "<li class='taskResourceItem laborTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+				}
+			}
+			
+			for(var p=0; p<taskFinance.productsCost.taskResourceTypeCosts.length; p++){
+				var taskItem = taskFinance.productsCost.taskResourceTypeCosts[p];
+				var bgColor = plenty_admin.HELPER.hexToRgb("#"+palette.colourAt(2));
+				productItems += "<li class='taskItem productTaskItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+taskItem.resourceTypeName	+"<span class='cost'>"+numeral(taskItem.cost).format('$0,0.00')+"</span></li>";
+				
+				//add task resource costs breakdown to task resource type costs (indented)
+				for(var tr=0; tr<taskItem.taskResourceCosts.length; tr++){
+					var resource = taskItem.taskResourceCosts[tr];
+					productItems += "<li class='taskResourceItem productTaskResourceItem' style='background-color:rgba("+bgColor.r+", "+bgColor.g+", "+bgColor.b+", .2);'>"+resource.resourceName+"<span class='cost'>"+numeral(resource.cost).format('$0,0.00')+"</span></li>";
+				}
+			}
+		}
+		
+		console.log("equipmentItems", equipmentItems);
+		console.log("laborItems", laborItems);
+		console.log("productItems", productItems);
+		
+		legendHolder
+		.find("li[data-name='equipment']")
+		.after(equipmentItems)
+		.end()
+		.find("li[data-name='labor']")
+		.after(laborItems)
+		.end()
+		.find("li[data-name='products']")
+		.after(productItems)
+		.end()
+		.find(".equipmentTaskResourceItem")
+		.last()
+		.addClass("last")
+		.end()
+		.end()
+		.find(".laborTaskResourceItem")
+		.last()
+		.addClass("last")
+		.end()
+		.end()
+		.find(".productTaskResourceItem")
+		.last()
+		.addClass("last");
+		
+		var resetLegentStyle = function(legendHolder){
+			$(legendHolder)
+			.find("li:not(.taskItem):not(.taskResourceItem)")
+			.css({"background-color": "transparent"})
+			.removeClass("active")
+			.find("span.swatch")
+			.each(function(){
+				$(this)
+				.css({"background-color": $(this).closest("li").data("hovercolour")});
+			})
+			.end()
+			.find("span.pct")
+			.text("");
+		}
+		
+		// Include a html legend template after the module doughnut itself
+		helpers.each(legendHolder.get(0).firstChild.childNodes, function (legendNode, index) {
+			helpers.addEvent(legendNode, 'mouseover', function () {
+				console.log("hover legendNode: ", this, index, $(this).prop("class"));
+				
+				if($(this).hasClass("taskItem") || $(this).hasClass("taskResourceItem")){
+					if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
+						index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
+					}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
+						index = 1; //$(legendHolder).find("li[data-name='labor']").index();
+					}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
+						index = 2; //$(legendHolder).find("li[data-name='products']").index();
+					}
+				}else{
+					index = parseInt($(this).data("segmentid"));
+				}
+				
+				console.log("index: ", index);
+				
+				if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
+					var activeSegment = plenty_admin.UI.plan.taskFinancesGraph.segments[index];
+					
+					var pct = numeral(activeSegment.circumference / 6.283).format('00.00%');
+					
+					activeSegment.save();
+					activeSegment.fillColor = activeSegment.highlightColor;
+					activeSegment.innerRadius = 60;
+					plenty_admin.UI.plan.taskFinancesGraph.showTooltip([activeSegment]);
+					activeSegment.restore();
+					
+					$(legendNode)
+					.css({"background-color": $(this).data("hovercolour")})
+					.addClass("active")
+					.find("span.swatch")
+					.css({"background-color": activeSegment.highlightColor})
+					.end()
+					.find("span.pct")
+					.text(pct);
+				}
+			});
+		});
+		
+		helpers.addEvent(legendHolder.get(0).firstChild, 'mouseout', function () {
+			if($(this).hasClass("taskItem")){
+				if($(this).hasClass("equipmentTaskItem") || $(this).hasClass("equipmentTaskResourceItem")){
+					index = 0; //$(legendHolder).find("li[data-name='equipment']").index();
+				}else if($(this).hasClass("laborTaskItem") || $(this).hasClass("laborTaskResourceItem")){
+					index = 1; //$(legendHolder).find("li[data-name='labor']").index();
+				}else if($(this).hasClass("productTaskItem") || $(this).hasClass("productTaskResourceItem")){
+					index = 2; //$(legendHolder).find("li[data-name='products']").index();
+				}
+				//return; //no hover effect on task items just yet
+			}
+			plenty_admin.UI.plan.taskFinancesGraph.draw();
+			if(!$(this).hasClass("taskItem") && !$(this).hasClass("taskResourceItem")){
+				resetLegentStyle(legendHolder);
+			}
+		});
+		
+		//highlight key element when hovering segment
+		plenty_admin.UI.plan.taskFinancesGraphEl.on("mousemove", function(evt){
+			var activePoints = plenty_admin.UI.plan.taskFinancesGraph.getSegmentsAtEvent(evt);
+			if(activePoints.length > 0){
+				//console.log("activePoints", activePoints, activePoints[0].label.replace(/ /g, "").toLowerCase());
+				legendHolder
+				.find("li")
+				.removeClass("active");
+				
+				var labelId = activePoints[0].label.replace(/ /g, "").toLowerCase();
+				var legendItem = legendHolder.find("li[data-name='"+labelId+"']");
+				var pct = numeral(activePoints[0].circumference / 6.283).format('00.00%');
+				
+				resetLegentStyle(legendHolder);
+				
+				legendItem
+				.addClass("active")
+				.css({"background-color": legendItem.data("hovercolour")})
+				.find("span.swatch")
+				.css({"background-color": activePoints[0].highlightColor})
+				.end()
+				.find("span.pct")
+				.text(pct);
+			}else{
+				resetLegentStyle(legendHolder);
+			}
+			// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+		});
+		
+		//clear segment highlight onMouseOut
+		plenty_admin.UI.plan.taskFinancesGraphEl.on("mouseout", function(evt){
+			resetLegentStyle(legendHolder);
+		});
 	}
 };
 
 plenty_admin.UI.plan.activityListContainer = plenty_admin.UI.plan.DOM.find("table.planActivities tbody");
 plenty_admin.UI.plan.financesGraphEl = plenty_admin.UI.plan.DOM.find("#plan_graph_wrapper canvas");
+plenty_admin.UI.plan.MODAL_activity = $("body").find(".modal#activity");
+plenty_admin.UI.plan.taskFinancesGraphEl = plenty_admin.UI.plan.MODAL_activity.find("canvas#taskGraph");
 
 //define an empty var for the sidebar HTML
 plenty_admin.UI.sideBar = {};
@@ -11863,7 +12330,6 @@ plenty_admin.UI.sideBar.organizations.init = function(orgs){
 	plenty_admin.UI.sideBar.organizations.html = "";
 	plenty_admin.UI.sideBar.organizations.DOM.html("");
 	
-	//loop organizations and inject Organizations DOM
 	//loop organizations and inject Organizations DOM
 	for(id in plenty_admin.DATA.organizations){
 		if(
@@ -11926,6 +12392,59 @@ plenty_admin.UI.sideBar.organizations.init = function(orgs){
 		//store the selected organization ID
 		store.set('filter::organization', orgId);
 	});
+	
+	var $new_org_link = $([
+		'<button class="btn btn-success btn-block panel-title add-org mtm">',
+			'<span class="glyphicon glyphicon-plus"></span> New Organization',
+		'</button>'
+	].join(""));
+	
+	$new_org_link
+	.find("a")
+	.click(function(){
+		//build the breadcrumb trail object
+		console.log("new org clicked");
+		var newOrg_breadcrumb = [
+			{
+				class:"back",
+				name:"Settings",
+				clickHandler:function(){
+					plenty_admin.UI.currentScreen
+					.fadeOut("normal", function(){
+						plenty_admin.UI.newOrganization.clear();
+						plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
+						plenty_admin.UI.currentScreen
+						.fadeIn("normal");
+					});
+					return false;
+				}
+			},
+			{
+				class:"active",
+				name:"Add Organization",
+				clickHandler:null
+			}
+		];
+		
+		plenty_admin.UI.newOrganization.DOM
+		.find(".breadcrumb-trail")
+		.remove()
+		.end()
+		.prepend(plenty_admin.UI.build_breadcrumb_trail(newOrg_breadcrumb));
+		
+		plenty_admin.UI.newOrganization.init();
+		
+		plenty_admin.UI.currentScreen
+		.fadeOut("normal", function(){
+			plenty_admin.UI.currentScreen = plenty_admin.UI.newOrganization.DOM;
+			plenty_admin.UI.currentScreen
+			.fadeIn("normal");
+		});
+return false;
+	});
+	
+	plenty_admin.UI.sideBar.organizations.DOM
+	.append($new_org_link);
 }
 
 plenty_admin.UI.sideBar.organizations.select_sub = function(orgId, hash){
@@ -12270,8 +12789,8 @@ plenty_admin.UI.filters.populate = function(init, callback){
 				var appliedFilter = plenty_admin.DATA.userFilters.filterDto[filterId];
 				applied_filter_count += plenty_admin.DATA.userFilters.filterDto[filterId].length;
 				
-				console.log("appliedFilter", appliedFilter);
-				console.log("applied_filter_count", applied_filter_count);
+				//console.log("appliedFilter", appliedFilter);
+				//console.log("applied_filter_count", applied_filter_count);
 				
 				var allApplied = false;
 				var quickFilterText = "";
@@ -12300,7 +12819,7 @@ plenty_admin.UI.filters.populate = function(init, callback){
 					break;
 					
 					default:
-						console.log("CHECK!!", filterId, plenty_admin.DATA.userFilters.filterDto[filterId].length, plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length);
+						//console.log("CHECK!!", filterId, plenty_admin.DATA.userFilters.filterDto[filterId].length, plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length);
 						if(
 							plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length === plenty_admin.DATA.userFilters.filterDto[filterId].length 
 							|| plenty_admin.DATA.userFilters.filterDto[filterId].length == 0
@@ -12475,12 +12994,12 @@ plenty_admin.UI.filters.build_filter_set = function(filter, filterNormalized){
 									'<i class="icon glyphicon glyphicon-triangle-right pull-right"></i>',
 								'</a>',
 							'</h3>'+
-							'<ul class="selected-filters clear mbn overflowFix">',
+							'<ul class="selected-filters clear mbn">',
 								'<li class="filter all">',
 									'<span class="pull-left">All</span>',
 								'</li>',
 							'</ul>',
-							'<ul class="all-filters overflowFix clear mbn" style="display:none;">',
+							'<ul class="all-filters clear mbn" style="display:none;">',
 							'</ul>',
 						'</div>'].join(""));
 	
@@ -12515,8 +13034,6 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 	if(force === "open"){
 		plenty_admin.UI.filters.state = "open";
 		
-		//plenty_admin.UI.filters.show_selected_filters();
-		
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
@@ -12527,7 +13044,7 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width()+1)});
 	}else if(plenty_admin.UI.filters.state === "closed"){
 		plenty_admin.UI.filters.state = "open";
 		
@@ -12537,11 +13054,11 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		.animate({"right":0});
 	}else if(plenty_admin.UI.filters.state === "open"){
 		plenty_admin.UI.filters.state = "closed";
-		
+		console.log("toggleFilters - close: ", plenty_admin.UI.filters.DOM.width());
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width()+1)});
 	}
 }
 
@@ -12563,8 +13080,7 @@ plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context)
 	plenty_admin.HELPER.showLoadingOverlay();
 	
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
-			console.log("data: ", data.body());
-			
+			//console.log("data: ", data.body());
 			//update the local possible filter entities only
 			//manage the filterDTO selected locally only as it differs from what is returned by the server
 			plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList = data.body().possibleFilteringEntitiesDtoList;
@@ -12573,12 +13089,26 @@ plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context)
 			
 			switch(plenty_admin.context){
 				case "map":
-				plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
-				plenty_admin.UI.map.add_equipment_to_map();
+					plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
+					plenty_admin.UI.map.add_equipment_to_map();
+					
+					plenty_admin.UI.map.toggleFilters
+					.parent()
+					.fadeIn("fast")
+					.parent()
+					.find(".filter_loader")
+					.fadeOut("fast");
 				break;
 				
 				case "plans":
+					var d = new Date();
+					var year = d.getUTCFullYear();
+					plenty_admin.UI.plans.eventCollector = window.eventcollector(2, 10000);
 					plenty_admin.REST.getPlansFiltered(plenty_admin.DATA.userFilters.filterDto.id);
+					plenty_admin.REST.getFieldCropsByYearFiltered(plenty_admin.DATA.userFilters.filterDto.id, year);
+					plenty_admin.UI.plans.eventCollector.on('alldone', function(total) {
+						plenty_admin.UI.plans.populate();
+					});
 				break;
 			}
 			
@@ -12604,6 +13134,7 @@ plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.DOM.fi
 plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.DOM.find('#confirm_delete');
 plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.DOM.find('#edit_field');
 plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_field');
+plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_plan');
 
 plenty_admin.UI.organization.BUTTON_delete_multiple = plenty_admin.UI.organization.DOM.find(".delete_multiple");
 
@@ -12621,7 +13152,7 @@ for(var e=0; e < entities.length; e++){
 
 plenty_admin.REST.insertBoundary = plenty_admin.api.all("boundaries/insertBoundary");
 plenty_admin.REST.insertBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/insertBoundaryPointsArray");
-plenty_admin.REST.updateBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/updateBoundaryPointList");
+plenty_admin.REST.updateBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/updateBoundaryPointArray");
 
 plenty_admin.REST.insertField = plenty_admin.api.all("fields/createFieledWithBoundaryInterestAndCropType");
 
@@ -12637,6 +13168,8 @@ plenty_admin.REST.insertActivity = plenty_admin.api.all("activities/insertActivi
 plenty_admin.REST.updateActivity = plenty_admin.api.all("activities/updateActivity");
 plenty_admin.REST.deleteActivity = plenty_admin.api.all("activities/deleteActivity");
 
+plenty_admin.REST.createTemplatePlan = plenty_admin.api.all("templatePlan/createTemplatePlan");
+
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){
 	//set the current organization
@@ -12644,44 +13177,41 @@ plenty_admin.UI.organization.init = function(org, hash){
 	
 	plenty_admin.DATA.data_source = plenty_admin.DATA.current_organization;
 	
-	//show organization template if it is not visible
-	if(!plenty_admin.UI.organization.DOM.is(":visible")){
-		plenty_admin.HELPER.showLoadingOverlay();
-		plenty_admin.UI.currentScreen
-		.fadeOut("normal", function(){
-			plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
-			plenty_admin.UI.organization.populate(org, hash);
-			plenty_admin.UI.organization.populate_farms_filter();
-			
-			plenty_admin.DATA.eventCollector = window.eventcollector(3, 10000);
-			plenty_admin.REST.getCropTypes();
-			plenty_admin.REST.getTillageTypes();
-			plenty_admin.REST.getIrrigationTypes();
-			
-			plenty_admin.DATA.eventCollector.on('alldone', function(total) {
-				plenty_admin.UI.organization.DOM.fadeIn("normal", function(){
-					plenty_admin.HELPER.hideLoadingOverlay();
-				});
-			});	
+	plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
+	plenty_admin.UI.organization.populate(org, hash);
+	plenty_admin.UI.organization.populate_farms_filter();
+	
+	plenty_admin.DATA.eventCollector = window.eventcollector(7, 10000);
+	plenty_admin.REST.getCropTypes();
+	plenty_admin.REST.getTillageTypes();
+	plenty_admin.REST.getIrrigationTypes();
+	plenty_admin.REST.getActivityTypes();
+	plenty_admin.REST.getSkillTypes();
+	plenty_admin.REST.getProductTypes();
+	plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
+	
+	plenty_admin.DATA.eventCollector.on('alldone', function(total) {
+		plenty_admin.UI.organization.DOM.fadeIn("normal", function(){
+			plenty_admin.HELPER.hideLoadingOverlay();
+			plenty_admin.UI.add_template_plan.init();
 		});
-	}else{
-		plenty_admin.HELPER.showLoadingOverlay();
-		plenty_admin.UI.organization.populate(org, hash);
-		plenty_admin.UI.organization.populate_farms_filter();
-		plenty_admin.HELPER.hideLoadingOverlay();
-	}
+		
+		//show the selected item in the side nav
+		plenty_admin.UI.sideBar.organizations.DOM
+		.find(".panel-collapse.in")
+		.removeClass("in")
+		.end()
+		.find(".panel-collapse[data-orgid='"+org.id+"']")
+		.addClass("in")
+		.find("li.sub")
+		.removeClass("active")
+		.end()
+		.find("li.sub a[href='"+hash+"']")
+		.parent()
+		.addClass("active");
+	});	
 	
 	plenty_admin.UI.organization.DOM
-	.find("h1 a.back")
-	.off("click")
-	.on("click", function(){
-		plenty_admin.UI.currentScreen
-		.fadeOut("normal", function(){
-			plenty_admin.UI.currentScreen = plenty_admin.UI.settings.DOM;
-			plenty_admin.UI.currentScreen.fadeIn("normal");
-		});
-	})
-	.end()
 	.find("button.btn.add_to_organization")
 	.off("click")
 	.on("click", function(e){
@@ -12690,6 +13220,8 @@ plenty_admin.UI.organization.init = function(org, hash){
 		var hash = url.substring(url.indexOf('#')+1);
 		if(hash === "fields"){
 			plenty_admin.UI.organization.show_add_field_modal();
+		}else if(hash === "plans"){
+			plenty_admin.UI.add_template_plan.show();
 		}else{
 			plenty_admin.UI.organization.show_item_modal("add_to_organization", modalContext);
 		}
@@ -12805,9 +13337,6 @@ plenty_admin.UI.organization.show_item_modal = function(modal, context, itemId, 
 		case "add":
 			var modalTitle = "Add a "+hash;
 		break;
-		
-		default:
-			
 	}
 	
 	
@@ -13301,7 +13830,7 @@ plenty_admin.UI.create_header_row = function(item, hash){
 }
 
 plenty_admin.UI.create_item = function(item, hash){
-	console.log("plenty_admin.UI.create_item: ", item, hash);
+	//console.log("plenty_admin.UI.create_item: ", item, hash);
 	if(hash === "fieldsAndCropTypes"){
 		var itemData = (item.id ? item : item.field);
 		plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(itemData.id, 2 /* We are only interested in field boundaries here*/, function(boundaries){
@@ -13452,7 +13981,6 @@ plenty_admin.UI.organization.populate = function(org, hash){
 					plenty_admin.UI.organization.DOM.find(".org-"+i)
 					.text(textValue)
 					.data("pk", org.id+"/organizations")
-					//.editable("destroy")
 					.editable(plenty_admin.REST.inline_editing_options);
 				break;
 				
@@ -13621,3 +14149,1000 @@ plenty_admin.UI.crop_survey.showMap = function(activeMap, fieldObj){
 		}, false, null, mapId);
 }
 
+
+//*********************** new-organization.js **************************//
+//create namespace for new organization layout
+plenty_admin.UI.newOrganization = {
+	init: function(){
+		if(plenty_admin.UI.newOrganization.DOM.data("ready")){
+			return;
+		}
+		plenty_admin.UI.newOrganization.DOM
+		.find("button.newOrg")
+		.off("click")
+		.on("click", function(){
+			var $form = $(this).closest(".panel").find("form");
+			var organizationDto = {};
+			organizationDto.name = $form.find("#new_org_name").val();
+			organizationDto.organizationTypeId = parseInt($form.find("#new_org_type").val());
+			organizationDto.addressLine1 = $form.find("#new_org_address_1").val();
+			organizationDto.addressLine2 = $form.find("#new_org_address_2").val();
+			organizationDto.city = $form.find("#new_org_city").val();
+			organizationDto.state = $form.find("#new_org_state").val();
+			organizationDto.zip = $form.find("#new_org_zip").val();
+			
+			console.log("organizationDto: ", organizationDto);
+			
+			$form
+			.fadeOut("fast", function(){
+				plenty_admin.UI.newOrganization.DOM
+				.find(".alert-info")
+				.fadeIn("fast");
+			});
+			plenty_admin.REST.insertOrganization.post(organizationDto).then(
+				function(insertedOrg){
+					console.log("organization inserted: ", insertedOrg().data);
+					
+					var roleData = {
+						organizationId:insertedOrg().data.id,
+						userId: plenty_admin.DATA.userDetails.id,
+						roleTypeId:1
+					};
+					plenty_admin.REST.insertRole.post(roleData).then(function(newUser){
+						plenty_admin.UI.newOrganization.DOM
+						.find(".alert-info")
+						.fadeOut("fast", function(){
+							plenty_admin.UI.newOrganization.DOM
+							.find(".alert-success")
+							.fadeIn("fast");
+							
+							var to = setTimeout(function(){
+								plenty_admin.UI.newOrganization.DOM
+								.find(".alert-success")
+								.fadeOut("fast", function(){
+									$form
+									.fadeIn("fast");
+								});
+							}, 5000);
+						});
+						
+						//populate the side bar organizations panel
+						plenty_admin.UI.sideBar.organizations.DOM
+						.find(".add-org")
+						.before(plenty_admin.UI.sideBar.organizations.create(insertedOrg().data));
+					});
+				},
+				function(){
+					plenty_admin.UI.settings.new_organization
+					.find(".alert-info")
+					.fadeOut("fast", function(){
+						plenty_admin.UI.settings.new_organization
+						.find(".alert-danger")
+						.fadeIn("fast");
+						
+						var to = setTimeout(function(){
+							plenty_admin.UI.settings.new_organization
+							.find(".alert-danger")
+							.fadeOut("fast", function(){
+								$form
+								.fadeIn("fast");
+							});
+						}, 5000);
+					});
+				}
+			)
+			return false;
+		})
+		.end()
+		.find("a.moreDetailsToggle")
+		.off("click")
+		.on("click", function(){
+			$(this)
+			.find("span")
+			.toggle()
+			.end()
+			.parent()
+			.find(".more-details")
+			.slideToggle();
+			return false;
+		});
+		
+		plenty_admin.UI.newOrganization.DOM
+		.data("ready", true);
+	},
+	clear: function(){
+		
+	}
+	
+};
+plenty_admin.UI.newOrganization.DOM = plenty_admin.UI.main.DOM.find("#new-organization-container");
+plenty_admin.UI.add_template_plan = {
+	modal: $("body").find(".modal#add-template-plan"),
+	init: function(){
+		//check if it has already been INIT'd
+		if(plenty_admin.UI.add_template_plan.modal.data("ready")){
+			return;
+		}
+		//populate the organizations dropdown in Add Plan modal
+		console.log("plenty_admin.UI.add_template_plan - INIT");
+		var organizationOptionsHTML = "";
+		for(id in plenty_admin.DATA.organizations)
+		{
+			if(
+				plenty_admin.DATA.organizations.hasOwnProperty(id)
+				&& id !== "length"
+			){
+				var org = plenty_admin.DATA.organizations[id];
+				organizationOptionsHTML += "<option value='"+id+"'>"+org.name+"</option>";
+			}
+		}
+		
+		var owningOrgIdList = plenty_admin.UI.add_template_plan.modal
+		.find("select#add_plan_owningOrgId");
+		
+		owningOrgIdList
+		.find("option")
+		.remove()
+		.end()
+		.append(organizationOptionsHTML);
+		
+		var equipmentTypeList = plenty_admin.UI.add_template_plan.modal
+		.find("select#add_task_equipment_types");
+		
+		equipmentTypeList
+		.find("option")
+		.remove()
+		.end()
+		.append("<option value='' disabled selected style='display:none;'>Choose equipment type</option>");
+		
+		//populate equipment types
+		for(id in plenty_admin.DATA.equipmentTypes)
+		{
+			if(
+				plenty_admin.DATA.equipmentTypes.hasOwnProperty(id)
+				&& id !== "length"
+			){
+				var equip = plenty_admin.DATA.equipmentTypes[id];
+				var $equipmentTypeOptionsHTML = $("<option value='"+id+"'>"+equip.name+"</option>");
+				
+				$equipmentTypeOptionsHTML
+				.data("dto", equip);
+				
+				equipmentTypeList
+				.append($equipmentTypeOptionsHTML);
+				
+				plenty_admin.REST.getEquipmentByOrgAndType(plenty_admin.DATA.current_organization.id, equip.id, function(equipment, el){
+					console.log("equipments - ", equipment);
+					el.data("items", equipment);
+				}, $equipmentTypeOptionsHTML);
+			}
+		}
+		
+		//populate skill types
+		var skillTypeList = plenty_admin.UI.add_template_plan.modal
+		.find("select#add_task_labour_types");
+		
+		skillTypeList
+		.find("option")
+		.remove()
+		.end()
+		.append("<option value='' disabled selected style='display:none;'>Choose labour type</option>");
+		
+		for(id in plenty_admin.DATA.labourTypes)
+		{
+			if(
+				plenty_admin.DATA.labourTypes.hasOwnProperty(id)
+				&& id !== "length"
+			){
+				var skill = plenty_admin.DATA.labourTypes[id];
+				var $skillTypeOptionsHTML = $("<option value='"+id+"'>"+skill.name+"</option>");
+				
+				$skillTypeOptionsHTML
+				.data("dto", skill);
+				
+				skillTypeList
+				.append($skillTypeOptionsHTML);
+			}
+		}
+		
+		//populate product types
+		var productTypeList = plenty_admin.UI.add_template_plan.modal
+		.find("select#add_task_product_types");
+		
+		productTypeList
+		.find("option")
+		.remove()
+		.end()
+		.append("<option value='' disabled selected style='display:none;'>Choose product type</option>");
+		
+		for(id in plenty_admin.DATA.productTypes)
+		{
+			if(
+				plenty_admin.DATA.productTypes.hasOwnProperty(id)
+				&& id !== "length"
+			){
+				var prod = plenty_admin.DATA.productTypes[id];
+				var $productTypeOptionsHTML = $("<option value='"+id+"'>"+prod.name+"</option>");
+				
+				$productTypeOptionsHTML.data("dto", prod);
+				
+				productTypeList
+				.append($productTypeOptionsHTML);
+				
+				plenty_admin.REST.getProductsByType(prod.id, function(products, el){
+					console.log("products - ", products);
+					el.data("items", products);
+				}, $productTypeOptionsHTML);
+			}
+		}
+		
+		
+		//populate activity types
+		var activityTypeOptionsHTML = "";
+		for(id in plenty_admin.DATA.activityTypes)
+		{
+			if(
+				plenty_admin.DATA.activityTypes.hasOwnProperty(id)
+				&& id !== "length"
+			){
+				var activity = plenty_admin.DATA.activityTypes[id];
+				activityTypeOptionsHTML += "<option value='"+id+"'>"+activity.name+"</option>";
+			}
+		}
+		
+		var activityTypeList = plenty_admin.UI.add_template_plan.modal
+		.find("select#add_activity_type");
+		
+		activityTypeList
+		.find("option")
+		.remove()
+		.end()
+		.append(activityTypeOptionsHTML);
+		
+		plenty_admin.UI.add_template_plan.modal
+		.on('show.bs.modal', function () {
+			$(this).find('.modal-content').css('height', $( window ).height()*0.9);
+		})
+		.on('hidden.bs.modal', function () {
+			plenty_admin.UI.add_template_plan.clear();
+		})
+		.find(".task-types-tabs a")
+		.click(function (e) {
+		  e.preventDefault()
+		  console.log("tab clicked", $(this));
+		  $(this).tab('show');
+		})
+		.on('shown.bs.tab', function (e) {
+			var url = $(e.target).prop("href");
+			var hash = url.substring(url.indexOf('#')+1);
+			console.log("hash", hash);
+			plenty_admin.UI.add_template_plan.modal
+			.find(".tab-content.task-types .tab-pane")
+			.removeClass("active")
+			.end()
+			.find(".tab-content.task-types .tab-pane#"+hash)
+			.addClass("active");
+		})
+		.end()
+		.find("select.specific_items")
+		.on("change", function(){
+			var $this = $(this);
+			var type = null;
+			
+			if($this.prop("id").indexOf("product") > -1){
+				type = "product";
+			}else if($this.prop("id").indexOf("equipment") > -1){
+				type = "equipment";
+			}
+			
+			if(
+				$(this).find("option:selected").val()
+				&& type === equipment
+			){
+				$(this)
+				.closest(".tab-pane")
+				.find(".component_qty")
+				.val(1)
+				.prop("disabled", true);
+			}else{
+				$(this)
+				.closest(".tab-pane")
+				.find(".component_qty")
+				.prop("disabled", false);
+			}
+			
+		})
+		.end()
+		.find("select.component_type")
+		.on("change", function(){
+			var $this = $(this);
+			var selected = $this.find("option:selected");
+			var selectedDto = selected.data("dto");
+			var specificItems = selected.data("items");
+			var specificItemsList = $this.parent().find("select.specific_items");
+			//console.log("selectedDto", selectedDto);
+			
+			if(selectedDto.unitName){
+				$this
+				.closest(".tab-pane")
+				.find(".uom")
+				.text(selectedDto.unitName)
+				.show();
+			}
+			
+			var type = null;
+			if($this.prop("id").indexOf("product") > -1){
+				type = "product";
+			}else if($this.prop("id").indexOf("equipment") > -1){
+				type = "equipment";
+			}
+			
+			console.log("type", type);
+			
+			if(type){
+				//list specific items for this type and show them
+				var specificItemsHTML = "<option value='' selected'>Choose specific "+selected.text()+"</option>";
+				//for(var s=0; s<specificItems.length; s++){
+				for(id in specificItems){
+					if(specificItems.hasOwnProperty(id)){
+						var item = specificItems[id];
+						specificItemsHTML += "<option value='"+item.id+"'>"+item.name+"</option>";
+					}
+				}
+				
+				specificItemsList
+				.find("option")
+				.remove()
+				.end()
+				.append(specificItemsHTML)
+				.show();
+			}
+			
+			return false;
+		})
+		.end()
+		.find("button.task_add_component")
+		.on("click", function(){
+			var $this = $(this);
+			var $tp = $this.closest(".tab-pane");
+			var valid = plenty_admin.HELPER.validateForm($tp);
+			
+			if(valid){
+				var type = $tp.data("type");
+				var $task_items_table = $tp.find("table.task-items tbody");
+				
+				//create the task item
+				var task_component = {
+					id: 		parseInt($tp.find(".component_type option:selected").val()),
+					qty: 	parseInt($tp.find(".component_qty").val()),
+				};
+				
+				//check if a specific item has been added - if so, add it to the task component
+				if($tp.find("select.specific_items option:selected").length > 0){
+					task_component.specificId = parseInt($tp.find("select.specific_items option:selected").val());
+				}
+				
+				//disable this type so it can only be added once
+				$tp.find(".component_type option:selected").prop("disabled", true);
+				$tp.find(".component_type option:eq(0)").show().prop("selected", true);
+				
+				//add the task item to the correct DOM table
+				var $taskComponent = plenty_admin.UI.add_template_plan.build_task_component(task_component, type);
+				$task_items_table.append($taskComponent);
+			}
+			
+			return false;
+		})
+		.end()
+		.find("button.save_activity")
+		.on("click", function(){
+			var $this = $(this);
+			var addActivityForm = plenty_admin.UI.add_template_plan.addActivityForm;
+			
+			var valid = plenty_admin.HELPER.validateForm(addActivityForm);
+			
+			if(valid){
+				var activityDto = {
+					templatePlanId:		null,
+					activityTypeId:		parseInt(addActivityForm.find("#add_activity_type option:selected").val()),
+					daysFromPlanting:	parseInt(addActivityForm.find("#add_activity_days_from_planting").val())
+				}
+				
+				console.log("activityDto", activityDto);
+				
+				plenty_admin.UI.add_template_plan.build_activity_element(activityDto);
+				
+				$this
+				.closest(".activities_management")
+				.find(".alert.help-block:eq(0)")
+				.hide()
+				.end()
+				.find("form")
+				.slideUp("fast", function(){
+					$this
+					.closest(".activities_management")
+					.find(".activity_list")
+					.slideDown("fast")
+					.end()
+					.find("button.add_activity")
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.addTaskBtn
+					.slideUp("fast")
+					.prop("disabled", false);
+					
+					plenty_admin.UI.add_template_plan.taskListHolder
+					.slideUp("fast");
+					
+					plenty_admin.UI.add_template_plan
+					.modal
+					.find(".noActivityForTasks")
+					.slideUp("fast");
+				});
+				
+				if(plenty_admin.UI.add_template_plan.activityListHolder.find("li.list-group-item.activity").length >1){
+					plenty_admin.UI.add_template_plan.activityListHolder.sortable({
+					  //group: 'simple_with_animation',
+					  pullPlaceholder: false,
+					  placeholder:'<li class="list-group-item placeholder"><a>MOVE HERE</a></li>',
+					  // animation on drop
+					  onDrop: function  ($item, container, _super) {
+						var $clonedItem = $('<li/>').css({height: 0});
+						$item.before($clonedItem);
+						$clonedItem.animate({'height': $item.height()});
+					
+						$item.animate($clonedItem.position(), function  () {
+						  $clonedItem.detach();
+						  _super($item, container);
+						});
+					  },
+					
+					  // set $item relative to cursor position
+					  onDragStart: function ($item, container, _super) {
+						var offset = $item.offset(),
+							pointer = container.rootGroup.pointer;
+					
+						adjustment = {
+						  left: pointer.left - offset.left,
+						  top: pointer.top - offset.top
+						};
+					
+						_super($item, container);
+					  },
+					  onDrag: function ($item, position) {
+						$item.css({
+						  left: position.left - adjustment.left,
+						  top: position.top - adjustment.top
+						});
+					  }
+					});
+				}
+			}
+			
+			return false;
+		})
+		.end()
+		.find("button.add_activity")
+		.on("click", function(){
+			var $this = $(this);
+			
+			$this
+			.hide()
+			.parent()
+			.find(".activity_list")
+			.slideUp("fast", function(){
+				$this
+				.parent()
+				.find(".add_activity_form")
+				.slideDown("fast");
+			})
+		})
+		.end()
+		.find("button.add_task")
+		.on("click", function(){
+			var $this = $(this);
+			
+			$this
+			.slideUp("fast");
+			
+			plenty_admin.UI.add_template_plan.taskListHolder
+			.slideUp("fast", function(){
+				plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+				.slideDown("fast");
+			})
+		})
+		.end()
+		.find("button.save_task")
+		.on("click", function(){
+			var $this = $(this);
+			
+			var addTaskForm = plenty_admin.UI.add_template_plan.addTaskForm;
+			var addTaskAndTaskComponents = plenty_admin.UI.add_template_plan.addTaskAndTaskComponents;
+			
+			var equipmentComponents = addTaskAndTaskComponents.find("table.equipment-items tbody tr.task-element");
+			var labourComponents = addTaskAndTaskComponents.find("table.labour-items tbody tr.task-element");
+			var productComponents = addTaskAndTaskComponents.find("table.product-items tbody tr.task-element");
+			var numTaskElements = equipmentComponents.length + labourComponents.length + productComponents.length;
+			
+			var valid = plenty_admin.HELPER.validateForm(addTaskForm);
+			
+			if(
+				valid
+				&& numTaskElements >= 1
+			){
+				//get the list of selected equipment IDs
+				var equipmentIds = [];
+				var anySpecificEquipmentIds = [];
+				for(var l=0; l<equipmentComponents.length; l++){
+					var taskComponent = $(equipmentComponents[l]).data("task_component");
+					
+					if(taskComponent.specificId){
+						anySpecificEquipmentIds.push(taskComponent.specificId);
+					}else{
+						equipmentIds.push(taskComponent.id);
+					}
+				}
+				console.log("equipmentIds:", equipmentIds);
+				console.log("anySpecificEquipmentIds:", anySpecificEquipmentIds);
+				
+				//get the list of selected labour IDs
+				var labourIds = [];
+				
+				for(var l=0; l<labourComponents.length; l++){
+					labourIds.push($(labourComponents[l]).data("task_component").id);
+				}
+				console.log("labourIds:", labourIds);
+				
+				//get the list of selected labour IDs
+				var productAmountPairs = [];
+				var anySpecificProductIds = [];
+				for(var l=0; l<productComponents.length; l++){
+					var taskComponent = $(productComponents[l]).data("task_component");
+					var prod = {
+						productTypeId:taskComponent.id,
+						amount:taskComponent.qty
+					};
+					
+					if(taskComponent.specificId){
+						anySpecificProductIds.push(taskComponent.specificId);
+					}else{
+						productAmountPairs.push(prod);
+					}
+				}
+				
+				console.log("productAmountPairs:", productAmountPairs);
+				console.log("anySpecificProductIds:", anySpecificProductIds);
+				
+				var templateTaskDto = {
+					name:addTaskForm.find("#add_task_name").val(),
+					templateActivityId:null,
+					daysFromActivityStart:parseInt(addTaskForm.find("#add_task_days_from_start").val()),
+					labourIds:labourIds,
+					equipmentIds:equipmentIds,
+					productAmountPairs:productAmountPairs,
+					anySpecificEquipmentIds:anySpecificEquipmentIds,
+					anySpecificProductIds:anySpecificProductIds
+				}
+				
+				console.log("templateTaskDto", templateTaskDto);
+				
+				//add the task element to the DOM
+				plenty_admin.UI.add_template_plan.build_task_element(templateTaskDto);
+				
+				addTaskAndTaskComponents
+				.slideUp("fast", function(){
+					plenty_admin.UI.add_template_plan.taskListHolder
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.addTaskBtn
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.clear_add_task_form();
+				});
+			}
+			
+			return false;
+		})
+		.end()
+		.find("button.cancel_activity")
+		.on("click", function(e){
+			e.preventDefault();
+			var $this = $(this);
+			
+			$this
+			.closest(".activities_management")
+			.find("form")
+			.slideUp("fast", function(){
+				$this
+				.closest(".activities_management")
+				.find(".activity_list")
+				.slideDown("fast")
+				.end()
+				.find("button.add_activity")
+				.slideDown("fast");
+			});
+		})
+		.end()
+		.find("button.cancel_task")
+		.on("click", function(e){
+			e.preventDefault();
+			var $this = $(this);
+			
+			plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+			.slideUp("fast", function(){
+				plenty_admin.UI.add_template_plan.taskListHolder
+				.slideDown("fast");
+				
+				plenty_admin.UI.add_template_plan.addTaskBtn
+				.slideDown("fast");
+			})
+		})
+		.end()
+		.find("button.add")
+		.on("click", function(){
+			//collect all activities and their associated tasks
+			var addPlanForm = plenty_admin.UI.add_template_plan.modal.find("form.add_plan_form");
+			var valid = plenty_admin.HELPER.validateForm(addPlanForm);
+			
+			//hide any current errors in activities
+			plenty_admin.UI.add_template_plan.modal.find(".activity .alert.help-block").slideUp("fast");
+			
+			if(valid){
+				var activities = plenty_admin.UI.add_template_plan.modal.find(".activity");
+				console.log("activities", activities, activities.length);
+				if(activities.length <= 0){
+					plenty_admin.UI.add_template_plan.activityListHolder
+					.parent()
+					.find(".alert.help-block:eq(0)")
+					.slideDown("fast");
+				}else{
+					plenty_admin.UI.add_template_plan.activityListHolder
+					.parent()
+					.find(".alert.help-text:eq(0)")
+					.hide();
+					
+					var activitiesAndTasks = [];
+					for(var a=0; a<activities.length; a++){
+						var $activity = $(activities[a]);
+						var templateTaskDtos = [];
+						var activityTasksList = plenty_admin.UI.add_template_plan.taskListHolder.find("ul.task_list.activity_tasks_"+$activity.data("index")+" .task");
+						
+						//alert the user if an activity has no tasks
+						if(activityTasksList.length <= 0){
+							$activity
+							.find(".help-block.alert")
+							.slideDown("fast");
+							
+							console.log("Activity Has No Tasks ;(");
+							
+							return false;
+						}
+						
+						for(var t=0; t<activityTasksList.length; t++){
+							var $task = $(activityTasksList[t]);
+							templateTaskDtos.push($task.data("taskDto"));
+						}
+						
+						$activity.data("activityDto").indexInPlan = $activity.index();
+						
+						var taskWithActivities = {
+							templateActivityDto:$activity.data("activityDto"),
+							templateTaskDtos:templateTaskDtos
+						};
+						activitiesAndTasks.push(taskWithActivities);
+					}
+					
+					var TemplatePlanCreationDto = {
+							owningOrgId:plenty_admin.DATA.current_organization.id,//parseInt(owningOrgIdList.find("option:selected").val()),
+							planName:addPlanForm.find("#add_plan_name").val(),
+							planDescription:addPlanForm.find("#add_plan_desc").val(),
+							activitiesAndTasks:activitiesAndTasks
+					}
+					
+					console.log("TemplatePlanCreationDto", TemplatePlanCreationDto);
+					
+					plenty_admin.REST.plans.createTemplatePlan(TemplatePlanCreationDto, function(templatePlan){
+						console.log("add this templatePlan to the list: ", templatePlan);
+					});
+				}
+			}
+			
+			return false;
+		})
+		.end();
+		
+		plenty_admin.UI.add_template_plan.modal
+		.data("ready", true);
+	},
+	show: function(){
+		plenty_admin.UI.add_template_plan.modal
+		.modal("show");
+	},
+	clear: function(){
+		//clear activities
+		plenty_admin.UI.add_template_plan.activityListHolder
+		.find("li.activity")
+		.remove()
+		.end()
+		.hide()
+		.parent()
+		.find("form.add_activity_form")
+		.show()
+		.end()
+		.find("button.add_activity")
+		.hide();
+		
+		//clear tasks
+		plenty_admin.UI.add_template_plan.taskListHolder
+		.find("li.task")
+		.remove()
+		.end()
+		.hide()
+		.parent()
+		.find("form.add_task_form, button.add_task")
+		.hide()
+		.end()
+		.find("p.noActivityForTasks")
+		.show();
+		
+		//reset form elements
+		plenty_admin.UI.add_template_plan.modal
+		.find("input, textarea")
+		.val("")
+		.end()
+		.find("select")
+		.each(function(){
+			$(this)
+			.find("option:eq(0)")
+			.prop("selected", true);
+		})
+		.end()
+		.find(".uom")
+		.hide();
+		
+		//remove any old task elements
+		plenty_admin.UI.add_template_plan.modal
+		.find("tr.task-element")
+		.remove();
+		
+	},
+	build_task_component: function(task_component, type){
+		var $taskComponent = $([
+			'<tr class="reveal-on-hover-wrap task-element">',
+				'<td width="55%">'+plenty_admin.DATA[type+"Types"][task_component.id].name+'</td>',
+				'<td width="20%">'+task_component.qty+'</td>',
+				'<td width="25%"><button class="btn btn-sm btn-danger delete reveal-on-hover-element btn-block"><span class="fa fa-trash-o"></span> Delete</button></td>',
+			'</tr>'
+		].join(""))
+		.data("task_component", task_component)
+		.find("button.delete")
+		.click(function(){
+			$(this)
+			.closest("tr")
+			.remove();
+			
+			return false;
+		})
+		.end();
+		
+		return $taskComponent;
+	},
+	build_task_element: function(taskDto){
+		console.log("build_task_element", taskDto);
+		var $taskDOM = $([
+			'<li class="list-group-item overflowFix reveal-on-hover-wrap task">',
+				'<div class="col-md-12">',
+					'<h4 class="pull-left">'+taskDto.name+'</h4>',
+					'<button class="btn btn-sm btn-danger reveal-on-hover-element pull-right delete-task"><span class="fa fa-trash-o"></span> Delete</button>',
+				'</div>',
+				'<div class="col-md-4 equipment prn">',
+					'<p><b>Equipment</b></p>',
+				'</div>',
+				'<div class="col-md-4 labour prn">',
+					'<p><b>Labour</b></p>',
+				'</div>',
+				'<div class="col-md-4 product">',
+					'<p><b>Product</b></p>',
+				'</div>',
+			'</li>'
+		].join(""))
+		.data("taskDto", taskDto);
+		
+		//build equipment taskItems
+		for(var e=0; e<taskDto.equipmentIds.length; e++){
+			var equip = taskDto.equipmentIds[e];
+			$equipment_task_item = $('<p>'+plenty_admin.DATA.equipmentTypes[equip].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$equipment_task_item
+			.find("a.remove")
+			.click(function(){
+				$(this)
+				.closest("p")
+				.remove();
+			});
+			
+			$taskDOM
+			.find(".equipment")
+			.append($equipment_task_item);
+		}
+		
+		//build labour taskItems
+		for(var e=0; e<taskDto.labourIds.length; e++){
+			var labour = taskDto.labourIds[e];
+			$labour_task_item = $('<p>'+plenty_admin.DATA.labourTypes[labour].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$labour_task_item
+			.find("a.remove")
+			.click(function(){
+				$(this)
+				.closest("p")
+				.remove();
+			});
+			
+			$taskDOM
+			.find(".labour")
+			.append($labour_task_item);
+		}
+		
+		//build product taskItems
+		for(var e=0; e<taskDto.productAmountPairs.length; e++){
+			var prod = taskDto.productAmountPairs[e];
+			$product_task_item = $('<p>'+plenty_admin.DATA.productTypes[prod.productTypeId].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$product_task_item
+			.find("a.remove")
+			.click(function(){
+				$(this)
+				.closest("p")
+				.remove();
+			});
+			
+			$taskDOM
+			.find(".product")
+			.append($product_task_item);
+		}
+		
+		$taskDOM
+		.find("button.delete-task")
+		.click(function(){
+			$taskDOM
+			.remove();
+			
+			return false;
+		});
+		
+		var selectedActivityIndex = plenty_admin.UI.add_template_plan.activityListHolder.find(".activity.active").data("index");
+		plenty_admin.UI.add_template_plan.taskListHolder
+		.find("ul.task_list")
+		.hide();
+		
+		plenty_admin.UI.add_template_plan.taskListHolder
+		.find("ul.task_list.activity_tasks_"+selectedActivityIndex)
+		.append($taskDOM)
+		.show();
+	},
+	clear_add_task_form: function(){
+		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+		.find("input")
+		.val("")
+		.end()
+		.find("table.task-items tbody tr")
+		.remove()
+		.end()
+		.parent()
+		.find("select :nth-child(0)")
+		.prop("selected", true);
+	},
+	build_activity_element: function(activityDto){
+		console.log("build_activity_element", activityDto);
+		var $activityDOM = $([
+			'<li class="list-group-item reveal-on-hover-wrap active activity">',
+				'<div class="help-block alert alert-danger error mtn mbs" style="display:none;"',
+					'<h3>This activity has no tasks associated with it.</h3>',
+					'<p>Either add tasks to it or remove this activity.</p>',
+				'</div>',
+				'<button class="btn btn-danger btn-sm reveal-on-hover-element pull-right delete-activity"><span class="fa fa-trash-o"></span>  Delete</button>',
+				'<a href="">',
+					plenty_admin.DATA.activityTypes[activityDto.activityTypeId].name,
+				'</a>',
+			'</li>'
+		].join(""))
+		.data("activityDto", activityDto)
+		.data("templateTaskDtos", [])
+		.data("tasks", [])
+		.find("a")
+		.click(function(){
+			var selectedActivityIndex = $(this).closest("li").data("index");
+			var allActivityTaskContainers = plenty_admin.UI.add_template_plan.taskListHolder.find("ul.task_list");
+			var activityTasksContainer = plenty_admin.UI.add_template_plan.taskListHolder.find("ul.task_list.activity_tasks_"+selectedActivityIndex);
+			var activityTasks = activityTasksContainer.find(".task");
+			
+			//hide all task containers
+			allActivityTaskContainers
+			.hide();
+			
+			//show the task container for this activity
+			activityTasksContainer
+			.show();
+				
+			if(activityTasks.length > 0){
+				//hide the add task form
+				plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+				.slideUp("fast");
+				
+				//show the tasks for this activity
+				plenty_admin.UI.add_template_plan.addTaskBtn
+				.slideDown("fast");
+				
+				//show the add task button
+				plenty_admin.UI.add_template_plan.taskListHolder
+				.slideDown("fast");
+			}else{
+				//hide the add task button
+				plenty_admin.UI.add_template_plan.addTaskBtn
+				.slideUp("fast");
+				
+				//hide the task list for this activity
+				plenty_admin.UI.add_template_plan.taskListHolder
+				.slideUp("fast");
+				
+				//show the add task form immediately
+				plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+				.slideDown("fast");
+			}
+			
+			plenty_admin.UI.add_template_plan.activityListHolder
+			.find("li.list-group-item.active")
+			.removeClass("active");
+			
+			$(this)
+			.parent()
+			.addClass("active");
+			
+			return false;
+		})
+		.end()
+		.find("button.delete-activity")
+		.click(function(){
+			$(this)
+			.closest("li")
+			.remove();
+			
+			if($(this).closest(".activities_management").find("li.activity").length <= 0){
+				plenty_admin.UI.add_template_plan
+				.modal
+				.find(".noActivityForTasks")
+				.slideDown("fast");
+				
+				//hide the add task form immediately
+				plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+				.slideUp("fast");
+			}
+		})
+		.end();
+		
+		//add the activity element to the DOM
+		plenty_admin.UI.add_template_plan.activityListHolder
+		.find("li.list-group-item.active")
+		.removeClass("active")
+		.end()
+		.append($activityDOM);
+		
+		$activityDOM
+		.data("index", $activityDOM.index());
+		
+		//create a task container for this activity element
+		var taskList = $('<ul class="task_list list-group activity_tasks_'+$activityDOM.data("index")+'" style="display:none;"></ul>');
+		plenty_admin.UI.add_template_plan.taskListHolder
+		.append(taskList);
+	}
+};
+
+plenty_admin.UI.add_template_plan.activityListHolder = plenty_admin.UI.add_template_plan.modal.find(".activities_management .activity_list");
+plenty_admin.UI.add_template_plan.addActivityForm = plenty_admin.UI.add_template_plan.modal.find("form.add_activity_form");
+plenty_admin.UI.add_template_plan.addActivityBtn = plenty_admin.UI.add_template_plan.modal.find("button.add_activity");
+
+plenty_admin.UI.add_template_plan.taskListHolder = plenty_admin.UI.add_template_plan.modal.find(".tasks_management .task_lists");
+plenty_admin.UI.add_template_plan.addTaskForm = plenty_admin.UI.add_template_plan.modal.find("form.add_task_form");
+plenty_admin.UI.add_template_plan.addTaskAndTaskComponents = plenty_admin.UI.add_template_plan.modal.find(".add_task_and_task_components");
+plenty_admin.UI.add_template_plan.addTaskBtn = plenty_admin.UI.add_template_plan.modal.find("button.add_task");

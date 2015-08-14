@@ -5660,19 +5660,19 @@ button.close {
   border: 1px solid #cc3737;
 }
 .bootbox.modal.danger .modal-dialog .modal-content .bootbox-body {
-  color: #cc3737;
+  /*color:@brand-danger;*/
 }
 .bootbox.modal.warning .modal-dialog .modal-content {
   border: 1px solid #e1b829;
 }
 .bootbox.modal.warning .modal-dialog .modal-content .bootbox-body {
-  color: #e1b829;
+  /*color:@brand-warning;*/
 }
 .bootbox.modal.info .modal-dialog .modal-content {
   border: 1px solid #0094de;
 }
 .bootbox.modal.info .modal-dialog .modal-content .bootbox-body {
-  color: #0094de;
+  /*color:@brand-primary;*/
 }
 .tooltip {
   position: absolute;
@@ -6399,7 +6399,7 @@ button.close {
   vertical-align: middle;
 }
 .slider.slider-horizontal {
-  width: 100%;
+  width: 210px;
   height: 20px;
 }
 .slider.slider-horizontal .slider-track {

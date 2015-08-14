@@ -1,0 +1,34 @@
+@import "variables.less";
+.container-fluid{
+	&.activitiesAndTasks{
+		position:relative;
+		
+		.tasks_management,
+		.activities_management{
+			position:absolute;
+			top:0;
+			height:100%;
+		}
+		
+		.tasks_management{
+			left:50%;
+		}
+		
+		.activity{
+			cursor:ns-resize;
+			a{
+				cursor:ns-resize;
+			}
+		}
+	}
+}
+
+.list-group-item{
+	&.placeholder{
+		opacity:.3;
+		background-color:#6d6d6d;
+		a{
+			color:#d4d4d4;
+		}
+	}
+}

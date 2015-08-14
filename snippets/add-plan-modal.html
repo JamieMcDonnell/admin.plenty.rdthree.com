@@ -8,54 +8,68 @@
 	  <div class="modal-body overflowFix">
 		  <div class="row">
 			<div class="col-md-12">
-				<form>
-					<div class="form-group col-md-12 mln">
-						<label class="col-md-12 control-label" for="replaceStartingDate">Replace Start Date</label>
-						This should default to todays date and prefil the date field with today's date
-						<div class="col-md-12">
-							<input id="replaceStartingDate" name="replaceStartingDate" type="text" placeholder="Pick Start Date" class="datepicker form-control input-md">
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" role="tablist">
+					<li role="presentation" class="active pointer"><a data-target="#plans_list" aria-controls="plans_list" role="tab" data-toggle="tab">Plans List</a></li>
+					<li role="presentation" class="pointer" style="display:none;"><a data-target="#plans_criterea" aria-controls="plans_criterea" role="tab" data-toggle="tab">Plan Criterea</a></li>
+				</ul>
+				<div class="tab-content container-fluid">
+					<div role="tabpanel" class="tab-pane active pull-left w100 clearfix" id="plans_list">
+						<table class="table mbn fitTable">
+							<thead>
+								<tr>
+									<th width="5%"></th>
+									<th width="35%">Name</th>
+									<th width="60%">
+										Description
+									</th>
+								</tr>
+							</thead>
+						</table>
+						<div class="templateplans-list-wrapper">
+							  <table class="table table-striped table-hover mbn fitTable" id="templateplans-list"></table>
 						</div>
+						<a href="settings.html" class="text-right col-md-12 clear">Manage Template Plans</a>
 					</div>
-					<br>
-					Add "Auto-Schedule" switch, off and disabled by default.
-					<br>
-					Replacement date is applicable only if it is a new plan.
-					If the field doesn't have a plan yet, only in this case we need to supply a plantation date
-					<div class="form-group col-md-6 mrn">
-						<label class="col-md-12 control-label" for="plantationDate">Plantation Date</label>
-						<div class="col-md-12">
-							<input id="plantationDate" name="plantationDate" type="text" placeholder="Pick Plantation Date" class="datepicker form-control input-md">
-						</div>
+					<div role="tabpanel" class="tab-pane pull-left w100 clearfix" id="plans_criterea">
+						<form>
+							<div class="form-group col-md-6 mln replacementDateWrapper">
+								<label class="col-md-12 control-label" for="replaceStartingDate">Replace Start Date</label>
+								<!--This should default to todays date and prefil the date field with today's date-->
+								<div class="col-md-12">
+									<input id="replaceStartingDate" name="replaceStartingDate" type="text" placeholder="Pick Start Date" class="datepicker form-control input-md">
+								</div>
+							</div>
+							<div class="form-group col-md-6 mrn plantationDateWrapper">
+								<label class="col-md-12 control-label" for="plantationDate">Plantation Date</label>
+								<div class="col-md-12">
+									<input id="plantationDate" name="plantationDate" type="text" placeholder="Pick Plantation Date" class="datepicker form-control input-md">
+								</div>
+							</div>
+							<div class="form-group autoScheduleWrapper col-md-6">
+								<label class="col-md-12 control-label" for="autoSchedule">Auto Schedule Plan</label>
+								<div class="col-md-12">
+									<input type="checkbox" disabled id="autoSchedule"></input>
+								</div>
+							</div>
+							<div class="form-group autoScheduleWrapper col-md-12">
+								<label class="col-md-12 control-label" for="organizationList">Organization Performing the plan</label>
+								<div class="col-md-12">
+									<select id="organizationList" class="form-control input-md">
+									</select>
+								</div>
+							</div>
+						</form>
 					</div>
-					<!--
-					<div class="form-group">
-						<label class="col-md-4 control-label" for="fieldCrops">Field Crop to Replace Plan</label>
-						<div class="col-md-4">
-							<select id="fieldCrops" name="fieldCrops" placeholder="Pick Field Crop" class="form-control input-md">
-							</select>
-						</div>
-					</div>
-					-->
-				</form>
+				</div>
 			</div>
 		</div>
-		<table class="table mbn fitTable">
-			<thead>
-				<tr>
-					<th width="5%"></th>
-					<th width="35%">Name</th>
-					<th width="60%">
-						Description
-					</th>
-				</tr>
-			</thead>
-		  </table>
-		  <div class="templateplans-list-wrapper">
-			  <table class="table table-striped table-hover mbn fitTable" id="templateplans-list"></table>
-		  </div>
 	  </div>
 	  <div class="modal-footer">
-	  	<button type="button" class="btn btn-primary pull-right add-plan"><span class="glyphicon glyphicon-plus"></span> Add Plan</button>
+		<button type="button" class="btn btn-default pull-left back" style="display:none"><span class="glyphicon glyphicon-chevron-left"></span> Back</button>
+		<button type="button" class="btn btn-primary pull-right next" disabled><span class="glyphicon glyphicon-chevron-right"></span> Next</button>
+		
+		<button type="button" class="btn btn-primary pull-right add-plan" style="display:none;" disabled data-loading-text="<span class='glyphicon glyphicon-plus'></span> Loading..."><span class="glyphicon glyphicon-plus"></span> Add Plan</button>
 		<button type="button" class="btn btn-default pull-right cancel mrs" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
 	  </div>
 	</div><!-- /.modal-content -->

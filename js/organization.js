@@ -10,6 +10,7 @@ plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.DOM.fi
 plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.DOM.find('#confirm_delete');
 plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.DOM.find('#edit_field');
 plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_field');
+plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_plan');
 
 plenty_admin.UI.organization.BUTTON_delete_multiple = plenty_admin.UI.organization.DOM.find(".delete_multiple");
 
@@ -27,7 +28,7 @@ for(var e=0; e < entities.length; e++){
 
 plenty_admin.REST.insertBoundary = plenty_admin.api.all("boundaries/insertBoundary");
 plenty_admin.REST.insertBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/insertBoundaryPointsArray");
-plenty_admin.REST.updateBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/updateBoundaryPointList");
+plenty_admin.REST.updateBoundaryPointsArray = plenty_admin.api.all("boundaryPoints/updateBoundaryPointArray");
 
 plenty_admin.REST.insertField = plenty_admin.api.all("fields/createFieledWithBoundaryInterestAndCropType");
 
@@ -43,6 +44,8 @@ plenty_admin.REST.insertActivity = plenty_admin.api.all("activities/insertActivi
 plenty_admin.REST.updateActivity = plenty_admin.api.all("activities/updateActivity");
 plenty_admin.REST.deleteActivity = plenty_admin.api.all("activities/deleteActivity");
 
+plenty_admin.REST.createTemplatePlan = plenty_admin.api.all("templatePlan/createTemplatePlan");
+
 // method to initiate and show this screen
 plenty_admin.UI.organization.init = function(org, hash){
 	//set the current organization
@@ -50,44 +53,41 @@ plenty_admin.UI.organization.init = function(org, hash){
 	
 	plenty_admin.DATA.data_source = plenty_admin.DATA.current_organization;
 	
-	//show organization template if it is not visible
-	if(!plenty_admin.UI.organization.DOM.is(":visible")){
-		plenty_admin.HELPER.showLoadingOverlay();
-		plenty_admin.UI.currentScreen
-		.fadeOut("normal", function(){
-			plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
-			plenty_admin.UI.organization.populate(org, hash);
-			plenty_admin.UI.organization.populate_farms_filter();
-			
-			plenty_admin.DATA.eventCollector = window.eventcollector(3, 10000);
-			plenty_admin.REST.getCropTypes();
-			plenty_admin.REST.getTillageTypes();
-			plenty_admin.REST.getIrrigationTypes();
-			
-			plenty_admin.DATA.eventCollector.on('alldone', function(total) {
-				plenty_admin.UI.organization.DOM.fadeIn("normal", function(){
-					plenty_admin.HELPER.hideLoadingOverlay();
-				});
-			});	
+	plenty_admin.UI.currentScreen = plenty_admin.UI.organization.DOM;
+	plenty_admin.UI.organization.populate(org, hash);
+	plenty_admin.UI.organization.populate_farms_filter();
+	
+	plenty_admin.DATA.eventCollector = window.eventcollector(7, 10000);
+	plenty_admin.REST.getCropTypes();
+	plenty_admin.REST.getTillageTypes();
+	plenty_admin.REST.getIrrigationTypes();
+	plenty_admin.REST.getActivityTypes();
+	plenty_admin.REST.getSkillTypes();
+	plenty_admin.REST.getProductTypes();
+	plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
+	
+	plenty_admin.DATA.eventCollector.on('alldone', function(total) {
+		plenty_admin.UI.organization.DOM.fadeIn("normal", function(){
+			plenty_admin.HELPER.hideLoadingOverlay();
+			plenty_admin.UI.add_template_plan.init();
 		});
-	}else{
-		plenty_admin.HELPER.showLoadingOverlay();
-		plenty_admin.UI.organization.populate(org, hash);
-		plenty_admin.UI.organization.populate_farms_filter();
-		plenty_admin.HELPER.hideLoadingOverlay();
-	}
+		
+		//show the selected item in the side nav
+		plenty_admin.UI.sideBar.organizations.DOM
+		.find(".panel-collapse.in")
+		.removeClass("in")
+		.end()
+		.find(".panel-collapse[data-orgid='"+org.id+"']")
+		.addClass("in")
+		.find("li.sub")
+		.removeClass("active")
+		.end()
+		.find("li.sub a[href='"+hash+"']")
+		.parent()
+		.addClass("active");
+	});	
 	
 	plenty_admin.UI.organization.DOM
-	.find("h1 a.back")
-	.off("click")
-	.on("click", function(){
-		plenty_admin.UI.currentScreen
-		.fadeOut("normal", function(){
-			plenty_admin.UI.currentScreen = plenty_admin.UI.settings.DOM;
-			plenty_admin.UI.currentScreen.fadeIn("normal");
-		});
-	})
-	.end()
 	.find("button.btn.add_to_organization")
 	.off("click")
 	.on("click", function(e){
@@ -96,6 +96,8 @@ plenty_admin.UI.organization.init = function(org, hash){
 		var hash = url.substring(url.indexOf('#')+1);
 		if(hash === "fields"){
 			plenty_admin.UI.organization.show_add_field_modal();
+		}else if(hash === "plans"){
+			plenty_admin.UI.add_template_plan.show();
 		}else{
 			plenty_admin.UI.organization.show_item_modal("add_to_organization", modalContext);
 		}
@@ -211,9 +213,6 @@ plenty_admin.UI.organization.show_item_modal = function(modal, context, itemId, 
 		case "add":
 			var modalTitle = "Add a "+hash;
 		break;
-		
-		default:
-			
 	}
 	
 	
@@ -707,7 +706,7 @@ plenty_admin.UI.create_header_row = function(item, hash){
 }
 
 plenty_admin.UI.create_item = function(item, hash){
-	console.log("plenty_admin.UI.create_item: ", item, hash);
+	//console.log("plenty_admin.UI.create_item: ", item, hash);
 	if(hash === "fieldsAndCropTypes"){
 		var itemData = (item.id ? item : item.field);
 		plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(itemData.id, 2 /* We are only interested in field boundaries here*/, function(boundaries){
@@ -858,7 +857,6 @@ plenty_admin.UI.organization.populate = function(org, hash){
 					plenty_admin.UI.organization.DOM.find(".org-"+i)
 					.text(textValue)
 					.data("pk", org.id+"/organizations")
-					//.editable("destroy")
 					.editable(plenty_admin.REST.inline_editing_options);
 				break;
 				

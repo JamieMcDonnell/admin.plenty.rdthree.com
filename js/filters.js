@@ -326,8 +326,8 @@ plenty_admin.UI.filters.populate = function(init, callback){
 				var appliedFilter = plenty_admin.DATA.userFilters.filterDto[filterId];
 				applied_filter_count += plenty_admin.DATA.userFilters.filterDto[filterId].length;
 				
-				console.log("appliedFilter", appliedFilter);
-				console.log("applied_filter_count", applied_filter_count);
+				//console.log("appliedFilter", appliedFilter);
+				//console.log("applied_filter_count", applied_filter_count);
 				
 				var allApplied = false;
 				var quickFilterText = "";
@@ -356,7 +356,7 @@ plenty_admin.UI.filters.populate = function(init, callback){
 					break;
 					
 					default:
-						console.log("CHECK!!", filterId, plenty_admin.DATA.userFilters.filterDto[filterId].length, plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length);
+						//console.log("CHECK!!", filterId, plenty_admin.DATA.userFilters.filterDto[filterId].length, plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length);
 						if(
 							plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList[filterId.replace("Ids", "s")	].length === plenty_admin.DATA.userFilters.filterDto[filterId].length 
 							|| plenty_admin.DATA.userFilters.filterDto[filterId].length == 0
@@ -531,12 +531,12 @@ plenty_admin.UI.filters.build_filter_set = function(filter, filterNormalized){
 									'<i class="icon glyphicon glyphicon-triangle-right pull-right"></i>',
 								'</a>',
 							'</h3>'+
-							'<ul class="selected-filters clear mbn overflowFix">',
+							'<ul class="selected-filters clear mbn">',
 								'<li class="filter all">',
 									'<span class="pull-left">All</span>',
 								'</li>',
 							'</ul>',
-							'<ul class="all-filters overflowFix clear mbn" style="display:none;">',
+							'<ul class="all-filters clear mbn" style="display:none;">',
 							'</ul>',
 						'</div>'].join(""));
 	
@@ -571,8 +571,6 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 	if(force === "open"){
 		plenty_admin.UI.filters.state = "open";
 		
-		//plenty_admin.UI.filters.show_selected_filters();
-		
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
@@ -583,7 +581,7 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width()+1)});
 	}else if(plenty_admin.UI.filters.state === "closed"){
 		plenty_admin.UI.filters.state = "open";
 		
@@ -593,11 +591,11 @@ plenty_admin.UI.filters.toggleFilters = function(force){
 		.animate({"right":0});
 	}else if(plenty_admin.UI.filters.state === "open"){
 		plenty_admin.UI.filters.state = "closed";
-		
+		console.log("toggleFilters - close: ", plenty_admin.UI.filters.DOM.width());
 		plenty_admin.UI.filters.DOM
 		.stop()
 		.clearQueue()
-		.animate({"right":-(plenty_admin.UI.filters.DOM.width())});
+		.animate({"right":-(plenty_admin.UI.filters.DOM.width()+1)});
 	}
 }
 
@@ -619,8 +617,7 @@ plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context)
 	plenty_admin.HELPER.showLoadingOverlay();
 	
 	plenty_admin.REST.update_filters.post(plenty_admin.DATA.userFilters.filterDto).then(function(data){
-			console.log("data: ", data.body());
-			
+			//console.log("data: ", data.body());
 			//update the local possible filter entities only
 			//manage the filterDTO selected locally only as it differs from what is returned by the server
 			plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList = data.body().possibleFilteringEntitiesDtoList;
@@ -629,12 +626,26 @@ plenty_admin.DATA.update_filters = function(callback, init, zoomFields, context)
 			
 			switch(plenty_admin.context){
 				case "map":
-				plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
-				plenty_admin.UI.map.add_equipment_to_map();
+					plenty_admin.UI.map.populate(plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.fields, zoomFields);
+					plenty_admin.UI.map.add_equipment_to_map();
+					
+					plenty_admin.UI.map.toggleFilters
+					.parent()
+					.fadeIn("fast")
+					.parent()
+					.find(".filter_loader")
+					.fadeOut("fast");
 				break;
 				
 				case "plans":
+					var d = new Date();
+					var year = d.getUTCFullYear();
+					plenty_admin.UI.plans.eventCollector = window.eventcollector(2, 10000);
 					plenty_admin.REST.getPlansFiltered(plenty_admin.DATA.userFilters.filterDto.id);
+					plenty_admin.REST.getFieldCropsByYearFiltered(plenty_admin.DATA.userFilters.filterDto.id, year);
+					plenty_admin.UI.plans.eventCollector.on('alldone', function(total) {
+						plenty_admin.UI.plans.populate();
+					});
 				break;
 			}
 			

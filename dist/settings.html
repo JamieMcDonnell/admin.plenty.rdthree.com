@@ -65,93 +65,13 @@
 </div>
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">
-			<div id="settings">
-				<div class="row organizations">
-					<div class='col-xs-12 col-sm-6 col-md-4 newOrgContainer pull-left'>
-						<div class="panel panel-success">
-							<div class="panel-heading">
-								<h2 class="panel-title text-center">New Organization</h2>
-							</div>
-							<div class="panel-body">
-								<form class="form-inline">
-									<div class="form-group overflowFix col-sm-12 pln prn">
-										<label for="new_org_name" class="col-sm-2 control-label">Name</label>
-										<div class="col-sm-10">
-											<input type="text" id="new_org_name" placeholder="Organization Name" class="form-control" required>
-											</input>
-										</div>
-									</div>
-									<div class="form-group overflowFix col-sm-12 pln prn">
-										<label for="new_org_type" class="col-sm-2 control-label">Type</label>
-										<div class="col-sm-10">
-											<select class="form-control" id="new_org_type" required>
-												<option value="1">Service Provider</option>
-												<option value="2">Client</option>
-												<option value="3">Vendor</option>
-											</select>
-										</div>
-									</div>
-									<a href="" class="pull-right mts mbs moreDetailsToggle"><span><i class="glyphicon glyphicon-triangle-bottom"></i>More Details</span><span style="display:none;"><i class="glyphicon glyphicon-triangle-top"></i> Less Details</span></a>
-									<div class="more-details overflowFix clear">
-										<div class="form-group overflowFix col-sm-12 pln prn">
-											<label for="new_org_address_1" class="col-sm-2 control-label">Address Line 1</label>
-											<div class="col-sm-10">
-												<input type="text" id="new_org_address_1" placeholder="e.g. 123 Royale Ave." class="form-control">
-												</input>
-											</div>
-										</div>
-										<div class="form-group overflowFix col-sm-12 pln prn">
-											<label for="new_org_address_2" class="col-sm-2 control-label">Address Line 2</label>
-											<div class="col-sm-10">
-												<input type="text" id="new_org_address_2" placeholder="e.g. Denhamshire" class="form-control">
-												</input>
-											</div>
-										</div>
-										<div class="form-group overflowFix col-sm-12 pln prn">
-											<label for="new_org_city" class="col-sm-2 control-label">City</label>
-											<div class="col-sm-10">
-												<input type="text" id="new_org_city" placeholder="e.g. Chicago" class="form-control">
-												</input>
-											</div>
-										</div>
-										<div class="form-group overflowFix col-sm-12 pln prn">
-											<label for="new_org_state" class="col-sm-2 control-label">State</label>
-											<div class="col-sm-10">
-												<input type="text" id="new_org_state" placeholder="e.g. IL" class="form-control">
-												</input>
-											</div>
-										</div>
-										<div class="form-group overflowFix col-sm-12 pln prn">
-											<label for="new_org_zip" class="col-sm-2 control-label">Zip</label>
-											<div class="col-sm-10">
-												<input type="text" id="new_org_zip" placeholder="e.g. 60613" class="form-control">
-												</input>
-											</div>
-										</div>
-									</div>
-									<button class='btn btn-success btn-lrg newOrg btn-block'><span class="glyphicon glyphicon-plus"></span> Create New Organization</button>
-								</form>
-								<div class="alert alert-success">
-									<h3>Organization Added Successfully</h3>
-									<i class="glyphicon glyphicon-ok"></i> </div>
-								<div class="alert alert-danger">
-									<h3>Adding an organization failed</h3>
-									<p>Please try again</p>
-									<i class="fa fa-warning"></i> </div>
-								<div class="alert alert-info">
-									<h3>Adding organization - please wait</h3>
-									<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i> </div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="organization-container" style="display:none;">
+			<div id="organization-container">
 	<div class="clearfix">
-		<p class="editable org-organizationTypeId pull-left mbn editable" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'></p>
-		<p class="pull-left lead2 mbn clear"><span class="org-addressLine1 editable" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span> <span class="org-addressLine2 editable" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span></p>
-		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"></p>
-		<p class="pull-left lead2 editable clear org-zip"></p>
+		<h2 class="editable org-name pull-left mbn editable" data-type="text" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Change the organization name"> </h2>
+		<p class="editable org-organizationTypeId pull-left mbn editable clear" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'> </p>
+		<p class="pull-left lead2 mbn clear"><span class="org-addressLine1 editable" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span> <span class="org-addressLine2 editable" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span> </p>
+		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"> </p>
+		<p class="pull-left lead2 editable clear org-zip"> </p>
 	</div>
 	<div role="tabpanel" id="orgAssets"> 
 		
@@ -237,6 +157,80 @@
 	</div>
 </div>
 
+			<div class='col-md-12 newOrgContainer' style="display:none" id="new-organization-container">
+	<div class="panel">
+		<div class="panel-body">
+			<form class="form-inline">
+				<div class="form-group overflowFix col-sm-12 pln prn">
+					<label for="new_org_name" class="col-sm-2 control-label">Name</label>
+					<div class="col-sm-10">
+						<input type="text" id="new_org_name" placeholder="Organization Name" class="form-control" required>
+						</input>
+					</div>
+				</div>
+				<div class="form-group overflowFix col-sm-12 pln prn">
+					<label for="new_org_type" class="col-sm-2 control-label">Type</label>
+					<div class="col-sm-10">
+						<select class="form-control" id="new_org_type" required>
+							<option value="1">Service Provider</option>
+							<option value="2">Client</option>
+							<option value="3">Vendor</option>
+						</select>
+					</div>
+				</div>
+				<a href="" class="pull-right mts mbs moreDetailsToggle"><span><i class="glyphicon glyphicon-triangle-bottom"></i>More Details</span><span style="display:none;"><i class="glyphicon glyphicon-triangle-top"></i> Less Details</span></a>
+				<div class="more-details overflowFix clear">
+					<div class="form-group overflowFix col-sm-12 pln prn">
+						<label for="new_org_address_1" class="col-sm-2 control-label">Address Line 1</label>
+						<div class="col-sm-10">
+							<input type="text" id="new_org_address_1" placeholder="e.g. 123 Royale Ave." class="form-control">
+							</input>
+						</div>
+					</div>
+					<div class="form-group overflowFix col-sm-12 pln prn">
+						<label for="new_org_address_2" class="col-sm-2 control-label">Address Line 2</label>
+						<div class="col-sm-10">
+							<input type="text" id="new_org_address_2" placeholder="e.g. Denhamshire" class="form-control">
+							</input>
+						</div>
+					</div>
+					<div class="form-group overflowFix col-sm-12 pln prn">
+						<label for="new_org_city" class="col-sm-2 control-label">City</label>
+						<div class="col-sm-10">
+							<input type="text" id="new_org_city" placeholder="e.g. Chicago" class="form-control">
+							</input>
+						</div>
+					</div>
+					<div class="form-group overflowFix col-sm-12 pln prn">
+						<label for="new_org_state" class="col-sm-2 control-label">State</label>
+						<div class="col-sm-10">
+							<input type="text" id="new_org_state" placeholder="e.g. IL" class="form-control">
+							</input>
+						</div>
+					</div>
+					<div class="form-group overflowFix col-sm-12 pln prn">
+						<label for="new_org_zip" class="col-sm-2 control-label">Zip</label>
+						<div class="col-sm-10">
+							<input type="text" id="new_org_zip" placeholder="e.g. 60613" class="form-control">
+							</input>
+						</div>
+					</div>
+				</div>
+				<button class='btn btn-success btn-lrg newOrg btn-block'><span class="glyphicon glyphicon-plus"></span> Create New Organization</button>
+			</form>
+			<div class="alert alert-success">
+				<h3 class="mtn mbn">Organization Added Successfully</h3>
+			</div>
+			<div class="alert alert-danger">
+				<h3 class="mtn">Adding an organization failed</h3>
+				<p>Please try again</p>
+			</div>
+			<div class="alert alert-info">
+				<h3 class="mtn mbn">Adding organization - please wait</h3>
+			</div>
+		</div>
+	</div>
+</div>
 			<div id="field-container" style="display:none;" class="fill-area-content flexbox-parent flexbox-item-grow">
 	<div class="row-fluid mbs overflowFix col-md-12 prn flexbox-item-grow">
 		<div class="field_preview col-md-3 pln">
@@ -784,6 +778,15 @@
 						<p class="todayLabel">Today</p>
 					</div>
 				</div>
+				<!--
+				<div class="zoomInLayer">
+					<div class="zoomInControl">
+						<p><b>Zoom</b></p>
+						<i class=""></i>
+						<i class=""></i>
+					</div>
+				</div>
+				-->
 			</div>
 		</div>
 	</div>
@@ -931,20 +934,6 @@
 	<div class="form-group">
 		<label for="add_product_cost">Password</label>
 		<input type="text" class="form-control" id="add_product_cost" placeholder="e.g. 12.99" required data-propname="standardCost">
-	</div>
-</form>
-		<form class="plans add_to_org_form">
-	<div class="form-group">
-		<label for="add_plan_name">Name</label>
-		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required data-propname="name">
-	</div>
-	<div class="form-group">
-		<label for="add_plan_desc">Type</label>
-		<textarea class="form-control" id="add_plan_desc" placeholder="e.g. This is my wheat plan" required data-propname="description"></textarea>
-	</div>
-	<div class="form-group">
-		<label for="add_plan_enabled clearfix">Enabled</label>
-		<input type="checkbox" class="form-control switch" id="add_plan_enabled">
 	</div>
 </form>
 		<form class="skills add_to_org_form">
@@ -1096,20 +1085,184 @@
 		<input type="text" class="form-control" id="add_product_cost" placeholder="e.g. 12.99" required data-propname="standardCost">
 	</div>
 </form>
-		<form class="plans add_to_org_form">
-	<div class="form-group">
+		<form class="plans add_plan_form row flexbox-item">
+	<div class="form-group col-md-6">
+		<p class="help-block alert alert-danger error" style="display:none;">You must provide a plan name</p>
 		<label for="add_plan_name">Name</label>
-		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required data-propname="name">
+		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required>
 	</div>
-	<div class="form-group">
-		<label for="add_plan_desc">Type</label>
-		<textarea class="form-control" id="add_plan_desc" placeholder="e.g. This is my wheat plan" required data-propname="description"></textarea>
-	</div>
-	<div class="form-group">
-		<label for="add_plan_enabled clearfix">Enabled</label>
-		<input type="checkbox" class="form-control switch" id="add_plan_enabled">
+	<div class="form-group col-md-6">
+		<label for="add_plan_desc">Description</label>
+		<textarea class="form-control" id="add_plan_desc" placeholder="e.g. This is my wheat plan"></textarea>
 	</div>
 </form>
+ <div class="container-fluid flexbox-item flexbox-item-grow flexbox-parent pln prn activitiesAndTasks">
+	  <div class="row flexbox-item flexbox-item-grow">
+		<div class="col-md-6 activities_management prn">
+			<div class="flexbox-parent">
+				<h3 class="flexbox-item mtn">Activities</h3>
+				<p class="help-block alert alert-danger error flexbox-item" style="display:none;">You must add at least one activity and it's associated tasks to save a plan.</p>
+				<ul class="activity_list list-group flexbox-scroll_y flexbox-item" style="display:none;">
+				</ul>
+				<form class="add_activity_form">
+					<div class="form-group">
+						<p class="help-block alert alert-danger error" style="display:none;">You must provide an activity type</p>
+						<label for="add_activity_type">Activity Type</label>
+						<select class="form-control" id="add_activity_type" required data-propname="activityTypeId">
+						</select>
+					</div>
+					<div class="form-group">
+						<p class="help-block alert alert-danger error" style="display:none;">Days from planting must not be empty</p>
+						<label for="add_activity_days_from_planting">Days from planting</label>
+						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0" required>
+					</div>
+					<p class="form-group text-right">
+						<button class="btn btn-default cancel_activity"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+						<button class="btn btn-primary save_activity"><span class="glyphicon glyphicon-plus"></span> Save Activity</button>
+					</p>
+				</form>
+				<button class="btn btn-block btn-success add_activity flexbox-item" style="display:none;"><span class="glyphicon glyphicon-plus"></span> Add Activity</button>
+			</div>
+		</div>
+		<div class="col-md-6 tasks_management prn">
+			<div class="flexbox-parent">
+				<h3 class="flexbox-item mtn">Tasks</h3>
+				
+				<div class="task_lists flexbox-scroll_y mbs">
+				</div>
+				
+				<div class="add_task_and_task_components flexbox-item-grow flexbox-parent" style="display:none;">
+					<form class="add_task_form row">
+						<div class="form-group col-md-6 prn">
+							<p class="help-block alert alert-danger error" style="display:none;">Task name can not be empty</p>
+							<label for="add_task_name">Name</label>
+							<input type="text" class="form-control" id="add_task_name" placeholder="e.g. Task 1" required>
+						</div>
+						<div class="form-group col-md-6">
+							<p class="help-block alert alert-danger error" style="display:none;">Days from activity start can not be empty</p>
+							<label for="add_task_days_from_start">Days from activity start</label>
+							<input type="number" class="form-control" id="add_task_days_from_start" placeholder="e.g. Task 1" min="0" value="0" required>
+						</div>
+					</form>
+					
+					<ul class="nav nav-tabs task-types-tabs" role="tablist">
+						<li role="presentation" class="active"><a href="#equipment_tab" aria-controls="equipment_tab" role="tab" data-toggle="tab">Equipment</a></li>
+						<li role="presentation"><a href="#labour_tab" aria-controls="labour_tab" role="tab" data-toggle="tab">Labour</a></li>
+						<li role="presentation"><a href="#product_tab" aria-controls="product_tab" role="tab" data-toggle="tab">Product</a></li>
+					</ul>
+						
+					<!-- Tab panes -->
+					<div class="tab-content task-types pln prn pbn ptn flexbox-item-grow flexbox-parent">
+						<div role="tabpanel" class="tab-pane active flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="equipment" id="equipment_tab">
+							<table class="table fitTable mbn">
+								<thead>
+									<tr>
+										<th width="55%">Name</th>
+										<th width="20%">Qty</th>
+										<th width="25%"></th>
+									</tr>
+								</thead>
+							</table>
+							<div class="flexbox-item-grow flexbox-scroll_y">
+								<table class="table table-striped table-condensed task-items equipment-items fitTable mbs">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<!-- Equipment - get by organization -->
+							<div class="overflowFix">
+								<div class="form-group col-xs-7 pln mbn">
+									<p class="help-block alert alert-danger error" style="display:none;">Equipment Type must be selected</p>
+									<select class="form-control component_type" id="add_task_equipment_types" required></select>
+									<select class="form-control specific_items mts" id="add_task_specific_product" style="display:none"></select>
+								</div>
+								<div class="form-group col-xs-2 pln prn mbn">
+									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
+									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" required>
+								</div>
+								<div class="form-group col-xs-3 prn text-right mbn">
+									<button class="btn btn-success btn-block task_add_component task_add_equipment"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+						<div role="tabpanel" class="tab-pane flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="labour" id="labour_tab">
+							<table class="table fitTable mbn">
+								<thead>
+									<tr>
+										<th width="55%">Name</th>
+										<th width="20%">Qty</th>
+										<th width="25%"></th>
+									</tr>
+								</thead>
+							</table>
+							<div class="flexbox-item-grow flexbox-scroll_y">
+								<table class="table table-striped table-condensed task-items labour-items fitTable mbs">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<div class="overflowFix">
+								<div class="form-group col-xs-7 pln">
+									<p class="help-block alert alert-danger error" style="display:none;">Labour Type must be selected</p>
+									<select class="form-control component_type" id="add_task_labour_types" required></select>
+								</div>
+								<div class="form-group col-xs-2 pln prn">
+									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
+									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" required>
+								</div>
+								<div class="form-group col-xs-3 prn text-right">
+									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+						<!-- Product - get by organization -->
+						<div role="tabpanel" class="tab-pane flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="product" id="product_tab">
+							<table class="table fitTable mbn">
+								<thead>
+									<tr>
+										<th width="55%">Name</th>
+										<th width="20%">Qty</th>
+										<th width="25%"></th>
+									</tr>
+								</thead>
+							</table>
+							<div class="flexbox-item-grow flexbox-scroll_y">
+								<table class="table table-striped table-condensed task-items product-items fitTable mbs">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<div class="overflowFix">
+								<div class="form-group col-xs-7 pln">
+									<p class="help-block alert alert-danger error" style="display:none;">Product Type must be selected</p>
+									<select class="form-control component_type mbs" id="add_task_product_types" required></select>
+									<select class="form-control specific_items" id="add_task_specific_product" style="display:none"></select>
+								</div>
+								<div class="form-group col-xs-2 pln prn">
+									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
+									<input type="number" class="form-control component_qty" id="add_task_product_qty" min="0" value="1" required>
+									<p class="uom" style="display:none;">UOM</p>
+								</div>
+								<div class="form-group col-xs-3 prn text-right">
+									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr class="clear mtn"/>
+					
+					<p class="form-group text-right">
+						<button class="btn btn-default cancel_task"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+						<button class="btn btn-primary save_task"><span class="glyphicon glyphicon-plus"></span> Save Task</button>
+					</p>
+				</div>
+				<p class="noActivityForTasks alert alert-info flexbox-item"><b>You need to add an Activity before you can add tasks to it.</b></p>
+				<button class="btn btn-block btn-success add_task flexbox-item" disabled style="display:none;"><span class="glyphicon glyphicon-plus"></span> Add Task</button>
+			</div>
+		</div>
+	  </div>
+</div>
+
 		<form class="skills add_to_org_form">
 	<div class="form-group">
 		<label for="add_skill_name">Name</label>
@@ -1148,6 +1301,200 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
         <button type="button" class="btn btn-primary add"><span class="glyphicon glyphicon-plus"></span> Add</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="add-template-plan">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content flexbox-parent">
+      <div class="modal-header flexbox-item">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add a plan</h4>
+      </div>
+      <div class="modal-body flexbox-item flexbox-item-grow flexbox-parent">
+        <form class="plans add_plan_form row flexbox-item">
+	<div class="form-group col-md-6">
+		<p class="help-block alert alert-danger error" style="display:none;">You must provide a plan name</p>
+		<label for="add_plan_name">Name</label>
+		<input type="text" class="form-control" id="add_plan_name" placeholder="e.g. Plan 1" required>
+	</div>
+	<div class="form-group col-md-6">
+		<label for="add_plan_desc">Description</label>
+		<textarea class="form-control" id="add_plan_desc" placeholder="e.g. This is my wheat plan"></textarea>
+	</div>
+</form>
+ <div class="container-fluid flexbox-item flexbox-item-grow flexbox-parent pln prn activitiesAndTasks">
+	  <div class="row flexbox-item flexbox-item-grow">
+		<div class="col-md-6 activities_management prn">
+			<div class="flexbox-parent">
+				<h3 class="flexbox-item mtn">Activities</h3>
+				<p class="help-block alert alert-danger error flexbox-item" style="display:none;">You must add at least one activity and it's associated tasks to save a plan.</p>
+				<ul class="activity_list list-group flexbox-scroll_y flexbox-item" style="display:none;">
+				</ul>
+				<form class="add_activity_form">
+					<div class="form-group">
+						<p class="help-block alert alert-danger error" style="display:none;">You must provide an activity type</p>
+						<label for="add_activity_type">Activity Type</label>
+						<select class="form-control" id="add_activity_type" required data-propname="activityTypeId">
+						</select>
+					</div>
+					<div class="form-group">
+						<p class="help-block alert alert-danger error" style="display:none;">Days from planting must not be empty</p>
+						<label for="add_activity_days_from_planting">Days from planting</label>
+						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0" required>
+					</div>
+					<p class="form-group text-right">
+						<button class="btn btn-default cancel_activity"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+						<button class="btn btn-primary save_activity"><span class="glyphicon glyphicon-plus"></span> Save Activity</button>
+					</p>
+				</form>
+				<button class="btn btn-block btn-success add_activity flexbox-item" style="display:none;"><span class="glyphicon glyphicon-plus"></span> Add Activity</button>
+			</div>
+		</div>
+		<div class="col-md-6 tasks_management prn">
+			<div class="flexbox-parent">
+				<h3 class="flexbox-item mtn">Tasks</h3>
+				
+				<div class="task_lists flexbox-scroll_y mbs">
+				</div>
+				
+				<div class="add_task_and_task_components flexbox-item-grow flexbox-parent" style="display:none;">
+					<form class="add_task_form row">
+						<div class="form-group col-md-6 prn">
+							<p class="help-block alert alert-danger error" style="display:none;">Task name can not be empty</p>
+							<label for="add_task_name">Name</label>
+							<input type="text" class="form-control" id="add_task_name" placeholder="e.g. Task 1" required>
+						</div>
+						<div class="form-group col-md-6">
+							<p class="help-block alert alert-danger error" style="display:none;">Days from activity start can not be empty</p>
+							<label for="add_task_days_from_start">Days from activity start</label>
+							<input type="number" class="form-control" id="add_task_days_from_start" placeholder="e.g. Task 1" min="0" value="0" required>
+						</div>
+					</form>
+					
+					<ul class="nav nav-tabs task-types-tabs" role="tablist">
+						<li role="presentation" class="active"><a href="#equipment_tab" aria-controls="equipment_tab" role="tab" data-toggle="tab">Equipment</a></li>
+						<li role="presentation"><a href="#labour_tab" aria-controls="labour_tab" role="tab" data-toggle="tab">Labour</a></li>
+						<li role="presentation"><a href="#product_tab" aria-controls="product_tab" role="tab" data-toggle="tab">Product</a></li>
+					</ul>
+						
+					<!-- Tab panes -->
+					<div class="tab-content task-types pln prn pbn ptn flexbox-item-grow flexbox-parent">
+						<div role="tabpanel" class="tab-pane active flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="equipment" id="equipment_tab">
+							<table class="table fitTable mbn">
+								<thead>
+									<tr>
+										<th width="55%">Name</th>
+										<th width="20%">Qty</th>
+										<th width="25%"></th>
+									</tr>
+								</thead>
+							</table>
+							<div class="flexbox-item-grow flexbox-scroll_y">
+								<table class="table table-striped table-condensed task-items equipment-items fitTable mbs">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<!-- Equipment - get by organization -->
+							<div class="overflowFix">
+								<div class="form-group col-xs-7 pln mbn">
+									<p class="help-block alert alert-danger error" style="display:none;">Equipment Type must be selected</p>
+									<select class="form-control component_type" id="add_task_equipment_types" required></select>
+									<select class="form-control specific_items mts" id="add_task_specific_product" style="display:none"></select>
+								</div>
+								<div class="form-group col-xs-2 pln prn mbn">
+									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
+									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" required>
+								</div>
+								<div class="form-group col-xs-3 prn text-right mbn">
+									<button class="btn btn-success btn-block task_add_component task_add_equipment"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+						<div role="tabpanel" class="tab-pane flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="labour" id="labour_tab">
+							<table class="table fitTable mbn">
+								<thead>
+									<tr>
+										<th width="55%">Name</th>
+										<th width="20%">Qty</th>
+										<th width="25%"></th>
+									</tr>
+								</thead>
+							</table>
+							<div class="flexbox-item-grow flexbox-scroll_y">
+								<table class="table table-striped table-condensed task-items labour-items fitTable mbs">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<div class="overflowFix">
+								<div class="form-group col-xs-7 pln">
+									<p class="help-block alert alert-danger error" style="display:none;">Labour Type must be selected</p>
+									<select class="form-control component_type" id="add_task_labour_types" required></select>
+								</div>
+								<div class="form-group col-xs-2 pln prn">
+									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
+									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" required>
+								</div>
+								<div class="form-group col-xs-3 prn text-right">
+									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+						<!-- Product - get by organization -->
+						<div role="tabpanel" class="tab-pane flexbox-item-grow flexbox-parent flexbox-scroll_y" data-type="product" id="product_tab">
+							<table class="table fitTable mbn">
+								<thead>
+									<tr>
+										<th width="55%">Name</th>
+										<th width="20%">Qty</th>
+										<th width="25%"></th>
+									</tr>
+								</thead>
+							</table>
+							<div class="flexbox-item-grow flexbox-scroll_y">
+								<table class="table table-striped table-condensed task-items product-items fitTable mbs">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<div class="overflowFix">
+								<div class="form-group col-xs-7 pln">
+									<p class="help-block alert alert-danger error" style="display:none;">Product Type must be selected</p>
+									<select class="form-control component_type mbs" id="add_task_product_types" required></select>
+									<select class="form-control specific_items" id="add_task_specific_product" style="display:none"></select>
+								</div>
+								<div class="form-group col-xs-2 pln prn">
+									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
+									<input type="number" class="form-control component_qty" id="add_task_product_qty" min="0" value="1" required>
+									<p class="uom" style="display:none;">UOM</p>
+								</div>
+								<div class="form-group col-xs-3 prn text-right">
+									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr class="clear mtn"/>
+					
+					<p class="form-group text-right">
+						<button class="btn btn-default cancel_task"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+						<button class="btn btn-primary save_task"><span class="glyphicon glyphicon-plus"></span> Save Task</button>
+					</p>
+				</div>
+				<p class="noActivityForTasks alert alert-info flexbox-item"><b>You need to add an Activity before you can add tasks to it.</b></p>
+				<button class="btn btn-block btn-success add_task flexbox-item" disabled style="display:none;"><span class="glyphicon glyphicon-plus"></span> Add Task</button>
+			</div>
+		</div>
+	  </div>
+</div>
+
+      </div>
+      <div class="modal-footer flexbox-item">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+        <button type="button" class="btn btn-success add"><span class="glyphicon glyphicon-plus"></span> Add Plan</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

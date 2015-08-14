@@ -133,9 +133,11 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'node_modules/rainbowvis.js/rainbowvis.js', 
 				'node_modules/eventcollector/dist/eventcollector.bundle.js', 
 				'node_modules/bootstrap-slider/dist/bootstrap-slider.min.js',
+				'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
 				'node_modules/numeral/min/numeral.min.js',
 				'bower_components/Chart.js/Chart.min.js',
 				'bower_components/bootbox/bootbox.js',
+				'bower_components/jquery-sortable/source/js/jquery-sortable-min.js',
 				//'bower_components/timezone-js/src/date.js',
 				'bower_components/StickyTableHeaders/js/jquery.stickytableheaders.min.js',
 				'js/global.js',
@@ -153,7 +155,9 @@ grunt.loadNpmTasks('grunt-include-replace-more');
 				'js/sidebar.js',
 				'js/filters.js',
 				'js/organization.js',
-				'js/crop-survey-modal.js'
+				'js/crop-survey-modal.js',
+				'js/new-organization.js',
+				'js/add-template-plan-modal.js'
 				//'js/report-problem.js'
 		  ],
 		  dest: 'dist/js/includes.js'

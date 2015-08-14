@@ -13,7 +13,8 @@ plenty_admin.UI.plans.dummyProfitProj = {
 	planDto: {
 		id:111,
 		name: "dummyPlan",
-		description:"dummy plan because getting profit projection failed"
+		description:"dummy plan because getting profit projection failed",
+		state: "UNSCHEDULED"
 	},
 	fieldDto: {
 		id:1,
@@ -109,154 +110,487 @@ plenty_admin.UI.plans.init = function(){
 			}
 		}, 300);
 	});
+
+	var t = Date.now();
+	var today = plenty_admin.HELPER.formatJavaDate(t);
+	var m = ((today.obj.getUTCMonth()+1) > 9 ? today.obj.getUTCMonth()+1 : "0"+(today.obj.getUTCMonth()+1));
+	var d = (today.obj.getUTCDate() > 9 ? today.obj.getUTCDate() : "0"+today.obj.getUTCDate());
+	var todayStr = today.year+"-"+m+"-"+d;
+	var datePickers = plenty_admin.UI.plans.add_template_plan_modal
+	.find("input.datepicker");
 	
-	plenty_admin.UI.plans.add_template_plan_modal
-	.find("input.datepicker").datepicker({
+	datePickers
+	.datepicker({
 		autoclose:true, 
 		startDate: '+0d'
 	});
 	
+	datePickers
+	.datepicker('setValue', todayStr)
+	.datepicker('update');
+	
+	datePickers
+	.on('show hide',function(e){ e.stopPropagation() });
+	
 	plenty_admin.UI.plans.DOM
 	.find(".btn.add-plan-to-displayed")
 	.click(function(){
-		plenty_admin.UI.plans.add_template_plan_modal
-		.data("fieldSet", plenty_admin.UI.plans.DOM.find("tbody.fieldPlans"))
-		.modal("show");
+		var fieldSet = plenty_admin.UI.plans.DOM.find("tbody.fieldPlans");
+		var openAddTemplateModal = function(fieldSet){
+			//check if any of the fields need a plantation date
+			for(var f=0; f<fieldSet.length; f++){
+				if($(this).find(".plan").length == 0){
+					plenty_admin.UI.plans.add_template_plan_modal
+					.addClass("plantAndStart");
+				}else{
+					plenty_admin.UI.plans.add_template_plan_modal
+					.removeClass("plantAndStart");
+				}
+			}
+			
+			plenty_admin.UI.plans.add_template_plan_modal
+			.data("fieldSet", fieldSet)
+			.modal("show");
+		}
+		if(fieldSet.length === 1){
+			for(var f=0; f<fieldSet.length; f++){
+				var tbody = fieldSet[f];
+				$(tbody)
+				.find("tr.plan")
+				.each(function(){
+					console.log("plan for this tbody: ", $(this));
+					var manifestedPlanId = parseInt($(this).data("manifested_plan_id"));
+					console.log("manifestedPlanId", manifestedPlanId);
+					
+					plenty_admin.UI.plans.add_template_plan_modal
+					.find(".templatePlan-"+manifestedPlanId)
+					.addClass("hide");
+				});
+			};
+			
+			if(plenty_admin.UI.plans.add_template_plan_modal.find(".templatePlan:not(.hide)").length == 0){ //if all template plans have been hidden	
+				bootbox.dialog({
+					message: "You have added all available plan templates.",
+					className: "info",
+					buttons: {
+						danger: {
+						  label: "OK",
+						  className: "btn-primary",
+						  callback: function(){
+								plenty_admin.HELPER.hideLoadingOverlay();
+							}
+						}
+					}
+				});
+			}else{
+				openAddTemplateModal(fieldSet);
+			}
+		}else{
+			openAddTemplateModal(fieldSet);
+		}
 	});
 	
 	plenty_admin.UI.plans.add_template_plan_modal
+	.find('a[data-toggle="tab"]')
+	.on('show.bs.tab', function (e) {
+	 // e.target // newly activated tab
+	  //e.relatedTarget // previous active tab
+	  console.log("tab switch: ", $(e.target).data("target"));
+	  
+	  switch($(e.target).data("target")){
+		 case "#plans_list":
+		 	plenty_admin.UI.plans.add_template_plan_modal
+			.find("button.next")
+			.show()
+			.end()
+			.find("button.back, button.add-plan")
+			.hide();
+		 break; 
+		 
+		 case "#plans_criterea":
+		 	plenty_admin.UI.plans.add_template_plan_modal
+			.find("button.next")
+			.hide()
+			.end()
+			.find("button.back, button.add-plan")
+			.show();
+		 break; 
+	  }
+	})
+	.end()
+	.find("button.next")
+	.click(function(){
+		console.log("next");
+		plenty_admin.UI.plans.add_template_plan_modal
+		.find('.nav-tabs a[data-target="#plans_criterea"]')
+		.tab('show');
+	})
+	.end()
+	.find("button.back")
+	.click(function(){
+		plenty_admin.UI.plans.add_template_plan_modal
+		.find('.nav-tabs a[data-target="#plans_list"]')
+		.tab('show');
+	})
+	.end()
 	.find("button.add-plan")
 	.click(function(){
 		var selectedPlanTemplates = [];
 		var $this = $(this);
-		plenty_admin.UI.plans.add_template_plan_modal.find("input[type='checkbox']:checked:enabled").each(function(){
+		
+		$this.button("loading");
+		
+		plenty_admin.UI.plans.add_template_plan_modal.find("input[type='checkbox']:checked").each(function(){
 			selectedPlanTemplates.push($(this).closest("tr"));
 		});
 		
 		console.log("selectedPlanTemplates", selectedPlanTemplates);
+		
+		plenty_admin.UI.plans.add_plan_eventCollector = window.eventcollector(selectedPlanTemplates.length, 10000);
+		
+		plenty_admin.UI.plans.add_plan_eventCollector.on('alldone', function(total) {
+			plenty_admin.HELPER.hideLoadingOverlay();
+		});
+		
 		for(var t=0; t<selectedPlanTemplates.length; t++){
 			//calculateCostForPlan
 			//get cost calculation to push into plans list
 			var templatePlanDto = selectedPlanTemplates[t].data("templatePlan");
+			var autoSchedule = plenty_admin.UI.plans.add_template_plan_modal
+			.find("#autoSchedule").is(":checked");
 			
-			var rDateObj = plenty_admin.UI.plans.add_template_plan_modal
-							.find("#replaceStartingDate").data("datepicker").date;
+			var plantationDate = null;
+			var replacementStartDate = null;
 			
-			var replaceStartingDate = rDateObj.getUTCFullYear()+"-"+
-										((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
-										(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
-										//(rDateObj.getUTCHours() < 10 ? "0"+rDateObj.getUTCHours() : rDateObj.getUTCHours())+":"+
-										//(rDateObj.getUTCMinutes() < 10 ? "0"+rDateObj.getUTCMinutes() : rDateObj.getUTCMinutes());
+			function getPlantationDate(){
+				var pDateObj = plenty_admin.UI.plans.add_template_plan_modal
+				.find("#plantationDate").data("datepicker").date;
 			
-			/*			
-			var pDateObj = plenty_admin.UI.plans.add_template_plan_modal
-							.find("#plantationDate").data("datepicker").date;
+				plantationDate = pDateObj.getUTCFullYear()+"-"+
+									((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
+									(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate());
+			}
 			
-			var plantationDate = pDateObj.getUTCFullYear()+"-"+
-										((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
-										(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate())+" "+
-										(pDateObj.getUTCHours() < 10 ? "0"+pDateObj.getUTCHours() : pDateObj.getUTCHours())+":"+
-										(pDateObj.getUTCMinutes() < 10 ? "0"+pDateObj.getUTCMinutes() : pDateObj.getUTCMinutes());
-			*/
-			
+			function getReplacementStartDate(){
+				var rDateObj = plenty_admin.UI.plans.add_template_plan_modal
+				.find("#replaceStartingDate").data("datepicker").date; //selected date
+				
+				replacementStartDate = rDateObj.getUTCFullYear()+"-"+
+									((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
+									(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
+			}
+							
 			var activeFields = plenty_admin.UI.plans.add_template_plan_modal.data("fieldSet");
+			var fieldCropReplaceDatePlantationDateDtos = [];
+			
+			var dates = plenty_admin.UI.plans.get_plan_start_end_range();
+			var currentFS = activeFields[fs];
+			
 			for(var fs=0; fs<activeFields.length; fs++){
-				var currentFS = activeFields[fs];
-				var planReplacementDto = {
-										organizationId: templatePlanDto.organizationId,
-										planId: $(currentFS).data("profitProjection").planDto.id,
-										templatePlanId: templatePlanDto.id, //this should be the ID of a newly added templatePlan
-										requestingUserId: plenty_admin.DATA.userDetails.id,
-										replaceStartingDate: replaceStartingDate,
-										fieldCropToReplacePlanForId: $(currentFS).data("profitProjection").fieldCropDto.id,
-										plantationDate: $(currentFS).data("profitProjection").planDto.plantationDate,
-										commit: false
-									}
-										
-				plenty_admin.REST.changePlan(planReplacementDto, function(profitProjection){
-					plenty_admin.UI.plans.add_template_plan_modal
-					.data("fieldSet")
-					.each(function(){
-						var $projectionPlanHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection, "templatePlan");
-						
-						$projectionPlanHTML
-						.data("planReplacementDto", planReplacementDto);
-						
-						$(this)
-						.append($projectionPlanHTML);
-					});
-					
-					plenty_admin.UI.plans.add_template_plan_modal
-					.modal("hide");
+				var isAdd = $(activeFields[fs]).find(".plan.active").length == 0;
+				if(
+					isAdd
+				){
+					getPlantationDate();
+					replacementStartDate = null;
+				}else {
+					getReplacementStartDate();
+					plantationDate = null;
+				}
+				fieldCropReplaceDatePlantationDateDtos.push({
+					fieldCropId: $(activeFields[fs]).find(".field-row").data("fieldDto").id,
+					replacementStartDate:replacementStartDate,
+					plantationDate: plantationDate
 				});
 			}
+			
+			var orgId = parseInt(plenty_admin.UI.plans.add_template_plan_modal.find("#organizationList option:selected").val());
+			
+			var templatePlanApplicationDto = {
+					templatePlanId: templatePlanDto.id, 
+					organizationId: orgId,
+					fieldCropReplaceDatePlantationDateDtos: fieldCropReplaceDatePlantationDateDtos,
+					autoSchedule: autoSchedule,
+					commit: false,
+					schedulerRequestArguments: {
+						organizationId: orgId,
+						triggeringUserId: plenty_admin.DATA.userDetails.id,
+						dateRangeStart: dates.dateRangeStart,
+						dateRangeEnd: dates.dateRangeEnd,
+						planningTimeAllowed: "ONE_MINUTE" //Will become an option of [THREE_MINUTES, FIVE_MINUTES, TEN_MINUTES, HALF_HOUR, HOUR]
+					}
+			}
+			
+			console.log("templatePlanApplicationDto", templatePlanApplicationDto);
+			
+			plenty_admin.UI.plans.add_template_plan_modal
+			.modal("hide");
+			
+			plenty_admin.HELPER.showLoadingOverlay();
+									
+			plenty_admin.REST.applyTemplatePlanToFieldCrops(templatePlanApplicationDto, function(planManifestation){
+				plenty_admin.UI.plans.add_template_plan_modal
+				.data("fieldSet")
+				.each(function(){
+					var status = {
+						planning:planManifestation.planning,
+						possible:planManifestation.possible,
+						ready:planManifestation.ready
+					};
+					
+					var $projectionPlanHTML = plenty_admin.UI.plans.create_plan_projection(planManifestation, "templatePlan");
+					
+					$projectionPlanHTML
+					.data("planManifestationResultsDto", planManifestation)
+					.data("templatePlanApplicationDto", templatePlanApplicationDto);
+					
+					$(this)
+					.append($projectionPlanHTML);
+				});
+				plenty_admin.UI.plans.add_plan_eventCollector.done("template plans added");
+			});
 		}
+	})
+	.end()
+	.find("#autoSchedule")
+	.bootstrapSwitch()
+	.end()
+	.on("show.bs.modal", function(){
+		console.log("show add plan modal");
+	})
+	.on("hidden.bs.modal", function(){
+		$(this).removeClass("addPlan plantAndStart");
+		var that = $(this);
+		
+		that
+		.find(".templatePlan")
+		.removeClass("hide alert-success")
+		.find("input[type=checkbox]")
+		.prop("checked", false)
+		.end()
+		.end()
+		.find("button.add-plan")
+		.button("reset")
+		.end()
+		.find('a[data-toggle="tab"][data-target="#plans_criterea"]')
+		.parent()
+		.hide()
+		.end()
+		.end()
+		.find('a[data-toggle="tab"][data-target="#plans_list"]')
+		.trigger("click")
+		.end()
+		.find("button.next")
+		.prop("disabled", true);
+		
+		var to = setTimeout(function(){
+			plenty_admin.UI.plans.add_template_plan_modal
+			.find("button.add-plan")
+			.prop('disabled', true);
+		}, 50);
 	});
 }
 
-plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
-	var plan = profitProjection.planDto;
-	var field = profitProjection.fieldDto;
-	var fieldCrop = profitProjection.fieldCropDto;
+plenty_admin.UI.plans.get_plan_start_end_range = function(){
+	var rsDate = Date.now() + -180*24*3600*1000; // date 5 days ago in milliseconds UTC
+	var dateRangeStartObj = new Date(rsDate);
+
+	var dateRangeStart = dateRangeStartObj.getUTCFullYear()+"-"+
+							((dateRangeStartObj.getUTCMonth()+1) < 10 ? "0"+(dateRangeStartObj.getUTCMonth()+1) : dateRangeStartObj.getUTCMonth()+1)+"-"+
+							(dateRangeStartObj.getUTCDate() < 10 ? "0"+dateRangeStartObj.getUTCDate() : dateRangeStartObj.getUTCDate());
+	
+	var reDate = Date.now() + 180*24*3600*1000; // date 5 days ago in milliseconds UTC
+	var dateRangeEndObj = new Date(reDate);
+	var dateRangeEnd = dateRangeEndObj.getUTCFullYear()+"-"+
+							((dateRangeEndObj.getUTCMonth()+1) < 10 ? "0"+(dateRangeEndObj.getUTCMonth()+1) : dateRangeEndObj.getUTCMonth()+1)+"-"+
+							(dateRangeEndObj.getUTCDate() < 10 ? "0"+dateRangeEndObj.getUTCDate() : dateRangeEndObj.getUTCDate());
+							
+	var dates = {
+		dateRangeEnd: dateRangeEnd,
+		dateRangeStart: dateRangeStart
+	};
+	
+	return dates;
+}
+
+plenty_admin.UI.plans.get_state_icon_class = function(state){
+	var statusClass = "thumbs-down";
+	switch(state){
+			case "SCHEDULED":
+				statusClass = "calendar";
+			break;
+			case "IN_PROGRESS":
+				statusClass = "hourglass-half";
+			break;
+			case "FINISHED":
+				statusClass = "flag-checkered";
+			break;
+			case "REPLACED":
+				statusClass = "exchange";
+			break;
+			case "UNSCHEDULED":
+				statusClass = "calendar-minus-o";
+			break;
+			case "SCHEDULING":
+				statusClass = "hourglass-half";
+			break;
+			case "CONFLICT":
+				statusClass = "hand-stop-o";
+			break;
+		}
+	return statusClass;
+}
+
+plenty_admin.UI.plans.create_plan_projection = function(planData, type){
+	//console.log("planData", planData);
+	switch (type){
+		case "plan":
+			var drilldownData = {
+				plan: planData.planDto,
+				field: planData.fieldDto,
+				fieldCrop: planData.fieldCropDto,
+				activities:planData.activityListDetailedFinancesDto,
+				profitProjection:planData,
+				manifestedPlan: {manifestedFromId: planData.planDto.manifestedFromId}
+			}
+		break;
 		
+		case "templatePlan":
+			var drilldownData = {
+				plan: planData.planManifestationResults[0].profitProjectionDto.planDto,
+				field: planData.planManifestationResults[0].profitProjectionDto.fieldDto,
+				fieldCrop: planData.planManifestationResults[0].profitProjectionDto.fieldCropDto,
+				activities:planData.planManifestationResults[0].profitProjectionDto.activityListDetailedFinancesDto,
+				profitProjection:planData.planManifestationResults[0].profitProjectionDto,
+				manifestedPlan: planData.planManifestationResults[0].manifestedPlan
+			}
+		break;
+	}
+	
+	var statusClass = "ready";
+	var active = false;
+	//calculate status
+	if(drilldownData.plan.state){
+		switch(drilldownData.plan.state){
+			case "SCHEDULED":
+				active = true;
+				statusClass = "calendar";
+			break;
+			case "IN_PROGRESS":
+				active = true;
+				statusClass = "hourglass-half";
+			break;
+			case "FINISHED":
+				active = true;
+				statusClass = "flag-checkered";
+			break;
+			case "REPLACED":
+				active = false;
+				statusClass = "exchange";
+			break;
+			case "UNSCHEDULED":
+				active = false;
+				statusClass = "calendar-minus-o";
+			break;
+			case "SCHEDULING":
+				active = false;
+				statusClass = "hourglass-half";
+			break;
+			case "CONFLICT":
+				active = false;
+				statusClass = "hand-stop-o";
+			break;
+		}
+	}
+	
+	var statePossibilities = "UNSCHEDULED SCHEDULING SCHEDULED CONFLICT IN_PROGRESS FINISHED REPLACED";
+	
 	var $planHTML = $([
-			"<tr data-id='"+plan.id+"' class='plan"+(plan.active ? " active" : "")+" pointer "+type+"' title='View Plan Details'>",
-				"<td width='6%' class='activeToggle'></th>",
-				"<td width='10.66%'>"+plan.name+"</th>",
-				"<td width='16.66%'>"+plan.description+"</th>",
-				"<td width='8%'>"+plan.startTime+"</th>",
-				"<td width='12.66%'>"+numeral(profitProjection.revenue).format('$0,0.00')+"</th>",
-				"<td width='12.66%'>"+numeral(profitProjection.expense).format('$0,0.00')+"</th>",
-				"<td width='16.66%'>"+numeral(profitProjection.profit).format('$0,0.00')+"</th>",
-				"<td width='16.66%' class='text-right'>"+numeral(profitProjection.profitPerAcre).format('$0,0.00')+"</th>",
+			"<tr data-id='"+drilldownData.plan.id+"' data-manifested_plan_id='"+drilldownData.manifestedPlan.manifestedFromId+"' class='plan"+(active ? " active" : "")+" pointer "+type+" "+drilldownData.plan.state+"' title='View Plan Details'>",
+				"<td width='7%' class='status text-center' title='This plan is currently "+drilldownData.plan.state+"'><i class='fa fa-"+statusClass+"'></i><br/><span class='statusText'>"+drilldownData.plan.state+"</span></i></td>",
+				"<td width='19%'>"+drilldownData.plan.name+"<i class='glyphicon glyphicon-info-sign desc mls' title='"+drilldownData.plan.description+"' data-toggle='tooltip' data-placement='top'></i></td>",
+				"<td width='12%'>"+numeral(drilldownData.profitProjection.revenue).format('$0,0.00')+"</td>",
+				"<td width='12%'>"+numeral(drilldownData.profitProjection.expense).format('$0,0.00')+"</td>",
+				"<td width='12%'>"+numeral(drilldownData.profitProjection.profit).format('$0,0.00')+"</td>",
+				//"<td width='20%'>"+drilldownData.plan.description+"</td>",
+				"<td width='12%'>"+plenty_admin.HELPER.formatJavaDate(drilldownData.plan.startDate).USDate+"</td>",
+				"<td width='18%' class='useplan'></td>",
+				"<td width='8%' class='text-right profitPerAcre'>"+numeral(drilldownData.profitProjection.profitPerAcre).format('$0,0.00')+"</td>",
 			"</tr>"
-		].join("")).data("profitProjection", profitProjection);
+		].join("")).data("drilldownData", drilldownData);
 		
-		var $activeToggle = $("<i class=' glyphicon glyphicon-ok active "+(plan.active ? "true" : "false")+"' title='Use this plan' data-toggle='tooltip' data-placement='top'></i>");
-		$activeToggle
-		.click(function(e){
-			e.stopPropagation();
-			var $this = $(this);
-			var profitProjection = $this.closest("tr").data("profitProjection");
+		if(drilldownData.plan.state == "UNSCHEDULED"){
+			var $usePlan = $("<button class='btn btn-primary btn-sm' title='Use this plan'><span class='glyphicon glyphicon-ok'></span> Use Plan</button>");
 			
-			if($(this).hasClass("true")){
-				//deactivate this plan from this field
-				$(this)
-				.removeClass("true")
-				.addClass("false")
-				.closest("tr.plan")
-				.removeClass("active");
-			}else{
+			$usePlan
+			.click(function(e){
+				e.stopPropagation();
+				var $this = $(this);
+				var drilldownData = $this.closest("tr").data("drilldownData");
+				var templatePlanApplicationDto = $this.closest("tr").data("templatePlanApplicationDto");
+				var planManifestationResultsDto = $this.closest("tr").data("planManifestationResultsDto");
+				var fieldRow = $this.closest("tbody").find(".field-row");
+				var fieldDto = fieldRow.data("fieldDto");
+				var fieldCropDto = fieldRow.data("fieldCropDto");
+				console.log("fieldDto", fieldDto);
+				console.log("fieldCropDto", fieldCropDto);
+				
+				try{
+					var currentPlanName = $this.closest("tbody").find(".plan.active").data("drilldownData").plan.name;
+				}catch(err){
+					var currentPlanName = null;
+				}
+				var newPlanName =  drilldownData.plan.name;
+				var manifestedPlanId = $this.closest("tr").data("manifested_plan_id");
+				
+				if(!templatePlanApplicationDto){
+					var dates = plenty_admin.UI.plans.get_plan_start_end_range();
+					fieldCropReplaceDatePlantationDateDtos = [{
+						fieldCropId: drilldownData.fieldCrop.id,
+						replacementStartDate:drilldownData.plan.startDate,
+						plantationDate: null
+					}];
+					templatePlanApplicationDto = {
+							templatePlanId: manifestedPlanId, 
+							organizationId: drilldownData.plan.organizationId,
+							fieldCropReplaceDatePlantationDateDtos: fieldCropReplaceDatePlantationDateDtos,
+							autoSchedule: false,
+							commit: true,
+							schedulerRequestArguments: {
+								organizationId: drilldownData.plan.organizationId,
+								triggeringUserId: plenty_admin.DATA.userDetails.id,
+								dateRangeStart: dates.dateRangeStart,
+								dateRangeEnd: dates.dateRangeEnd,
+								planningTimeAllowed: "ONE_MINUTE" //Will become an option of [THREE_MINUTES, FIVE_MINUTES, TEN_MINUTES, HALF_HOUR, HOUR]
+							}
+					}
+				}
+				
+				if(!currentPlanName){
+					var planManifestationResult = $.grep(planManifestationResultsDto.planManifestationResults, function(plan, p){
+						return plan.manifestedPlan.fieldCropId === drilldownData.fieldCrop.id;
+					});
+					
+					//console.log("planManifestationResult", planManifestationResult);
+					var newPlanPlantationDate = planManifestationResult[0].manifestedPlan.plantationDate;
+					var changeMsg = 'Are you sure you want to make</p><h4>'+newPlanName+'</h4><p>the active plan for</p><h4>'+fieldDto.name+'</h4><p>starting on</p><h4>'+newPlanPlantationDate+'?';
+				}else{
+					try{
+						var newPlanChangeDate = templatePlanApplicationDto.fieldCropReplaceDatePlantationDateDtos[0].replacementStartDate;
+						var changeMsg = 'Are you sure you want to change</p><h4>'+currentPlanName+'</h4><p>for</p><h4>'+newPlanName+'</h4><p>starting on</p><h4>'+newPlanChangeDate+'?';
+					}catch(err){
+						console.error("current plans dfo not have a templatePlanApplicationDto");
+						var changeMsg = 'Are you sure you want to change</p><h4>'+currentPlanName+'</h4><p>for</p><h4>'+newPlanName+'?</h4>';
+					}
+				}
+				
 				
 				var $modalBody = 
 					$('<div class="row">' +
 						'<div class="col-md-12"> ' +
-							'<p>Are you sure you want to change Plan X for Plan Y starting on MM/DD/YYYY?</p>'+
+							'<p>'+changeMsg+'</h4>'+
 						'</div> '+
 					'</div>');
-				/*
-				var $modalBody = 
-					$('<div class="row">' +
-					'<div class="col-md-12"> ' +
-						'<form>' +
-							'<div class="form-group col-md-12 mln">' +
-								'<label class="col-md-12 control-label" for="replaceStartingDate">Replace Start Date</label>' +
-								'<div class="col-md-12">' +
-									'<input id="replaceStartingDate" name="replaceStartingDate" type="text" placeholder="Pick Start Date" class="datepicker form-control input-md">' +
-								'</div>' +
-							'</div>' +
-							
-							'<div class="form-group col-md-6 mrn">' +
-								'<label class="col-md-12 control-label" for="plantationDate">Plantation Date</label>' +
-								'<div class="col-md-12">' +
-									'<input id="plantationDate" name="plantationDate" type="text" placeholder="Pick Plantation Date" class="datepicker form-control input-md">' +
-								'</div>' +
-							'</div>' +
-							
-						'</form>'+
-					'</div> '+
-				'</div>');
-				*/
 				
 				//warn the user about changing plans
 				bootbox.dialog({
@@ -275,60 +609,69 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 							callback: function(){
 								plenty_admin.HELPER.showLoadingOverlay();
 								
-								console.log("profitProjection", profitProjection);
-								/*	
-								var rDateObj = $modalBody.find("#replaceStartingDate").data("datepicker").date;
+								console.log("templatePlanApplicationDto", templatePlanApplicationDto);
+								templatePlanApplicationDto.commit = true;
 								
-								var replaceStartingDate = rDateObj.getUTCFullYear()+"-"+
-															((rDateObj.getUTCMonth()+1) < 10 ? "0"+(rDateObj.getUTCMonth()+1) : rDateObj.getUTCMonth()+1)+"-"+
-															(rDateObj.getUTCDate() < 10 ? "0"+rDateObj.getUTCDate() : rDateObj.getUTCDate());
-															//(rDateObj.getUTCHours() < 10 ? "0"+rDateObj.getUTCHours() : rDateObj.getUTCHours())+":"+
-															//(rDateObj.getUTCMinutes() < 10 ? "0"+rDateObj.getUTCMinutes() : rDateObj.getUTCMinutes());
-								
-												
-								var pDateObj = $modalBody.find("#plantationDate").data("datepicker").date;
-								
-								var plantationDate = pDateObj.getUTCFullYear()+"-"+
-															((pDateObj.getUTCMonth()+1) < 10 ? "0"+(pDateObj.getUTCMonth()+1) : pDateObj.getUTCMonth()+1)+"-"+
-															(pDateObj.getUTCDate() < 10 ? "0"+pDateObj.getUTCDate() : pDateObj.getUTCDate())+" "+
-															(pDateObj.getUTCHours() < 10 ? "0"+pDateObj.getUTCHours() : pDateObj.getUTCHours())+":"+
-															(pDateObj.getUTCMinutes() < 10 ? "0"+pDateObj.getUTCMinutes() : pDateObj.getUTCMinutes());
-															
-								console.log("replaceStartingDate", replaceStartingDate);
-								console.log("plantationDate", plantationDate);
-								*/
-								
-								var planReplacementDto = {
-									organizationId: profitProjection.planDto.organizationId,
-									planId: profitProjection.planDto.id,
-									templatePlanId: profitProjection.planDto.id, //this should be the ID of a newly added templatePlan
-									requestingUserId: plenty_admin.DATA.userDetails.id,
-									replaceStartingDate: replaceStartingDate,
-									fieldCropToReplacePlanForId: profitProjection.fieldCropDto.id, 
-									plantationDate: null,
-									commit: true
-								}
-								
-								console.log("planReplacementDto", planReplacementDto);
-								
-								$this.closest("tr.plan").data("planReplacementDto", planReplacementDto);
-								
-								plenty_admin.REST.changePlan(planReplacementDto, function(){
+								plenty_admin.REST.applyTemplatePlanToFieldCrops(templatePlanApplicationDto, function(planManifestationResultsDto){
 									//remove active class from other plans 
-									$this
+									var activePlan = $this
 									.closest("tbody")
-									.find("tr.plan")
-									.removeClass("active")
-									.find("i.active") 
-									.removeClass("true")
-									.addClass("false");
+									.find("tr.plan.active");
+									
+									var newState = planManifestationResultsDto.planManifestationResults[0].profitProjectionDto.planDto.state;
+									var previousPlanState = (
+																planManifestationResultsDto.planManifestationResults[0].replacedPlan ?
+																planManifestationResultsDto.planManifestationResults[0].replacedPlan.state :
+																null
+															)
+									
+									if(planManifestationResultsDto.planManifestationResults[0].profitProjectionDtoForReplacedPlan){
+										var previousPlanProfitProj = planManifestationResultsDto.planManifestationResults[0].profitProjectionDtoForReplacedPlan;
+										var drilldownData = {
+											plan: previousPlanProfitProj.planDto,
+											field: previousPlanProfitProj.fieldDto,
+											fieldCrop: previousPlanProfitProj.fieldCropDto,
+											activities:previousPlanProfitProj.activityListDetailedFinancesDto,
+											profitProjection:previousPlanProfitProj,
+											manifestedPlan: {manifestedFromId: previousPlanProfitProj.planDto.manifestedFromId}
+										};
+									}
+									
+															
+									if(previousPlanState){
+										activePlan
+										.removeClass("active "+statePossibilities)
+										.addClass(previousPlanState)
+										.data("profitProjection", previousPlanProfitProj)
+										.data("drilldownData", drilldownData)
+											.find("td.status")
+											.removeClass(statePossibilities)
+											.addClass(previousPlanState)
+											.prop("title", "This plan is currently "+previousPlanState)
+												.find("i.fa")
+												.prop("class", "")
+												.addClass("fa fa-"+plenty_admin.UI.plans.get_state_icon_class(previousPlanState))
+											.end()
+												.find("span.statusText")
+												.text(previousPlanState);
+									}
 									
 									//enable this plan for this field
 									$this
-									.removeClass("false")
-									.addClass("true")
-									.closest("tr.plan")
-									.addClass("active");
+										.closest("tr.plan")
+										.removeClass(statePossibilities)
+										.addClass("active "+newState)
+											.find("i.fa")
+												.prop("class", "")
+												.addClass("fa fa-"+plenty_admin.UI.plans.get_state_icon_class(newState))
+											.end()
+											.find("span.statusText")
+											.text(newState)
+											.closest("td")
+											.prop("title", "This plan is currently "+newState);
+											
+									$this
+									.remove();
 									
 									plenty_admin.HELPER.hideLoadingOverlay();
 								});
@@ -336,17 +679,22 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 						}
 					}
 				});
-			}
-			return false;
-		});
+				return false;
+			});
+			
+			$planHTML
+			.find("td.useplan")
+			.append($usePlan);
+		}
 		
 		$planHTML
-		.find("td.activeToggle")
-		.append($activeToggle)
+		.find("i.desc")
+		.tooltip()
 		.end()
 		.click(function(e){
 			e.stopPropagation();
 			console.log("clicked a plan");
+			var drilldownData = $(this).data("drilldownData");
 			
 			//build the breadcrumb trail object
 			var plan_breadcrumb = [
@@ -366,7 +714,7 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 				},
 				{
 					class:"active",
-					name:field.name+", "+plan.name,
+					name:drilldownData.field.name+", "+drilldownData.plan.name,
 					clickHandler:null
 				}
 			];
@@ -377,115 +725,205 @@ plenty_admin.UI.plans.create_plan_projection = function(profitProjection, type){
 			.end()
 			.prepend(plenty_admin.UI.build_breadcrumb_trail(plan_breadcrumb));
 			
-			plenty_admin.UI.plan.init(profitProjection, $(this).hasClass("templatePlan"));
+			plenty_admin.UI.plan.init(drilldownData);
 		});
 		
-		return $planHTML;
-}
-
-plenty_admin.UI.plans.populate = function(){
-	plenty_admin.UI.plans.plansTable
-	.find("tbody")
-	.remove();
-		
-		var legendItems = {};
-		plenty_admin.UI.plans.allCropTypes = [];
-		
-	for(var f=0; f<plenty_admin.DATA.plans.length; f++){
-		var profitProjection = plenty_admin.DATA.plans[f];
-		var plan = profitProjection.planDto;
-		var field = profitProjection.fieldDto;
-		var fieldCrop = profitProjection.fieldCropDto;
-			
-		if(!legendItems[fieldCrop.cropTypeId]){
-			//plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
-			plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(legendItems).length > 0 ? Object.keys(legendItems).length : 100));
-			legendItems[fieldCrop.cropTypeId] = {
-									color: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
-									colour: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
-									label : plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name
-								};
+		//add polling to this plan if it is currently planning to check status
+		if(statusClass === "planning"){
+			$planHTML.checkStatus = setTimeout(function(){
+				plenty_admin.REST.getPlan(profitProjection.planDto.id, function(plan){
+					console.log("got plan from polling: ", plan);
+				});
+			}, 5000);
 		}
 		
-		//add a legend to the map based on the filtered fields
-		console.log("legendItems: ", legendItems);
+		return $planHTML;
+};
+
+plenty_admin.UI.plans.create_field_tbody = function(field, profitProjection){
+	var $tbody = $("<tbody class='fieldPlans fieldPlans_"+field.id+"'/>");
+	//$tbody.data("profitProjection", profitProjection);
+	return $tbody;
+}
+
+plenty_admin.UI.plans.create_field_row = function(field, fieldCrop, legendItems){
+	$fieldHTML = $([
+			"<tr class='field-row field-row-"+field.id+" category pointer' data-id='"+field.id+"' title='View the plan summary for this field'>",
+				"<td width='7%' class='fieldPreview'><img src='' class='pointer pull-left field_thumb_"+field.id+"'/></th>",
+				"<td width='19%'>",
+					"<h4 class=''>"+field.name+"</h4>",
+					"<span class='fieldDetails capitalize'>"+field.acres+"ac, "+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</span>",
+				"</td>",
+				"<td width='12%' class='revenue'></td>",
+				"<td width='12%' class='expense'></td>",
+				"<td width='12%' class='profit'></td>",
+				"<td width='12%' class='startDate'></td>",
+				"<td width='18%'>",
+					"<button class='btn btn-primary btn-inverted add-field-plan' title='Add plan(s) to compare cost projections'>",
+						"<span class='glyphicon glyphicon-plus'></span>Add Plan(s)",
+					"</button>",
+				"</td>",
+				"<td width='8%' class='text-right profitPerAcre' class='profitPerAcre'></td>",
+			"</tr>"
+	].join(""));
+	
+	$fieldHTML
+	.data("fieldDto", field)
+	.data("fieldCropDto", fieldCrop)
+	.data("revenue", 0)
+	.data("expense", 0)
+	.data("profit", 0)
+	.data("profitPerAcre", 0)
+	.click(function(e){
+		e.stopPropagation();
+		plenty_admin.UI.filters.toggleFilters("close");	
+		plenty_admin.UI.plans.farms_quickfilter.popover("hide");
+		plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
+		var $fieldRow = $(this);
+		var fieldDto = $fieldRow.data("fieldDto");
 		
-		if(plenty_admin.UI.plans.plansTable.find(".fieldPlans_"+field.id).length == 0){
-			var $tbody = $("<tbody class='fieldPlans fieldPlans_"+field.id+"'/>");
-			$tbody.data("profitProjection", profitProjection);
-			$fieldHTML = $([
-					"<tr class='field-row category'>",
-						"<td class='fieldPreview'><img src='' class='pointer'/></td>",
-						"<td colspan='6'><h4 class='mbn mtn'>"+field.name+"</h4><span class='fieldDetails capitalize'>"+field.acres+"ac, "+plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name+"</span></td>",
-						"<td>",
-							"<button class='btn btn-primary btn-inverted pull-right add-field-plan' title='Add a plan template to compare cost projections'>",
-								"<span class='glyphicon glyphicon-plus'></span>Add Plan Template",
-							"</button>",
-						"</td>",
-					"</tr>"
-			].join(""));
-			
-			$fieldHTML
-			.data("fieldDto", field)
-			.click(function(){
-				plenty_admin.UI.filters.toggleFilters("close");	
-				plenty_admin.UI.plans.farms_quickfilter.popover("hide");
-				plenty_admin.UI.plans.orgs_quickfilter.popover("hide");
-			})
-			.find("button.add-field-plan")
-			.click(function(){
-				console.log("add field plan");
-				var $this = $(this);
-				
-				plenty_admin.UI.plans.add_template_plan_modal
-				.data("fieldSet", $this.closest("tbody.fieldPlans"))
-				.modal("show");
+		console.log("clicked a field");
+		var drilldownDatasArray = [];
+		
+		var activePlansForField = $fieldRow.closest("tbody").find("tr.plan:not(.UNSCHEDULED)");
+		activePlansForField
+		.each(function(){
+			drilldownDatasArray.push($(this).data("drilldownData"));
+		});
+		
+		if(activePlansForField.length == 0){
+			bootbox.dialog({
+				message: "There are currently no active plans for this field.",
+				className: "info",
+				buttons: {
+					danger: {
+					  label: "OK",
+					  className: "btn-primary",
+					  callback: function(){
+							plenty_admin.HELPER.hideLoadingOverlay();
+						}
+					}
+				}
 			});
+		}else{
+			//build the breadcrumb trail object
+			var plan_breadcrumb = [
+				{
+					class:"back",
+					name:"Plans",
+					clickHandler:function(){
+						plenty_admin.UI.currentScreen
+						.fadeOut("normal", function(){
+							plenty_admin.UI.plan.clear();
+							plenty_admin.UI.currentScreen = plenty_admin.UI.plans.DOM;
+							plenty_admin.UI.currentScreen
+							.fadeIn("normal");
+						});
+						return false;
+					}
+				},
+				{
+					class:"active",
+					name:fieldDto.name+" Plan Summary",
+					clickHandler:null
+				}
+			];
 			
-			plenty_admin.UI.plans.plansTable
-			.append($fieldHTML);
+			plenty_admin.UI.plan.DOM
+			.find(".breadcrumb-trail")
+			.remove()
+			.end()
+			.prepend(plenty_admin.UI.build_breadcrumb_trail(plan_breadcrumb));
 			
-			$tbody
-			.append($fieldHTML);
-			
-			//create field thumbnail static map url
-			plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(profitProjection.fieldDto.id, 2, function(boundaries, fieldId, cropTypeId){
-				//console.log("got boundaries for field: ", boundaries, fieldId);
-				
-				var bounds = new google.maps.LatLngBounds();	
-				boundaries.forEach(function(xy, i) {
-					bounds.extend(new google.maps.LatLng(xy.latitude, xy.longitude));
-				});
-				
-				var fieldCenter = bounds.getCenter();
-				var cropColor = legendItems[cropTypeId].color.substring(legendItems[cropTypeId].color.indexOf('#')+1);
-				var pathString = "color:white|weight:2|fillcolor:0x"+cropColor;
-				boundaries.forEach(function(boundary, b){
-					pathString += "|" + boundary.latitude+","+boundary.longitude
-				});
-				
-				staticMapParams = {
-					center:fieldCenter.lat()+","+fieldCenter.lng(),
-					size:"110x110",
-					maptype:"hybrid",
-					zoom: plenty_admin.MAPS.getBoundsZoomLevel(bounds, {width:110, height:110}),
-					path:pathString
-				};
-				
-				var thumb_url = plenty_admin.MAPS.get_static_maps_url(staticMapParams);
-				
-				var field_thumb = plenty_admin.UI.plans.plansTable.find(".fieldPlans.fieldPlans_"+fieldId+" .fieldPreview img");
-				
-				set_thumb_url(thumb_url);
-				
+			plenty_admin.UI.plan.init(drilldownDatasArray);
+		}
+	})
+	.find("button.add-field-plan")
+	.click(function(e){
+		console.log("add field plan");
+		e.stopPropagation();
+		var $this = $(this);
+		var replacePlan = $this.closest("tbody").find(".plan.active").length == 1;
+		
+		if(replacePlan){
+			plenty_admin.UI.plans.add_template_plan_modal
+			.removeClass("addPlan");
+		}else{
+			plenty_admin.UI.plans.add_template_plan_modal
+			.addClass("addPlan");
+		}
+		
+		plenty_admin.UI.plans.add_template_plan_modal
+		.data("fieldSet", $this.closest("tbody.fieldPlans"))
+		.modal("show");
+	});
+	
+	//create field thumbnail static map url
+	plenty_admin.REST.fields.getAllBoundaryPointsByFieldAndBoundaryType(field.id, 2, function(boundaries, fieldId, cropTypeId){
+		var bounds = new google.maps.LatLngBounds();	
+		boundaries.forEach(function(xy, i) {
+			bounds.extend(new google.maps.LatLng(xy.latitude, xy.longitude));
+		});
+		
+		var fieldCenter = bounds.getCenter();
+		var cropColor = legendItems[cropTypeId].color.substring(legendItems[cropTypeId].color.indexOf('#')+1);
+		var pathString = "color:white|weight:2|fillcolor:0x"+cropColor;
+		boundaries.forEach(function(boundary, b){
+			pathString += "|" + boundary.latitude+","+boundary.longitude
+		});
+		
+		staticMapParams = {
+			center:fieldCenter.lat()+","+fieldCenter.lng(),
+			size:"110x110",
+			maptype:"hybrid",
+			zoom: plenty_admin.MAPS.getBoundsZoomLevel(bounds, {width:110, height:110}),
+			path:pathString
+		};
+		
+		var thumb_url = plenty_admin.MAPS.get_static_maps_url(staticMapParams);
+		
+		var field_thumb = plenty_admin.UI.plans.plansTable.find(".fieldPlans.fieldPlans_"+fieldId+" .fieldPreview img");
+		
+		set_thumb_url(thumb_url, fieldId);
+		
+		field_thumb
+		.popover({
+				content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
+				title: field_thumb.closest("tr").data("fieldDto").name,
+				html:true,
+				id:"",
+				placement:"right",
+				container:"body"
+		})
+		.on("mouseenter", function () {
+			var _this = this;
+			$(this).popover("show");
+			$(".popover").on("mouseleave", function () {
+				$(_this).popover('hide');
+			});
+		}).on("mouseleave", function () {
+			var _this = this;
+			setTimeout(function () {
+				if (!$(".popover:hover").length) {
+					$(_this).popover("hide");
+				}
+			}, 300);
+		});
+		
+		function set_thumb_url(thumb_url, fieldId){
+			if(field_thumb.length > 0){
 				field_thumb
-				.popover({
-						content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
-						title: field_thumb.closest("tr").data("fieldDto").name,
-						html:true,
-						id:"",
-						placement:"top",
-						container:"body"
+				.prop("src", thumb_url);
+				
+				var field_thumb_clone = field_thumb.clone(true, true);
+				field_thumb_clone
+					.popover({
+					content:"<img src='"+thumb_url+"' style='width:110px; height:110px;'/>",
+					title: field_thumb.closest("tr").data("fieldDto").name,
+					html:true,
+					id:"",
+					placement:"right",
+					container:"body"
 				})
 				.on("mouseenter", function () {
 					var _this = this;
@@ -502,29 +940,122 @@ plenty_admin.UI.plans.populate = function(){
 					}, 300);
 				});
 				
-				function set_thumb_url(thumb_url){
-					if(field_thumb.length > 0){
-						field_thumb
-						.prop("src", thumb_url);
-					}else{
-						var to = setTimeout(function(){
-							console.log("checking field dom element");
-							set_thumb_url(thumb_url);
-						}, 300);
-					}
-				}
-			}, fieldCrop.cropTypeId);
-		}else{
-			var $tbody = plenty_admin.UI.plans.plansTable.find(".fieldPlans_"+field.id);
+				var cloneContainer = field_thumb
+				.closest(".flexbox-scroll_y")
+				.find(".floating-header .field-row-"+fieldId+" .fieldPreview");
+				
+				cloneContainer
+				.find("img.field_thumb_"+fieldId)
+				.remove();
+				
+				cloneContainer
+				.append(field_thumb_clone);
+			}else{
+				var to = setTimeout(function(){
+					console.log("checking field dom element");
+					set_thumb_url(thumb_url);
+				}, 300);
+			}
+		}
+	}, fieldCrop.cropTypeId);
+	
+	return $fieldHTML;
+};
+
+plenty_admin.UI.plans.populate = function(){
+	plenty_admin.UI.plans.plansTable
+	.find("tbody")
+	.remove();
+		
+	var legendItems = {};
+	var $fieldHTML = null;
+	plenty_admin.UI.plans.allCropTypes = [];
+	
+	//loop fields in the filter and add tbody elements for each field
+	for(var f=0; f<plenty_admin.DATA.fieldCrops.length; f++){
+		var fieldCrop = plenty_admin.DATA.fieldCrops[f];
+		var field = fieldCrop.fieldDto;
+		console.log("field", field);
+		
+		var $fieldTBody = plenty_admin.UI.plans.create_field_tbody(field);
+		plenty_admin.UI.plans.plansTable.append($fieldTBody);
+	}
+	
+	//loop fields in the filter and add tbody elements with the field row for each
+	for(var f=0; f<plenty_admin.DATA.fieldCrops.length; f++){
+		var fieldCrop = plenty_admin.DATA.fieldCrops[f];
+		var field = fieldCrop.fieldDto;
+		console.log("fieldCrop", fieldCrop);
+		console.log("field", field);
+		
+		if(!legendItems[fieldCrop.cropTypeId]){
+			//plenty_admin.UI.map.allCropTypes[field.cropTypeName.replace(/ /g, "")] = field.cropTypeName;
+			plenty_admin.UI.brand_palette.setNumberRange(0, (Object.keys(legendItems).length > 0 ? Object.keys(legendItems).length : 100));
+			legendItems[fieldCrop.cropTypeId] = {
+									color: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
+									colour: "#"+plenty_admin.UI.brand_palette.colourAt(Object.keys(legendItems).length), 
+									label : plenty_admin.DATA.cropTypes[fieldCrop.cropTypeId].name
+								};
 		}
 		
-		var $planHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection);
-		$tbody
-		.append($planHTML);
+		//add a legend to the map based on the filtered fields
+		console.log("legendItems: ", legendItems);
+		
+		$fieldHTML = plenty_admin.UI.plans.create_field_row(field, fieldCrop, legendItems);
 		
 		plenty_admin.UI.plans.plansTable
-		.append($tbody);
+		.find("tbody.fieldPlans_"+field.id)
+		.prepend($fieldHTML);
 	}
+	
+	//loop the field plans and add them to the appropriate tbody element
+	for(var p=0; p<plenty_admin.DATA.plans.length; p++){
+		var profitProjection = plenty_admin.DATA.plans[p];
+		var plan = profitProjection.planDto;
+		var field = profitProjection.fieldDto;
+		var fieldCrop = profitProjection.fieldCropDto;
+		
+		var $planHTML = plenty_admin.UI.plans.create_plan_projection(profitProjection, "plan");
+		
+		//store the original object on the DOM element
+		$planHTML
+		.data("profitProjection", profitProjection);
+		
+		var tbody = plenty_admin.UI.plans.plansTable
+		.find("tbody.fieldPlans_"+field.id);
+		
+		tbody
+		.append($planHTML);
+		
+		var fieldRow = tbody.find("tr.field-row");
+		
+		//calculate field totals from plans
+		fieldRow
+		.data("revenue", fieldRow.data("revenue") + profitProjection.revenue)
+		.data("expense", fieldRow.data("expense") + profitProjection.expense)
+		.data("profit", fieldRow.data("profit") + profitProjection.profit)
+		.data("profitPerAcre", fieldRow.data("profitPerAcre") + profitProjection.profitPerAcre);
+	}
+	
+	plenty_admin.UI.plans.plansTable
+	.find("tr.field-row")
+	.each(function(field, f){
+		console.log("field row: ", $(this), f);
+		$(this)
+		.find(".profit")
+		.text(numeral($(f).data("profit")).format('$0,0.00'))
+		.end()
+		.find(".expense")
+		.text(numeral($(f).data("expense")).format('$0,0.00'))
+		.end()
+		.find(".revenue")
+		.text(numeral($(f).data("revenue")).format('$0,0.00'))
+		.end()
+		.find(".profitPerAcre")
+		.text(numeral($(f).data("profitPerAcre")).format('$0,0.00'));
+	});
+	
+	plenty_admin.HELPER.initFloatingHeaders(plenty_admin.UI.plans.plansTable, ".field-row", "#plans-wrapper");
 
 	plenty_admin.HELPER.hideLoadingOverlay();
 }
@@ -537,7 +1068,40 @@ plenty_admin.REST.getPlansFiltered = function(filterId){
 		function(plans){
 			console.log("got plans filtered: ", plans().data);
 			plenty_admin.DATA.plans = plans().data;
-			plenty_admin.UI.plans.populate();
+			plenty_admin.UI.plans.eventCollector.done("plans filtered");
+		},
+		function(err){
+			console.error("getting filtered plans: ", err);
+		}
+	);
+}
+
+//get field and fieldCrops filtered
+plenty_admin.REST.getFieldCropsByYearFiltered = function(filterId, year){
+	plenty_admin.REST.fieldCropsByYearFiltered = plenty_admin.api.one("filters/getFieldCropsByYearFiltered/"+year, filterId);
+	plenty_admin.REST.fieldCropsByYearFiltered.get()
+	.then(
+		function(fieldCrops){
+			console.log("got field crops by year filtered: ", fieldCrops().data);
+			plenty_admin.DATA.fieldCrops = fieldCrops().data;
+			plenty_admin.UI.plans.eventCollector.done("field crops by year filtered");
+		},
+		function(err){
+			console.error("getting filtered fieldCrops by year failed: ", err);
+		}
+	);
+}
+
+//get plans applicable to this filter
+plenty_admin.REST.getPlan = function(planId, callback){
+	plenty_admin.REST.plan = plenty_admin.api.one("plan/getPlan", planId);
+	plenty_admin.REST.plan.get()
+	.then(
+		function(plan){
+			console.log("got plan: ", plan().data);
+			if(callback && typeof callback === "function"){
+				callback(plan().data);
+			}
 		},
 		function(err){
 			console.error("getting filtered plans: ", err);
@@ -557,7 +1121,7 @@ plenty_admin.REST.getProfitProjectionForPlan = function(planDto, callback){
 			}
 		},
 		function(err){
-			console.error("getting profit proje tion for plan dto failed:: ", err);
+			console.error("getting profit projection for plan dto failed:: ", err);
 			
 			/* HACK - return dummy profitProjectionDto for UI testing only */
 			callback(plenty_admin.UI.plans.dummyProfitProj);
@@ -583,18 +1147,18 @@ plenty_admin.REST.getTemplatePlans = function(callback){
 }
 
 //change a plan
-plenty_admin.REST.changePlan = function(planReplacementDto, callback){
-	plenty_admin.REST.changePlan = plenty_admin.api.all("plan/changePlan");
-	plenty_admin.REST.changePlan.post(planReplacementDto)
+plenty_admin.REST.applyTemplatePlanToFieldCrops = function(templatePlanApplicationDto, callback){
+	plenty_admin.REST.templatePlanToFieldCrops = plenty_admin.api.all("plan/applyTemplatePlanToFieldCrops");
+	plenty_admin.REST.templatePlanToFieldCrops.post(templatePlanApplicationDto)
 	.then(
-		function(changedPlan){
-			console.log("changed plan: ", changedPlan().data);
+		function(planManifestationResultsDto){
+			console.log("planManifestationResultsDto: ", planManifestationResultsDto().data);
 			if(callback && typeof callback === "function"){
-				callback(changedPlan().data);
+				callback(planManifestationResultsDto().data);
 			}
 		},
 		function(err){
-			console.error("changing plan failed: ", err);
+			console.error("applyTemplatePlanToFieldCrops failed: ", err);
 			bootbox.dialog({
 				message: "Could not apply plan to field! - "+err.status+" - "+err.statusText,
 				className: "danger",
@@ -603,10 +1167,10 @@ plenty_admin.REST.changePlan = function(planReplacementDto, callback){
 					  label: "OK",
 					  className: "btn-danger",
 					  callback: function(){
-							plenty_admin.HELPER.hideLoadingOverlay();
-							
-							/* HACK - return dummy profitProjectionDto for UI testing only */
-							callback(plenty_admin.UI.plans.dummyProfitProj);
+							//plenty_admin.HELPER.hideLoadingOverlay();
+							plenty_admin.UI.plans.add_template_plan_modal
+							.find("button.add-plan")
+							.button('reset');
 						}
 					}
 				}
@@ -640,9 +1204,9 @@ $( document ).on( "plans_data_ready", function( event ) {
 		for(var tp=0; tp<plenty_admin.DATA.templatePlans.length; tp++){
 			var tplan = plenty_admin.DATA.templatePlans[tp];
 			var $templatePlan = $([
-				'<tr>',
-					'<td width="5%">',
-						'<input type="checkbox" class="selectTemplatePlan"></input>',
+				'<tr class="templatePlan templatePlan-'+tplan.id+' pointer">',
+					'<td width="5%" class="select">',
+						'<input type="checkbox" class="selectTemplatePlan pointer"></input>',
 					'</td>',
 					'<td width="35%">',
 						tplan.name,
@@ -660,6 +1224,20 @@ $( document ).on( "plans_data_ready", function( event ) {
 					//add from the selected templatePlans array
 					plenty_admin.DATA.selectedTemplatePlans
 					.push(thisTP);
+					
+					console.log("enable");
+					
+					$(this)
+					.closest("tr")
+					.addClass("alert-success");
+					
+					plenty_admin.UI.plans.add_template_plan_modal
+					.find("button.add-plan, button.next")
+					.prop('disabled', false)
+					.end()
+					.find('.nav-tabs a[data-target="#plans_criterea"]')
+					.parent()
+					.show();
 				}else{
 					//remove from the selected templatePlans array
 					var index = null;
@@ -667,14 +1245,36 @@ $( document ).on( "plans_data_ready", function( event ) {
 						var stp = plenty_admin.DATA.selectedTemplatePlans[a];
 						if(stp.id == thisTP.id){
 							plenty_admin.DATA.selectedTemplatePlans.splice(a, 1);
+							if(plenty_admin.DATA.selectedTemplatePlans.length == 0){
+								plenty_admin.UI.plans.add_template_plan_modal
+								.find("button.add-plan, button.next")
+								.prop('disabled', true)
+								.end()
+								.find('.nav-tabs a[data-target="#plans_criterea"]')
+								.parent()
+								.hide();
+							}
+							
+							$(this)
+							.closest("tr")
+							.removeClass("alert-success");
+					
 							return;
 						}
 					}
+					$(this)
+					.closest("tr")
+					.removeClass("alert-success");
 				}
 			})
-			.end();
-			
-			console.log("$templatePlan", $templatePlan);
+			.end()
+			.click(function(e){
+				if(e.target.type !== "checkbox"){
+					$(this)
+					.find("input.selectTemplatePlan")
+					.trigger("click");
+				}
+			});
 			
 			$tpBody
 			.append($templatePlan);
@@ -685,7 +1285,7 @@ $( document ).on( "plans_data_ready", function( event ) {
 	
 	//populate filter panel options based on current user filters
 	plenty_admin.DATA.load_user_filters(function(filters){	
-		console.log("filters", filters);
+		//console.log("filters", filters);
 		plenty_admin.DATA.userFilters = filters().data;
 		plenty_admin.DATA.data_source = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList;
 		plenty_admin.DATA.update_filters(function(){
@@ -696,6 +1296,22 @@ $( document ).on( "plans_data_ready", function( event ) {
 			.parent()
 			.find(".filter_loader")
 			.fadeOut("fast");
+			
+			//populate the organizations dropdown in Add Plan modal
+			var organizationOptionsHTML = "";
+			for(var o=0; o<plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.organizations.length; o++)
+			{
+				var org = plenty_admin.DATA.userFilters.possibleFilteringEntitiesDtoList.organizations[o];
+				organizationOptionsHTML += "<option value='"+org.id+"'>"+org.name+"</option>";
+			}
+			
+			plenty_admin.UI.plans.add_template_plan_modal
+			.find("select#organizationList")
+			.find("option")
+			.remove()
+			.end()
+			.append(organizationOptionsHTML);
+			
 		}, true);
 	});
 });

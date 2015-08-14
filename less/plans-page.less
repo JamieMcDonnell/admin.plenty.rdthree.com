@@ -20,6 +20,33 @@ body.plans{
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 	}
+	
+	.modal.add-plan{
+		.plantationDateWrapper{
+			display:none;
+		}
+		
+		.replacementDateWrapper{
+			display:block;
+		}
+		
+		&.addPlan{
+			.plantationDateWrapper{
+				display:block;
+			}
+			
+			.replacementDateWrapper{
+				display:none;
+			}
+		}
+		
+		&.plantAndStart{
+			.plantationDateWrapper,
+			.replacementDateWrapper{
+				display:block;
+			}
+		}
+	}
 }
 
 #plans-container{
@@ -43,7 +70,9 @@ body.plans{
 		
 		#plans-list{
 			.field-row{
-				
+				&:hover{
+					background-color:darken(@brand-primary, 10%) !important;
+				}
 				td{
 					vertical-align:middle;
 					font-size:16px;
@@ -57,8 +86,8 @@ body.plans{
 							}
 						}
 						img{
-							width:50px;
-							height:50px;
+							width:70px;
+							height:70px;
 							border-radius:4px;
 							/*border:1px solid @white;*/
 							margin:2px;
@@ -70,6 +99,24 @@ body.plans{
 				background-color: #f9f9f9;
 			}
 			.plan{
+				td{
+					vertical-align:middle;
+					
+					i.desc{
+						color:@brand-primary;
+						display:none;
+					}
+				}
+				&:hover{
+					td{
+						i.desc{
+							display:inline;
+						}
+					}
+				}
+				&.active{
+					font-weight:bold;
+				}
 				.active{
 					font-size:18px;
 					padding:5px;
@@ -96,6 +143,60 @@ body.plans{
 				
 				&.last{
 					border-bottom: 2px solid #006ba1;
+				}
+				
+				td.status{
+					color:@white;
+					font-size:21px;
+					
+					i.loading{
+						display:none;
+					}
+					
+					.statusText{
+						font-size:11px;
+					}
+				}
+				&.IN_PROGRESS,
+				&.SCHEDULED{
+					td.status{
+						background-color:@brand-secondary;
+					}
+				}
+				
+				&.CONFLICT{
+					td.status{
+						background-color:@brand-warning;
+					}
+				}
+				&.UNSCHEDULED{
+					td.status{
+						background-color:#ebebeb;
+						color:grey;
+					}
+				}
+				&.FINISHED,
+				&.REPLACED{
+					td.status{
+						background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI2ZmZiI+PC9yZWN0Pgo8cmVjdCB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNjY2MiPjwvcmVjdD4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNjY2MiPjwvcmVjdD4KPC9zdmc+");
+						color:grey;
+						
+						i,
+						.statusText{
+							background-color:@white;
+							padding:4px;
+							border-radius:4px;
+						}
+					}
+				}
+				&.SCHEDULING{
+					td.status{
+						background-color:@brand-primary;
+						
+						i.loading{
+							display:block;
+						}
+					}
 				}
 			}
 			.spacer{
