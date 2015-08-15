@@ -2936,6 +2936,19 @@ plenty_admin.REST.getEquipmentTypes = function(){
 			});
 }
 
+// get all equipment types and store them
+plenty_admin.REST.equipmentEquipmentTypes = plenty_admin.api.all("equipmentEquipmentTypes/getAll");
+plenty_admin.REST.getEquipmentEquipmentTypes = function(){
+	plenty_admin.REST.equipmentEquipmentTypes.getAll()
+		.then(
+			function(equipmentTypesReturn){
+				plenty_admin.DATA.equipmentEquipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				console.log("Get equip equip types finished");
+				
+				plenty_admin.DATA.eventCollector.done("equipment equipment");
+			});
+}
+
 plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
 	plenty_admin.REST.equipmentByOrgAndType = plenty_admin.api.one("equipmentEquipmentTypes/getByOrganizationAndType/"+org, type);
 	plenty_admin.REST.equipmentByOrgAndType.get()
@@ -13102,7 +13115,8 @@ plenty_admin.UI.organization.init = function(org, hash){
 	plenty_admin.REST.getSkillTypes();
 	plenty_admin.REST.getProductTypes();
 	plenty_admin.REST.getAllProducts();
-	plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
+	//plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
+	plenty_admin.REST.getEquipmentEquipmentTypes();
 	plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
 	  console.log('event %d of %d emitted', fired, total);
 	  console.log('event description:', data);
@@ -14459,8 +14473,16 @@ plenty_admin.UI.add_template_plan = {
 				}
 				
 				//disable this type so it can only be added once
-				$tp.find(".component_type option:selected").prop("disabled", true);
-				$tp.find(".component_type option:eq(0)").show().prop("selected", true);
+				$tp
+				.find(".component_type option:selected")
+				.prop("disabled", true)
+				.end()
+				.find(".component_type option:eq(0)")
+				.show()
+				.prop("selected", true)
+				.end()
+				.find("select.specific_items, .uom")
+				.hide();
 				
 				//add the task item to the correct DOM table
 				var $taskComponent = plenty_admin.UI.add_template_plan.build_task_component(task_component, type);
@@ -14495,6 +14517,105 @@ plenty_admin.UI.add_template_plan = {
 				.end()
 				.find("form")
 				.slideUp("fast", function(){
+					plenty_admin.UI.add_template_plan.clear_add_activity_form();
+					
+					$this
+					.closest(".activities_management")
+					.find(".activity_list")
+					.slideDown("fast")
+					.end()
+					.find("button.add_activity")
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.addTaskBtn
+					.slideUp("fast")
+					.prop("disabled", false);
+					
+					plenty_admin.UI.add_template_plan.taskListHolder
+					.slideUp("fast");
+					
+					plenty_admin.UI.add_template_plan
+					.modal
+					.find(".noActivityForTasks")
+					.slideUp("fast");
+				});
+				
+				if(plenty_admin.UI.add_template_plan.activityListHolder.find("li.list-group-item.activity").length >1){
+					plenty_admin.UI.add_template_plan.activityListHolder.sortable({
+					  //group: 'simple_with_animation',
+					  pullPlaceholder: false,
+					  placeholder:'<li class="list-group-item placeholder"><a>MOVE HERE</a></li>',
+					  // animation on drop
+					  onDrop: function  ($item, container, _super) {
+						var $clonedItem = $('<li/>').css({height: 0});
+						$item.before($clonedItem);
+						$clonedItem.animate({'height': $item.height()});
+					
+						$item.animate($clonedItem.position(), function  () {
+						  $clonedItem.detach();
+						  _super($item, container);
+						});
+					  },
+					
+					  // set $item relative to cursor position
+					  onDragStart: function ($item, container, _super) {
+						var offset = $item.offset(),
+							pointer = container.rootGroup.pointer;
+					
+						adjustment = {
+						  left: pointer.left - offset.left,
+						  top: pointer.top - offset.top
+						};
+					
+						_super($item, container);
+					  },
+					  onDrag: function ($item, position) {
+						$item.css({
+						  left: position.left - adjustment.left,
+						  top: position.top - adjustment.top
+						});
+					  }
+					});
+				}
+			}
+			
+			return false;
+		})
+		.end()
+		.find("button.update_activity")
+		.on("click", function(){
+			var $this = $(this);
+			var addActivityForm = plenty_admin.UI.add_template_plan.addActivityForm;
+			
+			var valid = plenty_admin.HELPER.validateForm(addActivityForm);
+			
+			if(valid){
+				var activityDto = {
+					templatePlanId:		null,
+					activityTypeId:		parseInt(addActivityForm.find("#add_activity_type option:selected").val()),
+					daysFromPlanting:	parseInt(addActivityForm.find("#add_activity_days_from_planting").val())
+				}
+				
+				console.log("activityDto", activityDto);
+				
+				//update the DTO on the activity connected to this edit
+				$this.data("activity")
+				.data("activityDto", activityDto)
+				.find("a")
+				.text(addActivityForm.find("#add_activity_type option:selected").text());
+				
+				$this
+				.closest(".activities_management")
+				.find(".alert.help-block:eq(0)")
+				.hide()
+				.end()
+				.find("form")
+				.slideUp("fast", function(){
+					plenty_admin.UI.add_template_plan.clear_add_activity_form();
+					
 					$this
 					.closest(".activities_management")
 					.find(".activity_list")
@@ -14570,9 +14691,13 @@ plenty_admin.UI.add_template_plan = {
 			.parent()
 			.find(".activity_list")
 			.slideUp("fast", function(){
-				$this
-				.parent()
-				.find(".add_activity_form")
+				plenty_admin.UI.add_template_plan.addActivityForm
+				.find(".save_activity")
+				.show()
+				.end()
+				.find(".update_activity")
+				.hide()
+				.end()
 				.slideDown("fast");
 			})
 		})
@@ -14684,6 +14809,99 @@ plenty_admin.UI.add_template_plan = {
 			return false;
 		})
 		.end()
+		.find("button.update_task")
+		.on("click", function(){
+			var $this = $(this);
+			
+			var addTaskForm = plenty_admin.UI.add_template_plan.addTaskForm;
+			var addTaskAndTaskComponents = plenty_admin.UI.add_template_plan.addTaskAndTaskComponents;
+			
+			var equipmentComponents = addTaskAndTaskComponents.find("table.equipment-items tbody tr.task-element");
+			var labourComponents = addTaskAndTaskComponents.find("table.labour-items tbody tr.task-element");
+			var productComponents = addTaskAndTaskComponents.find("table.product-items tbody tr.task-element");
+			var numTaskElements = equipmentComponents.length + labourComponents.length + productComponents.length;
+			
+			var valid = plenty_admin.HELPER.validateForm(addTaskForm);
+			
+			if(
+				valid
+				&& numTaskElements >= 1
+			){
+				//get the list of selected equipment IDs
+				var equipmentIds = [];
+				var anySpecificEquipmentIds = [];
+				for(var l=0; l<equipmentComponents.length; l++){
+					var taskComponent = $(equipmentComponents[l]).data("task_component");
+					
+					if(taskComponent.specificId){
+						anySpecificEquipmentIds.push(taskComponent.specificId);
+					}else{
+						equipmentIds.push(taskComponent.id);
+					}
+				}
+				console.log("equipmentIds:", equipmentIds);
+				console.log("anySpecificEquipmentIds:", anySpecificEquipmentIds);
+				
+				//get the list of selected labour IDs
+				var labourIds = [];
+				
+				for(var l=0; l<labourComponents.length; l++){
+					labourIds.push($(labourComponents[l]).data("task_component").id);
+				}
+				console.log("labourIds:", labourIds);
+				
+				//get the list of selected labour IDs
+				var productAmountPairs = [];
+				var anySpecificProductIds = [];
+				for(var l=0; l<productComponents.length; l++){
+					var taskComponent = $(productComponents[l]).data("task_component");
+					var prod = {
+						productTypeId:taskComponent.id,
+						amount:taskComponent.qty
+					};
+					
+					if(taskComponent.specificId){
+						anySpecificProductIds.push(taskComponent.specificId);
+					}else{
+						productAmountPairs.push(prod);
+					}
+				}
+				
+				console.log("productAmountPairs:", productAmountPairs);
+				console.log("anySpecificProductIds:", anySpecificProductIds);
+				
+				var templateTaskDto = {
+					name:addTaskForm.find("#add_task_name").val(),
+					templateActivityId:null,
+					daysFromActivityStart:parseInt(addTaskForm.find("#add_task_days_from_start").val()),
+					labourIds:labourIds,
+					equipmentIds:equipmentIds,
+					productAmountPairs:productAmountPairs,
+					anySpecificEquipmentIds:anySpecificEquipmentIds,
+					anySpecificProductIds:anySpecificProductIds,
+					anySpecificLabourIds:[]
+				}
+				
+				console.log("templateTaskDto", templateTaskDto);
+				
+				//update the dto on the task element linked to this edit
+				$this.data("task").replaceWith(plenty_admin.UI.add_template_plan.build_task_element(templateTaskDto));
+				
+				addTaskAndTaskComponents
+				.slideUp("fast", function(){
+					plenty_admin.UI.add_template_plan.taskListHolder
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.addTaskBtn
+					.slideDown("fast");
+					
+					plenty_admin.UI.add_template_plan.clear_add_task_form();
+				});
+			}
+			
+			return false;
+		})
+		.end()
 		.find("button.cancel_activity")
 		.on("click", function(e){
 			e.preventDefault();
@@ -14693,6 +14911,8 @@ plenty_admin.UI.add_template_plan = {
 			.closest(".activities_management")
 			.find("form")
 			.slideUp("fast", function(){
+				plenty_admin.UI.add_template_plan.clear_add_activity_form();
+				
 				$this
 				.closest(".activities_management")
 				.find(".activity_list")
@@ -14847,6 +15067,7 @@ plenty_admin.UI.add_template_plan = {
 		plenty_admin.UI.add_template_plan.modal
 		.find("input, textarea")
 		.each(function(){
+			console.log("check default: ", $(this).data("default"));
 			if($(this).data("default")){
 				if($(this).prop("type") == "number"){
 					$(this).val(parseInt($(this).data("default")));
@@ -14857,7 +15078,6 @@ plenty_admin.UI.add_template_plan = {
 				$(this).val("");
 			}
 		})
-		//.val("")
 		.end()
 		.find("select")
 		.each(function(){
@@ -14889,9 +15109,27 @@ plenty_admin.UI.add_template_plan = {
 		
 	},
 	build_task_component: function(task_component, type){
+		console.log("build_task_component", task_component, type);
+		var componentName = null;
+		if(task_component.specificId){
+			var specificComponentList = null;
+			switch(type){
+				case "product":
+				specificComponentList = "allProducts";
+				break;
+				
+				case "equipment":
+				specificComponentList = "equipmentEquipmentTypes";
+				break;
+			}
+			console.log("specificComponentList", specificComponentList);
+			componentName = plenty_admin.DATA[specificComponentList][task_component.specificId].name;
+		}else{
+			componentName = plenty_admin.DATA[type+"Types"][task_component.id].name;
+		}
 		var $taskComponent = $([
 			'<tr class="reveal-on-hover-wrap task-element">',
-				'<td width="55%">'+plenty_admin.DATA[type+"Types"][task_component.id].name+'</td>',
+				'<td width="55%">'+componentName+'</td>',
 				'<td width="20%">'+task_component.qty+'</td>',
 				'<td width="25%"><button class="btn btn-sm btn-danger delete reveal-on-hover-element btn-block"><span class="fa fa-trash-o"></span> Delete</button></td>',
 			'</tr>'
@@ -14975,7 +15213,7 @@ plenty_admin.UI.add_template_plan = {
 		//build specific equipment taskItems
 		for(var e=0; e<taskDto.anySpecificEquipmentIds.length; e++){
 			var equip = taskDto.anySpecificEquipmentIds[e];
-			$equipment_task_item = $('<p>'+plenty_admin.DATA.current_organization.equipmentEquipmentTypes[equip].equipmentName+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$equipment_task_item = $('<p class="task-component">'+plenty_admin.DATA.equipmentEquipmentTypes[equip].equipmentName+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
 			
 			$equipment_task_item
 			.data("id", equip)
@@ -14997,7 +15235,7 @@ plenty_admin.UI.add_template_plan = {
 		//build labour taskItems
 		for(var e=0; e<taskDto.labourIds.length; e++){
 			var labour = taskDto.labourIds[e];
-			$labour_task_item = $('<p>'+plenty_admin.DATA.labourTypes[labour].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$labour_task_item = $('<p class="task-component">'+plenty_admin.DATA.labourTypes[labour].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
 			$labour_task_item
 			.data("id", labour)
 			.data("type", "labourIds")
@@ -15036,7 +15274,7 @@ plenty_admin.UI.add_template_plan = {
 		//build product taskItems
 		for(var e=0; e<taskDto.productAmountPairs.length; e++){
 			var prod = taskDto.productAmountPairs[e];
-			$product_task_item = $('<p>'+plenty_admin.DATA.productTypes[prod.productTypeId].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$product_task_item = $('<p class="task-component">'+plenty_admin.DATA.productTypes[prod.productTypeId].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
 			
 			$product_task_item
 			.data("id", prod)
@@ -15076,7 +15314,7 @@ plenty_admin.UI.add_template_plan = {
 		//build specific product taskItems
 		for(var e=0; e<taskDto.anySpecificProductIds.length; e++){
 			var prod = taskDto.anySpecificProductIds[e];
-			$product_task_item = $('<p>'+plenty_admin.DATA.allProducts[prod].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
+			$product_task_item = $('<p class="task-component">'+plenty_admin.DATA.allProducts[prod].name+' <a href="" class="remove pull-right ptn pbn pln prn"><i class="fa fa-trash-o"></i></a></p>');
 			
 			$product_task_item
 			.data("id", prod)
@@ -15127,7 +15365,7 @@ plenty_admin.UI.add_template_plan = {
 		.end()
 		.find("button.edit-task")
 		.click(function(){
-			plenty_admin.UI.add_template_plan.edit_task();
+			plenty_admin.UI.add_template_plan.edit_task($(this).closest(".task"));
 			return false;
 		})
 		.end();
@@ -15141,6 +15379,16 @@ plenty_admin.UI.add_template_plan = {
 		.find("ul.task_list.activity_tasks_"+selectedActivityIndex)
 		.append($taskDOM)
 		.show();
+	},
+	clear_add_activity_form: function(){
+		plenty_admin.UI.add_template_plan.addActivityForm
+		.find("select option:eq(0)").prop("selected", true)
+		.end()
+		.find("input").each(function(){
+			console.log("default: ", $(this).data("default"));
+			$(this)
+			.val($(this).data("default"));
+		});
 	},
 	clear_add_task_form: function(){
 		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
@@ -15170,28 +15418,111 @@ plenty_admin.UI.add_template_plan = {
 		.find("select.specific_items, .uom")
 		.hide();
 	},
-	edit_activity: function(activity){
+	edit_activity: function($activity){
+		console.log("edit_activity", $activity);
+		var dto = $activity.data("activityDto");
 		plenty_admin.UI.add_template_plan.addActivityBtn
-		.hide()
+		.hide();
 		
 		plenty_admin.UI.add_template_plan.activityListHolder
 		.slideUp("fast", function(){
 			plenty_admin.UI.add_template_plan.addActivityForm
+			.find(".save_activity")
+			.hide()
+			.end()
+			.find(".update_activity")
+			.data("activity", $activity)
+			.show()
+			.end()
+			.find("#add_activity_type option[value="+dto.activityTypeId+"]")
+			.prop("selected", true)
+			.end()
+			.find("#add_activity_days_from_planting")
+			.val(dto.daysFromPlanting)
+			.end()
 			.slideDown("fast");
 		});
 	},
-	edit_task: function(task){
+	edit_task: function($task){
+		console.log("edit_task", $task);
+		var dto = $task.data("taskDto");
+		//render the task components
+		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+		.find("#add_task_name")
+		.val(dto.name)
+		.end()
+		.find("#add_task_days_from_start")
+		.val(dto.daysFromActivityStart)
+		.end()
+		.find("button.save_task")
+		.hide()
+		.end()
+		.find("button.update_task")
+		.data("task", $task)
+		.show();
+		
+		//loop dto and add task components to the table
+		for(prop in dto){
+			if(dto.hasOwnProperty(prop)){
+				//we are only processing the arrays in this DTO
+				if(Array.isArray(dto[prop])){
+					var lcProp = prop.toLowerCase();
+					var type = null;
+					var specific = false;
+					
+					if(lcProp.indexOf("equipment") > -1){
+						type = "equipment";
+					}else if(lcProp.indexOf("labour") > -1){
+						type = "labour";
+					}else if(lcProp.indexOf("product") > -1){
+						type = "product";
+					}
+					
+					if(lcProp.indexOf("specific") > -1){
+						specific = true;
+					}
+					
+					var $task_items_table = plenty_admin.UI.add_template_plan.addTaskAndTaskComponents.find(".tab-pane#"+type+"_tab table."+type+"-items");
+					
+					for(var p=0; p<dto[prop].length; p++){
+						var tc = dto[prop][p];
+						//create the task item
+						console.log("typeof tc: ", typeof tc);
+						if(typeof tc === "object"){
+							var task_component = {
+								id: 		tc.productTypeId,
+								qty: 	tc.amount
+							};
+							if(specific){
+								task_component.specificId = tc.productTypeId;
+							}
+						}else if(typeof tc === "number"){
+							var task_component = {
+								id: 		tc,
+								qty: 	0 // NOTE - these should also be type/amount pairs as we do not currently have a record of how many labourers / equipments
+							};
+							if(specific){
+								task_component.specificId = tc;
+							}
+						}
+						var $taskComponent = plenty_admin.UI.add_template_plan.build_task_component(task_component, type);
+						$task_items_table.append($taskComponent);
+					}
+				}
+			}
+		}
+		
 		//hide the add task button
 		plenty_admin.UI.add_template_plan.addTaskBtn
 		.slideUp("fast");
 		
 		//hide the task list for this activity
 		plenty_admin.UI.add_template_plan.taskListHolder
-		.slideUp("fast");
-		
-		//show the add task form immediately
-		plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
-		.slideDown("fast");
+		.slideUp("fast", function(){
+			//show the add task form immediately
+			plenty_admin.UI.add_template_plan.addTaskAndTaskComponents
+			.slideDown("fast");
+		});
 	},
 	build_activity_element: function(activityDto){
 		console.log("build_activity_element", activityDto);
@@ -15285,7 +15616,7 @@ plenty_admin.UI.add_template_plan = {
 		.end()
 		.find("button.edit-activity")
 		.click(function(){
-			plenty_admin.UI.add_template_plan.edit_activity();
+			plenty_admin.UI.add_template_plan.edit_activity($(this).closest(".activity"));
 		})
 		.end();
 		

@@ -412,6 +412,19 @@ plenty_admin.REST.getEquipmentTypes = function(){
 			});
 }
 
+// get all equipment types and store them
+plenty_admin.REST.equipmentEquipmentTypes = plenty_admin.api.all("equipmentEquipmentTypes/getAll");
+plenty_admin.REST.getEquipmentEquipmentTypes = function(){
+	plenty_admin.REST.equipmentEquipmentTypes.getAll()
+		.then(
+			function(equipmentTypesReturn){
+				plenty_admin.DATA.equipmentEquipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
+				console.log("Get equip equip types finished");
+				
+				plenty_admin.DATA.eventCollector.done("equipment equipment");
+			});
+}
+
 plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
 	plenty_admin.REST.equipmentByOrgAndType = plenty_admin.api.one("equipmentEquipmentTypes/getByOrganizationAndType/"+org, type);
 	plenty_admin.REST.equipmentByOrgAndType.get()

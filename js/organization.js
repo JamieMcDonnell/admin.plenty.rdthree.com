@@ -65,7 +65,8 @@ plenty_admin.UI.organization.init = function(org, hash){
 	plenty_admin.REST.getSkillTypes();
 	plenty_admin.REST.getProductTypes();
 	plenty_admin.REST.getAllProducts();
-	plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
+	//plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
+	plenty_admin.REST.getEquipmentEquipmentTypes();
 	plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
 	  console.log('event %d of %d emitted', fired, total);
 	  console.log('event description:', data);
