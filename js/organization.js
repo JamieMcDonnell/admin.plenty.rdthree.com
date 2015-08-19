@@ -10,7 +10,6 @@ plenty_admin.UI.organization.MODAL_edit_in_organization = plenty_admin.UI.DOM.fi
 plenty_admin.UI.organization.MODAL_confirm_delete = plenty_admin.UI.DOM.find('#confirm_delete');
 plenty_admin.UI.organization.MODAL_edit_field = plenty_admin.UI.DOM.find('#edit_field');
 plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_field');
-plenty_admin.UI.organization.MODAL_add_field = plenty_admin.UI.DOM.find('#add_plan');
 
 plenty_admin.UI.organization.BUTTON_delete_multiple = plenty_admin.UI.organization.DOM.find(".delete_multiple");
 
@@ -57,21 +56,7 @@ plenty_admin.UI.organization.init = function(org, hash){
 	plenty_admin.UI.organization.populate(org, hash);
 	plenty_admin.UI.organization.populate_farms_filter();
 	
-	plenty_admin.DATA.eventCollector = window.eventcollector(8, 10000);
-	plenty_admin.REST.getCropTypes();
-	plenty_admin.REST.getTillageTypes();
-	plenty_admin.REST.getIrrigationTypes();
-	plenty_admin.REST.getActivityTypes();
-	plenty_admin.REST.getSkillTypes();
-	plenty_admin.REST.getProductTypes();
-	plenty_admin.REST.getAllProducts();
-	//plenty_admin.REST.getEquipmentEquipmentTypesForOrg();
-	plenty_admin.REST.getEquipmentEquipmentTypes();
-	plenty_admin.DATA.eventCollector.on('done', function(fired, total, data) {
-	  console.log('event %d of %d emitted', fired, total);
-	  console.log('event description:', data);
-	});
-	plenty_admin.DATA.eventCollector.on('alldone', function(total) {
+	plenty_admin.REST.getSkillsAndRatesForOrg(function(){
 		plenty_admin.UI.organization.DOM.fadeIn("normal", function(){
 			plenty_admin.HELPER.hideLoadingOverlay();
 			plenty_admin.UI.add_template_plan.init();
@@ -99,6 +84,7 @@ plenty_admin.UI.organization.init = function(org, hash){
 		var modalContext = ["Add", "to", "insert"];
 		var url = plenty_admin.UI.organization.tabs.DOM.find("li.active a[role='tab']").prop("href");
 		var hash = url.substring(url.indexOf('#')+1);
+		console.log("add_to_organization: ", url, hash);
 		if(hash === "fields"){
 			plenty_admin.UI.organization.show_add_field_modal();
 		}else if(hash === "plans"){
@@ -666,6 +652,10 @@ plenty_admin.UI.create_header_row = function(item, hash){
 					&& p !== "lastModified"
 					&& p !== "enabled"
 					&& p !== "farmId"
+					&& p !== "organizationId"
+					&& p !== "radarCode"
+					&& p !== "equipmentId"
+					&& p !== "equipmentTypeId"
 				){
 					var correctedHeader = "";
 					var headerWidth = "";
@@ -696,6 +686,22 @@ plenty_admin.UI.create_header_row = function(item, hash){
 						
 						case "longitude":
 							correctedHeader = "Lon";
+						break;
+						
+						case "stateCode":
+							correctedHeader = "State";
+						break;
+						
+						case "equipmentTypeName":
+							correctedHeader = "Equipment Type";
+						break;
+						
+						case "earliestDateFromPlanting":
+							correctedHeader = "Earliest Date from Planting";
+						break;
+						
+						case "standardWagePerHour":
+							correctedHeader = "Std. Wage / hr";
 						break;
 						
 						default:
@@ -804,6 +810,11 @@ plenty_admin.UI.create_item = function(item, hash){
 								&& p !== "lastModified"
 								&& p !== "enabled"
 								&& p !== "farmId"
+								&& p !== "organizationId"
+								&& p !== "stateAbbreviation"
+								&& p !== "countryCode"
+								&& p !== "radarCode"
+								&& p !== "equipmentId"
 							){
 								// process the data type if necessary before inserting it
 								var tdata = "";

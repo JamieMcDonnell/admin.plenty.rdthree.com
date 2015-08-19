@@ -46,7 +46,9 @@
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script>
 	{{ include('snippets/footer-scripts.html') }}
 	<script type="text/javascript">
-		plenty_admin.init("plans");
+		$(function() {
+			plenty_admin.init("plans");
+		});
 	</script>
 </body>
 </html>

@@ -158,6 +158,23 @@ body footer.footer {
 table .editable-container.editable-inline {
   background-color: #fff;
 }
+@media (min-width: 768px) {
+  .modal-dialog.modal-lg {
+    width: -webkit-calc(100% - 20px);
+    width:         calc(100% - 20px);
+    margin: 10px auto;
+  }
+}
+.fix-right-controls {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  z-index: 1;
+  padding: 2px;
+  margin: 2px 0;
+  background-color: #fff;
+  border-radius: 4px;
+}
 .flexbox-parent {
   display: -webkit-box;
   display: -webkit-flex;
@@ -3204,7 +3221,40 @@ body.settings .container-fluid.page-container {
   /* Hide for mobile, show later */
 }
 body.settings .container-fluid.page-container .sidebar {
+  position: absolute;
+  top: 17px;
+  left: 0;
+  z-index: 1;
+  display: block;
+  padding: 0;
+  background-color: #fff;
+  border-top: 1px solid #93b222;
+  border-right: 1px solid #93b222;
+  border-bottom: 1px solid #93b222;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+body.settings .container-fluid.page-container .sidebar:not(:hover) h3,
+body.settings .container-fluid.page-container .sidebar:not(:hover) .organizations-list {
   display: none;
+}
+body.settings .container-fluid.page-container .sidebar i.tab {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin: 4px;
+  color: #93b222;
+  background: url(../img/filter-icons/organizations.svg) no-repeat 0 0;
+}
+body.settings .container-fluid.page-container #main-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+body.settings .container-fluid.page-container #main-panel .org-name {
+  margin-left: 30px;
 }
 @media (min-width: 768px) {
   body.settings .container-fluid.page-container .sidebar {
@@ -3222,13 +3272,32 @@ body.settings .container-fluid.page-container .sidebar {
     background-color: #f5f5f5;
     border-right: 1px solid #eee;
   }
-}
-body.settings .container-fluid.page-container #main-panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 83.33333333%;
-  height: 100%;
+  body.settings .container-fluid.page-container .sidebar h3,
+  body.settings .container-fluid.page-container .sidebar .organizations-list,
+  body.settings .container-fluid.page-container .sidebar i.tab {
+    display: block;
+  }
+  body.settings .container-fluid.page-container .sidebar:not(:hover) h3,
+  body.settings .container-fluid.page-container .sidebar:not(:hover) .organizations-list {
+    display: block;
+  }
+  body.settings .container-fluid.page-container .sidebar .organizations-list {
+    clear: both;
+  }
+  body.settings .container-fluid.page-container .sidebar i.tab {
+    margin: 0 5px 0 0;
+    cursor: pointer;
+  }
+  body.settings .container-fluid.page-container .sidebar h3,
+  body.settings .container-fluid.page-container .sidebar i.tab {
+    float: left;
+  }
+  body.settings .container-fluid.page-container #main-panel {
+    width: 75%;
+  }
+  body.settings .container-fluid.page-container #main-panel .org-name {
+    margin-left: 0;
+  }
 }
 body.settings .newOrgContainer form .more-details {
   display: none;
@@ -4324,16 +4393,53 @@ body.filters {
 .container-fluid.activitiesAndTasks .activities_management {
   position: absolute;
   top: 0;
+  width: 50%;
   height: 100%;
 }
 .container-fluid.activitiesAndTasks .tasks_management {
   left: 50%;
 }
-.container-fluid.activitiesAndTasks .activity {
-  cursor: ns-resize;
+.container-fluid.activitiesAndTasks .tasks_management .task_lists:empty {
+  display: none;
 }
-.container-fluid.activitiesAndTasks .activity a {
-  cursor: ns-resize;
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task .twistie {
+  padding: 0 5px 0 0;
+  text-decoration: none;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task .twistie .glyphicon-triangle-right {
+  display: block;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task .twistie .glyphicon-triangle-bottom {
+  display: none;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task.open .twistie .glyphicon-triangle-right {
+  display: none;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task.open .twistie .glyphicon-triangle-bottom {
+  display: block;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task .task-component {
+  padding: 4px;
+  border-radius: 4px;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task .task-component a.remove {
+  color: #cc3737;
+}
+.container-fluid.activitiesAndTasks .tasks_management .task_lists .task_list .task.active .task-component {
+  color: #333;
+  text-shadow: none;
+}
+.container-fluid.activitiesAndTasks .activities_management ul:empty {
+  display: none;
+}
+.container-fluid.activitiesAndTasks .activities_management .activity_list .activity a {
+  padding: 10px 10px;
+}
+.container-fluid.activitiesAndTasks .activities_management .add_activity_form .harvest {
+  display: none;
+}
+.container-fluid.activitiesAndTasks .activities_management .add_activity_form.harvest .harvest {
+  display: block;
 }
 .list-group-item.placeholder {
   background-color: #6d6d6d;

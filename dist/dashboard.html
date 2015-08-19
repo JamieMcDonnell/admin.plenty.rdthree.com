@@ -59,7 +59,8 @@
 	</nav><!-- /.navbar -->
 <div class="container-fluid page-container">
 	<div class="row"> 
-		<div class="col-sm-3 col-md-2 sidebar" id="sidebar">
+		<div class="col-sm-3 sidebar" id="sidebar">
+	<i class="tab"></i>
 	<h3 class="mtn">Organizations</h3>
 	<div class="organizations-list panel-group" id="organizations" role="tablist" aria-multiselectable="true"> </div>
 </div>
@@ -74,8 +75,14 @@
 </div>
 </div>
 	<div id="loadingOverlay">
-	<h1>Loading - Please Wait...</h1>
-	<i class="fa fa-refresh fa-spin"></i>
+	<div class="loadingInfo">
+		<h1><span class="verb">Loading</span><span class="noun"></span>, Please Wait...</h1>
+		<i class="fa fa-refresh fa-spin"></i>
+	</div>
+	<div class="doneInfo" style="display:none;">
+		<h1>Done.</h1>
+		<i class="fa fa-thumbs-o-up"></i>
+	</div>
 </div>
 	<div class="modal fade" id="setCreds">
   <div class="modal-dialog">

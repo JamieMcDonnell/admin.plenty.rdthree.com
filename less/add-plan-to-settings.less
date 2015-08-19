@@ -8,16 +8,79 @@
 			position:absolute;
 			top:0;
 			height:100%;
+			width:50%;
 		}
 		
 		.tasks_management{
 			left:50%;
+			
+			.task_lists{
+				&:empty{
+					display:none;
+				}
+				
+				.task_list{
+					.task{
+						.twistie{
+							text-decoration:none;
+							padding:0 5px 0 0;
+							
+							.glyphicon-triangle-right{
+								display:block;
+							}
+							.glyphicon-triangle-bottom{
+								display:none;
+							}
+						}
+						&.open{
+							.twistie{
+								.glyphicon-triangle-right{
+									display:none;
+								}
+								.glyphicon-triangle-bottom{
+									display:block;
+								}
+							}
+						}
+						.task-component{
+							padding:4px;
+							border-radius:4px;
+							
+							a.remove{
+								color:@brand-danger;
+							}
+						}
+						&.active{
+							.task-component{
+								color:@gray-dark;
+								text-shadow:none;
+							}
+						}
+					}
+				}
+			}
 		}
 		
-		.activity{
-			cursor:ns-resize;
-			a{
-				cursor:ns-resize;
+		.activities_management{
+			ul:empty{
+				display:none;
+			}
+			.activity_list{
+				.activity{
+					a{
+						padding:10px 10px;
+					}
+				}
+			}
+			.add_activity_form{
+				.harvest{
+					display:none;
+				}
+				&.harvest{
+					.harvest{
+						display:block;
+					}
+				}
 			}
 		}
 	}

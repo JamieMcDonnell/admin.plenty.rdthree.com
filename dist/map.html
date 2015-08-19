@@ -662,8 +662,14 @@
 
 </div>
 	<div id="loadingOverlay">
-	<h1>Loading - Please Wait...</h1>
-	<i class="fa fa-refresh fa-spin"></i>
+	<div class="loadingInfo">
+		<h1><span class="verb">Loading</span><span class="noun"></span>, Please Wait...</h1>
+		<i class="fa fa-refresh fa-spin"></i>
+	</div>
+	<div class="doneInfo" style="display:none;">
+		<h1>Done.</h1>
+		<i class="fa fa-thumbs-o-up"></i>
+	</div>
 </div>
 	<div class="modal fade equipment" id="equipment">
   <div class="modal-dialog">
@@ -998,7 +1004,9 @@
 <script src="//use.typekit.net/jmc8hvz.js"></script>
 <script>try{Typekit.load();}catch(e){}</script>
 	<script type="text/javascript">
+	$(function() {
 		plenty_admin.init("map");
+	});
 	</script>
 </body>
 </html>

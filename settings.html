@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 
-{{ include('snippets/meta.html', {"title": "Plenty Admin Dashboard", "description": "This is the dashboard of the admin UI", "author": "Jamie McDonnell"}) }}
+{{ include('snippets/meta.html', {"title": "Plenty Admin Organization Settings", "description": "This is the dashboard of the admin UI", "author": "Jamie McDonnell"}) }}
 </head>
 {{ include('snippets/header-flex.html', {"page": "settings", "dashboard" : false, "settings" : true, "contact" : false, "organization" : false, "map" : false, "plans" : false, "filters": false}) }}
 	<div class="container-fluid page-container flexbox-parent flexbox-item-grow">
 		<div class="row flexbox-parent flexbox-item-grow"> 
 			{{ include('snippets/sidebar-nav.html') }}
-			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">
+			<div class="col-sm-9 col-sm-offset-3" id="main-panel">
 				{{ include('snippets/organization.html') }}
 				{{ include('snippets/new-organization.html') }}
 				{{ include('snippets/field.html', {"breadcrumbs": true}) }} </div>
@@ -27,6 +27,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script> 	
 {{ include('snippets/footer-scripts.html') }}
 <script type="text/javascript">
+	$(function() {
 		plenty_admin.init("settings");
+	});
 	</script>
 </body></html>

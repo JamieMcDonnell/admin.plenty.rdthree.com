@@ -326,7 +326,7 @@ plenty_admin.UI.plans.init = function(){
 			plenty_admin.UI.plans.add_template_plan_modal
 			.modal("hide");
 			
-			plenty_admin.HELPER.showLoadingOverlay();
+			plenty_admin.HELPER.showLoadingOverlay("Saving", "Plan");
 									
 			plenty_admin.REST.applyTemplatePlanToFieldCrops(templatePlanApplicationDto, function(planManifestation){
 				plenty_admin.UI.plans.add_template_plan_modal
@@ -607,7 +607,7 @@ plenty_admin.UI.plans.create_plan_projection = function(planData, type){
 						  label: "OK",
 						  className: "btn-primary",
 							callback: function(){
-								plenty_admin.HELPER.showLoadingOverlay();
+								plenty_admin.HELPER.showLoadingOverlay("Changing", "Plan");
 								
 								console.log("templatePlanApplicationDto", templatePlanApplicationDto);
 								templatePlanApplicationDto.commit = true;

@@ -1,10 +1,22 @@
 <div id="organization-container" class="flexbox-item-grow flexbox-parent">
 	<div class="clearfix">
-		<h2 class="editable org-name pull-left mbn editable" data-type="text" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Change the organization name"> </h2>
-		<p class="editable org-organizationTypeId pull-left mbn editable clear" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'> </p>
-		<p class="pull-left lead2 mbn clear"><span class="org-addressLine1 editable" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span> <span class="org-addressLine2 editable" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span> </p>
-		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"> </p>
-		<p class="pull-left lead2 editable clear org-zip"> </p>
+		<h2 class="editable org-name pull-left mbn editable" data-type="text" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Change the organization name"></h2>
+		<p class="editable org-organizationTypeId pull-left mbn editable clear" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'></p>
+		<span class="pull-left">,</span>
+		
+		<p class="pull-left lead2 mbn mls">
+			<span class="org-addressLine1 editable pull-left" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span>
+			<span class="pull-left">,</span>
+			<span class="org-addressLine2 editable mls" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span>
+		</p>
+		
+		<p class="pull-left lead2 mbs clear">
+			<span class="org-city editable pull-left" data-type="text" data-name="city" data-title="Set City"></span>
+			<span class="pull-left">,</span>
+			<span class="org-state editable pull-left mls" data-type="text" data-name="state" data-title="Set State"></span>
+			<span class="pull-left">,</span>
+			<span class="pull-left lead2 editable org-zip mls"></span>
+		</p>
 	</div>
 	
 	<div role="tabpanel" id="orgAssets" class="flexbox-item-grow flexbox-parent mbs"> 

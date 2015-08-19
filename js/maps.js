@@ -5,7 +5,8 @@ plenty_admin.MAPS.fillColour = '#758e1b';
 plenty_admin.MAPS.selectedPolygon = {};
 plenty_admin.MAPS.clu_boundaries = [];
 plenty_admin.MAPS.equipment_pins = [];
-plenty_admin.MAPS.add_field_state = 0;
+plenty_admin.MAPS.add_field_state = 0; // 0=not editing, 1=clu chosen but not confirmed, 2=clu confirmed
+plenty_admin.MAPS.edit_field_state = 0;
 plenty_admin.MAPS.static_maps_url_base = "https://maps.googleapis.com/maps/api/staticmap?";
 plenty_admin.MAPS.api_key = "AIzaSyDePtID2AxWnYcPJdCKTZd9b0jRIOrrj4E";
 
@@ -40,11 +41,11 @@ plenty_admin.MAPS.show_clu_boundaries = function(map){
 		plenty_admin.MAPS.add_field_state == 0
 	){
 		var boundary = {};
-		boundary.maxLongitude = bounds.getNorthEast().F;
-		boundary.minLongitude = bounds.getSouthWest().F;
-		boundary.maxLatitude = bounds.getNorthEast().A;
-		boundary.minLatitude = bounds.getSouthWest().A;
-		plenty_admin.HELPER.showLoadingOverlay();
+		boundary.maxLongitude = bounds.getNorthEast().lng();
+		boundary.minLongitude = bounds.getSouthWest().lng();
+		boundary.maxLatitude = bounds.getNorthEast().lat();
+		boundary.minLatitude = bounds.getSouthWest().lat();
+		plenty_admin.HELPER.showLoadingOverlay("Loading", "Field Boundaries");
 		plenty_admin.REST.fields.getCLUBoundaryPointsForBoundingBox(boundary, plenty_admin.MAPS.render_CLU_boundaries, map);
 	}
 }
@@ -153,6 +154,9 @@ plenty_admin.MAPS.add_field_control = function(map){
 				plenty_admin.MAPS.selected_clu_polygon = null;
 				plenty_admin.MAPS.add_field_state = 1;
 				plenty_admin.MAPS.hide_clu_polygons();
+				
+				//show equipment
+				plenty_admin.MAPS.show_equipment(plenty_admin.MAPS.equipment_pins, map);
 			}else{
 				btn.data("state", "on");
 				
@@ -168,6 +172,10 @@ plenty_admin.MAPS.add_field_control = function(map){
 				
 				plenty_admin.MAPS.add_field_state = 0;
 				plenty_admin.MAPS.show_clu_boundaries(map);
+				
+				//hide equipment
+				plenty_admin.MAPS.hide_equipment(plenty_admin.MAPS.equipment_pins);
+				
 				plenty_admin.MAPS.set_on_idle_event(map, function(e){
 					plenty_admin.MAPS.show_clu_boundaries(map);
 				});
@@ -534,6 +542,10 @@ plenty_admin.MAPS.draw_polygon = function(fieldData, events, map, pushPoly){
 		field_polygon.cropType = fieldData.cropType;
 	}
 	
+	if(fieldData.cluBoundaryId){
+		field_polygon.cluBoundaryId = fieldData.cluBoundaryId;
+	}
+	
 	google.maps.event.addListener(field_polygon, 'set_at', ( events.onEdit ? events.onEdit : function(){/*empty*/} ));
 	google.maps.event.addListener(field_polygon, 'insert_at', ( events.onEdit ? events.onEdit : function(){/*empty*/} ));
 	google.maps.event.addListener(field_polygon, "mouseover", ( events.onMouseOver ? events.onMouseOver : function(){/*empty*/} )); 
@@ -779,7 +791,7 @@ plenty_admin.MAPS.show_polygon_context_menu = function(fieldData, map, menu_name
 					.find(".view_field a")
 					.click(function(){
 						//alert("insert equipment");
-						plenty_admin.HELPER.showLoadingOverlay();
+						plenty_admin.HELPER.showLoadingOverlay("Loading", "Field");
 						var polyPath = [];
 						polygon.getPath().getArray().forEach(function(point, p){
 							var latlng = {
@@ -1744,6 +1756,9 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 					.find(".addFieldMapCtrl div")
 					.data("state", "off");
 					//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
+					
+					//show equipment
+					plenty_admin.MAPS.show_equipment(plenty_admin.MAPS.equipment_pins, map);
 				}else{
 					plenty_admin.MAPS.show_clu_polygons();
 				}
@@ -1767,8 +1782,11 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 				var fieldData = {
 					boundaries:vertices,
 					editable: true,
-					isCoords: true
+					isCoords: true,
+					cluBoundaryId:area.id
 				};
+				
+				console.log("fieldData", fieldData);
 				
 				var poly_events = {
 					onMouseOver:function(){/*empty handler*/},
@@ -1841,6 +1859,14 @@ plenty_admin.MAPS.suggest_clu_field = function(area, map) {
 	});
 }
 
+plenty_admin.MAPS.show_clu_polygons = function(except, map){
+	//loop through the CLU boundaries on the map and set their map to null
+	for(var b=0; b<plenty_admin.MAPS.clu_boundaries.length; b++){
+		var boundary = plenty_admin.MAPS.clu_boundaries[b];
+			boundary.setMap(map);
+	}
+}
+
 plenty_admin.MAPS.hide_clu_polygons = function(except){
 	//loop through the CLU boundaries on the map and set their map to null
 	for(var b=0; b<plenty_admin.MAPS.clu_boundaries.length; b++){
@@ -1890,15 +1916,6 @@ plenty_admin.MAPS.show_equipment = function(equipment, map){
 	for(var b=0; b<equipment.length; b++){
 		var equip = equipment[b];
 			equip.setMap(map);
-	}
-}
-
-
-plenty_admin.MAPS.show_clu_polygons = function(except){
-	//loop through the CLU boundaries on the map and set their map to null
-	for(var b=0; b<plenty_admin.MAPS.clu_boundaries.length; b++){
-		var boundary = plenty_admin.MAPS.clu_boundaries[b];
-			boundary.setMap(plenty_admin.MAPS.map);
 	}
 }
 
@@ -1990,7 +2007,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 						plenty_admin.MAPS.infoWindow.close();
 						plenty_admin.MAPS.selectedPolygon.polygon.setMap(null);
 						plenty_admin.MAPS.selectedPolygon.polygon = null;
-						plenty_admin.MAPS.show_clu_polygons();
+						plenty_admin.MAPS.show_clu_polygons(map);
 						plenty_admin.MAPS.add_field_state = 0;
 						
 						plenty_admin.MAPS.selected_clu_polygon
@@ -2033,6 +2050,10 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 				fieldObj.latitude = MAPS.selectedPolygon.centerPoint.A;
 				fieldObj.longitude = MAPS.selectedPolygon.centerPoint.F;
 				
+				if(area.cluBoundaryId > -1){
+					fieldObj.cluBoundaryId = area.cluBoundaryId;
+				}
+				
 				console.log("fieldObj:", fieldObj);
 				
 				console.log("newFarmField:", newFarmField, newFarmField.val().length);
@@ -2046,7 +2067,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 							console.log("farmBody:", farm_body);
 							
 							//insert the field here
-							fieldObj.farmId = farm_body.id;
+							fieldObj.farmId = parseInt(farm_body.id);
 							plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints(fieldObj, 100, showFieldAddedSuccess);
 							
 							//add field to the data set locally
@@ -2089,7 +2110,7 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 				plenty_admin.MAPS.infoWindow.close();
 				plenty_admin.MAPS.selectedPolygon.polygon.setMap(null);
 				plenty_admin.MAPS.selectedPolygon.polygon = null;
-				plenty_admin.MAPS.show_clu_polygons();
+				plenty_admin.MAPS.show_clu_polygons(map);
 				plenty_admin.MAPS.add_field_state = 0;
 				
 				plenty_admin.MAPS.selected_clu_polygon
@@ -2120,8 +2141,11 @@ plenty_admin.MAPS.showAddFieldForm = function(area, event, map) {
 					.find(".addFieldMapCtrl div")
 					.data("state", "off");
 					//plenty_admin.MAPS.selected_clu_polygon.setMap(null);
+					
+					//show equipment
+					plenty_admin.MAPS.show_equipment(plenty_admin.MAPS.equipment_pins, map);
 				}else{
-					plenty_admin.MAPS.show_clu_polygons();
+					plenty_admin.MAPS.show_clu_polygons(map);
 				}
 
 				return false;

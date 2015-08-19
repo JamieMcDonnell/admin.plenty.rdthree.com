@@ -299,24 +299,12 @@ plenty_admin.REST.inline_editing_options = {
 	}
 
 plenty_admin.DATA = {};
-plenty_admin.DATA.getInitialOrganizationData = function(orgs, callback){
-	var _orgsBody = orgs.body();
-	//console.log("getInitialOrganizationData: ", _orgsBody);
-	plenty_admin.DATA.organizations = {};
-	plenty_admin.DATA.organizations.length = 0;
-	
-	//create the organization API collection
-	plenty_admin.REST.getInitialDataForOrganization = plenty_admin.api.all("settings/getInitialDataForOrganization");
-	
-	//loop organizations and add them to the dashboard
-	for(var o = 0; o < _orgsBody.length; o++){
-		var org_data = _orgsBody[o].data();
-		plenty_admin.DATA.organizations[org_data.id] = org_data;
-		//console.log("looping orgs: ", org_data, o);
-		//get dashboard per organization in this loop, then build the dashboard org element
-		
-		plenty_admin.REST.getInitialDataForOrganization
-		.get(org_data.id)
+//create the organization API collection
+plenty_admin.REST.getInitialDataForOrganization = plenty_admin.api.all("settings/getInitialDataForOrganization");
+
+plenty_admin.DATA.getInitialDataForOrganization = function(id, _orgsBody, callback){
+	plenty_admin.REST.getInitialDataForOrganization
+		.get(id)
 		.then(function(org_sub){
 			//console.log("Organization initial data: ", org_sub);
 			var org_sub_body = org_sub.body();
@@ -329,10 +317,32 @@ plenty_admin.DATA.getInitialOrganizationData = function(orgs, callback){
 			plenty_admin.DATA.organizations[full_org.id] = full_org;
 			plenty_admin.DATA.organizations.length += 1;
 			
-			if(plenty_admin.DATA.organizations.length === _orgsBody.length && callback && typeof callback === "function"){
-				callback();
+			if(_orgsBody && plenty_admin.DATA.organizations.length === _orgsBody.length){
+				if(callback && typeof callback === "function"){
+					callback();
+				}
+			}else{
+				if(callback && typeof callback === "function"){
+					callback();
+				}
 			}
 		});
+}
+
+plenty_admin.DATA.getInitialOrganizationData = function(orgs, callback){
+	var _orgsBody = orgs.body();
+	console.log("getInitialOrganizationData: ", _orgsBody);
+	plenty_admin.DATA.organizations = {};
+	plenty_admin.DATA.organizations.length = 0;
+	
+	//loop organizations and add them to the dashboard
+	for(var o = 0; o < _orgsBody.length; o++){
+		var org_data = _orgsBody[o].data();
+		plenty_admin.DATA.organizations[org_data.id] = org_data;
+		console.log("looping orgs: ", org_data, o);
+		//get dashboard per organization in this loop, then build the dashboard org element
+		
+		plenty_admin.DATA.getInitialDataForOrganization(org_data.id, _orgsBody, callback);
 	}
 }
 
@@ -440,19 +450,19 @@ plenty_admin.REST.getEquipmentByOrgAndType = function(org, type, callback, el){
 			});
 }
 
-plenty_admin.REST.getSkillsAndRatesByUserAndSkillAndOrg = function(type, callback, el){
+plenty_admin.REST.getSkillsAndRatesForOrg = function(callback){
 	var org = plenty_admin.DATA.current_organization.id;
 	var user = plenty_admin.DATA.userDetails.id;
-	plenty_admin.REST.skillsAndRatesByUserAndSkillAndOrg = plenty_admin.api.one("skillsAndRates/getSkillsAndRatesByUserAndSkillAndOrganization/"+user+"/"+type, org);
-	plenty_admin.REST.skillsAndRatesByUserAndSkillAndOrg.get()
+	plenty_admin.REST.skillsAndRatesByUserAndOrg = plenty_admin.api.one("skillsAndRates/getByUsersInOrganization/", org);
+	plenty_admin.REST.skillsAndRatesByUserAndOrg.get()
 		.then(
 			function(skillsAndRatesReturn){
-				//plenty_admin.DATA.equipmentTypes = plenty_admin.REST.get_object_from_data(equipmentTypesReturn.body());
-				var orgSkillsAndRatesForType = plenty_admin.REST.get_object_from_data(skillsAndRatesReturn.body());
+				var orgSkillsAndRates = plenty_admin.REST.get_object_from_data(skillsAndRatesReturn.body());
+				plenty_admin.DATA.current_organization.skillsAndRates = orgSkillsAndRates;
 				//console.log("Get equip types for org finished", orgEquipmentForType);
 				
 				if(callback && typeof callback === "function"){
-					callback(orgSkillsAndRatesForType, el);
+					callback();
 				}
 			});
 }
@@ -1013,6 +1023,11 @@ plenty_admin.REST.fields.insertFieldWithInterestAndBoundaryPoints = function(fie
 	fullFieldObject.tillageTypeId = parseInt(fieldObj.tillageTypeId);
 	delete fieldObj.tillageTypeId;
 	
+	if(fieldObj.cluBoundaryId){
+		fullFieldObject.cluBoundaryId = parseInt(fieldObj.cluBoundaryId);
+		delete fieldObj.cluBoundaryId;
+	}
+	
 	fullFieldObject.growthMethodId = parseInt(fieldObj.growthMethodId);
 	
 	fullFieldObject.year = 2015;
@@ -1102,6 +1117,20 @@ plenty_admin.REST.plans.createTemplatePlan = function(TemplatePlanCreationDto, c
 			console.log("adding templatePlan success: ", templatePlan_body);
 			if(callback && typeof callback === "function"){
 				callback(templatePlan_body);
+			}
+		}
+	)
+}
+
+plenty_admin.REST.costForTemplateTask = plenty_admin.api.all("templateTasks/getCostForTemplateTask");
+plenty_admin.REST.plans.getCostForTemplateTask = function(templateTask, el, callback){
+	plenty_admin.REST.costForTemplateTask.post(templateTask)
+	.then(
+		function(templateTaskCost){
+			var templateTaskCost_body = templateTaskCost.body();
+			console.log("getting templateTask cost success: ", templateTaskCost_body);
+			if(callback && typeof callback === "function"){
+				callback(templateTaskCost_body, el);
 			}
 		}
 	)
@@ -1306,20 +1335,45 @@ plenty_admin.HELPER.daydiff = function(startDate, endDate) {
     return daydiff;
 }
 plenty_admin.HELPER.hideLoadingOverlay = function(){
-	$("body")
-	.removeClass("loading")
-	.find(".page-container")
-	.removeClass("blur");
-	
-	plenty_admin.UI.loadingOverlay.fadeOut("fast");
+	plenty_admin.UI.loadingOverlay
+	.find(".loadingInfo")
+	.fadeOut("fast", function(){
+		plenty_admin.UI.loadingOverlay
+		.find(".doneInfo")
+		.fadeIn("fast", function(){
+			var to = setTimeout(function(){
+				plenty_admin.UI.loadingOverlay
+				.fadeOut("fast", function(){
+					plenty_admin.UI.loadingOverlay
+					.find(".loadingInfo")
+					.show()
+					.end()
+					.find(".doneInfo")
+					.hide();
+				});
+				
+				$("body")
+				.removeClass("loading")
+				.find(".page-container")
+				.removeClass("blur");
+			}, 800);
+		});
+	});
 }
-plenty_admin.HELPER.showLoadingOverlay = function(){
+plenty_admin.HELPER.showLoadingOverlay = function(verb, noun){
 	$("body")
 	.addClass("loading")
 	.find(".page-container")
 	.addClass("blur");
 	
-	plenty_admin.UI.loadingOverlay.fadeIn("fast");
+	plenty_admin.UI.loadingOverlay
+	.find(".verb")
+	.text(verb ? verb : "Loading")
+	.end()
+	.find(".noun")
+	.text(noun ? " "+noun : "")
+	.end()
+	.fadeIn("fast");
 }
 plenty_admin.HELPER.returnInlineEditSelectOptions = function(field){
 	if(field === "timezone"){
@@ -1357,10 +1411,11 @@ plenty_admin.HELPER.validateForm = function($form){
 	var valid = true;
 	var invalidFields = [];
 	$form.find("input, select")
+	.filter(":visible")
 	.each(function(){
-		console.log("field", this);
+		//console.log("field", this);
 		if($(this).prop("required")){
-			console.log("field is required", this, this.tagName);
+			//console.log("field is required", this, this.tagName);
 			var val = null;
 			switch(this.tagName.toLowerCase()){
 				case "input":
@@ -1371,7 +1426,7 @@ plenty_admin.HELPER.validateForm = function($form){
 					val = $(this).find("option:selected").val();
 				break;
 			}
-			console.log("val = ", val === null, val.length);
+			//console.log("val = ", val === null, val.length);
 			if(val.length <= 0 || val === null){
 				$(this).parent()
 				.addClass("has-error");

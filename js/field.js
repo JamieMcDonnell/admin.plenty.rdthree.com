@@ -21,7 +21,7 @@ plenty_admin.UI.field = {
 		//fieldObj.boundaries = polyPath;
 		switch(context){
 			case "settings":
-				plenty_admin.HELPER.showLoadingOverlay();
+				plenty_admin.HELPER.showLoadingOverlay("Loading", "Field");
 	  
 				  plenty_admin.UI.field.DOM.attrchange({
 					trackValues: true,
@@ -367,7 +367,7 @@ plenty_admin.UI.field = {
 	
 	update_field_year: function (fieldId, cropYear){
 		console.log("update_field_year", fieldId, cropYear);
-		plenty_admin.HELPER.showLoadingOverlay();
+		plenty_admin.HELPER.showLoadingOverlay("Loading", "Equipment");
 		plenty_admin.REST.get_field_equipments_with_fieldId(fieldId, function(fieldEquipment){
 			console.log("get_field_equipments_with_fieldId", fieldEquipment);
 			plenty_admin.UI.field.renderEquipment(fieldEquipment);

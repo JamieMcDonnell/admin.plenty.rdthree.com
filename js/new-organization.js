@@ -9,7 +9,8 @@ plenty_admin.UI.newOrganization = {
 		.find("button.newOrg")
 		.off("click")
 		.on("click", function(){
-			var $form = $(this).closest(".panel").find("form");
+			var $this = $(this);
+			var $form = $this.closest(".panel").find("form");
 			var organizationDto = {};
 			organizationDto.name = $form.find("#new_org_name").val();
 			organizationDto.organizationTypeId = parseInt($form.find("#new_org_type").val());
@@ -19,45 +20,48 @@ plenty_admin.UI.newOrganization = {
 			organizationDto.state = $form.find("#new_org_state").val();
 			organizationDto.zip = $form.find("#new_org_zip").val();
 			
-			console.log("organizationDto: ", organizationDto);
+			$this
+			.button("loading");
 			
-			$form
-			.fadeOut("fast", function(){
-				plenty_admin.UI.newOrganization.DOM
-				.find(".alert-info")
-				.fadeIn("fast");
-			});
+			plenty_admin.HELPER.showLoadingOverlay("Saving", "New Organization");
+			
 			plenty_admin.REST.insertOrganization.post(organizationDto).then(
 				function(insertedOrg){
 					console.log("organization inserted: ", insertedOrg().data);
 					
+					var newOrg = insertedOrg().data;
+					
+					plenty_admin.DATA.organizations[newOrg.id] = newOrg;
+					
+					plenty_admin.UI.newOrganization.eventCollector = window.eventcollector(2, 10000);
+	
 					var roleData = {
-						organizationId:insertedOrg().data.id,
+						organizationId:newOrg.id,
 						userId: plenty_admin.DATA.userDetails.id,
 						roleTypeId:1
 					};
+					
+					plenty_admin.DATA.getInitialDataForOrganization(newOrg.id, null, function(){
+						plenty_admin.UI.newOrganization.eventCollector.done("getOrgData");
+					});
+					
 					plenty_admin.REST.insertRole.post(roleData).then(function(newUser){
-						plenty_admin.UI.newOrganization.DOM
-						.find(".alert-info")
-						.fadeOut("fast", function(){
-							plenty_admin.UI.newOrganization.DOM
-							.find(".alert-success")
-							.fadeIn("fast");
-							
-							var to = setTimeout(function(){
-								plenty_admin.UI.newOrganization.DOM
-								.find(".alert-success")
-								.fadeOut("fast", function(){
-									$form
-									.fadeIn("fast");
-								});
-							}, 5000);
-						});
-						
+						plenty_admin.UI.newOrganization.eventCollector.done("insertRole");
+					});
+					
+					plenty_admin.UI.newOrganization.eventCollector.on('alldone', function(total) {
 						//populate the side bar organizations panel
 						plenty_admin.UI.sideBar.organizations.DOM
 						.find(".add-org")
-						.before(plenty_admin.UI.sideBar.organizations.create(insertedOrg().data));
+						.before(plenty_admin.UI.sideBar.organizations.create(newOrg));
+						
+						//load the farms tab of the new org by default
+						plenty_admin.UI.organization.init(plenty_admin.DATA.organizations[newOrg.id], "#farms");
+						
+						$this
+						.button("reset");
+			
+						plenty_admin.HELPER.hideLoadingOverlay();
 					});
 				},
 				function(){

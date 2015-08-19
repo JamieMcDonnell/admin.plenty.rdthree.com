@@ -15,8 +15,8 @@
 			<div class="flexbox-parent">
 				<h3 class="flexbox-item mtn">Activities</h3>
 				<p class="help-block alert alert-danger error flexbox-item" style="display:none;">You must add at least one activity and it's associated tasks to save a plan.</p>
-				<ul class="activity_list list-group flexbox-scroll_y flexbox-item" style="display:none;">
-				</ul>
+				<ul class="activity_list list-group flexbox-scroll_y flexbox-item mbs"></ul>
+				<h4 class="text-right">Plan Total:<span class="plan_total">$0.00</span></h4>
 				<form class="add_activity_form">
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">You must provide an activity type</p>
@@ -27,7 +27,19 @@
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">Days from planting must not be empty</p>
 						<label for="add_activity_days_from_planting">Days from planting</label>
-						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0"  data-default="0" required>
+						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0" min="-60" max="300"  data-default="0" required>
+					</div>
+					<div class="form-group harvest col-md-6 pln prn">
+						<p class="help-block alert alert-danger error" style="display:none;">Expected Yield must not be empty</p>
+						<label for="add_activity_days_from_planting">Expected Yield</label>
+						<input type="number" class="form-control" id="add_activity_expected_yield" placeholder="e.g. 1" value="100"  data-default="100" required>
+					</div>
+					<div class="form-group harvest col-md-6 prn">
+						<p class="help-block alert alert-danger error" style="display:none;">Yield UOM must not be empty</p>
+						<label for="add_activity_days_from_planting">UOM</label>
+						<select class="form-control" id="add_activity_yield_uom" disabled required>
+							<option value="1" selected disabled>Bushels</option>
+						</select>
 					</div>
 					<p class="form-group text-right">
 						<button class="btn btn-default cancel_activity"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
@@ -42,8 +54,7 @@
 			<div class="flexbox-parent">
 				<h3 class="flexbox-item mtn">Tasks</h3>
 				
-				<div class="task_lists flexbox-scroll_y mbs">
-				</div>
+				<div class="task_lists flexbox-scroll_y mbs"></div>
 				
 				<div class="add_task_and_task_components flexbox-item-grow flexbox-parent" style="display:none;">
 					<form class="add_task_form row">
@@ -77,22 +88,22 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items equipment-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
 							<!-- Equipment - get by organization -->
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Equipment Type must be selected</p>
 									<select class="form-control component_type" id="add_task_equipment_types" required></select>
-									<select class="form-control specific_items mts" id="add_task_specific_product" style="display:none"></select>
+									<select class="form-control specific_items mts" id="add_task_specific_equipment" style="display:none"></select>
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" data-default="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" disabled data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_equipment"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -109,13 +120,13 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items labour-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Labour Type must be selected</p>
 									<select class="form-control component_type" id="add_task_labour_types" required></select>
@@ -123,7 +134,7 @@
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" data-default="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" disabled data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -141,13 +152,13 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items product-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Product Type must be selected</p>
 									<select class="form-control component_type" id="add_task_product_types" required></select>

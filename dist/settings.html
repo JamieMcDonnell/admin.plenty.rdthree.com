@@ -10,7 +10,7 @@
 <meta name="author" content="Jamie McDonnell">
 <!--<link rel="icon" href="favicon.ico">-->
 
-<title>Plenty Admin Dashboard</title>
+<title>Plenty Admin Organization Settings</title>
 
 <!-- Bootstrap core CSS -->
 <link href="css/Plenty.RDThree.com.min.css" rel="stylesheet">
@@ -60,19 +60,32 @@
 	</nav><!-- /.navbar -->
 	<div class="container-fluid page-container flexbox-parent flexbox-item-grow">
 		<div class="row flexbox-parent flexbox-item-grow"> 
-			<div class="col-sm-3 col-md-2 sidebar" id="sidebar">
+			<div class="col-sm-3 sidebar" id="sidebar">
+	<i class="tab"></i>
 	<h3 class="mtn">Organizations</h3>
 	<div class="organizations-list panel-group" id="organizations" role="tablist" aria-multiselectable="true"> </div>
 </div>
 
-			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2" id="main-panel">
+			<div class="col-sm-9 col-sm-offset-3" id="main-panel">
 				<div id="organization-container" class="flexbox-item-grow flexbox-parent">
 	<div class="clearfix">
-		<h2 class="editable org-name pull-left mbn editable" data-type="text" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Change the organization name"> </h2>
-		<p class="editable org-organizationTypeId pull-left mbn editable clear" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'> </p>
-		<p class="pull-left lead2 mbn clear"><span class="org-addressLine1 editable" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span> <span class="org-addressLine2 editable" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span> </p>
-		<p class="pull-left lead2 mbn clear"><span class="org-city editable" data-type="text" data-name="city" data-title="Set City"></span> <span class="org-state editable" data-type="text" data-name="state" data-title="Set State"> </p>
-		<p class="pull-left lead2 editable clear org-zip"> </p>
+		<h2 class="editable org-name pull-left mbn editable" data-type="text" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Change the organization name"></h2>
+		<p class="editable org-organizationTypeId pull-left mbn editable clear" data-type="select" data-url="http://52.5.118.250:8080/plenty/organizations/updateOrganization" data-title="Choose an organization type" data-source='[{value: 1, text: "Landowner"}, {value: 2, text: "Custom Farmer"}, {value: 3, text: "Service Provider"}, {value: 4, text: "Vendor"}]'></p>
+		<span class="pull-left">,</span>
+		
+		<p class="pull-left lead2 mbn mls">
+			<span class="org-addressLine1 editable pull-left" data-type="text" data-name="addressLine1" data-title="Set Address Line 1"></span>
+			<span class="pull-left">,</span>
+			<span class="org-addressLine2 editable mls" data-type="text" data-name="addressLine2" data-title="Set Address Line 2"></span>
+		</p>
+		
+		<p class="pull-left lead2 mbs clear">
+			<span class="org-city editable pull-left" data-type="text" data-name="city" data-title="Set City"></span>
+			<span class="pull-left">,</span>
+			<span class="org-state editable pull-left mls" data-type="text" data-name="state" data-title="Set State"></span>
+			<span class="pull-left">,</span>
+			<span class="pull-left lead2 editable org-zip mls"></span>
+		</p>
 	</div>
 	
 	<div role="tabpanel" id="orgAssets" class="flexbox-item-grow flexbox-parent mbs"> 
@@ -1170,8 +1183,8 @@
 			<div class="flexbox-parent">
 				<h3 class="flexbox-item mtn">Activities</h3>
 				<p class="help-block alert alert-danger error flexbox-item" style="display:none;">You must add at least one activity and it's associated tasks to save a plan.</p>
-				<ul class="activity_list list-group flexbox-scroll_y flexbox-item" style="display:none;">
-				</ul>
+				<ul class="activity_list list-group flexbox-scroll_y flexbox-item mbs"></ul>
+				<h4 class="text-right">Plan Total:<span class="plan_total">$0.00</span></h4>
 				<form class="add_activity_form">
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">You must provide an activity type</p>
@@ -1182,7 +1195,19 @@
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">Days from planting must not be empty</p>
 						<label for="add_activity_days_from_planting">Days from planting</label>
-						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0"  data-default="0" required>
+						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0" min="-60" max="300"  data-default="0" required>
+					</div>
+					<div class="form-group harvest col-md-6 pln prn">
+						<p class="help-block alert alert-danger error" style="display:none;">Expected Yield must not be empty</p>
+						<label for="add_activity_days_from_planting">Expected Yield</label>
+						<input type="number" class="form-control" id="add_activity_expected_yield" placeholder="e.g. 1" value="100"  data-default="100" required>
+					</div>
+					<div class="form-group harvest col-md-6 prn">
+						<p class="help-block alert alert-danger error" style="display:none;">Yield UOM must not be empty</p>
+						<label for="add_activity_days_from_planting">UOM</label>
+						<select class="form-control" id="add_activity_yield_uom" disabled required>
+							<option value="1" selected disabled>Bushels</option>
+						</select>
 					</div>
 					<p class="form-group text-right">
 						<button class="btn btn-default cancel_activity"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
@@ -1197,8 +1222,7 @@
 			<div class="flexbox-parent">
 				<h3 class="flexbox-item mtn">Tasks</h3>
 				
-				<div class="task_lists flexbox-scroll_y mbs">
-				</div>
+				<div class="task_lists flexbox-scroll_y mbs"></div>
 				
 				<div class="add_task_and_task_components flexbox-item-grow flexbox-parent" style="display:none;">
 					<form class="add_task_form row">
@@ -1232,22 +1256,22 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items equipment-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
 							<!-- Equipment - get by organization -->
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Equipment Type must be selected</p>
 									<select class="form-control component_type" id="add_task_equipment_types" required></select>
-									<select class="form-control specific_items mts" id="add_task_specific_product" style="display:none"></select>
+									<select class="form-control specific_items mts" id="add_task_specific_equipment" style="display:none"></select>
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" data-default="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" disabled data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_equipment"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -1264,13 +1288,13 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items labour-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Labour Type must be selected</p>
 									<select class="form-control component_type" id="add_task_labour_types" required></select>
@@ -1278,7 +1302,7 @@
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" data-default="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" disabled data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -1296,13 +1320,13 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items product-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Product Type must be selected</p>
 									<select class="form-control component_type" id="add_task_product_types" required></select>
@@ -1401,8 +1425,8 @@
 			<div class="flexbox-parent">
 				<h3 class="flexbox-item mtn">Activities</h3>
 				<p class="help-block alert alert-danger error flexbox-item" style="display:none;">You must add at least one activity and it's associated tasks to save a plan.</p>
-				<ul class="activity_list list-group flexbox-scroll_y flexbox-item" style="display:none;">
-				</ul>
+				<ul class="activity_list list-group flexbox-scroll_y flexbox-item mbs"></ul>
+				<h4 class="text-right">Plan Total:<span class="plan_total">$0.00</span></h4>
 				<form class="add_activity_form">
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">You must provide an activity type</p>
@@ -1413,7 +1437,19 @@
 					<div class="form-group">
 						<p class="help-block alert alert-danger error" style="display:none;">Days from planting must not be empty</p>
 						<label for="add_activity_days_from_planting">Days from planting</label>
-						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0"  data-default="0" required>
+						<input type="number" class="form-control" id="add_activity_days_from_planting" placeholder="e.g. 1" value="0" min="-60" max="300"  data-default="0" required>
+					</div>
+					<div class="form-group harvest col-md-6 pln prn">
+						<p class="help-block alert alert-danger error" style="display:none;">Expected Yield must not be empty</p>
+						<label for="add_activity_days_from_planting">Expected Yield</label>
+						<input type="number" class="form-control" id="add_activity_expected_yield" placeholder="e.g. 1" value="100"  data-default="100" required>
+					</div>
+					<div class="form-group harvest col-md-6 prn">
+						<p class="help-block alert alert-danger error" style="display:none;">Yield UOM must not be empty</p>
+						<label for="add_activity_days_from_planting">UOM</label>
+						<select class="form-control" id="add_activity_yield_uom" disabled required>
+							<option value="1" selected disabled>Bushels</option>
+						</select>
 					</div>
 					<p class="form-group text-right">
 						<button class="btn btn-default cancel_activity"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
@@ -1428,8 +1464,7 @@
 			<div class="flexbox-parent">
 				<h3 class="flexbox-item mtn">Tasks</h3>
 				
-				<div class="task_lists flexbox-scroll_y mbs">
-				</div>
+				<div class="task_lists flexbox-scroll_y mbs"></div>
 				
 				<div class="add_task_and_task_components flexbox-item-grow flexbox-parent" style="display:none;">
 					<form class="add_task_form row">
@@ -1463,22 +1498,22 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items equipment-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
 							<!-- Equipment - get by organization -->
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Equipment Type must be selected</p>
 									<select class="form-control component_type" id="add_task_equipment_types" required></select>
-									<select class="form-control specific_items mts" id="add_task_specific_product" style="display:none"></select>
+									<select class="form-control specific_items mts" id="add_task_specific_equipment" style="display:none"></select>
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" data-default="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_equipment_qty" min="0" value="1" disabled data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_equipment"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -1495,13 +1530,13 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items labour-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Labour Type must be selected</p>
 									<select class="form-control component_type" id="add_task_labour_types" required></select>
@@ -1509,7 +1544,7 @@
 								</div>
 								<div class="form-group col-xs-2 pln prn mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">You must provide a quantity</p>
-									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" data-default="1" required>
+									<input type="number" class="form-control component_qty" id="add_task_labour_qty" min="0" value="1" disabled data-default="1" required>
 								</div>
 								<div class="form-group col-xs-3 prn text-right mbn">
 									<button class="btn btn-success btn-block task_add_component task_add_labour"><span class="glyphicon glyphicon-plus"></span> Add</button>
@@ -1527,13 +1562,13 @@
 									</tr>
 								</thead>
 							</table>
-							<div class="flexbox-item-grow flexbox-scroll_y">
+							<div class="flexbox-scroll_y">
 								<table class="table table-striped table-condensed task-items product-items fitTable mbs">
 									<tbody>
 									</tbody>
 								</table>
 							</div>
-							<div class="overflowFix">
+							<div>
 								<div class="form-group col-xs-7 pln mbn">
 									<p class="help-block alert alert-danger error" style="display:none;">Product Type must be selected</p>
 									<select class="form-control component_type" id="add_task_product_types" required></select>
@@ -1604,8 +1639,14 @@
   </div>
 </div>
 <div id="loadingOverlay">
-	<h1>Loading - Please Wait...</h1>
-	<i class="fa fa-refresh fa-spin"></i>
+	<div class="loadingInfo">
+		<h1><span class="verb">Loading</span><span class="noun"></span>, Please Wait...</h1>
+		<i class="fa fa-refresh fa-spin"></i>
+	</div>
+	<div class="doneInfo" style="display:none;">
+		<h1>Done.</h1>
+		<i class="fa fa-thumbs-o-up"></i>
+	</div>
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=geometry,drawing,places"></script> 	
 <!-- Bootstrap core JavaScript
@@ -1621,6 +1662,8 @@
 <script src="//use.typekit.net/jmc8hvz.js"></script>
 <script>try{Typekit.load();}catch(e){}</script>
 <script type="text/javascript">
+	$(function() {
 		plenty_admin.init("settings");
+	});
 	</script>
 </body></html>
